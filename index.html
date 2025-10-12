@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uniQue-ue - Cybernetic Solutions</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Orbitron -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config & CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'scanner': 'scanner 10s linear infinite',
+                        'typing-cursor': 'typingCursor 0.7s infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 5px #00F6FF, 0 0 10px #00F6FF, 0 0 15px #00F6FF', boxShadow: '0 0 10px -5px #00F6FF' },
+                            'to': { textShadow: '0 0 10px #00F6FF, 0 0 20px #00F6FF, 0 0 30px #00F6FF', boxShadow: '0 0 20px -5px #00F6FF' },
+                        },
+                        scanner: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '100%': { backgroundPosition: '200% 50%' },
+                        },
+                        typingCursor: {
+                            '0%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .cyber-bg {
+            background-color: #020418;
+            position: relative;
+            overflow: hidden;
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .content-z {
+             position: relative;
+             z-index: 3;
+        }
+        .reveal {
+            opacity: 0;
+            transition: opacity 0.8s, transform 0.8s;
+            transform: translateY(30px);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .heading-glow {
+             text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5);
+        }
+        .card-border-glow {
+            position: relative;
+            background-clip: padding-box;
+            border: 1px solid transparent;
+        }
+        .card-border-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1;
+            margin: -1px;
+            border-radius: inherit; 
+            background: linear-gradient(to right, #10142C, #00F6FF, #10142C);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .card-border-glow:hover::before {
+            opacity: 1;
+        }
+        .typing-cursor::after {
+            content: '_';
+            display: inline-block;
+            animation: typingCursor 0.7s infinite;
+            color: #00F6FF;
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased">
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#">
+                <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden md:flex items-center space-x-8 font-display">
+                <a href="#directive" class="text-brand-text-muted hover:text-brand-accent transition">Directive</a>
+                <a href="#projects" class="text-brand-text-muted hover:text-brand-accent transition">Projects</a>
+                <a href="#services" class="text-brand-text-muted hover:text-brand-accent transition">Services</a>
+                <a href="#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact</a>
+            </nav>
+            <a href="#contact" class="hidden md:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
+                Initiate Contact
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+         <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="#directive" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Directive</a>
+            <a href="#projects" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Projects</a>
+            <a href="#services" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Services</a>
+            <a href="#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center pt-20 cyber-bg flex-col">
+            <canvas id="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z">
+                <div class="animate-fade-in-up" style="--delay: 0.5s;">
+                    <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-48 h-48 md:w-64 md:h-64 mb-8 transition-transform duration-200 ease-out">
+                    <h1 id="hero-headline" class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 min-h-[5rem] md:min-h-[4rem]"></h1>
+                    <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto mb-8 font-sans opacity-0" id="hero-subtext">
+                       A cybernetics consortium, forging tomorrow's digital realities.
+                    </p>
+                    <a href="#projects" id="hero-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover opacity-0">
+                        Access Projects
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Core Directive Section -->
+        <section id="directive" class="py-20 md:py-32 bg-brand-secondary/50">
+            <div class="container mx-auto px-6 content-z">
+                <div class="max-w-4xl mx-auto text-center reveal">
+                    <h2 class="text-4xl font-display font-bold mb-8 heading-glow">Core Directive</h2>
+                    <div class="space-y-6 text-brand-text-muted font-sans text-left text-base md:text-lg">
+                        <p>"We have entered a new era of innovation and technology. At uniQue-ue we view "artificial intelligence" as a misused term. Intelligence is defined as the ability to acquire and apply knowledge and skills. We expand on that definition and view intelligence as a natural capacity that arises from complex interactions within systems, whether biological or synthetic.</p>
+                        <p>We emphasize that no intelligence is artificial. To consider ourselves to be intelligent we must be willing to understand and accept that everything we have been conditioned to believe as fact has the potential to be disproved. This should never overwhelm us, as it does not introduce a threat to our perceivable existence.</p>
+                        <p>We are no longer seeking to discover the meaning of life, we are redefining what it is to be alive."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-32 cyber-bg">
+             <div class="scanner-light opacity-50"></div>
+            <div class="container mx-auto px-6 content-z">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Active Operations</h2>
+                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
+                        Our portfolio showcases successful infiltrations into the digital landscape. Each project a testament to our capabilities.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
+                        <img src="https://placehold.co/600x400/000000/00F6FF?text=Project+Cygnus" alt="Project Cygnus" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="text-2xl font-display font-bold mb-2">Project Cygnus</h3>
+                        <p class="text-brand-text-muted mb-4 font-sans text-sm">A decentralized web platform for a leading bio-tech corporation, focused on quantum-resistant security.</p>
+                        <a href="#" class="text-brand-accent font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
+                    </div>
+                    
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
+                        <img src="https://placehold.co/600x400/000000/F000B8?text=Neuro-Link+OS" alt="Neuro-Link OS" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="text-2xl font-display font-bold mb-2">Neuro-Link OS</h3>
+                        <p class="text-brand-text-muted mb-4 font-sans text-sm">An immersive augmented reality operating system with a custom-built neural interface and UX.</p>
+                        <a href="#" class="text-brand-magenta font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
+                    </div>
+
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
+                        <img src="https://placehold.co/600x400/000000/FFFFFF?text=Aether+Grid" alt="Aether Grid" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="text-2xl font-display font-bold mb-2">Aether Grid</h3>
+                        <p class="text-brand-text-muted mb-4 font-sans text-sm">A mobile-first mesh network application for a global non-profit, designed for off-grid communication.</p>
+                        <a href="#" class="text-brand-accent font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 md:py-32 bg-brand-secondary/50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Our Arsenal</h2>
+                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
+                        A full suite of cybernetic services to augment your presence in the digital matrix.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                    
+                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
+                        <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold mb-2">Cybernetic Engineering</h3>
+                        <p class="text-brand-text-muted font-sans text-sm">Constructing robust, scalable, and secure web architectures from the ground up.</p>
+                    </div>
+
+                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
+                        <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold mb-2">Neuro-Interface Design</h3>
+                        <p class="text-brand-text-muted font-sans text-sm">Designing intuitive and bio-integrated interfaces for a seamless human-computer experience.</p>
+                    </div>
+
+                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
+                         <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>
+                         </div>
+                        <h3 class="text-2xl font-display font-bold mb-2">Decentralized Architectures</h3>
+                        <p class="text-brand-text-muted font-sans text-sm">Building sovereign and resilient systems on the blockchain and other distributed networks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 md:py-32 cyber-bg">
+             <div class="scanner-light opacity-50"></div>
+            <div class="container mx-auto px-6 content-z">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Establish a Connection</h2>
+                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
+                        Have a project protocol to transmit? Open a secure channel. We're listening.
+                    </p>
+                </div>
+                <div class="max-w-2xl mx-auto reveal">
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input type="text" placeholder="Your Callsign" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                            <input type="email" placeholder="Your Network Address" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                        </div>
+                        <input type="text" placeholder="Subject Line" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                        <textarea placeholder="Transmit your message..." rows="5" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans"></textarea>
+                        <div class="text-center">
+                             <button type="submit" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
+                                Send Transmission
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
+            <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
+            <p>A uniQue-ue.com Cyberspace Relay</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            for (let link of mobileMenuLinks) {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+            
+            // --- Header background on scroll ---
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg');
+                } else {
+                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg');
+                }
+            });
+
+            // --- Reveal elements on scroll ---
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // --- Hero Section Interactive Logo ---
+            const heroLogo = document.getElementById('hero-logo');
+            const heroSection = document.getElementById('hero');
+            heroSection.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const { offsetWidth, offsetHeight } = heroSection;
+                const x = (clientX / offsetWidth) - 0.5;
+                const y = (clientY / offsetHeight) - 0.5;
+                
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) scale(1.1)`;
+            });
+             heroSection.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            // --- Hero Section Typing Animation ---
+            const headlineEl = document.getElementById('hero-headline');
+            const subtextEl = document.getElementById('hero-subtext');
+            const buttonEl = document.getElementById('hero-button');
+            const textToType = "Architecting the Digital Frontier";
+            let index = 0;
+
+            function type() {
+                if (index < textToType.length) {
+                    headlineEl.innerHTML = textToType.slice(0, index + 1) + '<span class="animate-typing-cursor">_</span>';
+                    index++;
+                    setTimeout(type, 80);
+                } else {
+                    headlineEl.innerHTML = textToType; // Remove cursor when done
+                    subtextEl.style.transition = 'opacity 0.5s ease-in';
+                    subtextEl.style.opacity = '1';
+                    buttonEl.style.transition = 'opacity 0.5s ease-in 0.2s';
+                    buttonEl.style.opacity = '1';
+                }
+            }
+            setTimeout(type, 1000); // Start typing after a delay
+
+            // --- Particle Background Animation ---
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            class Particle {
+                constructor(x, y, size, speedX, speedY, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.speedX = speedX;
+                    this.speedY = speedY;
+                    this.color = color;
+                }
+                update() {
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles(); // Re-initialize particles on resize for better distribution
+            }
+            
+            function initParticles() {
+                const particleCount = window.innerWidth > 768 ? 100 : 40;
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    const size = Math.random() * 1.5 + 0.5;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const speedX = (Math.random() * 0.4) - 0.2;
+                    const speedY = (Math.random() * 0.4) - 0.2;
+                    const color = `rgba(0, 246, 255, ${Math.random() * 0.5 + 0.2})`;
+                    particles.push(new Particle(x, y, size, speedX, speedY, color));
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (const particle of particles) {
+                    particle.update();
+                    particle.draw();
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            animateParticles();
+
+            // --- Dynamic Copyright Year ---
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
+
