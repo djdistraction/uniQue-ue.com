@@ -6,15 +6,12 @@
     <title>uniQue-ue - Cybernetic Solutions</title>
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Inter & Orbitron -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Custom Tailwind Config & CSS -->
     <script>
         tailwind.config = {
             theme: {
@@ -67,7 +64,11 @@
             position: relative;
             overflow: hidden;
         }
-        #particle-canvas {
+        .particle-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .particle-canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -120,38 +121,44 @@
 </head>
 <body class="bg-brand-primary text-brand-text font-sans antialiased">
 
-    <!-- Header -->
     <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#">
+            <a href="index.html">
                 <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
             </a>
-            <nav class="hidden md:flex items-center space-x-8 font-display">
-                <a href="#directive" class="text-brand-text-muted hover:text-brand-accent transition">Directive</a>
-                <a href="#projects" class="text-brand-text-muted hover:text-brand-accent transition">Projects</a>
-                <a href="#services" class="text-brand-text-muted hover:text-brand-accent transition">Services</a>
-                <a href="#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact</a>
+            <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
+                <a href="businesses.html" class="text-brand-text-muted hover:text-brand-accent transition">Businesses & Products</a>
+                <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">Headquarters</a>
             </nav>
-            <a href="#contact" class="hidden md:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
+            <a href="#contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
                 Initiate Contact
             </a>
-            <button id="mobile-menu-button" class="md:hidden text-white">
+            <button id="mobile-menu-button" class="lg:hidden text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
         </div>
-         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-secondary/95 backdrop-blur-sm">
-            <a href="#directive" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Directive</a>
-            <a href="#projects" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Projects</a>
-            <a href="#services" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Services</a>
-            <a href="#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Contact</a>
+         <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="businesses.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Businesses & Products</a>
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="careers.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Careers</a>
+            <a href="investors.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Investor Relations</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Headquarters</a>
+            <a href="#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
         </div>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section id="hero" class="min-h-screen flex items-center justify-center pt-20 cyber-bg flex-col">
-            <canvas id="particle-canvas"></canvas>
+        <section id="hero" class="min-h-screen flex items-center justify-center pt-20 particle-container flex-col" style="background-color: #020418;">
+            <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 text-center content-z">
                 <div class="animate-fade-in-up" style="--delay: 0.5s;">
                     <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-48 h-48 md:w-64 md:h-64 mb-8 transition-transform duration-200 ease-out">
@@ -160,14 +167,14 @@
                        A cybernetics consortium, forging tomorrow's digital realities.
                     </p>
                     <a href="#projects" id="hero-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover opacity-0">
-                        Access Projects
+                        Explore Operations
                     </a>
                 </div>
             </div>
         </section>
         
-        <!-- Core Directive Section -->
-        <section id="directive" class="py-20 md:py-32 bg-brand-secondary/50">
+        <section id="directive" class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
+            <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 content-z">
                 <div class="max-w-4xl mx-auto text-center reveal">
                     <h2 class="text-4xl font-display font-bold mb-8 heading-glow">Core Directive</h2>
@@ -180,8 +187,8 @@
             </div>
         </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="py-20 md:py-32 cyber-bg">
+        <section id="projects" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
+             <canvas class="particle-canvas"></canvas>
              <div class="scanner-light opacity-50"></div>
             <div class="container mx-auto px-6 content-z">
                 <div class="text-center mb-12 reveal">
@@ -217,9 +224,9 @@
             </div>
         </section>
 
-        <!-- Services Section -->
-        <section id="services" class="py-20 md:py-32 bg-brand-secondary/50">
-            <div class="container mx-auto px-6">
+        <section id="services" class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
                 <div class="text-center mb-12 reveal">
                     <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Our Arsenal</h2>
                     <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
@@ -255,8 +262,8 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 md:py-32 cyber-bg">
+        <section id="contact" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
+             <canvas class="particle-canvas"></canvas>
              <div class="scanner-light opacity-50"></div>
             <div class="container mx-auto px-6 content-z">
                 <div class="text-center mb-12 reveal">
@@ -284,7 +291,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
         <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
             <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
@@ -311,9 +317,9 @@
             const header = document.getElementById('header');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
-                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg');
+                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
                 } else {
-                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg');
+                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
                 }
             });
 
@@ -340,7 +346,7 @@
                 const x = (clientX / offsetWidth) - 0.5;
                 const y = (clientY / offsetHeight) - 0.5;
                 
-                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) scale(1.1)`;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
             });
              heroSection.addEventListener('mouseleave', () => {
                 heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
@@ -369,11 +375,7 @@
             setTimeout(type, 1000); // Start typing after a delay
 
             // --- Particle Background Animation ---
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            
-            class Particle {
+            const Particle = class {
                 constructor(x, y, size, speedX, speedY, color) {
                     this.x = x;
                     this.y = y;
@@ -382,52 +384,62 @@
                     this.speedY = speedY;
                     this.color = color;
                 }
-                update() {
+                update(canvas) {
                     if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                     if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
                     this.x += this.speedX;
                     this.y += this.speedY;
                 }
-                draw() {
+                draw(ctx) {
                     ctx.fillStyle = this.color;
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
                 }
-            }
+            };
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                initParticles(); // Re-initialize particles on resize for better distribution
-            }
-            
-            function initParticles() {
-                const particleCount = window.innerWidth > 768 ? 100 : 40;
-                particles = [];
-                for (let i = 0; i < particleCount; i++) {
-                    const size = Math.random() * 1.5 + 0.5;
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const speedX = (Math.random() * 0.4) - 0.2;
-                    const speedY = (Math.random() * 0.4) - 0.2;
-                    const color = `rgba(0, 246, 255, ${Math.random() * 0.5 + 0.2})`;
-                    particles.push(new Particle(x, y, size, speedX, speedY, color));
-                }
-            }
+            const setupParticleCanvas = (canvas) => {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
 
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (const particle of particles) {
-                    particle.update();
-                    particle.draw();
-                }
-                requestAnimationFrame(animateParticles);
-            }
-            
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            animateParticles();
+                const resizeCanvas = () => {
+                    canvas.width = parent.clientWidth;
+                    canvas.height = parent.clientHeight;
+                    initParticles();
+                };
+
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(15, Math.floor(area / 25000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2;
+                        const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push(new Particle(x, y, size, speedX, speedY, color));
+                    }
+                };
+                
+                const animateParticles = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (const particle of particles) {
+                        particle.update(canvas);
+                        particle.draw(ctx);
+                    }
+                    requestAnimationFrame(animateParticles);
+                };
+                
+                const resizeObserver = new ResizeObserver(() => resizeCanvas());
+                resizeObserver.observe(parent);
+
+                animateParticles();
+            };
+
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
 
             // --- Dynamic Copyright Year ---
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
