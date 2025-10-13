@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uniQue-ue - Blog</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                         glow: {
+                            'from': { textShadow: '0 0 5px #00F6FF, 0 0 10px #00F6FF, 0 0 15px #00F6FF', boxShadow: '0 0 10px -5px #00F6FF' },
+                            'to': { textShadow: '0 0 10px #00F6FF, 0 0 20px #00F6FF, 0 0 30px #00F6FF', boxShadow: '0 0 20px -5px #00F6FF' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .content-z {
+             position: relative;
+             z-index: 3;
+        }
+         .heading-glow {
+             text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5);
+        }
+        .card-border-glow {
+            position: relative;
+            background-clip: padding-box;
+            border: 1px solid transparent;
+        }
+        .card-border-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1;
+            margin: -1px;
+            border-radius: inherit; 
+            background: linear-gradient(to right, #10142C, #00F6FF, #10142C);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .card-border-glow:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html">
+                <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
+                <a href="businesses.html" class="text-brand-text-muted hover:text-brand-accent transition">Businesses & Products</a>
+                <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                <a href="blog.html" class="text-brand-accent font-bold transition">Blog</a>
+                <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">Headquarters</a>
+            </nav>
+            <a href="index.html#contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
+                Initiate Contact
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+             <a href="businesses.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Businesses & Products</a>
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Blog</a>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="careers.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Careers</a>
+            <a href="investors.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Investor Relations</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Headquarters</a>
+            <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="py-32 md:py-40 particle-container bg-brand-secondary/50">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Data Streams</h1>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                   Transmissions from the edge of tomorrow's world. Analysis, insights, and research from the uniQue-ue collective.
+                </p>
+            </div>
+        </section>
+        
+        <section class="py-20 md:py-24 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div id="blog-posts-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Blog posts will be dynamically inserted here -->
+                </div>
+                <div id="loading-indicator" class="text-center text-brand-accent">
+                    <p>Loading transmissions...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
+            <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
+            <p>A uniQue-ue.com Cyberspace Relay</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ... (header, mobile menu, and particle script code remains the same) ...
+
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
+                } else {
+                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+             const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            for (let link of mobileMenuLinks) {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+
+            // --- Dynamic Blog Post Loading ---
+            const postsContainer = document.getElementById('blog-posts-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+
+            function displayPosts(posts) {
+                // Sort posts by date, newest first
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                loadingIndicator.style.display = 'none';
+
+                if (posts.length === 0) {
+                    postsContainer.innerHTML = `<p class="col-span-full text-center text-brand-text-muted">No transmissions available. Stand by.</p>`;
+                    return;
+                }
+
+                posts.forEach((post, index) => {
+                    const postElement = document.createElement('div');
+                    postElement.className = 'bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 card-border-glow animate-fade-in-up';
+                    postElement.style.animationDelay = `${index * 0.2}s`;
+                    
+                    const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 'text-brand-accent';
+
+                    postElement.innerHTML = `
+                        <img src="${post.image}" alt="${post.title}" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <div class="text-sm ${categoryColor} font-semibold mb-2 font-sans">${new Date(post.date).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${post.category.toUpperCase()}</div>
+                        <h3 class="text-2xl font-display font-bold mb-2">${post.title}</h3>
+                        <p class="text-brand-text-muted mb-4 font-sans text-sm">${post.excerpt}</p>
+                        <a href="${post.url}" class="text-brand-accent font-semibold hover:underline font-sans">Read Transmission &rarr;</a>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+            }
+            
+            // --- Blog Post Data ---
+            // NOTE: In a live environment, the following 'posts' array would be replaced with a fetch() call
+            // to the 'published-posts.json' file. This is embedded for preview purposes.
+            const posts = [
+              {
+                "title": "The Quantum Entanglement of Modern Web Stacks",
+                "date": "2025-10-26",
+                "category": "Technology",
+                "excerpt": "A deep dive into the complex interplay between frontend frameworks, backend services, and the decentralized future.",
+                "image": "https://placehold.co/600x400/020418/00F6FF?text=Quantum+Web",
+                "url": "posts/post1.html"
+              },
+              {
+                "title": "Deconstructing Consciousness in Neural Networks",
+                "date": "2025-10-20",
+                "category": "Analysis",
+                "excerpt": "Exploring the emergent behaviors in large language models and the philosophical questions they raise about synthetic minds.",
+                "image": "https://placehold.co/600x400/020418/F000B8?text=Synthetic+Mind",
+                "url": "posts/post2.html"
+              }
+            ];
+
+            displayPosts(posts);
+
+
+            // --- Particle Background Animation ---
+            const Particle = class {
+                constructor(x, y, size, speedX, speedY, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.speedX = speedX;
+                    this.speedY = speedY;
+                    this.color = color;
+                }
+                update(canvas) {
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                }
+                draw(ctx) {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            };
+
+            const setupParticleCanvas = (canvas) => {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
+
+                const resizeCanvas = () => {
+                    canvas.width = parent.clientWidth;
+                    canvas.height = parent.clientHeight;
+                    initParticles();
+                };
+
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(15, Math.floor(area / 15000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.3) - 0.15;
+                        const speedY = (Math.random() * 0.3) - 0.15;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.5 + 0.2})`;
+                        particles.push(new Particle(x, y, size, speedX, speedY, color));
+                    }
+                };
+                
+                const animateParticles = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (const particle of particles) {
+                        particle.update(canvas);
+                        particle.draw(ctx);
+                    }
+                    requestAnimationFrame(animateParticles);
+                };
+                
+                const resizeObserver = new ResizeObserver(() => resizeCanvas());
+                resizeObserver.observe(parent);
+
+                animateParticles();
+            };
+
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
