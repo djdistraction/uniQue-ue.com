@@ -127,7 +127,20 @@
                 <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
             </a>
             <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
-                <a href="businesses.html" class="text-brand-text-muted hover:text-brand-accent transition">Businesses & Products</a>
+                <!-- Dropdown Menu for Businesses & Products -->
+                <div class="relative group">
+                    <button class="text-brand-text-muted hover:text-brand-accent transition inline-flex items-center focus:outline-none">
+                        Businesses & Products
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 animate-fade-in-up" style="animation-duration: 0.3s;">
+                        <div class="py-1">
+                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
+                            <!-- Future items can be added here -->
+                        </div>
+                    </div>
+                </div>
+
                 <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
                 <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
                 <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
@@ -144,7 +157,10 @@
             </button>
         </div>
          <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
-            <a href="businesses.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Businesses & Products</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Businesses & Products</span>
+                <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Publisher</a>
+            </div>
             <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
             <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
             <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
@@ -447,4 +463,6 @@
     </script>
 </body>
 </html>
+
+
 
