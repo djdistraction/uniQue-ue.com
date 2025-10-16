@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -310,7 +311,6 @@
                 chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
                 chatInput.value = '';
 
-                // Add a thinking indicator for the AI
                 const thinkingDiv = document.createElement('div');
                 thinkingDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm';
                 thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">AI Muse</p><p class="text-brand-text-muted animate-pulse">Thinking...</p>`;
@@ -318,23 +318,22 @@
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    // This now points to your secure serverless function
+                    const functionUrl = '/.netlify/functions/getAiResponse';
                     
-                    const payload = {
-                        contents: chatHistory,
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                    };
-
-                    const response = await fetch(apiUrl, {
+                    const response = await fetch(functionUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ chatHistory, systemPrompt })
                     });
+
+                    if (!response.ok) {
+                         throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    
                     const result = await response.json();
                     const aiMessage = result.candidates[0].content.parts[0].text;
                     
-                    chatContainer.removeChild(thinkingDiv); // Remove thinking indicator
+                    chatContainer.removeChild(thinkingDiv);
                     addMessage('ai', aiMessage);
                     chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
 
@@ -345,7 +344,7 @@
                 }
             };
             
-            const handleGenerate = async (format) => {
+             const handleGenerate = async (format) => {
                 if(chatHistory.length < 2) {
                      quill.setText('Please have a short conversation with the AI first to establish your ideas.');
                      return;
@@ -354,23 +353,26 @@
                 quill.setText(`Generating ${format}... Please wait...`);
 
                 try {
-                     const apiKey = "";
-                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                      const generationPrompt = `Based on the following conversation, please generate a well-structured ${format}. The conversation is as follows: ${JSON.stringify(chatHistory)}`;
+                     
+                     // Use the same secure serverless function for generation
+                     const functionUrl = '/.netlify/functions/getAiResponse';
+                     
+                     // We create a temporary, single-turn history for the generation task
+                     const generationHistory = [{ role: 'user', parts: [{ text: generationPrompt }] }];
 
-                     const payload = {
-                         contents: [{ parts: [{ text: generationPrompt }] }],
-                     };
-
-                     const response = await fetch(apiUrl, {
+                     const response = await fetch(functionUrl, {
                          method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify(payload)
+                         body: JSON.stringify({ chatHistory: generationHistory, systemPrompt: "" }) // No special system prompt for generation
                      });
+                     
+                     if (!response.ok) {
+                         throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+
                      const result = await response.json();
                      const generatedContent = result.candidates[0].content.parts[0].text;
 
-                     // Set content in Quill editor
                      quill.setText(generatedContent);
 
                 } catch (error) {
@@ -397,5 +399,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 
