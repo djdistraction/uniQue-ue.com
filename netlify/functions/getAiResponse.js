@@ -65,11 +65,16 @@ async function verifyRecaptcha(token, ip, secretKey) {
 exports.handler = async function (event) {
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
+    };
   }
 
   // Get the user's IP address from Netlify headers
-  const clientIp = event.headers['x-nf-client-connection-ip'];
+  const clientIp = event.headers['x-nf-client-connection-ip'] || 
+                    event.headers['x-forwarded-for'] || 
+                    'unknown';
   
   // Check rate limit
   if (!checkRateLimit(clientIp)) {
@@ -79,15 +84,29 @@ exports.handler = async function (event) {
     };
   }
 
-  // Get the chat history, system prompt, and captcha token from the request body
-  const { chatHistory, systemPrompt, captchaToken } = JSON.parse(event.body);
+  // Parse and validate request body
+  let chatHistory, systemPrompt, captchaToken;
+  try {
+    const body = JSON.parse(event.body);
+    chatHistory = body.chatHistory;
+    systemPrompt = body.systemPrompt;
+    captchaToken = body.captchaToken;
+  } catch (error) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid request body.' }),
+    };
+  }
   
   // Get the secret keys from environment variables
   const apiKey = process.env.GEMINI_API_KEY;
   const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!apiKey) {
-    return { statusCode: 500, body: 'API key not configured.' };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'API key not configured.' }),
+    };
   }
 
   if (!recaptchaSecretKey) {
