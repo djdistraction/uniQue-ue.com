@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uniQue-ue - Publisher</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Orbitron -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Quill Rich Text Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config & CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                         fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 5px #00F6FF, 0 0 10px #00F6FF', boxShadow: '0 0 10px -5px #00F6FF' },
+                            'to': { textShadow: '0 0 10px #00F6FF, 0 0 20px #00F6FF', boxShadow: '0 0 20px -5px #00F6FF' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .content-z {
+             position: relative;
+             z-index: 3;
+        }
+        .heading-glow {
+             text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5);
+        }
+        /* Quill Editor Styling */
+        .ql-toolbar {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            background-color: #10142C;
+            border-color: rgba(0, 246, 255, 0.3) !important;
+        }
+        .ql-container {
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            background-color: #020418;
+            border-color: rgba(0, 246, 255, 0.3) !important;
+            color: #E5E7EB;
+            font-family: 'Inter', sans-serif;
+            min-height: 400px;
+        }
+        .ql-editor {
+            font-size: 16px;
+        }
+        .ql-snow .ql-stroke {
+            stroke: rgba(0, 246, 255, 0.8);
+        }
+        .ql-snow .ql-picker-label {
+            color: rgba(0, 246, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html">
+                <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
+                <div class="relative group">
+                    <button class="text-brand-accent font-bold transition inline-flex items-center focus:outline-none">
+                        Businesses & Products
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 animate-fade-in-up" style="animation-duration: 0.3s;">
+                        <div class="py-1">
+                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-accent font-bold bg-brand-primary">Publisher</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">Headquarters</a>
+            </nav>
+            <a href="index.html#contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
+                Initiate Contact
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <div>
+                <a href="#" class="block py-3 px-6 text-brand-accent font-bold font-display">Businesses & Products</a>
+                <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-accent font-bold bg-brand-primary font-display text-xs">Publisher</a>
+            </div>
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="careers.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Careers</a>
+            <a href="investors.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Investor Relations</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Headquarters</a>
+            <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main class="pt-24">
+        <section class="py-16 md:py-24 particle-container bg-brand-secondary/50">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">The Publisher</h1>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                   Your creative co-pilot. Transform raw ideas into polished, monetizable works through a symbiotic partnership with our AI.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-12 md:py-16 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Column 1: Chat Interface -->
+                    <div class="lg:col-span-1 bg-brand-secondary/80 p-6 rounded-lg border border-brand-accent/20 animate-fade-in-up" style="animation-delay: 0.2s;">
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Phase 1: Dialogue</h2>
+                        <div id="chat-container" class="h-96 overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4">
+                            <!-- AI Welcome Message -->
+                            <div class="p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm">
+                                <p class="font-bold text-brand-accent">AI Muse</p>
+                                <p class="text-brand-text-muted">Welcome. I am here to listen. Let's explore your thoughts. What story is waiting to be told?</p>
+                            </div>
+                            <!-- User messages will appear here -->
+                        </div>
+                        <div class="flex">
+                            <input type="text" id="chat-input" class="flex-grow bg-brand-primary p-3 rounded-l-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans" placeholder="Transmit your thoughts...">
+                            <button id="send-button" class="bg-brand-accent text-brand-primary font-bold px-4 py-3 rounded-r-md transition hover:bg-brand-accent-hover border border-brand-accent">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2 & 3: Editor and Publishing -->
+                    <div class="lg:col-span-2 space-y-8">
+                         <!-- Generation Controls -->
+                        <div class="bg-brand-secondary/80 p-6 rounded-lg border border-brand-accent/20 animate-fade-in-up" style="animation-delay: 0.4s;">
+                            <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Phase 2: Manifestation</h2>
+                             <p class="text-brand-text-muted mb-4 text-sm">When you are ready, select a format to generate the first draft based on our conversation.</p>
+                            <div id="generation-controls" class="flex flex-wrap gap-4">
+                                <button data-format="Blog Post" class="gen-button bg-brand-accent/20 text-brand-accent px-4 py-2 rounded-md hover:bg-brand-accent hover:text-brand-primary transition border border-brand-accent/50">Blog Post</button>
+                                <button data-format="Article" class="gen-button bg-brand-accent/20 text-brand-accent px-4 py-2 rounded-md hover:bg-brand-accent hover:text-brand-primary transition border border-brand-accent/50">Article</button>
+                                <button data-format="Short Story" class="gen-button bg-brand-accent/20 text-brand-accent px-4 py-2 rounded-md hover:bg-brand-accent hover:text-brand-primary transition border border-brand-accent/50">Short Story</button>
+                                <button data-format="Novel Outline" class="gen-button bg-brand-accent/20 text-brand-accent px-4 py-2 rounded-md hover:bg-brand-accent hover:text-brand-primary transition border border-brand-accent/50">Novel Outline</button>
+                                <button data-format="Comic Script" class="gen-button bg-brand-accent/20 text-brand-accent px-4 py-2 rounded-md hover:bg-brand-accent hover:text-brand-primary transition border border-brand-accent/50">Comic Script</button>
+                            </div>
+                        </div>
+
+                        <!-- Document Editor -->
+                        <div class="bg-brand-secondary/80 p-6 rounded-lg border border-brand-accent/20 animate-fade-in-up" style="animation-delay: 0.6s;">
+                            <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Phase 3: Refinement</h2>
+                            <div id="editor-container"></div>
+                        </div>
+                        
+                        <!-- Publishing -->
+                        <div class="bg-brand-secondary/80 p-6 rounded-lg border border-brand-accent/20 animate-fade-in-up" style="animation-delay: 0.8s;">
+                            <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Phase 4: Monetization</h2>
+                            <p class="text-brand-text-muted mb-4 text-sm">Once your work is perfected, let's discuss publishing strategies, monetization channels, and affiliate integrations to bring your creation to the global market.</p>
+                            <button id="publish-button" class="bg-brand-magenta/80 text-white px-6 py-3 rounded-md hover:bg-brand-magenta transition border border-brand-magenta/50 font-bold">Initiate Publishing Protocol</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
+            <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
+            <p>A uniQue-ue.com Cyberspace Relay</p>
+        </div>
+    </footer>
+
+    <!-- Quill Rich Text Editor JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Header & Menu Logic ---
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
+                } else {
+                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
+                }
+            });
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Particle Background ---
+            const Particle = class {
+                constructor(x, y, size, speedX, speedY, color) { this.x = x; this.y = y; this.size = size; this.speedX = speedX; this.speedY = speedY; this.color = color; }
+                update(canvas) { if (this.x < 0 || this.x > canvas.width) this.speedX *= -1; if (this.y < 0 || this.y > canvas.height) this.speedY *= -1; this.x += this.speedX; this.y += this.speedY; }
+                draw(ctx) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+            };
+            const setupParticleCanvas = (canvas) => {
+                const ctx = canvas.getContext('2d'); let particles = []; const parent = canvas.parentElement;
+                const resizeCanvas = () => { canvas.width = parent.clientWidth; canvas.height = parent.clientHeight; initParticles(); };
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height; const particleCount = Math.max(15, Math.floor(area / 25000)); particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5; const x = Math.random() * canvas.width; const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2; const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push(new Particle(x, y, size, speedX, speedY, color));
+                    }
+                };
+                const animateParticles = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); for (const particle of particles) { particle.update(canvas); particle.draw(ctx); } requestAnimationFrame(animateParticles); };
+                const resizeObserver = new ResizeObserver(() => resizeCanvas()); resizeObserver.observe(parent);
+                animateParticles();
+            };
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+
+            // --- Quill Editor Initialization ---
+            const quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Generated content will appear here after manifestation...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // --- AI Chat and Generation Logic ---
+            const chatContainer = document.getElementById('chat-container');
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const genButtons = document.querySelectorAll('.gen-button');
+            let chatHistory = [];
+
+            // System prompt to guide the AI's persona
+            const systemPrompt = "You are an AI Muse, a creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
+
+            const addMessage = (sender, message) => {
+                const messageDiv = document.createElement('div');
+                const senderClass = sender === 'user' ? 'bg-brand-secondary self-end' : 'bg-brand-accent/10 self-start';
+                const senderName = sender === 'user' ? 'You' : 'AI Muse';
+                const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
+
+                messageDiv.className = `p-3 rounded-lg ${senderClass} max-w-xs text-sm`;
+                messageDiv.innerHTML = `<p class="font-bold ${senderColor}">${senderName}</p><p class="text-brand-text-muted">${message}</p>`;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            };
+
+            const handleSend = async () => {
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+
+                addMessage('user', userMessage);
+                chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+                chatInput.value = '';
+
+                // Add a thinking indicator for the AI
+                const thinkingDiv = document.createElement('div');
+                thinkingDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm';
+                thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">AI Muse</p><p class="text-brand-text-muted animate-pulse">Thinking...</p>`;
+                chatContainer.appendChild(thinkingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                try {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    
+                    const payload = {
+                        contents: chatHistory,
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    const aiMessage = result.candidates[0].content.parts[0].text;
+                    
+                    chatContainer.removeChild(thinkingDiv); // Remove thinking indicator
+                    addMessage('ai', aiMessage);
+                    chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
+
+                } catch (error) {
+                    console.error("Error fetching AI response:", error);
+                    chatContainer.removeChild(thinkingDiv);
+                    addMessage('ai', 'My apologies, I am having trouble connecting to the network. Please try again.');
+                }
+            };
+            
+            const handleGenerate = async (format) => {
+                if(chatHistory.length < 2) {
+                     quill.setText('Please have a short conversation with the AI first to establish your ideas.');
+                     return;
+                }
+                
+                quill.setText(`Generating ${format}... Please wait...`);
+
+                try {
+                     const apiKey = "";
+                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                     const generationPrompt = `Based on the following conversation, please generate a well-structured ${format}. The conversation is as follows: ${JSON.stringify(chatHistory)}`;
+
+                     const payload = {
+                         contents: [{ parts: [{ text: generationPrompt }] }],
+                     };
+
+                     const response = await fetch(apiUrl, {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify(payload)
+                     });
+                     const result = await response.json();
+                     const generatedContent = result.candidates[0].content.parts[0].text;
+
+                     // Set content in Quill editor
+                     quill.setText(generatedContent);
+
+                } catch (error) {
+                    console.error("Error generating content:", error);
+                    quill.setText(`Error: Could not generate content. Please check the console for details.`);
+                }
+            };
+
+            sendButton.addEventListener('click', handleSend);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSend();
+            });
+
+            genButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const format = button.dataset.format;
+                    handleGenerate(format);
+                });
+            });
+
+            // --- Dynamic Copyright Year ---
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
