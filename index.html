@@ -128,12 +128,12 @@
             </a>
             <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
                 <!-- Dropdown Menu for Businesses & Products -->
-                <div class="relative group">
-                    <button class="text-brand-text-muted hover:text-brand-accent transition inline-flex items-center focus:outline-none">
+                <div class="relative">
+                    <button id="products-menu-button" class="text-brand-text-muted hover:text-brand-accent transition inline-flex items-center focus:outline-none">
                         Businesses & Products
                         <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 animate-fade-in-up" style="animation-duration: 0.3s;">
+                    <div id="products-menu" class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden z-50 animate-fade-in-up" style="animation-duration: 0.3s;">
                         <div class="py-1">
                             <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
                             <!-- Future items can be added here -->
@@ -328,6 +328,22 @@
                     mobileMenu.classList.add('hidden');
                 });
             }
+
+            // --- Dropdown Menu Logic ---
+            const productsMenuButton = document.getElementById('products-menu-button');
+            const productsMenu = document.getElementById('products-menu');
+
+            productsMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent this click from immediately closing the menu
+                productsMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown if clicked outside
+            window.addEventListener('click', (event) => {
+                if (!productsMenu.classList.contains('hidden') && !productsMenu.contains(event.target) && !productsMenuButton.contains(event.target)) {
+                    productsMenu.classList.add('hidden');
+                }
+            });
             
             // --- Header background on scroll ---
             const header = document.getElementById('header');
@@ -463,6 +479,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
