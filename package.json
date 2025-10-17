@@ -1,0 +1,8 @@
+{
+  "name": "unique-ue-serverless",
+  "version": "1.0.0",
+  "description": "Serverless functions for the uniQue-ue website.",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}
