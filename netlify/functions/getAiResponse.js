@@ -1,8 +1,6 @@
 // This function runs on a secure server, not in the browser.
 // It includes IP-based rate limiting to prevent abuse.
 
-const fetch = require('node-fetch');
-
 // In-memory store for rate limiting. This is a basic implementation.
 // For a larger-scale application, a persistent store like Redis would be more robust.
 const ipRequestMap = new Map();
@@ -75,7 +73,4 @@ exports.handler = async function (event) {
   }
 };
 
-
-  }
-};
 
