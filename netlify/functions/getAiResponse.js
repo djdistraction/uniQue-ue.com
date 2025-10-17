@@ -1,129 +1,48 @@
 // This function runs on a secure server, not in the browser.
-// It keeps your API key safe.
+// It includes IP-based rate limiting to prevent abuse.
 
-// In-memory store for IP-based rate limiting
-const ipRequestStore = new Map();
-
-// Rate limiting configuration
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+// In-memory store for rate limiting. In a larger application, you might use a service like Redis.
+const ipRequestMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 60 seconds
 const MAX_REQUESTS_PER_WINDOW = 20;
 
-// Helper function to check rate limit
-function checkRateLimit(ip) {
+exports.handler = async function (event) {
+  // --- Rate Limiting Check ---
+  // Netlify provides the client's IP address in this header.
+  const clientIp = event.headers['x-nf-client-connection-ip'] || 'unknown';
   const now = Date.now();
   
-  if (!ipRequestStore.has(ip)) {
-    ipRequestStore.set(ip, [now]);
-    return true;
-  }
+  // Get the request timestamps for this IP, or initialize if it's a new IP.
+  const requestTimestamps = ipRequestMap.get(clientIp) || [];
   
-  const timestamps = ipRequestStore.get(ip);
-  
-  // Filter out timestamps older than the rate limit window
-  const recentTimestamps = timestamps.filter(
-    timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS
-  );
-  
+  // Filter out timestamps that are older than our time window.
+  const recentTimestamps = requestTimestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS);
+
+  // If the number of recent requests exceeds the limit, block the request.
   if (recentTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
-  
-  // Add current timestamp and update the store
-  recentTimestamps.push(now);
-  ipRequestStore.set(ip, recentTimestamps);
-  
-  return true;
-}
-
-// Helper function to verify reCAPTCHA token
-async function verifyRecaptcha(token, ip, secretKey) {
-  const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
-  
-  const params = new URLSearchParams({
-    secret: secretKey,
-    response: token,
-    remoteip: ip
-  });
-  
-  try {
-    const response = await fetch(verificationUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    });
-    
-    const result = await response.json();
-    return result.success === true;
-  } catch (error) {
-    console.error('Error verifying reCAPTCHA:', error);
-    return false;
-  }
-}
-
-exports.handler = async function (event) {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
-    };
-  }
-
-  // Get the user's IP address from Netlify headers
-  const clientIp = event.headers['x-nf-client-connection-ip'] || 
-                    event.headers['x-forwarded-for'] || 
-                    'unknown';
-  
-  // Check rate limit
-  if (!checkRateLimit(clientIp)) {
+    console.warn(`Rate limit exceeded for IP: ${clientIp}`);
     return {
       statusCode: 429,
-      body: JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+      body: JSON.stringify({ error: 'Too Many Requests. Please wait a moment.' }),
     };
   }
 
-  // Parse and validate request body
-  let chatHistory, systemPrompt, captchaToken;
-  try {
-    const body = JSON.parse(event.body);
-    chatHistory = body.chatHistory;
-    systemPrompt = body.systemPrompt;
-    captchaToken = body.captchaToken;
-  } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid request body.' }),
-    };
+  // Add the current timestamp to this IP's record.
+  recentTimestamps.push(now);
+  ipRequestMap.set(clientIp, recentTimestamps);
+
+  // --- Proceed with existing logic ---
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
-  
-  // Get the secret keys from environment variables
+
+  const { chatHistory, systemPrompt } = JSON.parse(event.body);
   const apiKey = process.env.GEMINI_API_KEY;
-  const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'API key not configured.' }),
-    };
-  }
-
-  if (!recaptchaSecretKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'reCAPTCHA secret key not configured.' }),
-    };
-  }
-
-  // Verify reCAPTCHA token
-  const isRecaptchaValid = await verifyRecaptcha(captchaToken, clientIp, recaptchaSecretKey);
-  
-  if (!isRecaptchaValid) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({ error: 'reCAPTCHA verification failed.' }),
-    };
+    console.error('API key not configured.');
+    return { statusCode: 500, body: 'API key not configured.' };
   }
 
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -146,7 +65,6 @@ exports.handler = async function (event) {
 
     const result = await apiResponse.json();
 
-    // Send the AI's response back to the website
     return {
       statusCode: 200,
       body: JSON.stringify(result),
@@ -159,3 +77,4 @@ exports.handler = async function (event) {
     };
   }
 };
+
