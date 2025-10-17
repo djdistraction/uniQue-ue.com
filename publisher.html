@@ -288,7 +288,6 @@
             const genButtons = document.querySelectorAll('.gen-button');
             let chatHistory = [];
 
-            // System prompt to guide the AI's persona
             const systemPrompt = "You are an AI Muse, a creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
 
             const addMessage = (sender, message) => {
@@ -316,58 +315,62 @@
                 thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">AI Muse</p><p class="text-brand-text-muted animate-pulse">Thinking...</p>`;
                 chatContainer.appendChild(thinkingDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // This is the correct, relative path to your serverless function on Netlify
+                const functionUrl = '/.netlify/functions/getAiResponse';
 
                 try {
-                    // This now points to your secure serverless function
-                    const functionUrl = '/.netlify/functions/getAiResponse';
-                    
                     const response = await fetch(functionUrl, {
                         method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ chatHistory, systemPrompt })
                     });
+                    
+                    chatContainer.removeChild(thinkingDiv);
 
                     if (!response.ok) {
-                         throw new Error(`Network response was not ok: ${response.statusText}`);
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `Server error: ${response.status}`);
                     }
                     
                     const result = await response.json();
                     const aiMessage = result.candidates[0].content.parts[0].text;
                     
-                    chatContainer.removeChild(thinkingDiv);
                     addMessage('ai', aiMessage);
                     chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
 
                 } catch (error) {
-                    console.error("Error fetching AI response:", error);
-                    chatContainer.removeChild(thinkingDiv);
+                    console.error("Error communicating with AI function:", error);
                     addMessage('ai', 'My apologies, I am having trouble connecting to the network. Please try again.');
                 }
             };
             
-             const handleGenerate = async (format) => {
+            const handleGenerate = async (format) => {
                 if(chatHistory.length < 2) {
                      quill.setText('Please have a short conversation with the AI first to establish your ideas.');
                      return;
                 }
                 
                 quill.setText(`Generating ${format}... Please wait...`);
+                const functionUrl = '/.netlify/functions/getAiResponse';
+                const generationSystemPrompt = `You are a content generation AI. Based on the provided conversation history, generate a complete and well-structured ${format}.`;
+                
+                // We create a new, single-turn request for generation
+                const generationChatHistory = [{
+                    role: 'user',
+                    parts: [{ text: `Please generate a ${format} based on this conversation: ${JSON.stringify(chatHistory)}` }]
+                }];
 
                 try {
-                     const generationPrompt = `Based on the following conversation, please generate a well-structured ${format}. The conversation is as follows: ${JSON.stringify(chatHistory)}`;
-                     
-                     // Use the same secure serverless function for generation
-                     const functionUrl = '/.netlify/functions/getAiResponse';
-                     
-                     // We create a temporary, single-turn history for the generation task
-                     const generationHistory = [{ role: 'user', parts: [{ text: generationPrompt }] }];
-
                      const response = await fetch(functionUrl, {
                          method: 'POST',
-                         body: JSON.stringify({ chatHistory: generationHistory, systemPrompt: "" }) // No special system prompt for generation
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({ chatHistory: generationChatHistory, systemPrompt: generationSystemPrompt })
                      });
-                     
+
                      if (!response.ok) {
-                         throw new Error(`Network response was not ok: ${response.statusText}`);
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `Server error: ${response.status}`);
                     }
 
                      const result = await response.json();
@@ -377,7 +380,7 @@
 
                 } catch (error) {
                     console.error("Error generating content:", error);
-                    quill.setText(`Error: Could not generate content. Please check the console for details.`);
+                    quill.setText(`Error: Could not generate content. Please check the browser console for details.`);
                 }
             };
 
@@ -399,7 +402,6 @@
     </script>
 </body>
 </html>
-
 
 
 
