@@ -156,7 +156,7 @@
             <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
                 <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">The Publisher</h1>
                 <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
-                   Your creative co-pilot. Transform raw ideas into polished, monetizable works through a symbiotic partnership with our AI.
+                   Your creative co-pilot. Transform raw ideas into polished, monetizable works through guided questions and optional AI enhancement.
                 </p>
             </div>
         </section>
@@ -165,19 +165,22 @@
             <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 content-z">
                 <div class="grid lg:grid-cols-3 gap-8">
-                    <!-- Column 1: Chat Interface -->
+                    <!-- Column 1: Question Interface -->
                     <div class="lg:col-span-1 bg-brand-secondary/80 p-6 rounded-lg border border-brand-accent/20 animate-fade-in-up" style="animation-delay: 0.2s;">
-                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Phase 1: Dialogue</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-display font-bold text-brand-accent heading-glow">Phase 1: Dialogue</h2>
+                            <button id="upgrade-button" class="text-xs bg-brand-magenta/80 text-white px-3 py-1 rounded-md hover:bg-brand-magenta transition border border-brand-magenta/50 font-bold">Upgrade to AI</button>
+                        </div>
                         <div id="chat-container" class="h-96 overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4">
-                            <!-- AI Welcome Message -->
+                            <!-- Welcome Message -->
                             <div class="p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm">
-                                <p class="font-bold text-brand-accent">AI Muse</p>
-                                <p class="text-brand-text-muted">Welcome. I am here to listen. Let's explore your thoughts. What story is waiting to be told?</p>
+                                <p class="font-bold text-brand-accent">Publisher Guide</p>
+                                <p class="text-brand-text-muted" id="welcome-message">Welcome to Publisher. I'll ask you a series of questions to help shape your creation. Let's begin!</p>
                             </div>
-                            <!-- User messages will appear here -->
+                            <!-- Questions and answers will appear here -->
                         </div>
                         <div class="flex">
-                            <input type="text" id="chat-input" class="flex-grow bg-brand-primary p-3 rounded-l-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans" placeholder="Transmit your thoughts...">
+                            <input type="text" id="chat-input" class="flex-grow bg-brand-primary p-3 rounded-l-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans" placeholder="Type your answer...">
                             <button id="send-button" class="bg-brand-accent text-brand-primary font-bold px-4 py-3 rounded-r-md transition hover:bg-brand-accent-hover border border-brand-accent">Send</button>
                         </div>
                     </div>
@@ -281,48 +284,96 @@
                 }
             });
 
-            // --- AI Chat and Generation Logic ---
+            // --- Publisher Logic with Free/Paid Tiers ---
             const chatContainer = document.getElementById('chat-container');
             const chatInput = document.getElementById('chat-input');
             const sendButton = document.getElementById('send-button');
+            const upgradeButton = document.getElementById('upgrade-button');
             const genButtons = document.querySelectorAll('.gen-button');
+            
+            // State management
+            let isPaidTier = localStorage.getItem('publisherPaidTier') === 'true';
+            let userApiKey = localStorage.getItem('publisherApiKey') || '';
+            let currentQuestionIndex = 0;
+            let userAnswers = {};
             let chatHistory = [];
 
-            const systemPrompt = "You are an AI Muse, a creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
+            // Predetermined questions for free tier
+            const predeterminedQuestions = [
+                "What type of content would you like to create? (e.g., blog post, article, story, etc.)",
+                "What is the main topic or theme you want to explore?",
+                "Who is your target audience?",
+                "What key message or takeaway do you want readers to have?",
+                "What tone would you like? (e.g., formal, casual, inspirational, educational)",
+                "Are there any specific points or sections you want to include?",
+                "What length are you aiming for? (e.g., short, medium, long)",
+                "Do you have a title in mind, or should one be suggested?"
+            ];
 
-            const addMessage = (sender, message) => {
+            // Update UI based on tier
+            function updateTierUI() {
+                const welcomeMsg = document.getElementById('welcome-message');
+                if (isPaidTier && userApiKey) {
+                    welcomeMsg.textContent = 'AI Mode Active! I am here to listen and help you explore your thoughts. What story is waiting to be told?';
+                    upgradeButton.textContent = 'AI Active ✓';
+                    upgradeButton.disabled = true;
+                    upgradeButton.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    welcomeMsg.textContent = 'Welcome to Publisher. I\'ll ask you a series of questions to help shape your creation. Let\'s begin!';
+                    upgradeButton.textContent = 'Upgrade to AI';
+                    upgradeButton.disabled = false;
+                    upgradeButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            const addMessage = (sender, message, questionId = null) => {
                 const messageDiv = document.createElement('div');
                 const senderClass = sender === 'user' ? 'bg-brand-secondary self-end' : 'bg-brand-accent/10 self-start';
-                const senderName = sender === 'user' ? 'You' : 'AI Muse';
+                const senderName = sender === 'user' ? 'You' : (isPaidTier && userApiKey ? 'AI Muse' : 'Publisher Guide');
                 const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
 
                 messageDiv.className = `p-3 rounded-lg ${senderClass} max-w-xs text-sm`;
                 messageDiv.innerHTML = `<p class="font-bold ${senderColor}">${senderName}</p><p class="text-brand-text-muted">${message}</p>`;
+                if (questionId !== null) {
+                    messageDiv.dataset.questionId = questionId;
+                }
                 chatContainer.appendChild(messageDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             };
 
-            const handleSend = async () => {
-                const userMessage = chatInput.value.trim();
-                if (!userMessage) return;
+            // Free tier: Question-based flow
+            const askNextQuestion = () => {
+                if (currentQuestionIndex < predeterminedQuestions.length) {
+                    const question = predeterminedQuestions[currentQuestionIndex];
+                    addMessage('guide', question, currentQuestionIndex);
+                    currentQuestionIndex++;
+                } else {
+                    addMessage('guide', 'Great! I have all the information I need. You can now select a format to generate your content.');
+                }
+            };
 
-                addMessage('user', userMessage);
+            // AI tier: Free-form conversation
+            const handleAiChat = async (userMessage) => {
                 chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
-                chatInput.value = '';
-
+                
                 const thinkingDiv = document.createElement('div');
                 thinkingDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm';
                 thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">AI Muse</p><p class="text-brand-text-muted animate-pulse">Thinking...</p>`;
                 chatContainer.appendChild(thinkingDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
                 
-                // This is the correct, relative path to your serverless function on Netlify
+                const systemPrompt = "You are an AI Muse, a creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
                 const functionUrl = '/.netlify/functions/getAiResponse';
 
                 try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (userApiKey) {
+                        headers['X-User-API-Key'] = userApiKey;
+                    }
+                    
                     const response = await fetch(functionUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: headers,
                         body: JSON.stringify({ chatHistory, systemPrompt })
                     });
                     
@@ -341,47 +392,221 @@
 
                 } catch (error) {
                     console.error("Error communicating with AI function:", error);
-                    addMessage('ai', 'My apologies, I am having trouble connecting to the network. Please try again.');
+                    addMessage('ai', 'My apologies, I am having trouble connecting to the network. Please try again or check your API key.');
+                }
+            };
+
+            const handleSend = async () => {
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+
+                addMessage('user', userMessage);
+                chatInput.value = '';
+
+                if (isPaidTier && userApiKey) {
+                    // AI mode
+                    await handleAiChat(userMessage);
+                } else {
+                    // Free tier: Save answer and ask next question
+                    if (currentQuestionIndex > 0) {
+                        userAnswers[`q${currentQuestionIndex - 1}`] = userMessage;
+                    }
+                    setTimeout(askNextQuestion, 500);
                 }
             };
             
             const handleGenerate = async (format) => {
-                if(chatHistory.length < 2) {
-                     quill.setText('Please have a short conversation with the AI first to establish your ideas.');
-                     return;
-                }
+                let contentPrompt = '';
                 
-                quill.setText(`Generating ${format}... Please wait...`);
-                const functionUrl = '/.netlify/functions/getAiResponse';
-                const generationSystemPrompt = `You are a content generation AI. Based on the provided conversation history, generate a complete and well-structured ${format}.`;
-                
-                // We create a new, single-turn request for generation
-                const generationChatHistory = [{
-                    role: 'user',
-                    parts: [{ text: `Please generate a ${format} based on this conversation: ${JSON.stringify(chatHistory)}` }]
-                }];
-
-                try {
-                     const response = await fetch(functionUrl, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ chatHistory: generationChatHistory, systemPrompt: generationSystemPrompt })
-                     });
-
-                     if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || `Server error: ${response.status}`);
+                if (isPaidTier && userApiKey) {
+                    // AI mode: Use chat history
+                    if (chatHistory.length < 2) {
+                        quill.setText('Please have a short conversation with the AI first to establish your ideas.');
+                        return;
                     }
+                    
+                    quill.setText(`Generating ${format}... Please wait...`);
+                    const functionUrl = '/.netlify/functions/getAiResponse';
+                    const generationSystemPrompt = `You are a content generation AI. Based on the provided conversation history, generate a complete and well-structured ${format}.`;
+                    
+                    const generationChatHistory = [{
+                        role: 'user',
+                        parts: [{ text: `Please generate a ${format} based on this conversation: ${JSON.stringify(chatHistory)}` }]
+                    }];
 
-                     const result = await response.json();
-                     const generatedContent = result.candidates[0].content.parts[0].text;
+                    try {
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (userApiKey) {
+                            headers['X-User-API-Key'] = userApiKey;
+                        }
+                        
+                        const response = await fetch(functionUrl, {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({ chatHistory: generationChatHistory, systemPrompt: generationSystemPrompt })
+                        });
 
-                     quill.setText(generatedContent);
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || `Server error: ${response.status}`);
+                        }
 
-                } catch (error) {
-                    console.error("Error generating content:", error);
-                    quill.setText(`Error: Could not generate content. Please check the browser console for details.`);
+                        const result = await response.json();
+                        const generatedContent = result.candidates[0].content.parts[0].text;
+
+                        quill.setText(generatedContent);
+
+                    } catch (error) {
+                        console.error("Error generating content:", error);
+                        quill.setText(`Error: Could not generate content. Please check your API key and try again.`);
+                    }
+                } else {
+                    // Free tier: Use question answers to create structured content
+                    if (Object.keys(userAnswers).length < 3) {
+                        quill.setText('Please answer at least 3 questions before generating content.');
+                        return;
+                    }
+                    
+                    quill.setText(`Generating ${format} based on your answers...`);
+                    
+                    // Build content from structured answers
+                    setTimeout(() => {
+                        let content = `# ${format}\n\n`;
+                        content += `**Based on your responses:**\n\n`;
+                        
+                        predeterminedQuestions.forEach((question, idx) => {
+                            if (userAnswers[`q${idx}`]) {
+                                content += `**${question}**\n${userAnswers[`q${idx}`]}\n\n`;
+                            }
+                        });
+                        
+                        content += `\n---\n\n`;
+                        content += `*This is a structured outline based on your answers. Upgrade to the AI tier to generate fully-formed content with creative enhancement.*`;
+                        
+                        quill.setText(content);
+                    }, 1000);
                 }
+            };
+
+            // Upgrade modal handling
+            upgradeButton.addEventListener('click', () => {
+                showUpgradeModal();
+            });
+
+            function showUpgradeModal() {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-brand-secondary p-8 rounded-lg max-w-md border border-brand-accent/30 relative">
+                        <button class="absolute top-4 right-4 text-brand-text-muted hover:text-brand-accent" onclick="this.closest('.fixed').remove()">✕</button>
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent">Upgrade to AI Mode</h2>
+                        <p class="text-brand-text-muted mb-4">Unlock the full power of AI-assisted content creation with intelligent conversations that adapt to your creative process.</p>
+                        
+                        <div class="bg-brand-primary/50 p-4 rounded-md mb-4">
+                            <h3 class="font-bold text-brand-accent mb-2">What you get:</h3>
+                            <ul class="text-sm text-brand-text-muted space-y-1">
+                                <li>✓ Natural AI conversations</li>
+                                <li>✓ Adaptive creative dialogue</li>
+                                <li>✓ Advanced content generation</li>
+                                <li>✓ Use your own API key (no recurring fees)</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="text-xs text-brand-text-muted mb-4">Payment: $9.99 one-time activation fee</p>
+                        
+                        <div class="space-y-3">
+                            <button onclick="handlePayment()" class="w-full bg-brand-magenta text-white px-6 py-3 rounded-md hover:bg-brand-magenta/80 transition font-bold">
+                                Proceed to Payment
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-brand-secondary border border-brand-accent/30 text-brand-text-muted px-6 py-3 rounded-md hover:border-brand-accent transition">
+                                Maybe Later
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+
+            window.handlePayment = function() {
+                // Close upgrade modal
+                document.querySelectorAll('.fixed').forEach(m => m.remove());
+                
+                // Show payment simulation (in production, this would integrate with a real payment processor)
+                const paymentModal = document.createElement('div');
+                paymentModal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+                paymentModal.innerHTML = `
+                    <div class="bg-brand-secondary p-8 rounded-lg max-w-md border border-brand-accent/30">
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent">Payment Simulation</h2>
+                        <p class="text-brand-text-muted mb-4">In a production environment, this would integrate with Stripe, PayPal, or another payment processor.</p>
+                        <p class="text-sm text-brand-text-muted mb-6">For demo purposes, click below to simulate a successful payment.</p>
+                        <button onclick="completeActivation()" class="w-full bg-brand-accent text-brand-primary px-6 py-3 rounded-md hover:bg-brand-accent-hover transition font-bold">
+                            Simulate Payment Success
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(paymentModal);
+            };
+
+            window.completeActivation = function() {
+                // Close payment modal
+                document.querySelectorAll('.fixed').forEach(m => m.remove());
+                
+                // Show API key input
+                const apiKeyModal = document.createElement('div');
+                apiKeyModal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+                apiKeyModal.innerHTML = `
+                    <div class="bg-brand-secondary p-8 rounded-lg max-w-md border border-brand-accent/30">
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent">Setup Your API Key</h2>
+                        <p class="text-brand-text-muted mb-4">To use AI features, you'll need to provide your own Google Gemini API key. This keeps your costs transparent and under your control.</p>
+                        
+                        <div class="bg-brand-primary/50 p-4 rounded-md mb-4">
+                            <p class="text-xs text-brand-text-muted mb-2">Get your free API key:</p>
+                            <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-brand-accent text-sm hover:underline">https://makersuite.google.com/app/apikey</a>
+                        </div>
+                        
+                        <input type="text" id="api-key-input" placeholder="Paste your API key here..." class="w-full bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:outline-none mb-4">
+                        
+                        <div class="space-y-2">
+                            <button onclick="saveApiKey()" class="w-full bg-brand-accent text-brand-primary px-6 py-3 rounded-md hover:bg-brand-accent-hover transition font-bold">
+                                Activate AI Mode
+                            </button>
+                            <p class="text-xs text-brand-text-muted text-center">You can change this later in settings</p>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(apiKeyModal);
+            };
+
+            window.saveApiKey = function() {
+                const apiKey = document.getElementById('api-key-input').value.trim();
+                if (!apiKey) {
+                    alert('Please enter a valid API key');
+                    return;
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('publisherPaidTier', 'true');
+                localStorage.setItem('publisherApiKey', apiKey);
+                isPaidTier = true;
+                userApiKey = apiKey;
+                
+                // Close modal
+                document.querySelectorAll('.fixed').forEach(m => m.remove());
+                
+                // Reset chat
+                chatContainer.innerHTML = '';
+                chatHistory = [];
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                
+                // Update UI
+                updateTierUI();
+                
+                // Show welcome message
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm';
+                welcomeDiv.innerHTML = `<p class="font-bold text-brand-accent">AI Muse</p><p class="text-brand-text-muted">Welcome. I am here to listen. Let's explore your thoughts. What story is waiting to be told?</p>`;
+                chatContainer.appendChild(welcomeDiv);
             };
 
             sendButton.addEventListener('click', handleSend);
@@ -395,6 +620,13 @@
                     handleGenerate(format);
                 });
             });
+
+            // Initialize
+            updateTierUI();
+            if (!isPaidTier) {
+                // Start with first question in free tier
+                setTimeout(askNextQuestion, 1000);
+            }
 
             // --- Dynamic Copyright Year ---
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
