@@ -353,32 +353,8 @@ exports.handler = async function(event, context) {
 
     // For Netlify, we need to return the stream in a specific format
     // This converts the AI SDK stream to a format Netlify can handle
-    const chunks = [];
-    for await (const chunk of result.textStream) {
-      chunks.push(chunk);
-    }
-
-    const fullText = chunks.join('');
-    const response = {
-      candidates: [{
-        content: {
-          parts: [{ text: fullText }]
-        }
-      }]
-    };
-
-    // Cache the response
-    await storeInCache(cacheKey, response);
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Cache': 'MISS'
-      },
-      body: JSON.stringify(response)
-    };
-
+    // Return the AI SDK's stream response so clients receive SSE as tokens are generated
+    return result.toAIStreamResponse();
   } catch (error) {
     console.error('Error generating AI response:', error);
 
