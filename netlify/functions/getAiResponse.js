@@ -3,6 +3,7 @@
 
 const crypto = require('crypto');
 const validator = require('validator');
+const fetch = require('node-fetch');
 
 // Redis client setup - with fallback to in-memory for local development
 let redisClient = null;
@@ -86,8 +87,10 @@ function validateInput(chatHistory, systemPrompt) {
           } else if (part.text.length > MAX_MESSAGE_LENGTH) {
             errors.push(`Message ${i}, part ${partIdx} exceeds maximum length`);
           }
-          // Sanitize the text to prevent injection
-          part.text = validator.escape(part.text);
+          // Note: We don't sanitize/escape text here because:
+          // 1. The text is sent directly to Gemini API, not rendered in HTML
+          // 2. Escaping would interfere with natural conversation
+          // 3. The API is called server-side with proper authentication
         });
       }
     }
@@ -304,7 +307,7 @@ exports.handler = async function (event) {
   }
   
   // Prepare API request
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
   const payload = {
     contents: chatHistory,
     systemInstruction: { parts: [{ text: systemPrompt }] }
