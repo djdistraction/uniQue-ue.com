@@ -136,17 +136,8 @@ exports.handler = async function(event, context) {
       })),
     });
 
-    // Convert to Netlify-compatible streaming response
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-      body: result.toAIStreamResponse(),
-      isBase64Encoded: false,
-    };
+    // Return the Response object directly for Netlify streaming
+    return result.toAIStreamResponse();
   } catch (error) {
     console.error('Error in AI streaming:', error);
     return {
