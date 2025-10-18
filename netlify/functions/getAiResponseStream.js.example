@@ -1,0 +1,403 @@
+// Example implementation of Vercel AI SDK for streaming AI responses
+// This is a reference implementation - copy to getAiResponseStream.js after testing
+
+const { streamText } = require('ai');
+const { google } = require('@ai-sdk/google-generative-ai');
+const { openai } = require('@ai-sdk/openai');
+const { anthropic } = require('@ai-sdk/anthropic');
+const validator = require('validator');
+const crypto = require('crypto');
+
+// Redis client setup (optional, for caching and rate limiting)
+let redisClient = null;
+let useRedis = false;
+
+// In-memory fallback
+const ipRequestMap = new Map();
+const responseCache = new Map();
+
+// Configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 60 seconds
+const MAX_REQUESTS_PER_WINDOW = 20;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const MAX_MESSAGE_LENGTH = 10000;
+
+// Initialize Redis if available
+async function initRedis() {
+  if (process.env.REDIS_URL && !redisClient) {
+    try {
+      const redis = require('redis');
+      redisClient = redis.createClient({
+        url: process.env.REDIS_URL,
+        socket: {
+          reconnectStrategy: (retries) => {
+            if (retries > 3) {
+              console.warn('Redis connection failed, using in-memory storage');
+              useRedis = false;
+              return false;
+            }
+            return Math.min(retries * 100, 3000);
+          }
+        }
+      });
+      
+      redisClient.on('error', (err) => {
+        console.error('Redis error:', err);
+        useRedis = false;
+      });
+      
+      await redisClient.connect();
+      useRedis = true;
+      console.log('Redis connected for streaming function');
+    } catch (error) {
+      console.warn('Redis initialization failed:', error.message);
+      useRedis = false;
+    }
+  }
+}
+
+// Provider selection with fallback logic
+function getProviderModel() {
+  const preferredProvider = process.env.DEFAULT_AI_PROVIDER || 'gemini';
+  
+  // Define provider configurations
+  const providerConfigs = {
+    gemini: {
+      check: () => process.env.GEMINI_API_KEY,
+      create: () => google('models/gemini-1.5-flash', {
+        apiKey: process.env.GEMINI_API_KEY
+      }),
+      name: 'Google Gemini'
+    },
+    openai: {
+      check: () => process.env.OPENAI_API_KEY,
+      create: () => openai('gpt-4o-mini', {
+        apiKey: process.env.OPENAI_API_KEY
+      }),
+      name: 'OpenAI GPT-4o mini'
+    },
+    anthropic: {
+      check: () => process.env.ANTHROPIC_API_KEY,
+      create: () => anthropic('claude-3-haiku-20240307', {
+        apiKey: process.env.ANTHROPIC_API_KEY
+      }),
+      name: 'Anthropic Claude'
+    }
+  };
+
+  // Try preferred provider first
+  if (providerConfigs[preferredProvider]?.check()) {
+    console.log(`Using preferred provider: ${providerConfigs[preferredProvider].name}`);
+    return providerConfigs[preferredProvider].create();
+  }
+
+  // Fallback to any available provider
+  for (const [key, config] of Object.entries(providerConfigs)) {
+    if (config.check()) {
+      console.log(`Falling back to provider: ${config.name}`);
+      return config.create();
+    }
+  }
+
+  throw new Error('No AI provider API key configured. Please set GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY');
+}
+
+// Validate input
+function validateInput(messages, systemPrompt) {
+  const errors = [];
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    errors.push('messages must be a non-empty array');
+  } else {
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      if (!msg.role || !['user', 'model', 'assistant'].includes(msg.role)) {
+        errors.push(`Invalid role at message ${i}`);
+      }
+      if (!msg.parts || !Array.isArray(msg.parts) || msg.parts.length === 0) {
+        errors.push(`Invalid parts at message ${i}`);
+      } else {
+        msg.parts.forEach((part, partIdx) => {
+          if (!part.text || typeof part.text !== 'string') {
+            errors.push(`Invalid text at message ${i}, part ${partIdx}`);
+          } else if (part.text.length > MAX_MESSAGE_LENGTH) {
+            errors.push(`Message ${i}, part ${partIdx} exceeds maximum length`);
+          }
+        });
+      }
+    }
+  }
+
+  if (!systemPrompt || typeof systemPrompt !== 'string') {
+    errors.push('systemPrompt must be a non-empty string');
+  }
+
+  return errors;
+}
+
+// Check rate limit
+async function checkRateLimit(clientIp) {
+  const now = Date.now();
+  const key = `rate_limit:${clientIp}`;
+
+  if (useRedis && redisClient) {
+    try {
+      const count = await redisClient.get(key);
+      const requests = count ? parseInt(count) : 0;
+
+      if (requests >= MAX_REQUESTS_PER_WINDOW) {
+        return false;
+      }
+
+      await redisClient.set(key, requests + 1, {
+        PX: RATE_LIMIT_WINDOW_MS,
+        NX: !count
+      });
+      return true;
+    } catch (error) {
+      console.error('Redis rate limit check failed:', error);
+    }
+  }
+
+  // In-memory fallback
+  const requestTimestamps = ipRequestMap.get(clientIp) || [];
+  const recentTimestamps = requestTimestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS);
+
+  if (recentTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+
+  recentTimestamps.push(now);
+  ipRequestMap.set(clientIp, recentTimestamps);
+  return true;
+}
+
+// Generate cache key
+function generateCacheKey(messages, systemPrompt) {
+  const content = JSON.stringify({ messages, systemPrompt });
+  return crypto.createHash('sha256').update(content).digest('hex');
+}
+
+// Check cache
+async function getFromCache(cacheKey) {
+  if (useRedis && redisClient) {
+    try {
+      const cached = await redisClient.get(`cache:${cacheKey}`);
+      return cached ? JSON.parse(cached) : null;
+    } catch (error) {
+      console.error('Redis cache get failed:', error);
+    }
+  }
+
+  const cached = responseCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+  return null;
+}
+
+// Store in cache
+async function storeInCache(cacheKey, data) {
+  if (useRedis && redisClient) {
+    try {
+      await redisClient.set(`cache:${cacheKey}`, JSON.stringify(data), {
+        PX: CACHE_TTL_MS
+      });
+      return;
+    } catch (error) {
+      console.error('Redis cache set failed:', error);
+    }
+  }
+
+  responseCache.set(cacheKey, { data, timestamp: Date.now() });
+
+  // Clean up old entries
+  if (responseCache.size > 100) {
+    const entries = Array.from(responseCache.entries());
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    responseCache.delete(entries[0][0]);
+  }
+}
+
+// Verify API token
+function verifyApiToken(event) {
+  const authHeader = event.headers['authorization'] || event.headers['Authorization'];
+  const expectedToken = process.env.API_AUTH_TOKEN;
+
+  if (!expectedToken) {
+    return true; // Authentication disabled
+  }
+
+  if (!authHeader) {
+    return false;
+  }
+
+  const token = authHeader.startsWith('Bearer ') 
+    ? authHeader.substring(7) 
+    : authHeader;
+
+  return token === expectedToken;
+}
+
+// Main handler
+exports.handler = async function(event, context) {
+  // Initialize Redis on first request
+  if (!redisClient && process.env.REDIS_URL) {
+    await initRedis();
+  }
+
+  // Only allow POST
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
+  }
+
+  // Verify authentication
+  if (!verifyApiToken(event)) {
+    console.warn('Unauthorized access attempt');
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized. Invalid or missing API token.' })
+    };
+  }
+
+  // Extract client IP
+  const clientIp = event.headers['x-nf-client-connection-ip'] || 
+                   event.headers['x-forwarded-for'] || 
+                   'unknown';
+
+  // Check rate limit
+  const rateLimitOk = await checkRateLimit(clientIp);
+  if (!rateLimitOk) {
+    console.warn(`Rate limit exceeded for IP: ${clientIp}`);
+    return {
+      statusCode: 429,
+      body: JSON.stringify({
+        error: 'Too Many Requests. Please wait a moment before trying again.',
+        retryAfter: Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)
+      })
+    };
+  }
+
+  // Parse request
+  let messages, systemPrompt;
+  try {
+    const body = JSON.parse(event.body);
+    messages = body.messages || body.chatHistory;
+    systemPrompt = body.systemPrompt;
+  } catch (error) {
+    console.error('Invalid JSON:', error);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid JSON in request body' })
+    };
+  }
+
+  // Validate input
+  const validationErrors = validateInput(messages, systemPrompt);
+  if (validationErrors.length > 0) {
+    console.warn('Validation failed:', validationErrors);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: 'Input validation failed',
+        details: validationErrors
+      })
+    };
+  }
+
+  // Check cache
+  const cacheKey = generateCacheKey(messages, systemPrompt);
+  const cachedResponse = await getFromCache(cacheKey);
+  if (cachedResponse) {
+    console.log('Returning cached response');
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Cache': 'HIT'
+      },
+      body: JSON.stringify(cachedResponse)
+    };
+  }
+
+  // Get AI provider
+  let model;
+  try {
+    model = getProviderModel();
+  } catch (error) {
+    console.error('Provider initialization failed:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+
+  // Convert messages to Vercel AI SDK format
+  const formattedMessages = messages.map(msg => ({
+    role: msg.role === 'model' ? 'assistant' : msg.role,
+    content: msg.parts[0].text
+  }));
+
+  try {
+    // Stream the AI response
+    const result = await streamText({
+      model,
+      system: systemPrompt,
+      messages: formattedMessages,
+      temperature: 0.7,
+      maxTokens: 2000,
+    });
+
+    // For Netlify, we need to return the stream in a specific format
+    // This converts the AI SDK stream to a format Netlify can handle
+    const chunks = [];
+    for await (const chunk of result.textStream) {
+      chunks.push(chunk);
+    }
+
+    const fullText = chunks.join('');
+    const response = {
+      candidates: [{
+        content: {
+          parts: [{ text: fullText }]
+        }
+      }]
+    };
+
+    // Cache the response
+    await storeInCache(cacheKey, response);
+
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Cache': 'MISS'
+      },
+      body: JSON.stringify(response)
+    };
+
+  } catch (error) {
+    console.error('Error generating AI response:', error);
+
+    // Handle specific error types
+    if (error.message?.includes('rate limit')) {
+      return {
+        statusCode: 429,
+        body: JSON.stringify({
+          error: 'API rate limit exceeded. Please try again later.'
+        })
+      };
+    }
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: 'Failed to generate AI response',
+        details: error.message
+      })
+    };
+  }
+};

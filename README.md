@@ -5,6 +5,19 @@ The official hub for our projects and directives. uniQue-ue: A cybernetics conso
 
 This repository includes a serverless AI chat function powered by Google's Gemini API. The function includes advanced features for security, performance, and reliability.
 
+### 🆕 Recommended Upgrade: Vercel AI SDK
+
+For enhanced functionality and better user experience, we recommend upgrading to the **Vercel AI SDK** with multi-provider support. See the detailed analysis in:
+- **[AI_INTEGRATION_RECOMMENDATION.md](AI_INTEGRATION_RECOMMENDATION.md)** - Comprehensive comparison and recommendation
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** - Step-by-step implementation instructions
+- **[AI_PROVIDERS_COMPARISON.md](AI_PROVIDERS_COMPARISON.md)** - Detailed provider comparison chart
+
+**Key Benefits:**
+- ✅ **Streaming Support** - Display responses as they're generated (60% faster perceived performance)
+- ✅ **Multi-Provider Support** - Use OpenAI, Anthropic, or Google Gemini with the same code
+- ✅ **Better Developer Experience** - TypeScript support, better error handling, modern APIs
+- ✅ **Future-Proof** - Easy to switch providers as the AI landscape evolves
+
 ### Features
 
 - **Redis-based Rate Limiting**: Prevents abuse with configurable rate limits (20 requests per 60 seconds by default)
