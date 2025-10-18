@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Serverless functions for the uniQue-ue website.",
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "redis": "^4.6.0",
+    "validator": "^13.11.0"
   }
 }
