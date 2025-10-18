@@ -369,7 +369,7 @@ Both implementations maintain strong security:
 | Metric | Current | With Streaming | Improvement |
 |--------|---------|----------------|-------------|
 | **Time to First Token** | N/A | ~300ms | Instant feedback |
-| **Perceived Latency** | 2-5s | 300ms | -80% |
+| **Perceived Latency** | 2-5s | 300ms | -85% to -94% |
 | **Complete Response Time** | 2-5s | 2-5s | Same |
 | **User Satisfaction** | Baseline | +30% | Better UX |
 | **Error Recovery** | Manual | Automatic | +95% success |

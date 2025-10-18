@@ -156,8 +156,10 @@ That's it! Your site now has streaming AI responses.
 |---------|---------|----------------|----------------|
 | Response Speed | 2-5s wait | Instant feedback | Instant feedback |
 | User Experience | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Reliability | 99% | 99% | 99.9% |
-| Cost | $225/mo | $225/mo | $335/mo |
+| Reliability | 99% | 99% | ~99.9%* |
+| Cost (est.) | $10-500/mo | $10-500/mo | $15-600/mo |
+
+*Target uptime with multi-provider automatic failover. Actual uptime depends on provider SLAs and network conditions.
 | Setup Time | 0 days | 1-2 weeks | 3-4 weeks |
 | API Keys Needed | 1 (Gemini) | 1 (Gemini) | 2-3 (Gemini+others) |
 | Risk Level | N/A | Very Low | Low |
@@ -214,16 +216,20 @@ Use this to estimate your monthly costs:
 ```
 Monthly conversations: 1,000
 Average tokens: 1,000 input + 500 output per conversation
+(Note: Actual usage may vary; adjust calculations based on your metrics)
 
 Gemini only:
 = (1M × $0.075) + (0.5M × $0.30)
 = $225/month
+
+Your costs may range from $10-50/month (low usage) to $500+/month (high usage)
 ```
 
 ### With Multi-Provider (Smart Routing)
 ```
 Monthly conversations: 1,000
 Provider split: 70% Gemini, 20% OpenAI, 10% Claude
+(Note: Actual split depends on query complexity and routing logic)
 
 Gemini (700 conversations):
 = (0.7M × $0.075) + (0.35M × $0.30)
@@ -239,6 +245,8 @@ Claude (100 conversations):
 
 Total: $335/month
 Increase: +$110/month (+49%)
+
+Estimated range: $15-75/month (low usage) to $600+/month (high usage)
 ```
 
 **Is it worth it?**
@@ -344,8 +352,7 @@ git pull
 npm install ai @ai-sdk/openai @ai-sdk/google-generative-ai
 
 # Copy example
-cp netlify/functions/getAiResponseStream.js.example \\
-   netlify/functions/getAiResponseStream.js
+cp netlify/functions/getAiResponseStream.js.example netlify/functions/getAiResponseStream.js
 
 # Test
 netlify dev

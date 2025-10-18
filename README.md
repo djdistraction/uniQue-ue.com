@@ -22,7 +22,7 @@ For enhanced functionality and better user experience, we recommend upgrading to
 - ✅ **Multi-Provider Support** - Use OpenAI, Anthropic, or Google Gemini with the same code
 - ✅ **Better Developer Experience** - TypeScript support, better error handling, modern APIs
 - ✅ **Future-Proof** - Easy to switch providers as the AI landscape evolves
-- ✅ **Higher Reliability** - Automatic fallback between providers (99.9% uptime)
+- ✅ **Higher Reliability** - Automatic fallback between providers (target ~99.9% uptime with multi-provider)
 
 ### Features
 
