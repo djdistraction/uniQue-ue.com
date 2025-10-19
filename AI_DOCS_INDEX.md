@@ -86,11 +86,6 @@ This repository contains comprehensive documentation for upgrading the AI integr
 - Multi-provider support
 - Error handling
 
-**[.env.example](.env.example)**
-- Environment variable configuration
-- API key setup
-- Provider selection options
-
 **What you'll learn:**
 - How to install dependencies
 - How to set up the new function
@@ -230,7 +225,6 @@ This repository contains comprehensive documentation for upgrading the AI integr
 ### Code Examples
 - **[getAiResponseStream.js.example](netlify/functions/getAiResponseStream.js.example)** - Complete implementation
 - **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** - Code snippets and examples
-- **[.env.example](.env.example)** - Configuration template
 
 ---
 
