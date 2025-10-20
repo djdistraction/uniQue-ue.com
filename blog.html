@@ -86,41 +86,61 @@
         .card-border-glow:hover::before {
             opacity: 1;
         }
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
     </style>
 </head>
-<body class="bg-brand-primary text-brand-text font-sans antialiased">
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
 
-    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
             <a href="index.html">
                 <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
             </a>
-            <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
-                <a href="businesses.html" class="text-brand-text-muted hover:text-brand-accent transition">Businesses & Products</a>
-                <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
-                <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
-                <a href="blog.html" class="text-brand-accent font-bold transition">Blog</a>
-                <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
-                <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
-                <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
-                <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">Headquarters</a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-accent active">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
             </nav>
-            <a href="index.html#contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
-                Initiate Contact
+            <a href="index.html#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
             </a>
             <button id="mobile-menu-button" class="lg:hidden text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
         </div>
         <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
-             <a href="businesses.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Businesses & Products</a>
-            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
-            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
-            <a href="blog.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Blog</a>
+             <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
+                <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Publisher</a>
+            </div>
             <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
-            <a href="careers.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Careers</a>
-            <a href="investors.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Investor Relations</a>
-            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Headquarters</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Blog</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
             <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
         </div>
     </header>
@@ -150,32 +170,55 @@
 
     </main>
 
-    <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
-        <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
-            <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
-            <p>A uniQue-ue.com Cyberspace Relay</p>
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="publisher.html" class="text-brand-text-muted hover:text-brand-accent transition">Publisher</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-accent font-bold">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
         </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // ... (header, mobile menu, and particle script code remains the same) ...
-
-            const header = document.getElementById('header');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
-                } else {
-                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
-                }
-            });
-
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-             const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+             const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
             for (let link of mobileMenuLinks) {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
@@ -187,23 +230,17 @@
             const loadingIndicator = document.getElementById('loading-indicator');
 
             function displayPosts(posts) {
-                // Sort posts by date, newest first
                 posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-
                 loadingIndicator.style.display = 'none';
-
                 if (posts.length === 0) {
                     postsContainer.innerHTML = `<p class="col-span-full text-center text-brand-text-muted">No transmissions available. Stand by.</p>`;
                     return;
                 }
-
                 posts.forEach((post, index) => {
                     const postElement = document.createElement('div');
                     postElement.className = 'bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 card-border-glow animate-fade-in-up';
                     postElement.style.animationDelay = `${index * 0.2}s`;
-                    
                     const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 'text-brand-accent';
-
                     postElement.innerHTML = `
                         <img src="${post.image}" alt="${post.title}" class="rounded-md mb-4 w-full h-48 object-cover">
                         <div class="text-sm ${categoryColor} font-semibold mb-2 font-sans">${new Date(post.date).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${post.category.toUpperCase()}</div>
@@ -215,9 +252,6 @@
                 });
             }
             
-            // --- Blog Post Data ---
-            // NOTE: In a live environment, the following 'posts' array would be replaced with a fetch() call
-            // to the 'published-posts.json' file. This is embedded for preview purposes.
             const posts = [
               {
                 "title": "The Quantum Entanglement of Modern Web Stacks",
@@ -236,45 +270,18 @@
                 "url": "posts/post2.html"
               }
             ];
-
             displayPosts(posts);
 
-
             // --- Particle Background Animation ---
-            const Particle = class {
-                constructor(x, y, size, speedX, speedY, color) {
-                    this.x = x;
-                    this.y = y;
-                    this.size = size;
-                    this.speedX = speedX;
-                    this.speedY = speedY;
-                    this.color = color;
-                }
-                update(canvas) {
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                }
-                draw(ctx) {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            };
-
             const setupParticleCanvas = (canvas) => {
                 const ctx = canvas.getContext('2d');
                 let particles = [];
                 const parent = canvas.parentElement;
-
                 const resizeCanvas = () => {
                     canvas.width = parent.clientWidth;
                     canvas.height = parent.clientHeight;
                     initParticles();
                 };
-
                 const initParticles = () => {
                     const area = canvas.width * canvas.height;
                     const particleCount = Math.max(15, Math.floor(area / 15000));
@@ -286,25 +293,27 @@
                         const speedX = (Math.random() * 0.3) - 0.15;
                         const speedY = (Math.random() * 0.3) - 0.15;
                         const color = `rgba(0, 246, 255, ${Math.random() * 0.5 + 0.2})`;
-                        particles.push(new Particle(x, y, size, speedX, speedY, color));
+                        particles.push({x, y, size, speedX, speedY, color});
                     }
                 };
-                
                 const animateParticles = () => {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    for (const particle of particles) {
-                        particle.update(canvas);
-                        particle.draw(ctx);
-                    }
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
                     requestAnimationFrame(animateParticles);
                 };
-                
-                const resizeObserver = new ResizeObserver(() => resizeCanvas());
-                resizeObserver.observe(parent);
-
+                resizeCanvas();
                 animateParticles();
+                new ResizeObserver(resizeCanvas).observe(parent);
             };
-
             document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
 
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
@@ -312,3 +321,4 @@
     </script>
 </body>
 </html>
+
