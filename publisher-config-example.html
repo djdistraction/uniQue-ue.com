@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publisher.html Configuration Example</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { 
+            color: #00f6ff; 
+            text-align: center;
+            font-size: 2em;
+        }
+        h2 {
+            color: #00f6ff;
+            margin-top: 40px;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .code-block {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid #00f6ff;
+            position: relative;
+        }
+        .code-block h3 {
+            margin: 0 0 15px 0;
+            color: #00f6ff;
+            font-size: 1.2em;
+        }
+        .before h3 { color: #ff4444; }
+        .after h3 { color: #00ff88; }
+        .before { border-color: #ff4444; }
+        .after { border-color: #00ff88; }
+        
+        pre {
+            margin: 0;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .highlight {
+            background: rgba(255, 200, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .line-number {
+            color: #666;
+            margin-right: 15px;
+            user-select: none;
+        }
+        .bad { color: #ff4444; }
+        .good { color: #00ff88; }
+        .comment { color: #888; font-style: italic; }
+        
+        .instructions {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #00f6ff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #00f6ff;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .warning {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 4px solid #ff4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        code {
+            background: #0f3460;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <h1>📝 Publisher.html Configuration Guide</h1>
+    
+    <div class="instructions">
+        <h3>What You Need to Change</h3>
+        <p>After deploying your Cloudflare Worker, you need to update <strong>ONE LINE</strong> in <code>publisher.html</code></p>
+        <ol>
+            <li>Deploy your Cloudflare Worker and get the URL</li>
+            <li>Open <code>publisher.html</code> in your code editor</li>
+            <li>Go to line 269 (or search for <code>AI_FUNCTION_URL</code>)</li>
+            <li>Replace the Netlify URL with your Cloudflare Worker URL</li>
+            <li>Save the file</li>
+            <li>Test with <code>test-ai-proxy.html</code></li>
+            <li>Commit and push to GitHub</li>
+        </ol>
+    </div>
+
+    <h2>The Change (Line 269)</h2>
+    
+    <div class="comparison">
+        <div class="code-block before">
+            <h3>❌ Before (Netlify - doesn't work)</h3>
+            <pre><code><span class="line-number">267</span>// --- State Management ---
+<span class="line-number">268</span>let chatHistory = [];
+<span class="line-number">269</span><span class="bad highlight">const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';</span>
+<span class="line-number">270</span>const CHAT_SYSTEM_PROMPT = "You are Draven...";</code></pre>
+        </div>
+        
+        <div class="code-block after">
+            <h3>✅ After (Cloudflare - works!)</h3>
+            <pre><code><span class="line-number">267</span>// --- State Management ---
+<span class="line-number">268</span>let chatHistory = [];
+<span class="line-number">269</span><span class="good highlight">const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev';</span>
+<span class="line-number">270</span>const CHAT_SYSTEM_PROMPT = "You are Draven...";</code></pre>
+        </div>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Important:</strong> Replace <code>YOUR-SUBDOMAIN</code> with your actual Cloudflare Workers subdomain!<br>
+        You'll get this URL after running <code>wrangler deploy</code>
+    </div>
+
+    <h2>How to Find Your Worker URL</h2>
+
+    <div class="code-block full-width">
+        <h3>Terminal Output After Deploy</h3>
+        <pre><code>$ wrangler deploy
+
+✨ Success! Uploaded 1 file (0.12 sec)
+✨ Uploaded unique-ue-ai-proxy (0.28 sec)
+✨ Published unique-ue-ai-proxy (0.24 sec)
+   <span class="good">https://unique-ue-ai-proxy.abc123.workers.dev</span>   ← Copy this URL!
+   
+🌍  Your worker is now live at:
+   <span class="good">https://unique-ue-ai-proxy.abc123.workers.dev</span></code></pre>
+    </div>
+
+    <h2>Complete Context (Lines 265-275)</h2>
+
+    <div class="comparison">
+        <div class="code-block before">
+            <h3>❌ Before</h3>
+            <pre><code><span class="line-number">265</span>
+<span class="line-number">266</span>// --- State Management ---
+<span class="line-number">267</span>let chatHistory = [];
+<span class="line-number">268</span><span class="bad highlight">const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';</span>
+<span class="line-number">269</span>const CHAT_SYSTEM_PROMPT = "You are Draven, an AI Muse and creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
+<span class="line-number">270</span>
+<span class="line-number">271</span>// --- Quill Editor Initialization ---
+<span class="line-number">272</span>const quill = new Quill('#editor-container', {
+<span class="line-number">273</span>    theme: 'snow',
+<span class="line-number">274</span>    placeholder: 'Generated content will appear here...',
+<span class="line-number">275</span>    modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link'], ['clean'] ] }</code></pre>
+        </div>
+        
+        <div class="code-block after">
+            <h3>✅ After</h3>
+            <pre><code><span class="line-number">265</span>
+<span class="line-number">266</span>// --- State Management ---
+<span class="line-number">267</span>let chatHistory = [];
+<span class="line-number">268</span><span class="good highlight">const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.abc123.workers.dev';</span>
+<span class="line-number">269</span>const CHAT_SYSTEM_PROMPT = "You are Draven, an AI Muse and creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
+<span class="line-number">270</span>
+<span class="line-number">271</span>// --- Quill Editor Initialization ---
+<span class="line-number">272</span>const quill = new Quill('#editor-container', {
+<span class="line-number">273</span>    theme: 'snow',
+<span class="line-number">274</span>    placeholder: 'Generated content will appear here...',
+<span class="line-number">275</span>    modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link'], ['clean'] ] }</code></pre>
+        </div>
+    </div>
+
+    <h2>Using Find & Replace</h2>
+
+    <div class="instructions">
+        <h3>Quick Method: Use Your Editor's Find & Replace</h3>
+        <ol>
+            <li>Open <code>publisher.html</code></li>
+            <li>Press <code>Ctrl+H</code> (or <code>Cmd+H</code> on Mac)</li>
+            <li><strong>Find:</strong> <code>'/.netlify/functions/getAiResponse'</code></li>
+            <li><strong>Replace with:</strong> <code>'https://unique-ue-ai-proxy.abc123.workers.dev'</code> (your actual URL)</li>
+            <li>Click "Replace" (should find exactly 1 match)</li>
+            <li>Save the file</li>
+        </ol>
+    </div>
+
+    <h2>Testing Your Change</h2>
+
+    <div class="code-block full-width">
+        <h3>Method 1: Use test-ai-proxy.html</h3>
+        <pre><code>1. Open test-ai-proxy.html in your browser
+2. Paste your worker URL in the input field
+3. Click "Run Health Check" - should see ✅
+4. Click "Send Message" - should get AI response
+5. If both work, your configuration is correct!</code></pre>
+    </div>
+
+    <div class="code-block full-width">
+        <h3>Method 2: Test in Publisher Directly</h3>
+        <pre><code>1. Open publisher.html in your browser
+2. Type a message in the chat: "Hello Draven"
+3. Click send
+4. Wait for response
+5. If Draven responds, it's working!</code></pre>
+    </div>
+
+    <div class="code-block full-width">
+        <h3>Method 3: Check Browser DevTools</h3>
+        <pre><code>1. Open publisher.html
+2. Press F12 to open DevTools
+3. Go to Network tab
+4. Send a chat message
+5. Look for request to your worker URL
+6. Response should be 200 OK
+7. <span class="good">VERIFY: No GITHUB_PAT visible anywhere!</span></code></pre>
+    </div>
+
+    <div class="success">
+        <strong>✅ Success!</strong> If you can send messages and get responses from Draven, your configuration is working correctly!
+    </div>
+
+    <h2>Common Mistakes</h2>
+
+    <div class="comparison">
+        <div class="code-block">
+            <h3>❌ Wrong: Typo in URL</h3>
+            <pre><code class="bad">const AI_FUNCTION_URL = 
+  'https://unique-ue-ai-proxy.abc12<span class="highlight">4</span>.workers.dev';
+  <span class="comment">// Typo: abc124 instead of abc123</span></code></pre>
+        </div>
+        
+        <div class="code-block">
+            <h3>✅ Correct: Exact URL</h3>
+            <pre><code class="good">const AI_FUNCTION_URL = 
+  'https://unique-ue-ai-proxy.abc123.workers.dev';
+  <span class="comment">// Copy/paste from terminal to avoid typos</span></code></pre>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <div class="code-block">
+            <h3>❌ Wrong: Missing https://</h3>
+            <pre><code class="bad">const AI_FUNCTION_URL = 
+  'unique-ue-ai-proxy.abc123.workers.dev';
+  <span class="comment">// Missing https:// protocol</span></code></pre>
+        </div>
+        
+        <div class="code-block">
+            <h3>✅ Correct: Full URL</h3>
+            <pre><code class="good">const AI_FUNCTION_URL = 
+  'https://unique-ue-ai-proxy.abc123.workers.dev';
+  <span class="comment">// Includes https:// protocol</span></code></pre>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <div class="code-block">
+            <h3>❌ Wrong: Placeholder not replaced</h3>
+            <pre><code class="bad">const AI_FUNCTION_URL = 
+  'https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev';
+  <span class="comment">// Still has placeholder YOUR-SUBDOMAIN</span></code></pre>
+        </div>
+        
+        <div class="code-block">
+            <h3>✅ Correct: Real subdomain</h3>
+            <pre><code class="good">const AI_FUNCTION_URL = 
+  'https://unique-ue-ai-proxy.abc123.workers.dev';
+  <span class="comment">// Real subdomain from wrangler deploy</span></code></pre>
+        </div>
+    </div>
+
+    <h2>After Making the Change</h2>
+
+    <div class="instructions">
+        <h3>Commit and Deploy</h3>
+        <ol>
+            <li>Save <code>publisher.html</code></li>
+            <li>Test locally first!</li>
+            <li>Once working, commit:
+                <pre><code>git add publisher.html
+git commit -m "Update AI endpoint to use Cloudflare Worker"
+git push</code></pre>
+            </li>
+            <li>GitHub Pages will automatically deploy the change</li>
+            <li>Wait 1-2 minutes for deployment</li>
+            <li>Test the live site</li>
+        </ol>
+    </div>
+
+    <div class="success">
+        <strong>🎉 That's it!</strong> Your publisher is now powered by a secure, fast Cloudflare Worker that doesn't expose any secrets!
+    </div>
+
+    <h2>Need Help?</h2>
+
+    <div class="instructions">
+        <h3>Resources</h3>
+        <ul>
+            <li>📖 <a href="QUICKSTART.md" style="color: #00f6ff;">QUICKSTART.md</a> - 5-minute setup guide</li>
+            <li>📖 <a href="CLOUDFLARE_SETUP.md" style="color: #00f6ff;">CLOUDFLARE_SETUP.md</a> - Detailed setup instructions</li>
+            <li>📖 <a href="PUBLISHER_CONFIG.md" style="color: #00f6ff;">PUBLISHER_CONFIG.md</a> - This guide in markdown format</li>
+            <li>🧪 <a href="test-ai-proxy.html" style="color: #00f6ff;">test-ai-proxy.html</a> - Test your worker</li>
+            <li>📖 <a href="SOLUTION_SUMMARY.md" style="color: #00f6ff;">SOLUTION_SUMMARY.md</a> - Complete solution overview</li>
+        </ul>
+    </div>
+</body>
+</html>
