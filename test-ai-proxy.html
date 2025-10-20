@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Proxy Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { color: #00f6ff; }
+        .test-section {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #00f6ff;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #00f6ff;
+            background: #0f3460;
+            color: #fff;
+            font-size: 14px;
+        }
+        button {
+            background: #00f6ff;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #00d4dd; }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #0f3460;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #00ff88; }
+        .error { color: #ff4444; }
+        .info { color: #ffaa00; }
+        .step {
+            padding: 10px;
+            margin: 5px 0;
+            background: #0f3460;
+            border-left: 3px solid #00f6ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 AI Proxy Test Suite</h1>
+    <p>This page tests the Cloudflare Worker proxy without exposing any secrets.</p>
+
+    <div class="test-section">
+        <h2>Configuration</h2>
+        <label for="worker-url">Cloudflare Worker URL:</label>
+        <input type="text" id="worker-url" placeholder="https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev">
+        <div class="info" style="margin-top: 10px;">
+            ℹ️ Get this URL after running <code>wrangler deploy</code>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 1: Simple Health Check</h2>
+        <button onclick="testHealthCheck()">Run Health Check</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Basic AI Chat</h2>
+        <label for="test-message">Your message:</label>
+        <input type="text" id="test-message" placeholder="Hello, how are you?" value="Tell me a short joke about coding">
+        <button onclick="testChat()">Send Message</button>
+        <div id="chat-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Full Publisher Workflow</h2>
+        <p>This simulates the actual publisher.html workflow:</p>
+        <button onclick="testPublisherWorkflow()">Run Publisher Test</button>
+        <div id="publisher-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Setup Instructions</h2>
+        <div class="step">
+            <strong>Step 1:</strong> Install Wrangler CLI
+            <pre>npm install -g wrangler</pre>
+        </div>
+        <div class="step">
+            <strong>Step 2:</strong> Login to Cloudflare
+            <pre>wrangler login</pre>
+        </div>
+        <div class="step">
+            <strong>Step 3:</strong> Set your secret (choose one):
+            <pre># For GitHub Models:
+wrangler secret put GITHUB_PAT
+
+# OR for HuggingFace (free alternative):
+wrangler secret put HUGGINGFACE_TOKEN</pre>
+        </div>
+        <div class="step">
+            <strong>Step 4:</strong> Deploy the worker
+            <pre>wrangler deploy</pre>
+        </div>
+        <div class="step">
+            <strong>Step 5:</strong> Copy the worker URL from the output and paste it above
+        </div>
+    </div>
+
+    <script>
+        function getWorkerUrl() {
+            const url = document.getElementById('worker-url').value.trim();
+            if (!url) {
+                alert('Please enter your Cloudflare Worker URL first');
+                return null;
+            }
+            return url;
+        }
+
+        function log(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            el.innerHTML += `<div class="${color}">[${timestamp}] ${message}</div>`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        async function testHealthCheck() {
+            const url = getWorkerUrl();
+            if (!url) return;
+
+            const resultEl = document.getElementById('health-result');
+            resultEl.innerHTML = '';
+            log('health-result', 'Testing worker health...', 'info');
+
+            try {
+                // Test OPTIONS (CORS preflight)
+                log('health-result', 'Testing CORS preflight (OPTIONS)...', 'info');
+                const optionsResponse = await fetch(url, { method: 'OPTIONS' });
+                if (optionsResponse.ok) {
+                    log('health-result', '✅ CORS preflight successful', 'success');
+                } else {
+                    log('health-result', `⚠️ OPTIONS returned ${optionsResponse.status}`, 'error');
+                }
+
+                // Test GET (should return 405)
+                log('health-result', 'Testing GET method (should fail)...', 'info');
+                const getResponse = await fetch(url);
+                if (getResponse.status === 405) {
+                    log('health-result', '✅ GET correctly rejected (405)', 'success');
+                } else {
+                    log('health-result', `⚠️ Unexpected status: ${getResponse.status}`, 'error');
+                }
+
+                log('health-result', '✅ Health check complete!', 'success');
+
+            } catch (error) {
+                log('health-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testChat() {
+            const url = getWorkerUrl();
+            if (!url) return;
+
+            const message = document.getElementById('test-message').value;
+            const resultEl = document.getElementById('chat-result');
+            resultEl.innerHTML = '';
+
+            log('chat-result', 'Sending message to AI...', 'info');
+            log('chat-result', `User: ${message}`, 'info');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chatHistory: [],
+                        systemPrompt: 'You are a helpful and friendly AI assistant.',
+                        model: 'openai/gpt-4o-mini'
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    log('chat-result', `❌ Error ${response.status}: ${error.error}`, 'error');
+                    if (error.details) {
+                        log('chat-result', `Details: ${error.details}`, 'error');
+                    }
+                    return;
+                }
+
+                const result = await response.json();
+                const aiMessage = result.choices?.[0]?.message?.content || 'No response';
+                
+                log('chat-result', '✅ Response received!', 'success');
+                log('chat-result', `AI: ${aiMessage}`, 'success');
+
+            } catch (error) {
+                log('chat-result', `❌ Network error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testPublisherWorkflow() {
+            const url = getWorkerUrl();
+            if (!url) return;
+
+            const resultEl = document.getElementById('publisher-result');
+            resultEl.innerHTML = '';
+
+            log('publisher-result', '🎭 Starting Publisher workflow test...', 'info');
+
+            try {
+                // Step 1: Initial chat
+                log('publisher-result', 'Step 1: User starts conversation...', 'info');
+                let chatHistory = [];
+
+                const response1 = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chatHistory: [],
+                        systemPrompt: 'You are Draven, a creative AI assistant. Help users develop their writing ideas.',
+                        model: 'openai/gpt-4o-mini'
+                    })
+                });
+
+                if (!response1.ok) {
+                    const error = await response1.json();
+                    log('publisher-result', `❌ Step 1 failed: ${error.error}`, 'error');
+                    return;
+                }
+
+                const result1 = await response1.json();
+                const greeting = result1.choices?.[0]?.message?.content || 'Hello!';
+                log('publisher-result', `✅ Draven: ${greeting.substring(0, 100)}...`, 'success');
+
+                // Step 2: User asks about writing a blog post
+                log('publisher-result', 'Step 2: User asks about blog writing...', 'info');
+                chatHistory.push({ role: 'model', parts: [{ text: greeting }] });
+                chatHistory.push({ role: 'user', parts: [{ text: 'I want to write about AI and creativity' }] });
+
+                const response2 = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chatHistory: chatHistory,
+                        systemPrompt: 'You are Draven, a creative AI assistant. Help users develop their writing ideas.',
+                        model: 'openai/gpt-4o-mini'
+                    })
+                });
+
+                if (!response2.ok) {
+                    log('publisher-result', `❌ Step 2 failed`, 'error');
+                    return;
+                }
+
+                const result2 = await response2.json();
+                const advice = result2.choices?.[0]?.message?.content || 'Great topic!';
+                log('publisher-result', `✅ Draven provides guidance: ${advice.substring(0, 100)}...`, 'success');
+
+                // Step 3: Generate content
+                log('publisher-result', 'Step 3: Generating final document...', 'info');
+                const response3 = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chatHistory: [],
+                        systemPrompt: 'Generate a short blog post about AI and creativity.',
+                        model: 'openai/gpt-4o-mini'
+                    })
+                });
+
+                if (!response3.ok) {
+                    log('publisher-result', `❌ Step 3 failed`, 'error');
+                    return;
+                }
+
+                const result3 = await response3.json();
+                const blogPost = result3.choices?.[0]?.message?.content || 'Content generated!';
+                log('publisher-result', `✅ Document generated (${blogPost.length} characters)`, 'success');
+                log('publisher-result', `Preview: ${blogPost.substring(0, 200)}...`, 'success');
+
+                log('publisher-result', '🎉 Publisher workflow test complete!', 'success');
+
+            } catch (error) {
+                log('publisher-result', `❌ Workflow error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

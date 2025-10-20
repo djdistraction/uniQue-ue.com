@@ -7,6 +7,10 @@ node_modules/
 .env.*.local
 .env.example
 
+# Cloudflare Workers
+.wrangler/
+.dev.vars
+
 # Logs
 *.log
 npm-debug.log*
@@ -23,5 +27,9 @@ Thumbs.db
 dist/
 build/
 
-# Test files
+# Test files (except test-ai-proxy.html which is part of the solution)
 test-*.html
+!test-ai-proxy.html
+
+# Backup files
+*.bak

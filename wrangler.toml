@@ -1,0 +1,12 @@
+name = "unique-ue-ai-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# This worker will be deployed to Cloudflare's free tier
+# 100,000 requests per day at no cost
+
+[env.production]
+name = "unique-ue-ai-proxy"
+
+# Secrets (set via CLI):
+# wrangler secret put GITHUB_PAT
