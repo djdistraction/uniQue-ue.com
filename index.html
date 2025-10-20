@@ -59,115 +59,78 @@
         }
     </script>
     <style>
-        .cyber-bg {
-            background-color: #020418;
-            position: relative;
-            overflow: hidden;
-        }
-        .particle-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        .content-z {
-             position: relative;
-             z-index: 3;
-        }
-        .reveal {
-            opacity: 0;
-            transition: opacity 0.8s, transform 0.8s;
-            transform: translateY(30px);
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .heading-glow {
-             text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5);
-        }
-        .card-border-glow {
-            position: relative;
-            background-clip: padding-box;
-            border: 1px solid transparent;
-        }
+        .cyber-bg { background-color: #020418; position: relative; overflow: hidden; }
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        .reveal { opacity: 0; transition: opacity 0.8s, transform 0.8s; transform: translateY(30px); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .heading-glow { text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5); }
+        .card-border-glow { position: relative; background-clip: padding-box; border: 1px solid transparent; overflow: hidden; }
         .card-border-glow::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            z-index: -1;
-            margin: -1px;
-            border-radius: inherit; 
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1; margin: -1px; border-radius: inherit; 
             background: linear-gradient(to right, #10142C, #00F6FF, #10142C);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            opacity: 0; transition: opacity 0.3s ease-in-out;
         }
-        .card-border-glow:hover::before {
-            opacity: 1;
+        .card-border-glow:hover::before { opacity: 1; }
+        .typing-cursor::after { content: '_'; display: inline-block; animation: typingCursor 0.7s infinite; color: #00F6FF; }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
         }
-        .typing-cursor::after {
-            content: '_';
-            display: inline-block;
-            animation: typingCursor 0.7s infinite;
+        .nav-link:hover {
+            border-color: #00F6FF;
             color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
         }
     </style>
 </head>
-<body class="bg-brand-primary text-brand-text font-sans antialiased">
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
 
-    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
             <a href="index.html">
                 <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
             </a>
-            <nav class="hidden lg:flex items-center space-x-4 font-display text-xs">
-                <!-- Dropdown Menu for Businesses & Products -->
-                <div class="relative">
-                    <button id="products-menu-button" class="text-brand-text-muted hover:text-brand-accent transition inline-flex items-center focus:outline-none">
-                        Businesses & Products
-                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div id="products-menu" class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden z-50 animate-fade-in-up" style="animation-duration: 0.3s;">
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
                         <div class="py-1">
                             <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
-                            <!-- Future items can be added here -->
                         </div>
                     </div>
                 </div>
-
-                <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
-                <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
-                <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
-                <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
-                <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
-                <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
-                <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">Headquarters</a>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-text-muted">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
             </nav>
-            <a href="#contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary font-bold px-5 py-2 rounded-md transition border border-brand-accent">
-                Initiate Contact
+            <a href="#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
             </a>
             <button id="mobile-menu-button" class="lg:hidden text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
         </div>
          <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
             <div>
-                <span class="block py-3 px-6 text-brand-text-muted font-display">Businesses & Products</span>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
                 <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Publisher</a>
             </div>
-            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
-            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
-            <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
             <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
-            <a href="careers.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Careers</a>
-            <a href="investors.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Investor Relations</a>
-            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Headquarters</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
             <a href="#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
         </div>
     </header>
@@ -182,8 +145,8 @@
                     <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto mb-8 font-sans opacity-0" id="hero-subtext">
                        A cybernetics consortium, forging tomorrow's digital realities.
                     </p>
-                    <a href="#projects" id="hero-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover opacity-0">
-                        Explore Operations
+                    <a href="#creative-resources" id="hero-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover opacity-0">
+                        Explore Resources
                     </a>
                 </div>
             </div>
@@ -203,77 +166,48 @@
             </div>
         </section>
 
-        <section id="projects" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
+        <section id="creative-resources" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
              <canvas class="particle-canvas"></canvas>
              <div class="scanner-light opacity-50"></div>
             <div class="container mx-auto px-6 content-z">
                 <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Active Operations</h2>
-                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
-                        Our portfolio showcases successful infiltrations into the digital landscape. Each project a testament to our capabilities.
-                    </p>
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Creative Resources</h2>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
-                        <img src="https://placehold.co/600x400/000000/00F6FF?text=Project+Cygnus" alt="Project Cygnus" class="rounded-md mb-4 w-full h-48 object-cover">
-                        <h3 class="text-2xl font-display font-bold mb-2">Project Cygnus</h3>
-                        <p class="text-brand-text-muted mb-4 font-sans text-sm">A decentralized web platform for a leading bio-tech corporation, focused on quantum-resistant security.</p>
-                        <a href="#" class="text-brand-accent font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Publisher</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">Transform raw ideas into polished, monetizable works through AI-powered dialogue.</p>
+                            <a href="publisher.html" class="text-brand-accent font-semibold hover:underline font-sans">Access Publisher &rarr;</a>
+                        </div>
                     </div>
                     
-                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
-                        <img src="https://placehold.co/600x400/000000/F000B8?text=Neuro-Link+OS" alt="Neuro-Link OS" class="rounded-md mb-4 w-full h-48 object-cover">
-                        <h3 class="text-2xl font-display font-bold mb-2">Neuro-Link OS</h3>
-                        <p class="text-brand-text-muted mb-4 font-sans text-sm">An immersive augmented reality operating system with a custom-built neural interface and UX.</p>
-                        <a href="#" class="text-brand-magenta font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
-                    </div>
-
-                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow">
-                        <img src="https://placehold.co/600x400/000000/FFFFFF?text=Aether+Grid" alt="Aether Grid" class="rounded-md mb-4 w-full h-48 object-cover">
-                        <h3 class="text-2xl font-display font-bold mb-2">Aether Grid</h3>
-                        <p class="text-brand-text-muted mb-4 font-sans text-sm">A mobile-first mesh network application for a global non-profit, designed for off-grid communication.</p>
-                        <a href="#" class="text-brand-accent font-semibold hover:underline font-sans">Access Data Stream &rarr;</a>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section id="services" class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
-            <canvas class="particle-canvas"></canvas>
-            <div class="container mx-auto px-6 content-z">
-                <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Our Arsenal</h2>
-                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
-                        A full suite of cybernetic services to augment your presence in the digital matrix.
-                    </p>
-                </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
-                    
-                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
-                        <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
                         </div>
-                        <h3 class="text-2xl font-display font-bold mb-2">Cybernetic Engineering</h3>
-                        <p class="text-brand-text-muted font-sans text-sm">Constructing robust, scalable, and secure web architectures from the ground up.</p>
-                    </div>
-
-                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
-                        <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                         <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Library Manager</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">An intelligent system for organizing, tagging, and retrieving your digital assets, from documents to multimedia.</p>
+                            <span class="text-brand-magenta font-semibold font-sans">Coming Soon</span>
                         </div>
-                        <h3 class="text-2xl font-display font-bold mb-2">Neuro-Interface Design</h3>
-                        <p class="text-brand-text-muted font-sans text-sm">Designing intuitive and bio-integrated interfaces for a seamless human-computer experience.</p>
                     </div>
 
-                    <div class="bg-brand-secondary/80 p-8 rounded-lg reveal border border-brand-accent/20">
-                         <div class="inline-block bg-brand-accent/10 text-brand-accent p-4 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>
-                         </div>
-                        <h3 class="text-2xl font-display font-bold mb-2">Decentralized Architectures</h3>
-                        <p class="text-brand-text-muted font-sans text-sm">Building sovereign and resilient systems on the blockchain and other distributed networks.</p>
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Lyrassist</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">An AI partner for songwriters, providing lyrical suggestions, rhyme schemes, and thematic inspiration.</p>
+                            <span class="text-brand-text-muted font-semibold font-sans">Coming Soon</span>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -285,18 +219,24 @@
                 <div class="text-center mb-12 reveal">
                     <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Establish a Connection</h2>
                     <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
-                        Have a project protocol to transmit? Open a secure channel. We're listening.
+                        We're listening.
                     </p>
                 </div>
                 <div class="max-w-2xl mx-auto reveal">
                     <form class="space-y-6">
                         <div class="grid md:grid-cols-2 gap-6">
-                            <input type="text" placeholder="Your Callsign" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
-                            <input type="email" placeholder="Your Network Address" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                            <input type="text" name="name" placeholder="Name" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                            <input type="email" name="email" placeholder="Email" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
                         </div>
-                        <input type="text" placeholder="Subject Line" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
-                        <textarea placeholder="Transmit your message..." rows="5" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans"></textarea>
-                        <div class="text-center">
+                        <div class="grid md:grid-cols-2 gap-6">
+                             <input type="tel" name="phone" placeholder="Phone Number (Optional)" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                             <input type="text" name="subject" placeholder="Subject" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                        </div>
+                        <textarea name="message" placeholder="Your Message..." rows="5" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans"></textarea>
+                        <div class="text-center text-xs text-brand-text-muted font-sans">
+                            <p>By submitting this form, you consent to us using your personal data to contact you in response to your inquiry. This site is conceptual and does not store or transmit data.</p>
+                        </div>
+                        <div class="text-center pt-4">
                              <button type="submit" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
                                 Send Transmission
                             </button>
@@ -307,10 +247,44 @@
         </section>
     </main>
 
-    <footer class="bg-brand-primary py-8 border-t border-brand-secondary/50">
-        <div class="container mx-auto px-6 text-center text-brand-text-muted font-sans text-sm">
-            <p>&copy; <span id="copyright-year">2025</span> uniQue-ue. All Rights Reserved.</p>
-            <p>A uniQue-ue.com Cyberspace Relay</p>
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="publisher.html" class="text-brand-text-muted hover:text-brand-accent transition">Publisher</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year-footer"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
         </div>
     </footer>
 
@@ -322,39 +296,13 @@
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
             for (let link of mobileMenuLinks) {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
                 });
             }
-
-            // --- Dropdown Menu Logic ---
-            const productsMenuButton = document.getElementById('products-menu-button');
-            const productsMenu = document.getElementById('products-menu');
-
-            productsMenuButton.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent this click from immediately closing the menu
-                productsMenu.classList.toggle('hidden');
-            });
-
-            // Close dropdown if clicked outside
-            window.addEventListener('click', (event) => {
-                if (!productsMenu.classList.contains('hidden') && !productsMenu.contains(event.target) && !productsMenuButton.contains(event.target)) {
-                    productsMenu.classList.add('hidden');
-                }
-            });
             
-            // --- Header background on scroll ---
-            const header = document.getElementById('header');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
-                } else {
-                    header.classList.remove('bg-brand-secondary/95', 'backdrop-blur-sm', 'shadow-lg', 'border-b', 'border-brand-accent/30');
-                }
-            });
-
             // --- Reveal elements on scroll ---
             const revealElements = document.querySelectorAll('.reveal');
             const revealObserver = new IntersectionObserver((entries) => {
@@ -377,7 +325,6 @@
                 const { offsetWidth, offsetHeight } = heroSection;
                 const x = (clientX / offsetWidth) - 0.5;
                 const y = (clientY / offsetHeight) - 0.5;
-                
                 heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
             });
              heroSection.addEventListener('mouseleave', () => {
@@ -390,7 +337,6 @@
             const buttonEl = document.getElementById('hero-button');
             const textToType = "Architecting the Digital Frontier";
             let index = 0;
-
             function type() {
                 if (index < textToType.length) {
                     headlineEl.innerHTML = textToType.slice(0, index + 1) + '<span class="animate-typing-cursor">_</span>';
@@ -407,40 +353,12 @@
             setTimeout(type, 1000); // Start typing after a delay
 
             // --- Particle Background Animation ---
-            const Particle = class {
-                constructor(x, y, size, speedX, speedY, color) {
-                    this.x = x;
-                    this.y = y;
-                    this.size = size;
-                    this.speedX = speedX;
-                    this.speedY = speedY;
-                    this.color = color;
-                }
-                update(canvas) {
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                }
-                draw(ctx) {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            };
-
             const setupParticleCanvas = (canvas) => {
+                if (!canvas) return;
                 const ctx = canvas.getContext('2d');
                 let particles = [];
                 const parent = canvas.parentElement;
-
-                const resizeCanvas = () => {
-                    canvas.width = parent.clientWidth;
-                    canvas.height = parent.clientHeight;
-                    initParticles();
-                };
-
+                const resizeCanvas = () => { canvas.width = parent.clientWidth; canvas.height = parent.clientHeight; initParticles(); };
                 const initParticles = () => {
                     const area = canvas.width * canvas.height;
                     const particleCount = Math.max(15, Math.floor(area / 25000));
@@ -452,35 +370,35 @@
                         const speedX = (Math.random() * 0.4) - 0.2;
                         const speedY = (Math.random() * 0.4) - 0.2;
                         const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
-                        particles.push(new Particle(x, y, size, speedX, speedY, color));
+                        particles.push({x, y, size, speedX, speedY, color});
                     }
                 };
-                
                 const animateParticles = () => {
+                    if (!ctx) return;
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    for (const particle of particles) {
-                        particle.update(canvas);
-                        particle.draw(ctx);
-                    }
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
                     requestAnimationFrame(animateParticles);
                 };
-                
-                const resizeObserver = new ResizeObserver(() => resizeCanvas());
-                resizeObserver.observe(parent);
-
+                resizeCanvas();
                 animateParticles();
+                new ResizeObserver(resizeCanvas).observe(parent);
             };
-
             document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
 
             // --- Dynamic Copyright Year ---
-            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            document.getElementById('copyright-year-footer').textContent = new Date().getFullYear();
         });
     </script>
 </body>
 </html>
-
-
-
 
 
