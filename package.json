@@ -1,10 +1,8 @@
 {
   "name": "unique-ue-serverless",
-  "version": "1.0.0",
-  "description": "Serverless functions for the uniQue-ue website.",
+  "version": "2.0.0",
+  "description": "Serverless function for the uniQue-ue website to call GitHub Models.",
   "dependencies": {
-    "node-fetch": "^2.6.7",
-    "redis": "^4.6.0",
-    "validator": "^13.11.0"
+    "node-fetch": "^2.6.7"
   }
 }
