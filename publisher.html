@@ -266,7 +266,24 @@
 
             // --- State Management ---
             let chatHistory = [];
-            const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';
+            const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
+            if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4';
+                errorDiv.innerHTML = `
+                    <strong class="font-bold">Configuration Error:</strong>
+                    <span class="block sm:inline">The Cloudflare Workers URL has not been configured. Please replace <code>YOUR-SUBDOMAIN</code> in <code>AI_FUNCTION_URL</code> with your actual subdomain.</span>
+                    <br>
+                    <span class="block sm:inline">See <a href="https://github.com/your-repo/deployment-instructions" target="_blank" class="underline text-blue-700">deployment instructions</a> for details.</span>
+                `;
+                // Insert at top of chatContainer or body
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    chatContainer.parentNode.insertBefore(errorDiv, chatContainer);
+                } else {
+                    document.body.insertBefore(errorDiv, document.body.firstChild);
+                }
+            }
             const CHAT_SYSTEM_PROMPT = "You are Draven, an AI Muse and creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
 
             // --- Quill Editor Initialization ---
