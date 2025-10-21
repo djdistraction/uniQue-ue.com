@@ -411,14 +411,36 @@
                     removeThinking();
                 } else {
                     showThinking('Analyzing context for suggestions...');
-                    const suggestionPrompt = `Analyze the following conversation. Your task is to suggest 3-5 potential document types (e.g., Blog Post, Short Story, Technical Article) that could be created from this context. For each suggestion, also propose a potential monetization strategy. Your response must be factual unless the context is clearly fictional. Respond ONLY with a numbered list. Example: 1. **Blog Post:** A detailed tutorial on... Monetization: Affiliate links for tools mentioned. 2. **Short Story:** A fictional narrative about... Monetization: Publish as an eBook on Amazon.`;
+                    const suggestionPrompt = `Analyze the following conversation. Your task is to suggest 3-5 potential document types (e.g., Blog Post, Short Story, Technical Article) that could be created from this context. For each suggestion, also propose a potential monetization strategy. Your response must be factual unless the context is clearly fictional. Respond ONLY with a numbered list, where each item is on a single line. Format each suggestion as: "NUMBER. TYPE: Description. Monetization: Strategy." Example:
+1. Blog Post: A detailed tutorial on... Monetization: Affiliate links for tools mentioned.
+2. Short Story: A fictional narrative about... Monetization: Publish as an eBook on Amazon.`;
                     const suggestions = await callAiFunction(chatHistory, suggestionPrompt);
                     removeThinking();
-                    const suggestionHtml = suggestions.replace(/(\d+\.\s*\*?.*?:\*?.*)/g, (match, p1) => {
-                        const buttonText = p1.replace(/\*\*/g, '');
-                        return `<button class="suggestion-button" data-suggestion="${encodeURIComponent(buttonText)}">${buttonText}</button>`;
+                    
+                    // Parse suggestions more robustly - split by lines and find numbered items
+                    const lines = suggestions.split('\n').filter(line => line.trim());
+                    let suggestionHtml = '';
+                    let foundSuggestions = false;
+                    
+                    lines.forEach(line => {
+                        // Match lines that start with a number followed by a period
+                        const match = line.match(/^(\d+)\.\s*(.+)$/);
+                        if (match) {
+                            foundSuggestions = true;
+                            const suggestionText = match[2].trim();
+                            const buttonText = suggestionText.replace(/\*\*/g, '');
+                            suggestionHtml += `<button class="suggestion-button" data-suggestion="${encodeURIComponent(suggestionText)}">${buttonText}</button>`;
+                        }
                     });
-                    addMessage('model', suggestionHtml, true);
+                    
+                    // If we found suggestions, show them as buttons. Otherwise, show the raw response.
+                    if (foundSuggestions) {
+                        addMessage('model', `<p class="text-white mb-2">I have analyzed our conversation. Please select a document type to generate:</p>${suggestionHtml}`, true);
+                    } else {
+                        // Fallback: if parsing failed, show raw response and add a note
+                        addMessage('model', suggestions);
+                        addMessage('model', 'I provided some suggestions above. You can click the Generate button again or describe what you\'d like me to create.');
+                    }
                 }
                 toggleInputs(false);
             };
