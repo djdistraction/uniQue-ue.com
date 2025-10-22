@@ -354,6 +354,14 @@
                 // Convert markdown to HTML with basic formatting
                 let html = markdown;
                 
+                // Handle image suggestions - convert [IMAGE: description] to actual image placeholders
+                html = html.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, description) => {
+                    // Create a search-friendly query from the description
+                    const query = encodeURIComponent(description.trim());
+                    // Use a placeholder image service with the description
+                    return `<img src="https://placehold.co/800x400/020418/00F6FF?text=${query.substring(0, 50)}" alt="${description.trim()}" class="rounded-md my-4 w-full h-auto shadow-lg">`;
+                });
+                
                 // Headers
                 html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
                 html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
@@ -371,7 +379,7 @@
                 let inList = false;
                 html = lines.map(line => {
                     const trimmed = line.trim();
-                    if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('</ul') || trimmed.startsWith('<li')) {
+                    if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('</ul') || trimmed.startsWith('<li') || trimmed.startsWith('<img')) {
                         inList = trimmed.startsWith('<ul') || (inList && !trimmed.startsWith('</ul'));
                         return trimmed;
                     }
@@ -402,16 +410,16 @@ CRITICAL REQUIREMENTS:
 6. Mention important birthdays of musicians, composers, or music industry figures
 7. Include notable album releases, concerts, or music milestones
 8. For each event, provide context and why it was significant
+9. Suggest relevant image search terms for each major section (format: [IMAGE: description])
 
 FORMAT:
 - Start with an engaging introduction
 - Use clear headings (## for main sections, ### for subsections)
+- For each major event or person, include an image suggestion like: [IMAGE: Artist Name performing] or [IMAGE: Album Cover Title]
 - Include specific dates and years
 - Make it entertaining and informative
 - End with a reflection on the lasting impact of these events
 - Write approximately 800-1000 words
-
-DO NOT include image URLs or image tags - the text should stand alone.
 
 Generate the blog post now for ${dateString}:`;
 
