@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On This Day in Music History - uniQue-ue</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'pulse-once': 'pulse-once 1s ease-out'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 4px rgba(0, 246, 255, 0.5)', boxShadow: '0 0 10px -5px #00F6FF, inset 0 0 2px rgba(0, 246, 255, 0.7)' },
+                            'to': { textShadow: '0 0 8px rgba(0, 246, 255, 0.7)', boxShadow: '0 0 20px -5px #00F6FF, inset 0 0 3px rgba(0, 246, 255, 0.9)' },
+                        },
+                        'pulse-once': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        .heading-glow { text-shadow: 0 0 2px rgba(0, 246, 255, 0.6), 0 0 5px rgba(0, 246, 255, 0.3); }
+        .panel-3d {
+            background-color: rgba(16, 20, 44, 0.6);
+            border: 1px solid rgba(0, 246, 255, 0.15);
+            box-shadow: inset 0 1px 2px rgba(0, 246, 255, 0.2), 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
+        .comment-box {
+            background-color: rgba(16, 20, 44, 0.4);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .blog-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #00F6FF;
+        }
+        .blog-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #9EFFFD;
+        }
+        .blog-content p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+        }
+        .blog-content ul, .blog-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .blog-content li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html">
+                <img src="uniQ_logo_T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-accent active">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="index.html#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
+                <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Publisher</a>
+            </div>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Blog</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
+            <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-16 md:py-24 particle-container bg-brand-secondary/50">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
+                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted mb-2">Music History Series</h2>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">On This Day in Music History</h1>
+                <p id="current-date" class="text-lg md:text-xl text-brand-accent max-w-3xl mx-auto font-sans mb-2"></p>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                    Discover the moments that shaped music on this day throughout history
+                </p>
+            </div>
+        </section>
+
+        <section class="py-12 md:py-16 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Generate Button -->
+                    <div class="text-center mb-8">
+                        <button id="generate-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
+                            Generate Today's Music History
+                        </button>
+                        <p class="text-brand-text-muted text-sm mt-2">Click to discover what happened on this day in music history</p>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loading-indicator" class="hidden text-center py-12">
+                        <div class="inline-block animate-pulse">
+                            <svg class="animate-spin h-12 w-12 text-brand-accent mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p class="text-brand-accent text-lg font-semibold">Researching music history...</p>
+                            <p class="text-brand-text-muted text-sm mt-2">Gathering factual information about this day</p>
+                        </div>
+                    </div>
+
+                    <!-- Blog Content -->
+                    <div id="blog-content" class="hidden">
+                        <article class="bg-brand-secondary/50 p-8 rounded-lg panel-3d animate-fade-in-up">
+                            <div id="blog-article" class="blog-content text-brand-text"></div>
+                        </article>
+
+                        <!-- Comment Section -->
+                        <div id="comment-section" class="mt-8 animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <div class="bg-brand-secondary/50 p-8 rounded-lg panel-3d">
+                                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Share Your Thoughts</h2>
+                                <p class="text-brand-text-muted mb-6">What are your memories or thoughts about these music history moments? Share your comments below!</p>
+                                
+                                <div class="comment-box mb-6">
+                                    <label for="comment-name" class="block text-brand-text-muted text-sm font-semibold mb-2">Your Name</label>
+                                    <input type="text" id="comment-name" class="w-full bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base mb-4" placeholder="Enter your name">
+                                    
+                                    <label for="comment-text" class="block text-brand-text-muted text-sm font-semibold mb-2">Your Comment</label>
+                                    <textarea id="comment-text" rows="4" class="w-full bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base mb-4" placeholder="Share your thoughts..."></textarea>
+                                    
+                                    <button id="submit-comment" class="bg-brand-accent text-brand-primary font-bold px-6 py-2 rounded-md transition-all duration-300 hover:bg-brand-accent-hover">
+                                        Post Comment
+                                    </button>
+                                </div>
+
+                                <div id="comments-list" class="space-y-4">
+                                    <!-- Comments will be dynamically added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="hidden bg-red-900/20 border border-red-500/50 text-red-200 px-6 py-4 rounded-lg">
+                        <p class="font-bold mb-2">Error</p>
+                        <p id="error-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="publisher.html" class="text-brand-text-muted hover:text-brand-accent transition">Publisher</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- UI Elements ---
+            const generateButton = document.getElementById('generate-button');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const blogContent = document.getElementById('blog-content');
+            const blogArticle = document.getElementById('blog-article');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const currentDateElement = document.getElementById('current-date');
+            const submitCommentButton = document.getElementById('submit-comment');
+            const commentsList = document.getElementById('comments-list');
+
+            // --- Configuration ---
+            const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
+            
+            // Check if AI function URL is configured
+            if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
+                showError('Configuration Error: The Cloudflare Workers URL has not been configured. Please replace YOUR-SUBDOMAIN in AI_FUNCTION_URL with your actual subdomain.');
+            }
+
+            // --- State Management ---
+            let comments = [];
+            const today = new Date();
+            const dateString = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+            const fullDateString = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // Display current date
+            currentDateElement.textContent = fullDateString;
+
+            // --- Helper Functions ---
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+            }
+
+            function hideError() {
+                errorMessage.classList.add('hidden');
+            }
+
+            async function callAiFunction(prompt, model = 'openai/gpt-4o-mini') {
+                try {
+                    const response = await fetch(AI_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            chatHistory: [], 
+                            systemPrompt: prompt, 
+                            model 
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    if (result.choices && result.choices[0]?.message?.content) {
+                        return result.choices[0].message.content;
+                    } else {
+                        throw new Error('Invalid AI response structure received from server.');
+                    }
+                } catch (error) {
+                    console.error("Error communicating with AI function:", error);
+                    throw error;
+                }
+            }
+
+            function parseMarkdownToHTML(markdown) {
+                // Convert markdown to HTML with basic formatting
+                let html = markdown;
+                
+                // Handle image suggestions - convert [IMAGE: description] to actual image placeholders
+                html = html.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, description) => {
+                    // Create a search-friendly query from the description
+                    const query = encodeURIComponent(description.trim());
+                    // Use a placeholder image service with the description
+                    return `<img src="https://placehold.co/800x400/020418/00F6FF?text=${query.substring(0, 50)}" alt="${description.trim()}" class="rounded-md my-4 w-full h-auto shadow-lg">`;
+                });
+                
+                // Headers
+                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                
+                // Bold
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Lists
+                html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
+                html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+                html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+                
+                // Paragraphs
+                const lines = html.split('\n');
+                let inList = false;
+                html = lines.map(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('</ul') || trimmed.startsWith('<li') || trimmed.startsWith('<img')) {
+                        inList = trimmed.startsWith('<ul') || (inList && !trimmed.startsWith('</ul'));
+                        return trimmed;
+                    }
+                    if (trimmed.length === 0) return '';
+                    if (!inList) return `<p>${trimmed}</p>`;
+                    return trimmed;
+                }).join('\n');
+                
+                return html;
+            }
+
+            async function generateMusicHistory() {
+                hideError();
+                generateButton.disabled = true;
+                loadingIndicator.classList.remove('hidden');
+                blogContent.classList.add('hidden');
+
+                try {
+                    // Create a comprehensive prompt for factual music history
+                    const prompt = `You are a music historian. Generate a comprehensive, factual, and engaging blog post about significant events in music history that occurred on ${dateString}.
+
+CRITICAL REQUIREMENTS:
+1. All information must be 100% factual and historically accurate
+2. Research and include REAL events that happened on ${dateString} in music history
+3. Include specific years and details
+4. Cover multiple eras and genres
+5. Include at least 3-5 significant events
+6. Mention important birthdays of musicians, composers, or music industry figures
+7. Include notable album releases, concerts, or music milestones
+8. For each event, provide context and why it was significant
+9. Suggest relevant image search terms for each major section (format: [IMAGE: description])
+
+FORMAT:
+- Start with an engaging introduction
+- Use clear headings (## for main sections, ### for subsections)
+- For each major event or person, include an image suggestion like: [IMAGE: Artist Name performing] or [IMAGE: Album Cover Title]
+- Include specific dates and years
+- Make it entertaining and informative
+- End with a reflection on the lasting impact of these events
+- Write approximately 800-1000 words
+
+Generate the blog post now for ${dateString}:`;
+
+                    const blogText = await callAiFunction(prompt);
+                    
+                    // Parse and display the content
+                    const htmlContent = parseMarkdownToHTML(blogText);
+                    blogArticle.innerHTML = htmlContent;
+                    
+                    // Show the blog content
+                    loadingIndicator.classList.add('hidden');
+                    blogContent.classList.remove('hidden');
+                    
+                    // Scroll to content
+                    blogContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                } catch (error) {
+                    showError(`Failed to generate music history content: ${error.message}`);
+                }
+                
+                generateButton.disabled = false;
+            }
+
+            function addComment(name, text, timestamp) {
+                const comment = {
+                    name: name || 'Anonymous',
+                    text: text,
+                    timestamp: timestamp || new Date().toLocaleString()
+                };
+                
+                comments.push(comment);
+                renderComments();
+                
+                // Clear form
+                document.getElementById('comment-name').value = '';
+                document.getElementById('comment-text').value = '';
+            }
+
+            function renderComments() {
+                commentsList.innerHTML = '';
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p class="text-brand-text-muted text-center py-4">No comments yet. Be the first to share your thoughts!</p>';
+                    return;
+                }
+                
+                comments.forEach((comment, index) => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment-box';
+                    commentDiv.style.animationDelay = `${index * 0.1}s`;
+                    commentDiv.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-brand-accent">${escapeHtml(comment.name)}</span>
+                            <span class="text-brand-text-muted text-xs">${comment.timestamp}</span>
+                        </div>
+                        <p class="text-brand-text">${escapeHtml(comment.text)}</p>
+                    `;
+                    commentsList.appendChild(commentDiv);
+                });
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // --- Event Listeners ---
+            generateButton.addEventListener('click', generateMusicHistory);
+
+            submitCommentButton.addEventListener('click', () => {
+                const name = document.getElementById('comment-name').value.trim();
+                const text = document.getElementById('comment-text').value.trim();
+                
+                if (!text) {
+                    alert('Please enter a comment before submitting.');
+                    return;
+                }
+                
+                addComment(name, text);
+            });
+
+            // --- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Hero Logo Interaction ---
+            const heroLogo = document.getElementById('hero-logo');
+            const heroSection = document.getElementById('hero');
+            heroSection.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = heroSection;
+                const x = ((clientX - offsetLeft) / offsetWidth) - 0.5;
+                const y = ((clientY - offsetTop) / offsetHeight) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) scale(1.05)`;
+            });
+            heroSection.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            // --- Particle Background Animation ---
+            const setupParticleCanvas = (canvas) => {
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
+
+                const resizeCanvas = () => {
+                    canvas.width = parent.clientWidth;
+                    canvas.height = parent.clientHeight;
+                    initParticles();
+                };
+
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(20, Math.floor(area / 25000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2;
+                        const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push({x, y, size, speedX, speedY, color});
+                    }
+                };
+                
+                let animationFrameId;
+                const animateParticles = () => {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    animationFrameId = requestAnimationFrame(animateParticles);
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        if (!animationFrameId) {
+                           resizeCanvas();
+                           animateParticles();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+                observer.observe(canvas);
+
+                new ResizeObserver(resizeCanvas).observe(parent);
+            };
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+
+            // --- Initial Page Setup & Auto-Generation ---
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            
+            // Check if auto-generate is enabled via URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auto') === 'true') {
+                // Auto-generate on page load
+                generateMusicHistory();
+            }
+        });
+    </script>
+</body>
+</html>

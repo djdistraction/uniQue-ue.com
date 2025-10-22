@@ -150,9 +150,17 @@
             <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
                 <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Data Streams</h1>
-                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans mb-8">
                    Transmissions from the edge of tomorrow's world. Analysis, insights, and research from the uniQue-ue collective.
                 </p>
+                <div class="max-w-2xl mx-auto bg-brand-secondary/60 p-6 rounded-lg border border-brand-accent/20">
+                    <h2 class="text-xl font-display font-bold text-brand-accent mb-3">Blog Series</h2>
+                    <div class="text-left space-y-2 text-brand-text-muted text-sm">
+                        <p><strong class="text-brand-magenta">On This Day in Music History:</strong> AI-generated blog exploring significant music events that occurred on the current day throughout history. Updates daily with fresh content.</p>
+                        <p><strong class="text-brand-accent">Technology:</strong> Deep dives into modern tech, web development, and digital innovation.</p>
+                        <p><strong class="text-brand-magenta">Analysis:</strong> Thought-provoking explorations of AI, consciousness, and the future.</p>
+                    </div>
+                </div>
             </div>
         </section>
         
@@ -240,7 +248,8 @@
                     const postElement = document.createElement('div');
                     postElement.className = 'bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 card-border-glow animate-fade-in-up';
                     postElement.style.animationDelay = `${index * 0.2}s`;
-                    const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 'text-brand-accent';
+                    const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 
+                                          post.category.toLowerCase() === 'music history' ? 'text-brand-magenta' : 'text-brand-accent';
                     postElement.innerHTML = `
                         <img src="${post.image}" alt="${post.title}" class="rounded-md mb-4 w-full h-48 object-cover">
                         <div class="text-sm ${categoryColor} font-semibold mb-2 font-sans">${new Date(post.date).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${post.category.toUpperCase()}</div>
@@ -253,6 +262,14 @@
             }
             
             const posts = [
+              {
+                "title": "On This Day in Music History",
+                "date": new Date().toISOString().split('T')[0],
+                "category": "Music History",
+                "excerpt": "Discover the moments that shaped music on this day throughout history. An automatically generated blog featuring significant events, birthdays, and milestones.",
+                "image": "https://placehold.co/600x400/020418/F000B8?text=Music+History",
+                "url": "music-history.html"
+              },
               {
                 "title": "The Quantum Entanglement of Modern Web Stacks",
                 "date": "2025-10-26",
