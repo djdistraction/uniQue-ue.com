@@ -585,7 +585,15 @@ Generate the blog post now for ${dateString}:`;
             };
             document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
 
+            // --- Initial Page Setup & Auto-Generation ---
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            
+            // Check if auto-generate is enabled via URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auto') === 'true') {
+                // Auto-generate on page load
+                generateMusicHistory();
+            }
         });
     </script>
 </body>
