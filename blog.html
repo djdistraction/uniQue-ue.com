@@ -240,7 +240,8 @@
                     const postElement = document.createElement('div');
                     postElement.className = 'bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 card-border-glow animate-fade-in-up';
                     postElement.style.animationDelay = `${index * 0.2}s`;
-                    const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 'text-brand-accent';
+                    const categoryColor = post.category.toLowerCase() === 'analysis' ? 'text-brand-magenta' : 
+                                          post.category.toLowerCase() === 'music history' ? 'text-brand-magenta' : 'text-brand-accent';
                     postElement.innerHTML = `
                         <img src="${post.image}" alt="${post.title}" class="rounded-md mb-4 w-full h-48 object-cover">
                         <div class="text-sm ${categoryColor} font-semibold mb-2 font-sans">${new Date(post.date).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${post.category.toUpperCase()}</div>
@@ -253,6 +254,14 @@
             }
             
             const posts = [
+              {
+                "title": "On This Day in Music History",
+                "date": new Date().toISOString().split('T')[0],
+                "category": "Music History",
+                "excerpt": "Discover the moments that shaped music on this day throughout history. An automatically generated blog featuring significant events, birthdays, and milestones.",
+                "image": "https://placehold.co/600x400/020418/F000B8?text=Music+History",
+                "url": "music-history.html"
+              },
               {
                 "title": "The Quantum Entanglement of Modern Web Stacks",
                 "date": "2025-10-26",
