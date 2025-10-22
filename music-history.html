@@ -177,23 +177,15 @@
             <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 content-z">
                 <div class="max-w-4xl mx-auto">
-                    <!-- Generate Button -->
-                    <div class="text-center mb-8">
-                        <button id="generate-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
-                            Generate Today's Music History
-                        </button>
-                        <p class="text-brand-text-muted text-sm mt-2">Click to discover what happened on this day in music history</p>
-                    </div>
-
                     <!-- Loading Indicator -->
-                    <div id="loading-indicator" class="hidden text-center py-12">
+                    <div id="loading-indicator" class="text-center py-12">
                         <div class="inline-block animate-pulse">
                             <svg class="animate-spin h-12 w-12 text-brand-accent mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <p class="text-brand-accent text-lg font-semibold">Researching music history...</p>
-                            <p class="text-brand-text-muted text-sm mt-2">Gathering factual information about this day</p>
+                            <p class="text-brand-accent text-lg font-semibold">Loading today's music history...</p>
+                            <p class="text-brand-text-muted text-sm mt-2">Fetching article for this day</p>
                         </div>
                     </div>
 
@@ -282,7 +274,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- UI Elements ---
-            const generateButton = document.getElementById('generate-button');
             const loadingIndicator = document.getElementById('loading-indicator');
             const blogContent = document.getElementById('blog-content');
             const blogArticle = document.getElementById('blog-article');
@@ -292,19 +283,16 @@
             const submitCommentButton = document.getElementById('submit-comment');
             const commentsList = document.getElementById('comments-list');
 
-            // --- Configuration ---
-            const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
-            
-            // Check if AI function URL is configured
-            if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
-                showError('Configuration Error: The Cloudflare Workers URL has not been configured. Please replace YOUR-SUBDOMAIN in AI_FUNCTION_URL with your actual subdomain.');
-            }
-
             // --- State Management ---
             let comments = [];
             const today = new Date();
             const dateString = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
             const fullDateString = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // Create date key for article lookup (format: MM-DD)
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const dateKey = `${month}-${day}`;
             
             // Display current date
             currentDateElement.textContent = fullDateString;
@@ -321,112 +309,113 @@
                 errorMessage.classList.add('hidden');
             }
 
-            async function callAiFunction(prompt, model = 'openai/gpt-4o-mini') {
-                try {
-                    const response = await fetch(AI_FUNCTION_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            chatHistory: [], 
-                            systemPrompt: prompt, 
-                            model 
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    if (result.choices && result.choices[0]?.message?.content) {
-                        return result.choices[0].message.content;
-                    } else {
-                        throw new Error('Invalid AI response structure received from server.');
-                    }
-                } catch (error) {
-                    console.error("Error communicating with AI function:", error);
-                    throw error;
-                }
-            }
-
             function parseMarkdownToHTML(markdown) {
                 // Convert markdown to HTML with basic formatting
                 let html = markdown;
                 
-                // Handle image suggestions - convert [IMAGE: description] to actual image placeholders
-                html = html.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, description) => {
-                    // Create a search-friendly query from the description
-                    const query = encodeURIComponent(description.trim());
-                    // Use a placeholder image service with the description
-                    return `<img src="https://placehold.co/800x400/020418/00F6FF?text=${query.substring(0, 50)}" alt="${description.trim()}" class="rounded-md my-4 w-full h-auto shadow-lg">`;
-                });
-                
-                // Headers
-                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-                
-                // Bold
-                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                // Lists
-                html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
-                html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
-                html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-                
-                // Paragraphs
+                // Process line by line to handle formatting properly
                 const lines = html.split('\n');
+                const processedLines = [];
                 let inList = false;
-                html = lines.map(line => {
+                
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i];
                     const trimmed = line.trim();
-                    if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('</ul') || trimmed.startsWith('<li') || trimmed.startsWith('<img')) {
-                        inList = trimmed.startsWith('<ul') || (inList && !trimmed.startsWith('</ul'));
-                        return trimmed;
+                    
+                    // Skip empty lines
+                    if (trimmed.length === 0) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push('');
+                        continue;
                     }
-                    if (trimmed.length === 0) return '';
-                    if (!inList) return `<p>${trimmed}</p>`;
-                    return trimmed;
-                }).join('\n');
+                    
+                    // Handle markdown images: ![alt text](url)
+                    if (trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)/)) {
+                        line = trimmed.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-md my-4 w-full h-auto shadow-lg">');
+                        processedLines.push(line);
+                        continue;
+                    }
+                    
+                    // Handle headers (must be at start of line)
+                    if (trimmed.startsWith('### ')) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push(`<h3>${trimmed.substring(4)}</h3>`);
+                        continue;
+                    }
+                    
+                    if (trimmed.startsWith('## ')) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push(`<h2>${trimmed.substring(3)}</h2>`);
+                        continue;
+                    }
+                    
+                    // Handle list items
+                    if (trimmed.match(/^[\*\-] /)) {
+                        if (!inList) {
+                            processedLines.push('<ul>');
+                            inList = true;
+                        }
+                        processedLines.push(`<li>${trimmed.substring(2)}</li>`);
+                        continue;
+                    }
+                    
+                    // Close list if we're in one and hit non-list content
+                    if (inList) {
+                        processedLines.push('</ul>');
+                        inList = false;
+                    }
+                    
+                    // Regular paragraph
+                    processedLines.push(`<p>${trimmed}</p>`);
+                }
+                
+                // Close any open lists
+                if (inList) {
+                    processedLines.push('</ul>');
+                }
+                
+                html = processedLines.join('\n');
+                
+                // Handle inline formatting (bold, italic, etc.)
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
                 
                 return html;
             }
 
-            async function generateMusicHistory() {
+            async function loadArticle() {
                 hideError();
-                generateButton.disabled = true;
                 loadingIndicator.classList.remove('hidden');
                 blogContent.classList.add('hidden');
 
                 try {
-                    // Create a comprehensive prompt for factual music history
-                    const prompt = `You are a music historian. Generate a comprehensive, factual, and engaging blog post about significant events in music history that occurred on ${dateString}.
-
-CRITICAL REQUIREMENTS:
-1. All information must be 100% factual and historically accurate
-2. Research and include REAL events that happened on ${dateString} in music history
-3. Include specific years and details
-4. Cover multiple eras and genres
-5. Include at least 3-5 significant events
-6. Mention important birthdays of musicians, composers, or music industry figures
-7. Include notable album releases, concerts, or music milestones
-8. For each event, provide context and why it was significant
-9. Suggest relevant image search terms for each major section (format: [IMAGE: description])
-
-FORMAT:
-- Start with an engaging introduction
-- Use clear headings (## for main sections, ### for subsections)
-- For each major event or person, include an image suggestion like: [IMAGE: Artist Name performing] or [IMAGE: Album Cover Title]
-- Include specific dates and years
-- Make it entertaining and informative
-- End with a reflection on the lasting impact of these events
-- Write approximately 800-1000 words
-
-Generate the blog post now for ${dateString}:`;
-
-                    const blogText = await callAiFunction(prompt);
+                    // Load articles from JSON file
+                    const response = await fetch('data/music-history-articles.json');
+                    if (!response.ok) {
+                        throw new Error('Failed to load articles database');
+                    }
+                    
+                    const articles = await response.json();
+                    
+                    // Get article for today's date
+                    const article = articles[dateKey];
+                    
+                    if (!article) {
+                        showError(`No article found for ${dateString}. We're working on adding articles for all days of the year!`);
+                        return;
+                    }
                     
                     // Parse and display the content
-                    const htmlContent = parseMarkdownToHTML(blogText);
+                    const htmlContent = parseMarkdownToHTML(article.content);
                     blogArticle.innerHTML = htmlContent;
                     
                     // Show the blog content
@@ -437,10 +426,8 @@ Generate the blog post now for ${dateString}:`;
                     blogContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     
                 } catch (error) {
-                    showError(`Failed to generate music history content: ${error.message}`);
+                    showError(`Failed to load music history article: ${error.message}`);
                 }
-                
-                generateButton.disabled = false;
             }
 
             function addComment(name, text, timestamp) {
@@ -488,8 +475,6 @@ Generate the blog post now for ${dateString}:`;
             }
 
             // --- Event Listeners ---
-            generateButton.addEventListener('click', generateMusicHistory);
-
             submitCommentButton.addEventListener('click', () => {
                 const name = document.getElementById('comment-name').value.trim();
                 const text = document.getElementById('comment-text').value.trim();
@@ -585,15 +570,11 @@ Generate the blog post now for ${dateString}:`;
             };
             document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
 
-            // --- Initial Page Setup & Auto-Generation ---
+            // --- Initial Page Setup ---
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
             
-            // Check if auto-generate is enabled via URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('auto') === 'true') {
-                // Auto-generate on page load
-                generateMusicHistory();
-            }
+            // Load today's article automatically on page load
+            loadArticle();
         });
     </script>
 </body>
