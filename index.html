@@ -79,13 +79,22 @@
         .nav-link {
             padding: 0.5rem 1rem;
             border-radius: 0.375rem;
-            border: 1px solid transparent;
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
             transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
         }
         .nav-link:hover {
             border-color: #00F6FF;
             color: #00F6FF;
-            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+            box-shadow: 0 6px 8px rgba(0, 246, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 2px 4px rgba(0, 246, 255, 0.3), inset 0 -1px 0 rgba(0, 246, 255, 0.2);
         }
     </style>
 </head>
@@ -97,6 +106,7 @@
                 <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
             </a>
             <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="index.html" class="nav-link text-brand-accent active">Home</a>
                 <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
                 <div class="relative group">
                     <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
@@ -122,6 +132,7 @@
             </button>
         </div>
          <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="index.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Home</a>
             <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
             <div>
                 <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
