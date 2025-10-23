@@ -7,7 +7,10 @@ This script generates factual music history blog posts using web research
 
 import json
 import sys
+import subprocess
+import time
 from pathlib import Path
+from datetime import datetime
 
 # Blog post content for October 23
 OCTOBER_23_CONTENT = """## A Day of Musical Milestones
