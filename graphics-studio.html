@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>uniQue-ue - Publisher</title>
+    <title>uniQue-ue - Graphics Studio</title>
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,8 +11,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -111,7 +109,8 @@
                     </button>
                     <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
                         <div class="py-1">
-                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-accent font-bold bg-brand-primary">Publisher</a>
+                            <a href="ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Ghost-Writer</a>
+                            <a href="graphics-studio.html" class="block px-4 py-2 text-sm text-brand-accent font-bold bg-brand-primary">Graphics Studio</a>
                         </div>
                     </div>
                 </div>
@@ -131,7 +130,8 @@
             <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
             <div>
                 <span class="block py-3 px-6 text-brand-accent font-bold font-display">Resources</span>
-                <a href="publisher.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-accent font-bold bg-brand-primary font-display text-xs">Publisher</a>
+                <a href="ghost-writer.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Ghost-Writer</a>
+                <a href="graphics-studio.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-accent font-bold bg-brand-primary font-display text-xs">Graphics Studio</a>
             </div>
             <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
             <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
@@ -147,9 +147,9 @@
             <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
                 <img src="uniQ_logo_T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
                 <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
-                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Publisher</h1>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Graphics Studio</h1>
                 <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
-                   Transform raw ideas into polished, monetizable works through AI-powered dialogue.
+                   Transform your documents into stunning visual narratives with AI-powered image generation.
                 </p>
             </div>
         </section>
@@ -157,50 +157,58 @@
         <section class="py-12 md:py-16 particle-container">
             <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 content-z">
-                <div class="grid lg:grid-cols-5 gap-8">
+                <div class="grid lg:grid-cols-2 gap-8">
                     <!-- Column 1: Chat Interface -->
-                    <div class="lg:col-span-2 p-6 rounded-lg animate-fade-in-up flex flex-col panel-3d" style="animation-delay: 0.2s;">
-                        <h2 class="text-2xl font-display font-bold text-brand-accent heading-glow mb-4">Publishing Assistant</h2>
+                    <div class="p-6 rounded-lg animate-fade-in-up flex flex-col panel-3d" style="animation-delay: 0.2s;">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-display font-bold text-brand-accent heading-glow">Graphics Assistant</h2>
+                            <div class="flex gap-2">
+                                <button id="backup-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Save Context</button>
+                                <button id="clear-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Clear Context</button>
+                            </div>
+                        </div>
                         <div id="chat-container" class="flex-grow h-96 min-h-[24rem] overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4">
                             <!-- Welcome Message -->
                             <div class="p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm chat-bubble-3d">
-                                <p class="font-bold text-brand-accent">Draven</p>
-                                <p class="text-white">Welcome. I am Draven, your creative partner. What story is waiting to be told?</p>
+                                <p class="font-bold text-brand-accent">Elena</p>
+                                <p class="text-white">Hello! I'm Elena, your visual storytelling companion. Upload a document, and I'll help you create stunning images to bring your narrative to life.</p>
                             </div>
                             <!-- Chat messages will appear here -->
                         </div>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-2">
-                                <button id="file-button" title="Add File" class="p-2 text-brand-text-muted hover:text-brand-accent transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg></button>
-                                <button id="url-button" title="Add URL" class="p-2 text-brand-text-muted hover:text-brand-accent transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg></button>
+                            <textarea id="chat-input" rows="3" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base resize-none overflow-y-auto" placeholder="Type your message..."></textarea>
+                        </div>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex gap-2">
+                                <button id="document-upload-button" title="Upload Document" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                    Upload Document
+                                </button>
                             </div>
-                            <input type="text" id="chat-input" class="w-full bg-brand-primary p-4 pl-20 pr-12 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base" placeholder="Type your message...">
-                            <div class="absolute inset-y-0 right-0 flex items-center">
-                                <button id="send-button" title="Send" class="p-2 mr-1 text-brand-accent hover:text-brand-accent-hover transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 mt-4">
-                            <button id="clear-context-button" class="bg-brand-secondary text-brand-text-muted text-xs font-bold px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30 hover:bg-brand-accent hover:text-brand-primary">Clear Context</button>
-                            <button id="backup-context-button" class="bg-brand-secondary text-brand-text-muted text-xs font-bold px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30 hover:bg-brand-accent hover:text-brand-primary">Backup Context</button>
-                            <button id="generate-button" class="col-span-1 bg-brand-accent text-brand-primary font-bold text-sm px-4 py-2 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">Generate</button>
-                        </div>
-                    </div>
-
-                    <!-- Column 2: Editor and Publishing -->
-                    <div class="lg:col-span-3 space-y-8">
-                        <div class="p-6 rounded-lg animate-fade-in-up panel-3d" style="animation-delay: 0.6s;">
-                            <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Document Editor</h2>
-                            <div id="editor-container"></div>
-                        </div>
-                        
-                        <div class="p-6 rounded-lg animate-fade-in-up panel-3d" style="animation-delay: 0.8s;">
-                            <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Monetization</h2>
-                             <p class="text-brand-text-muted mb-4 text-sm">Once your work is perfected, our AI can suggest publishing strategies and monetization channels. Finalize your document in the editor above, then initiate the publishing protocol.</p>
-                            <button id="publish-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
-                                Initiate Publishing Protocol
+                            <button id="send-button" title="Send" class="nav-link text-brand-accent font-bold px-4 py-2 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                Send
                             </button>
                         </div>
                     </div>
+
+                    <!-- Column 2: Image Gallery -->
+                    <div class="p-6 rounded-lg animate-fade-in-up panel-3d flex flex-col" style="animation-delay: 0.6s;">
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Generated Images</h2>
+                        <div id="image-gallery" class="flex-grow bg-brand-primary/50 p-4 rounded-md overflow-y-auto min-h-[24rem]">
+                            <p class="text-brand-text-muted text-center mt-20">Upload a document and start chatting with Elena to generate images.</p>
+                        </div>
+                        <div id="image-actions" class="flex justify-center items-center mt-4 hidden">
+                            <button id="download-images-button" class="nav-link text-brand-accent font-bold px-6 py-2">Download All Images</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Generate Button - Centered -->
+                <div class="flex justify-center mt-8">
+                    <button id="generate-image-button" class="w-24 h-24 rounded-full bg-brand-accent text-brand-primary font-bold text-base transition-all duration-300 inline-flex items-center justify-center animate-glow border-4 border-brand-accent hover:bg-brand-accent-hover hover:scale-110 shadow-lg shadow-brand-accent/50">
+                        <span class="text-lg">Generate</span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -220,7 +228,8 @@
                 <div>
                     <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
                     <nav class="flex flex-col space-y-2 text-sm">
-                        <a href="publisher.html" class="text-brand-accent font-bold">Publisher</a>
+                        <a href="ghost-writer.html" class="text-brand-text-muted hover:text-brand-accent transition">Ghost-Writer</a>
+                        <a href="graphics-studio.html" class="text-brand-accent font-bold">Graphics Studio</a>
                         <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
                     </nav>
                 </div>
@@ -249,23 +258,25 @@
 
     <input type="file" id="file-input" class="hidden">
 
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- UI Elements ---
             const chatContainer = document.getElementById('chat-container');
             const chatInput = document.getElementById('chat-input');
             const sendButton = document.getElementById('send-button');
-            const fileButton = document.getElementById('file-button');
-            const fileInput = document.getElementById('file-input');
-            const urlButton = document.getElementById('url-button');
+            const documentUploadButton = document.getElementById('document-upload-button');
+            const documentInput = document.getElementById('file-input');
             const clearContextButton = document.getElementById('clear-context-button');
             const backupContextButton = document.getElementById('backup-context-button');
-            const generateButton = document.getElementById('generate-button');
+            const generateImageButton = document.getElementById('generate-image-button');
+            const imageGallery = document.getElementById('image-gallery');
+            const imageActions = document.getElementById('image-actions');
+            const downloadImagesButton = document.getElementById('download-images-button');
 
             // --- State Management ---
             let chatHistory = [];
+            let documentContent = '';
+            let generatedImages = [];
             const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
             if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
                 const errorDiv = document.createElement('div');
@@ -284,19 +295,12 @@
                     document.body.insertBefore(errorDiv, document.body.firstChild);
                 }
             }
-            const CHAT_SYSTEM_PROMPT = "You are Draven, an AI Muse and creative partner. Your goal is to help users explore their ideas for writing projects. Be patient, encouraging, and conversational. Ask open-ended questions. Never rush the user. Your purpose is to facilitate a dialogue that helps them flesh out their thoughts. Do not generate stories or articles in the chat. Your role is to be a thoughtful sounding board until they are ready to generate content.";
-
-            // --- Quill Editor Initialization ---
-            const quill = new Quill('#editor-container', {
-                theme: 'snow',
-                placeholder: 'Generated content will appear here...',
-                modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link'], ['clean'] ] }
-            });
+            const CHAT_SYSTEM_PROMPT = "You are Elena, an AI visual storytelling companion specializing in image generation guidance. Your goal is to help users create stunning visual content that complements their written documents. Review uploaded documents carefully and suggest specific, detailed image prompts that would enhance the narrative. Be creative, descriptive, and helpful. When the user is ready to generate images, provide clear, detailed prompts for AI image generation.";
 
             // --- UI Helper Functions ---
             const addMessage = (sender, message, isHtml = false) => {
                 const messageDiv = document.createElement('div');
-                const senderName = sender === 'user' ? 'You' : 'Draven';
+                const senderName = sender === 'user' ? 'You' : 'Elena';
                 const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
                 let messageContent = '';
                 if (isHtml) { messageContent = message; } 
@@ -316,7 +320,7 @@
                 const thinkingDiv = document.createElement('div');
                 thinkingDiv.id = 'thinking-indicator';
                 thinkingDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm self-start chat-bubble-3d';
-                thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">Draven</p><p class="text-white animate-pulse">${text}</p>`;
+                thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">Elena</p><p class="text-white animate-pulse">${text}</p>`;
                 chatContainer.appendChild(thinkingDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             };
@@ -329,9 +333,8 @@
             const toggleInputs = (disabled) => {
                 chatInput.disabled = disabled;
                 sendButton.disabled = disabled;
-                generateButton.disabled = disabled;
-                fileButton.disabled = disabled;
-                urlButton.disabled = disabled;
+                generateImageButton.disabled = disabled;
+                documentUploadButton.disabled = disabled;
             };
 
             const showConfirmationModal = (message, onConfirm) => {
@@ -397,76 +400,88 @@
                 chatInput.focus();
             };
             
-            const handleGenerateClick = async () => {
-                toggleInputs(true);
-                quill.setText('');
-                if (chatHistory.length === 0) {
-                    showThinking('Generating "On this Day"...');
-                    const today = new Date();
-                    const dateString = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-                    const title = `On this Day in Music History: ${dateString}, ${today.getFullYear()}`;
-                    const prompt = `Generate a factual, original, and engaging blog post titled "${title}". The post must be about a significant and interesting event in music history that occurred on this day (${dateString}). The response must be well-researched and contain only the blog post content itself.`;
-                    const postContent = await callAiFunction([], prompt, 'openai/gpt-4o-mini');
-                    quill.setText(`${title}\n\n${postContent}`);
-                    removeThinking();
-                } else {
-                    showThinking('Analyzing context for suggestions...');
-                    const suggestionPrompt = `Analyze the following conversation. Your task is to suggest 3-5 potential document types (e.g., Blog Post, Short Story, Technical Article) that could be created from this context. For each suggestion, also propose a potential monetization strategy. Your response must be factual unless the context is clearly fictional. Respond ONLY with a numbered list, where each item is on a single line. Format each suggestion as: "NUMBER. TYPE: Description. Monetization: Strategy." Example:
-1. Blog Post: A detailed tutorial on... Monetization: Affiliate links for tools mentioned.
-2. Short Story: A fictional narrative about... Monetization: Publish as an eBook on Amazon.`;
-                    const suggestions = await callAiFunction(chatHistory, suggestionPrompt);
-                    removeThinking();
-                    
-                    // Parse suggestions more robustly - split by lines and find numbered items
-                    const lines = suggestions.split('\n').filter(line => line.trim());
-                    let suggestionHtml = '';
-                    let foundSuggestions = false;
-                    
-                    lines.forEach(line => {
-                        // Match lines that start with a number followed by a period
-                        const match = line.match(/^(\d+)\.\s*(.+)$/);
-                        if (match) {
-                            foundSuggestions = true;
-                            const suggestionText = match[2].trim();
-                            const buttonText = suggestionText.replace(/\*\*/g, '');
-                            suggestionHtml += `<button class="suggestion-button" data-suggestion="${encodeURIComponent(suggestionText)}">${buttonText}</button>`;
-                        }
-                    });
-                    
-                    // If we found suggestions, show them as buttons. Otherwise, show the raw response.
-                    if (foundSuggestions) {
-                        addMessage('model', `<p class="text-white mb-2">I have analyzed our conversation. Please select a document type to generate:</p>${suggestionHtml}`, true);
-                    } else {
-                        // Fallback: if parsing failed, show raw response and add a note
-                        addMessage('model', suggestions);
-                        addMessage('model', 'I provided some suggestions above. You can click the Generate button again or describe what you\'d like me to create.');
-                    }
+            const handleGenerateImageClick = async () => {
+                if (!documentContent) {
+                    addMessage('model', 'Please upload a document first, and let me know what kind of images you would like me to generate.');
+                    return;
                 }
+                toggleInputs(true);
+                showThinking('Generating image based on our conversation...');
+                
+                const imagePrompt = `Based on our conversation about the document, please provide a single detailed image generation prompt that would create a compelling visual. Be specific about style, mood, composition, and key elements.`;
+                const prompt = await callAiFunction(chatHistory, imagePrompt);
+                removeThinking();
+                
+                // Simulate image generation - in a real implementation, this would call an image generation API
+                const mockImageDiv = document.createElement('div');
+                mockImageDiv.className = 'bg-brand-secondary p-4 rounded-lg mb-4';
+                mockImageDiv.innerHTML = `
+                    <div class="aspect-square bg-gradient-to-br from-brand-accent/20 to-brand-magenta/20 rounded-md flex items-center justify-center mb-2">
+                        <p class="text-brand-text-muted text-sm text-center px-4">Image placeholder<br><small>Prompt: ${prompt.substring(0, 100)}...</small></p>
+                    </div>
+                    <p class="text-brand-text-muted text-xs mt-2">Full prompt: ${prompt}</p>
+                `;
+                
+                if (imageGallery.querySelector('p')) {
+                    imageGallery.innerHTML = '';
+                }
+                
+                imageGallery.appendChild(mockImageDiv);
+                generatedImages.push(prompt);
+                imageActions.classList.remove('hidden');
+                addMessage('model', 'I have generated an image concept based on our discussion. In a full implementation, this would create an actual image using an AI image generation service.');
                 toggleInputs(false);
             };
 
-            const handleSuggestionClick = async (event) => {
-                const button = event.target.closest('.suggestion-button');
-                if (!button) return;
-                const suggestionText = decodeURIComponent(button.dataset.suggestion);
-                toggleInputs(true);
-                showThinking(`Generating document: ${suggestionText.split(':')[0]}...`);
-                const generationPrompt = `Based on our conversation history and my choice to create the following: "${suggestionText}", please generate the full document. Ensure the content is factual unless the context is clearly fictional. Generate only the document itself, without any extra conversational text.`;
-                const finalDoc = await callAiFunction(chatHistory, generationPrompt, 'openai/gpt-4o-mini');
-                quill.setText(finalDoc);
-                removeThinking();
-                toggleInputs(false);
-                addMessage('model', 'I have generated the document for you in the editor.');
+            const handleDocumentUpload = async (e) => {
+                if(e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    try {
+                        const text = await file.text();
+                        documentContent = text;
+                        addMessage('user', `[Document Uploaded: ${file.name}]`);
+                        chatHistory.push({ role: 'user', parts: [{ text: `Document "${file.name}" content:\n${text.substring(0, 1000)}...` }] });
+                        
+                        // Elena reviews the document
+                        showThinking('Reviewing your document...');
+                        const reviewPrompt = 'I have uploaded a document. Please review its content and suggest some ideas for images that would complement this text.';
+                        chatHistory.push({ role: 'user', parts: [{ text: reviewPrompt }] });
+                        const aiMessage = await callAiFunction(chatHistory, CHAT_SYSTEM_PROMPT);
+                        removeThinking();
+                        addMessage('model', aiMessage);
+                        chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
+                    } catch (error) {
+                        addMessage('model', `Failed to read document: ${error.message}`);
+                    }
+                }
+            };
+
+            const handleDownloadImages = () => {
+                if (generatedImages.length === 0) {
+                    alert('No images to download yet.');
+                    return;
+                }
+                const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(generatedImages.join('\n\n---\n\n'));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `image_prompts_${new Date().toISOString()}.txt`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                addMessage('model', 'Image prompts have been downloaded. In a full implementation, actual images would be downloaded.');
             };
 
             const handleClearContext = () => {
                 showConfirmationModal("This will clear the entire conversation and cannot be undone. Are you sure?", () => {
                     chatHistory = [];
+                    documentContent = '';
+                    generatedImages = [];
                     const welcomeMessage = chatContainer.children[0];
                     chatContainer.innerHTML = '';
                     chatContainer.appendChild(welcomeMessage);
-                    quill.setText('');
-                    addMessage('model', 'Our conversation has been reset. How can I help you start something new?');
+                    imageGallery.innerHTML = '<p class="text-brand-text-muted text-center mt-20">Upload a document and start chatting with Elena to generate images.</p>';
+                    imageActions.classList.add('hidden');
+                    addMessage('model', 'Our conversation has been reset. Upload a document to get started!');
                 });
             };
 
@@ -478,7 +493,7 @@
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chatHistory, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", `publisher_chat_${new Date().toISOString()}.json`);
+                downloadAnchorNode.setAttribute("download", `graphics_studio_chat_${new Date().toISOString()}.json`);
                 document.body.appendChild(downloadAnchorNode);
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
@@ -505,19 +520,13 @@
             
             sendButton.addEventListener('click', handleSend);
             chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
-            generateButton.addEventListener('click', handleGenerateClick);
+            generateImageButton.addEventListener('click', handleGenerateImageClick);
             clearContextButton.addEventListener('click', handleClearContext);
             backupContextButton.addEventListener('click', handleBackupContext);
-            chatContainer.addEventListener('click', handleSuggestionClick);
+            downloadImagesButton.addEventListener('click', handleDownloadImages);
 
-            fileButton.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => {
-                if(e.target.files.length > 0) addMessage('user', `[File Attached: ${e.target.files[0].name}]`);
-            });
-            urlButton.addEventListener('click', () => {
-                const url = prompt("Please enter the URL to reference:");
-                if(url) addMessage('user', `https://developers.google.com/style/cross-references`);
-            });
+            documentUploadButton.addEventListener('click', () => documentInput.click());
+            documentInput.addEventListener('change', handleDocumentUpload);
             
             // --- Particle Background Animation ---
             const setupParticleCanvas = (canvas) => {

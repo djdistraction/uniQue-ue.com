@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publisher.html Configuration Example</title>
+    <title>Ghost-Writer.html Configuration Example</title>
     <style>
         body {
             font-family: 'Monaco', 'Courier New', monospace;
@@ -110,14 +110,14 @@
     </style>
 </head>
 <body>
-    <h1>📝 Publisher.html Configuration Guide</h1>
+    <h1>📝 Ghost-Writer.html Configuration Guide</h1>
     
     <div class="instructions">
         <h3>What You Need to Change</h3>
-        <p>After deploying your Cloudflare Worker, you need to update <strong>ONE LINE</strong> in <code>publisher.html</code></p>
+        <p>After deploying your Cloudflare Worker, you need to update <strong>ONE LINE</strong> in <code>ghost-writer.html</code></p>
         <ol>
             <li>Deploy your Cloudflare Worker and get the URL</li>
-            <li>Open <code>publisher.html</code> in your code editor</li>
+            <li>Open <code>ghost-writer.html</code> in your code editor</li>
             <li>Go to line 269 (or search for <code>AI_FUNCTION_URL</code>)</li>
             <li>Replace the Netlify URL with your Cloudflare Worker URL</li>
             <li>Save the file</li>
@@ -205,7 +205,7 @@
     <div class="instructions">
         <h3>Quick Method: Use Your Editor's Find & Replace</h3>
         <ol>
-            <li>Open <code>publisher.html</code></li>
+            <li>Open <code>ghost-writer.html</code></li>
             <li>Press <code>Ctrl+H</code> (or <code>Cmd+H</code> on Mac)</li>
             <li><strong>Find:</strong> <code>'/.netlify/functions/getAiResponse'</code></li>
             <li><strong>Replace with:</strong> <code>'https://unique-ue-ai-proxy.abc123.workers.dev'</code> (your actual URL)</li>
@@ -226,8 +226,8 @@
     </div>
 
     <div class="code-block full-width">
-        <h3>Method 2: Test in Publisher Directly</h3>
-        <pre><code>1. Open publisher.html in your browser
+        <h3>Method 2: Test in Ghost-Writer Directly</h3>
+        <pre><code>1. Open ghost-writer.html in your browser
 2. Type a message in the chat: "Hello Draven"
 3. Click send
 4. Wait for response
@@ -236,7 +236,7 @@
 
     <div class="code-block full-width">
         <h3>Method 3: Check Browser DevTools</h3>
-        <pre><code>1. Open publisher.html
+        <pre><code>1. Open ghost-writer.html
 2. Press F12 to open DevTools
 3. Go to Network tab
 4. Send a chat message
@@ -304,10 +304,10 @@
     <div class="instructions">
         <h3>Commit and Deploy</h3>
         <ol>
-            <li>Save <code>publisher.html</code></li>
+            <li>Save <code>ghost-writer.html</code></li>
             <li>Test locally first!</li>
             <li>Once working, commit:
-                <pre><code>git add publisher.html
+                <pre><code>git add ghost-writer.html
 git commit -m "Update AI endpoint to use Cloudflare Worker"
 git push</code></pre>
             </li>
