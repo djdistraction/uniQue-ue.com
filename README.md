@@ -37,7 +37,33 @@ This project uses a hybrid architecture to provide a secure, real-time AI chat e
 ✅ **Easier Setup**: Simple deployment with `wrangler deploy`  
 ✅ **Better Security**: Encrypted secrets, never exposed to frontend
 
-## **AI Chat Feature**
+## 🎨 **AI Image Generation Feature** 🆕
+
+The Graphics Studio page features **Elena**, an AI visual storytelling assistant that generates images using Stable Diffusion.
+
+### **Features**
+
+✨ **Document-Based Image Generation** - Upload documents and get relevant image suggestions  
+🤖 **AI-Powered Prompts** - Elena analyzes your content and creates detailed prompts  
+🎨 **Real Image Generation** - Uses Stable Diffusion v1.5 via HuggingFace Inference API  
+📥 **Download Images** - Save individual or all generated images  
+🖼️ **Image Gallery** - View all generated images with their prompts  
+⚡ **Free Tier** - Completely free using HuggingFace's Inference API (~1000 images/day)
+
+### **Setup**
+
+To enable image generation, see [IMAGE_GENERATION_SETUP.md](IMAGE_GENERATION_SETUP.md) for complete instructions.
+
+**Quick Setup:**
+1. Create free HuggingFace account at https://huggingface.co
+2. Generate API token at https://huggingface.co/settings/tokens
+3. Set secret: `wrangler secret put HUGGINGFACE_TOKEN`
+4. Deploy: `wrangler deploy worker-image-gen.js`
+5. Update `AI_FUNCTION_URL` in `graphics-studio.html` with your worker URL
+
+---
+
+## **AI Chat Feature** (Text Generation)
 
 The publisher.html page features an AI-powered creative assistant ("Draven").
 
@@ -127,7 +153,8 @@ Then update line 269 in `publisher.html` with your worker URL.
 ### Live Pages
 - **[Home](https://djdistraction.github.io/)** - Main landing page
 - **[About](https://djdistraction.github.io/about.html)** - Company vision and mission
-- **[Publisher](https://djdistraction.github.io/publisher.html)** - AI-powered creative assistant
+- **[Ghost-Writer](https://djdistraction.github.io/ghost-writer.html)** - AI-powered creative writing assistant
+- **[Graphics Studio](https://djdistraction.github.io/graphics-studio.html)** - AI-powered image generation 🆕
 - **[Blog](https://djdistraction.github.io/blog.html)** - Latest updates and articles
 - **[Music History](https://djdistraction.github.io/music-history.html)** - Daily music history posts
 - **[Downloads](https://djdistraction.github.io/downloads.html)** - Resources and documentation
