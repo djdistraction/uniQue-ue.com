@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Download resources, tools, and documentation from uniQue-ue. Access our suite of creative and development tools.">
+    <meta name="keywords" content="uniQue-ue, downloads, resources, tools, documentation, AI tools">
+    <meta property="og:title" content="Downloads - uniQue-ue Resources">
+    <meta property="og:description" content="Download resources, tools, and documentation from uniQue-ue.">
+    <meta property="og:type" content="website">
+    <title>Downloads - uniQue-ue</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
+        }
+        .nav-link:hover {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 6px 8px rgba(0, 246, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 2px 4px rgba(0, 246, 255, 0.3), inset 0 -1px 0 rgba(0, 246, 255, 0.2);
+        }
+        .resource-card {
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .resource-card:hover {
+            border-color: #00F6FF;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 246, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html" aria-label="Return to home page">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="nav-link text-brand-text-muted">Home</a>
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none" aria-label="Resources menu">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="publisher.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Publisher</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-accent active" aria-current="page">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-text-muted">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="py-20 md:py-32 bg-brand-secondary/50">
+            <div class="container mx-auto px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h1 class="text-5xl font-display font-bold mb-6 text-brand-accent text-center">Downloads & Resources</h1>
+                    <p class="text-xl text-brand-text-muted text-center mb-12">Access documentation, tools, and resources for the uniQue-ue platform</p>
+                    
+                    <!-- Documentation Section -->
+                    <div class="mb-16">
+                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent">📚 Documentation</h2>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Quick Start Guide</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Get up and running in 5 minutes with our comprehensive quick start guide.</p>
+                                <a href="https://github.com/djdistraction/djdistraction.github.io/blob/main/QUICKSTART.md" target="_blank" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    View Guide →
+                                </a>
+                            </div>
+                            
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Documentation Index</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Navigate all documentation with our comprehensive index.</p>
+                                <a href="https://github.com/djdistraction/djdistraction.github.io/blob/main/DOCS_INDEX.md" target="_blank" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    View Index →
+                                </a>
+                            </div>
+                            
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Architecture Guide</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Understand the system architecture and design decisions.</p>
+                                <a href="https://github.com/djdistraction/djdistraction.github.io/blob/main/ARCHITECTURE.md" target="_blank" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    View Architecture →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools Section -->
+                    <div class="mb-16">
+                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent">🛠️ Tools & Scripts</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Deployment Script</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Automated script for deploying Cloudflare Workers with interactive guidance.</p>
+                                <div class="flex items-center space-x-4">
+                                    <a href="https://github.com/djdistraction/djdistraction.github.io/blob/main/deploy-worker.sh" target="_blank" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                        View Script →
+                                    </a>
+                                    <span class="text-brand-text-muted text-xs">Bash</span>
+                                </div>
+                            </div>
+                            
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Validation Script</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Automated validation to ensure your setup is correct.</p>
+                                <div class="flex items-center space-x-4">
+                                    <a href="https://github.com/djdistraction/djdistraction.github.io/blob/main/validate-solution.sh" target="_blank" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                        View Script →
+                                    </a>
+                                    <span class="text-brand-text-muted text-xs">Bash</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Tools Section -->
+                    <div class="mb-16">
+                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent">🚀 Live Tools</h2>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Publisher</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">AI-powered creative assistant for transforming ideas into polished works.</p>
+                                <a href="publisher.html" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    Launch Publisher →
+                                </a>
+                            </div>
+                            
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">AI Proxy Test</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Interactive test suite for validating your worker deployment.</p>
+                                <a href="test-ai-proxy.html" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    Launch Tester →
+                                </a>
+                            </div>
+                            
+                            <div class="resource-card p-6 rounded-lg">
+                                <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Music History Blog</h3>
+                                <p class="text-brand-text-muted mb-4 text-sm">Daily music history posts featuring significant events and milestones.</p>
+                                <a href="music-history.html" class="text-brand-accent hover:text-brand-accent-hover font-semibold">
+                                    View Blog →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GitHub Repository -->
+                    <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20 text-center">
+                        <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">📦 Full Source Code</h2>
+                        <p class="text-brand-text-muted mb-6">All tools, scripts, and documentation are open source and available on GitHub.</p>
+                        <a href="https://github.com/djdistraction/djdistraction.github.io" target="_blank" class="inline-block bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 hover:bg-brand-accent-hover border-2 border-brand-accent">
+                            <svg class="inline-block w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                            </svg>
+                            Visit GitHub Repository
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="publisher.html" class="text-brand-text-muted hover:text-brand-accent transition">Publisher</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; 2025 uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
