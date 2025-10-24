@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
+  <url>
+    <loc>https://djdistraction.github.io/</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/index.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- About and Company -->
+  <url>
+    <loc>https://djdistraction.github.io/about.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Tools and Resources -->
+  <url>
+    <loc>https://djdistraction.github.io/publisher.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/downloads.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/test-ai-proxy.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Blog and Content -->
+  <url>
+    <loc>https://djdistraction.github.io/blog.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/music-history.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Community -->
+  <url>
+    <loc>https://djdistraction.github.io/events.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Corporate -->
+  <url>
+    <loc>https://djdistraction.github.io/careers.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/investors.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Other Pages -->
+  <url>
+    <loc>https://djdistraction.github.io/chimera-tower.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://djdistraction.github.io/publisher-config-example.html</loc>
+    <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+</urlset>
