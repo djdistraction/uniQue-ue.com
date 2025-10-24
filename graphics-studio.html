@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uniQue-ue - Graphics Studio</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'pulse-once': 'pulse-once 1s ease-out'
+                    },
+                    keyframes: {
+                         fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 4px rgba(0, 246, 255, 0.5)', boxShadow: '0 0 10px -5px #00F6FF, inset 0 0 2px rgba(0, 246, 255, 0.7)' },
+                            'to': { textShadow: '0 0 8px rgba(0, 246, 255, 0.7)', boxShadow: '0 0 20px -5px #00F6FF, inset 0 0 3px rgba(0, 246, 255, 0.9)' },
+                        },
+                        'pulse-once': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        .heading-glow { text-shadow: 0 0 2px rgba(0, 246, 255, 0.6), 0 0 5px rgba(0, 246, 255, 0.3); }
+        .panel-3d {
+            background-color: rgba(16, 20, 44, 0.6);
+            border: 1px solid rgba(0, 246, 255, 0.15);
+            box-shadow: inset 0 1px 2px rgba(0, 246, 255, 0.2), 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .chat-bubble-3d {
+            border: 1px solid rgba(0, 246, 255, 0.1);
+            box-shadow: inset 0 1px 1px rgba(0, 246, 255, 0.15), 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        .ql-toolbar { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background-color: #10142C; border-color: rgba(0, 246, 255, 0.3) !important; }
+        .ql-container { border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: #020418; border-color: rgba(0, 246, 255, 0.3) !important; color: white; font-family: 'Inter', sans-serif; min-height: 400px; }
+        .ql-editor { font-size: 16px; }
+        .ql-snow .ql-stroke { stroke: rgba(0, 246, 255, 0.8); }
+        .ql-snow .ql-picker-label { color: rgba(0, 246, 255, 0.8); }
+
+        .suggestion-button {
+            display: block; width: 100%; padding: 8px 12px; margin-top: 8px; border-radius: 4px;
+            background-color: rgba(0, 246, 255, 0.1); border: 1px solid rgba(0, 246, 255, 0.3);
+            color: #9EFFFD; text-align: left; transition: all 0.2s;
+        }
+        .suggestion-button:hover { background-color: rgba(0, 246, 255, 0.2); border-color: rgba(0, 246, 255, 0.7); }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+         <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-accent active inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Ghost-Writer</a>
+                            <a href="graphics-studio.html" class="block px-4 py-2 text-sm text-brand-accent font-bold bg-brand-primary">Graphics Studio</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-text-muted">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="index.html#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-accent font-bold font-display">Resources</span>
+                <a href="ghost-writer.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Ghost-Writer</a>
+                <a href="graphics-studio.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-accent font-bold bg-brand-primary font-display text-xs">Graphics Studio</a>
+            </div>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Blog</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
+            <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-16 md:py-24 particle-container bg-brand-secondary/50">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
+                <img src="uniQ_logo_T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
+                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Graphics Studio</h1>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                   Transform your documents into stunning visual narratives with AI-powered image generation.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-12 md:py-16 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Column 1: Chat Interface -->
+                    <div class="p-6 rounded-lg animate-fade-in-up flex flex-col panel-3d" style="animation-delay: 0.2s;">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-display font-bold text-brand-accent heading-glow">Graphics Assistant</h2>
+                            <div class="flex gap-2">
+                                <button id="backup-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Save Context</button>
+                                <button id="clear-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Clear Context</button>
+                            </div>
+                        </div>
+                        <div id="chat-container" class="flex-grow h-96 min-h-[24rem] overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4">
+                            <!-- Welcome Message -->
+                            <div class="p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm chat-bubble-3d">
+                                <p class="font-bold text-brand-accent">Elena</p>
+                                <p class="text-white">Hello! I'm Elena, your visual storytelling companion. Upload a document, and I'll help you create stunning images to bring your narrative to life.</p>
+                            </div>
+                            <!-- Chat messages will appear here -->
+                        </div>
+                        <div class="relative">
+                            <textarea id="chat-input" rows="3" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base resize-none overflow-y-auto" placeholder="Type your message..."></textarea>
+                        </div>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex gap-2">
+                                <button id="document-upload-button" title="Upload Document" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                    Upload Document
+                                </button>
+                            </div>
+                            <button id="send-button" title="Send" class="nav-link text-brand-accent font-bold px-4 py-2 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                Send
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Image Gallery -->
+                    <div class="p-6 rounded-lg animate-fade-in-up panel-3d flex flex-col" style="animation-delay: 0.6s;">
+                        <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Generated Images</h2>
+                        <div id="image-gallery" class="flex-grow bg-brand-primary/50 p-4 rounded-md overflow-y-auto min-h-[24rem]">
+                            <p class="text-brand-text-muted text-center mt-20">Upload a document and start chatting with Elena to generate images.</p>
+                        </div>
+                        <div id="image-actions" class="flex justify-center items-center mt-4 hidden">
+                            <button id="download-images-button" class="nav-link text-brand-accent font-bold px-6 py-2">Download All Images</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Generate Button - Centered -->
+                <div class="flex justify-center mt-8">
+                    <button id="generate-image-button" class="w-24 h-24 rounded-full bg-brand-accent text-brand-primary font-bold text-base transition-all duration-300 inline-flex items-center justify-center animate-glow border-4 border-brand-accent hover:bg-brand-accent-hover hover:scale-110 shadow-lg shadow-brand-accent/50">
+                        <span class="text-lg">Generate</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="ghost-writer.html" class="text-brand-text-muted hover:text-brand-accent transition">Ghost-Writer</a>
+                        <a href="graphics-studio.html" class="text-brand-accent font-bold">Graphics Studio</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+    <input type="file" id="file-input" class="hidden">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- UI Elements ---
+            const chatContainer = document.getElementById('chat-container');
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const documentUploadButton = document.getElementById('document-upload-button');
+            const documentInput = document.getElementById('file-input');
+            const clearContextButton = document.getElementById('clear-context-button');
+            const backupContextButton = document.getElementById('backup-context-button');
+            const generateImageButton = document.getElementById('generate-image-button');
+            const imageGallery = document.getElementById('image-gallery');
+            const imageActions = document.getElementById('image-actions');
+            const downloadImagesButton = document.getElementById('download-images-button');
+
+            // --- State Management ---
+            let chatHistory = [];
+            let documentContent = '';
+            let generatedImages = [];
+            const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
+            if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4';
+                errorDiv.innerHTML = `
+                    <strong class="font-bold">Configuration Error:</strong>
+                    <span class="block sm:inline">The Cloudflare Workers URL has not been configured. Please replace <code>YOUR-SUBDOMAIN</code> in <code>AI_FUNCTION_URL</code> with your actual subdomain.</span>
+                    <br>
+                    <span class="block sm:inline">See <a href="https://github.com/your-repo/deployment-instructions" target="_blank" class="underline text-blue-700">deployment instructions</a> for details.</span>
+                `;
+                // Insert at top of chatContainer or body
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    chatContainer.parentNode.insertBefore(errorDiv, chatContainer);
+                } else {
+                    document.body.insertBefore(errorDiv, document.body.firstChild);
+                }
+            }
+            const CHAT_SYSTEM_PROMPT = "You are Elena, an AI visual storytelling companion specializing in image generation guidance. Your goal is to help users create stunning visual content that complements their written documents. Review uploaded documents carefully and suggest specific, detailed image prompts that would enhance the narrative. Be creative, descriptive, and helpful. When the user is ready to generate images, provide clear, detailed prompts for AI image generation.";
+
+            // --- UI Helper Functions ---
+            const addMessage = (sender, message, isHtml = false) => {
+                const messageDiv = document.createElement('div');
+                const senderName = sender === 'user' ? 'You' : 'Elena';
+                const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
+                let messageContent = '';
+                if (isHtml) { messageContent = message; } 
+                else {
+                    const p = document.createElement('p');
+                    p.className = 'text-white whitespace-pre-wrap';
+                    p.textContent = message;
+                    messageContent = p.outerHTML;
+                }
+                messageDiv.className = `p-3 rounded-lg max-w-xs text-sm chat-bubble-3d ${sender === 'user' ? 'bg-brand-secondary self-end' : 'bg-brand-accent/10 self-start'}`;
+                messageDiv.innerHTML = `<p class="font-bold ${senderColor}">${senderName}</p>${messageContent}`;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            };
+
+            const showThinking = (text = 'Thinking...') => {
+                const thinkingDiv = document.createElement('div');
+                thinkingDiv.id = 'thinking-indicator';
+                thinkingDiv.className = 'p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm self-start chat-bubble-3d';
+                thinkingDiv.innerHTML = `<p class="font-bold text-brand-accent">Elena</p><p class="text-white animate-pulse">${text}</p>`;
+                chatContainer.appendChild(thinkingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            };
+            
+            const removeThinking = () => {
+                const thinkingDiv = document.getElementById('thinking-indicator');
+                if (thinkingDiv) thinkingDiv.remove();
+            };
+
+            const toggleInputs = (disabled) => {
+                chatInput.disabled = disabled;
+                sendButton.disabled = disabled;
+                generateImageButton.disabled = disabled;
+                documentUploadButton.disabled = disabled;
+            };
+
+            const showConfirmationModal = (message, onConfirm) => {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-fade-in-up';
+                modal.style.animationDuration = '0.3s';
+                modal.innerHTML = `
+                    <div class="bg-brand-secondary p-8 rounded-lg max-w-sm border border-brand-accent/30 relative text-center panel-3d">
+                        <p class="text-brand-text-muted mb-6">${message}</p>
+                        <div class="flex justify-center gap-4">
+                            <button id="confirm-btn" class="bg-brand-magenta text-white px-6 py-2 rounded-md hover:bg-brand-magenta/80 transition font-bold">Confirm</button>
+                            <button id="cancel-btn" class="bg-brand-secondary border border-brand-accent/30 text-brand-text-muted px-6 py-2 rounded-md hover:border-brand-accent transition">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                document.getElementById('confirm-btn').onclick = () => {
+                    onConfirm();
+                    modal.remove();
+                };
+                document.getElementById('cancel-btn').onclick = () => modal.remove();
+            };
+
+            // --- Core AI Logic ---
+            const callAiFunction = async (history, prompt, model = 'openai/gpt-4o-mini') => {
+                try {
+                    const response = await fetch(AI_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatHistory: history, systemPrompt: prompt, model })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    if (result.choices && result.choices[0]?.message?.content) {
+                         return result.choices[0].message.content;
+                    } else {
+                        throw new Error('Invalid AI response structure received from server.');
+                    }
+                } catch (error) {
+                    console.error("Error communicating with AI function:", error);
+                    return `My apologies, a connection error occurred. Please try again. \n\nDetails: ${error.message}`;
+                }
+            };
+
+            // --- Event Handlers ---
+            const handleSend = async () => {
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+                addMessage('user', userMessage);
+                chatInput.value = '';
+                toggleInputs(true);
+                chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+                showThinking();
+                const aiMessage = await callAiFunction(chatHistory, CHAT_SYSTEM_PROMPT);
+                removeThinking();
+                addMessage('model', aiMessage);
+                chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
+                toggleInputs(false);
+                chatInput.focus();
+            };
+            
+            const handleGenerateImageClick = async () => {
+                if (!documentContent) {
+                    addMessage('model', 'Please upload a document first, and let me know what kind of images you would like me to generate.');
+                    return;
+                }
+                toggleInputs(true);
+                showThinking('Generating image based on our conversation...');
+                
+                const imagePrompt = `Based on our conversation about the document, please provide a single detailed image generation prompt that would create a compelling visual. Be specific about style, mood, composition, and key elements.`;
+                const prompt = await callAiFunction(chatHistory, imagePrompt);
+                removeThinking();
+                
+                // Simulate image generation - in a real implementation, this would call an image generation API
+                const mockImageDiv = document.createElement('div');
+                mockImageDiv.className = 'bg-brand-secondary p-4 rounded-lg mb-4';
+                mockImageDiv.innerHTML = `
+                    <div class="aspect-square bg-gradient-to-br from-brand-accent/20 to-brand-magenta/20 rounded-md flex items-center justify-center mb-2">
+                        <p class="text-brand-text-muted text-sm text-center px-4">Image placeholder<br><small>Prompt: ${prompt.substring(0, 100)}...</small></p>
+                    </div>
+                    <p class="text-brand-text-muted text-xs mt-2">Full prompt: ${prompt}</p>
+                `;
+                
+                if (imageGallery.querySelector('p')) {
+                    imageGallery.innerHTML = '';
+                }
+                
+                imageGallery.appendChild(mockImageDiv);
+                generatedImages.push(prompt);
+                imageActions.classList.remove('hidden');
+                addMessage('model', 'I have generated an image concept based on our discussion. In a full implementation, this would create an actual image using an AI image generation service.');
+                toggleInputs(false);
+            };
+
+            const handleDocumentUpload = async (e) => {
+                if(e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    try {
+                        const text = await file.text();
+                        documentContent = text;
+                        addMessage('user', `[Document Uploaded: ${file.name}]`);
+                        chatHistory.push({ role: 'user', parts: [{ text: `Document "${file.name}" content:\n${text.substring(0, 1000)}...` }] });
+                        
+                        // Elena reviews the document
+                        showThinking('Reviewing your document...');
+                        const reviewPrompt = 'I have uploaded a document. Please review its content and suggest some ideas for images that would complement this text.';
+                        chatHistory.push({ role: 'user', parts: [{ text: reviewPrompt }] });
+                        const aiMessage = await callAiFunction(chatHistory, CHAT_SYSTEM_PROMPT);
+                        removeThinking();
+                        addMessage('model', aiMessage);
+                        chatHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
+                    } catch (error) {
+                        addMessage('model', `Failed to read document: ${error.message}`);
+                    }
+                }
+            };
+
+            const handleDownloadImages = () => {
+                if (generatedImages.length === 0) {
+                    alert('No images to download yet.');
+                    return;
+                }
+                const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(generatedImages.join('\n\n---\n\n'));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `image_prompts_${new Date().toISOString()}.txt`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                addMessage('model', 'Image prompts have been downloaded. In a full implementation, actual images would be downloaded.');
+            };
+
+            const handleClearContext = () => {
+                showConfirmationModal("This will clear the entire conversation and cannot be undone. Are you sure?", () => {
+                    chatHistory = [];
+                    documentContent = '';
+                    generatedImages = [];
+                    const welcomeMessage = chatContainer.children[0];
+                    chatContainer.innerHTML = '';
+                    chatContainer.appendChild(welcomeMessage);
+                    imageGallery.innerHTML = '<p class="text-brand-text-muted text-center mt-20">Upload a document and start chatting with Elena to generate images.</p>';
+                    imageActions.classList.add('hidden');
+                    addMessage('model', 'Our conversation has been reset. Upload a document to get started!');
+                });
+            };
+
+            const handleBackupContext = () => {
+                if (chatHistory.length === 0) {
+                    addMessage('model', "There is no conversation to back up yet.");
+                    return;
+                }
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chatHistory, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `graphics_studio_chat_${new Date().toISOString()}.json`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            };
+
+            // --- Hero Logo Interaction ---
+            const heroLogo = document.getElementById('hero-logo');
+            const heroSection = document.getElementById('hero');
+            heroSection.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = heroSection;
+                const x = ((clientX - offsetLeft) / offsetWidth) - 0.5;
+                const y = ((clientY - offsetTop) / offsetHeight) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) scale(1.05)`;
+            });
+             heroSection.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            // --- Initial Page Setup & Listeners ---
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            const mobileMenuEl = document.getElementById('mobile-menu');
+            document.getElementById('mobile-menu-button').addEventListener('click', () => mobileMenuEl.classList.toggle('hidden'));
+            
+            sendButton.addEventListener('click', handleSend);
+            chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+            generateImageButton.addEventListener('click', handleGenerateImageClick);
+            clearContextButton.addEventListener('click', handleClearContext);
+            backupContextButton.addEventListener('click', handleBackupContext);
+            downloadImagesButton.addEventListener('click', handleDownloadImages);
+
+            documentUploadButton.addEventListener('click', () => documentInput.click());
+            documentInput.addEventListener('change', handleDocumentUpload);
+            
+            // --- Particle Background Animation ---
+            const setupParticleCanvas = (canvas) => {
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
+
+                const resizeCanvas = () => {
+                    canvas.width = parent.clientWidth;
+                    canvas.height = parent.clientHeight;
+                    initParticles();
+                };
+
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(20, Math.floor(area / 25000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2;
+                        const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push({x, y, size, speedX, speedY, color});
+                    }
+                };
+                
+                let animationFrameId;
+                const animateParticles = () => {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    animationFrameId = requestAnimationFrame(animateParticles);
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        if (!animationFrameId) {
+                           resizeCanvas();
+                           animateParticles();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+                observer.observe(canvas);
+
+                new ResizeObserver(resizeCanvas).observe(parent);
+            };
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+        });
+    </script>
+</body>
+</html>
+
+
