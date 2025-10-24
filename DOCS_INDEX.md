@@ -37,6 +37,7 @@ Welcome! This repository contains a complete solution for powering the publisher
 | File | Purpose | When to Use |
 |------|---------|-------------|
 | [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | Detailed Cloudflare setup | For step-by-step deployment instructions |
+| [IMAGE_GENERATION_SETUP.md](IMAGE_GENERATION_SETUP.md) | Image generation setup 🆕 | To enable AI image generation in Graphics Studio |
 | [PUBLISHER_CONFIG.md](PUBLISHER_CONFIG.md) | How to update publisher.html | After deploying the worker |
 | [publisher-config-example.html](publisher-config-example.html) | Visual configuration guide | To see exactly what to change |
 
@@ -95,6 +96,7 @@ Welcome! This repository contains a complete solution for powering the publisher
 ```
 worker.js                    - Cloudflare Worker for GitHub Models
 worker-huggingface.js        - Alternative using HuggingFace
+worker-image-gen.js          - 🆕 Worker with image generation support
 wrangler.toml                - Worker configuration
 ```
 

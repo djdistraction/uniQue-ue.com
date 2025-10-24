@@ -383,6 +383,64 @@
                 }
             };
 
+            const generateImage = async (prompt, retryCount = 0) => {
+                const maxRetries = 2;
+                const imageGenUrl = AI_FUNCTION_URL + '/generate-image';
+                
+                try {
+                    const response = await fetch(imageGenUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            prompt: prompt,
+                            negative_prompt: 'blurry, bad quality, distorted, ugly, deformed',
+                            width: 512,
+                            height: 512
+                        })
+                    });
+                    
+                    if (response.status === 503 && retryCount < maxRetries) {
+                        // Model is loading, retry after delay
+                        await new Promise(resolve => setTimeout(resolve, 20000));
+                        return generateImage(prompt, retryCount + 1);
+                    }
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        const error = new Error(errorData.error || `Image generation failed: ${response.status}`);
+                        error.retry = errorData.loading || false;
+                        throw error;
+                    }
+                    
+                    // Convert response to blob and create object URL
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+                    return imageUrl;
+                } catch (error) {
+                    console.error("Error generating image:", error);
+                    throw error;
+                }
+            };
+            
+            // Global function for downloading single image
+            window.downloadSingleImage = async (imageUrl, timestamp) => {
+                try {
+                    const response = await fetch(imageUrl);
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `generated_image_${timestamp}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                } catch (error) {
+                    console.error('Download error:', error);
+                    alert('Failed to download image. Please try right-clicking and selecting "Save image as..."');
+                }
+            };
+
             // --- Event Handlers ---
             const handleSend = async () => {
                 const userMessage = chatInput.value.trim();
@@ -406,30 +464,44 @@
                     return;
                 }
                 toggleInputs(true);
-                showThinking('Generating image based on our conversation...');
+                showThinking('Creating image prompt based on our conversation...');
                 
-                const imagePrompt = `Based on our conversation about the document, please provide a single detailed image generation prompt that would create a compelling visual. Be specific about style, mood, composition, and key elements.`;
+                const imagePrompt = `Based on our conversation about the document, please provide a single detailed image generation prompt that would create a compelling visual. Be specific about style, mood, composition, and key elements. Format your response as just the prompt itself, without any preamble or explanation.`;
                 const prompt = await callAiFunction(chatHistory, imagePrompt);
                 removeThinking();
                 
-                // Simulate image generation - in a real implementation, this would call an image generation API
-                const mockImageDiv = document.createElement('div');
-                mockImageDiv.className = 'bg-brand-secondary p-4 rounded-lg mb-4';
-                mockImageDiv.innerHTML = `
-                    <div class="aspect-square bg-gradient-to-br from-brand-accent/20 to-brand-magenta/20 rounded-md flex items-center justify-center mb-2">
-                        <p class="text-brand-text-muted text-sm text-center px-4">Image placeholder<br><small>Prompt: ${prompt.substring(0, 100)}...</small></p>
-                    </div>
-                    <p class="text-brand-text-muted text-xs mt-2">Full prompt: ${prompt}</p>
-                `;
+                // Generate actual image using HuggingFace API
+                showThinking('Generating image with AI... This may take 10-30 seconds.');
                 
-                if (imageGallery.querySelector('p')) {
-                    imageGallery.innerHTML = '';
+                try {
+                    const imageUrl = await generateImage(prompt);
+                    removeThinking();
+                    
+                    const imageDiv = document.createElement('div');
+                    imageDiv.className = 'bg-brand-secondary p-4 rounded-lg mb-4 image-item';
+                    imageDiv.innerHTML = `
+                        <img src="${imageUrl}" alt="Generated image" class="w-full rounded-md mb-2 cursor-pointer hover:opacity-90 transition" onclick="window.open('${imageUrl}', '_blank')">
+                        <p class="text-brand-text-muted text-xs mt-2 break-words">Prompt: ${prompt}</p>
+                        <div class="flex gap-2 mt-2">
+                            <button class="text-brand-accent text-xs hover:underline" onclick="this.closest('.image-item').querySelector('img').click()">View Full Size</button>
+                            <button class="text-brand-accent text-xs hover:underline" onclick="downloadSingleImage('${imageUrl}', '${Date.now()}')">Download</button>
+                        </div>
+                    `;
+                    
+                    if (imageGallery.querySelector('p')) {
+                        imageGallery.innerHTML = '';
+                    }
+                    
+                    imageGallery.appendChild(imageDiv);
+                    generatedImages.push({ prompt: prompt, url: imageUrl, timestamp: Date.now() });
+                    imageActions.classList.remove('hidden');
+                    addMessage('model', 'I have successfully generated an image based on our discussion! Click on it to view at full size.');
+                } catch (error) {
+                    removeThinking();
+                    console.error('Image generation error:', error);
+                    addMessage('model', `I apologize, but I encountered an error while generating the image: ${error.message}. ${error.retry ? 'The AI model may be loading. Please try again in a moment.' : 'Please try again.'}`);
                 }
                 
-                imageGallery.appendChild(mockImageDiv);
-                generatedImages.push(prompt);
-                imageActions.classList.remove('hidden');
-                addMessage('model', 'I have generated an image concept based on our discussion. In a full implementation, this would create an actual image using an AI image generation service.');
                 toggleInputs(false);
             };
 
@@ -456,19 +528,23 @@
                 }
             };
 
-            const handleDownloadImages = () => {
+            const handleDownloadImages = async () => {
                 if (generatedImages.length === 0) {
                     alert('No images to download yet.');
                     return;
                 }
-                const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(generatedImages.join('\n\n---\n\n'));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", `image_prompts_${new Date().toISOString()}.txt`);
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-                addMessage('model', 'Image prompts have been downloaded. In a full implementation, actual images would be downloaded.');
+                
+                // Download each image
+                for (let i = 0; i < generatedImages.length; i++) {
+                    const image = generatedImages[i];
+                    await window.downloadSingleImage(image.url, image.timestamp);
+                    // Add delay between downloads to avoid issues
+                    if (i < generatedImages.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                }
+                
+                addMessage('model', `Successfully downloaded ${generatedImages.length} image(s).`);
             };
 
             const handleClearContext = () => {
