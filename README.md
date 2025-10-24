@@ -2,6 +2,23 @@
 
 The official hub for uniQue-ue projects and directives. This repository hosts the static GitHub Pages site for [www.unique-ue.com](https://www.google.com/search?q=http://www.unique-ue.com).
 
+## 🚀 Quick Links
+
+- **[Live Site](https://djdistraction.github.io)** - Visit the deployed website
+- **[Documentation Index](DOCS_INDEX.md)** - Navigate all documentation
+- **[Quick Start](QUICKSTART.md)** - 5-minute setup guide
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
+- **[Deployment Guide](DEPLOYMENT.md)** - Deployment instructions
+
+## 📋 Table of Contents
+
+- [Architecture](#architecture)
+- [AI Chat Feature](#ai-chat-feature)
+- [Pages](#pages)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## **Architecture**
 
 This project uses a hybrid architecture to provide a secure, real-time AI chat experience with **ZERO COST**:
@@ -102,4 +119,118 @@ wrangler deploy
 You'll get a URL like: `https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev`
 
 Then update line 269 in `publisher.html` with your worker URL.
+
+---
+
+## 📄 Pages
+
+### Live Pages
+- **[Home](https://djdistraction.github.io/)** - Main landing page
+- **[About](https://djdistraction.github.io/about.html)** - Company vision and mission
+- **[Publisher](https://djdistraction.github.io/publisher.html)** - AI-powered creative assistant
+- **[Blog](https://djdistraction.github.io/blog.html)** - Latest updates and articles
+- **[Music History](https://djdistraction.github.io/music-history.html)** - Daily music history posts
+- **[Downloads](https://djdistraction.github.io/downloads.html)** - Resources and documentation
+- **[Events](https://djdistraction.github.io/events.html)** - Community events
+- **[Careers](https://djdistraction.github.io/careers.html)** - Join our team
+- **[Investors](https://djdistraction.github.io/investors.html)** - Investor relations
+- **[Chimera Tower HQ](https://djdistraction.github.io/chimera-tower.html)** - Virtual headquarters
+
+### Developer Pages
+- **[AI Proxy Test](https://djdistraction.github.io/test-ai-proxy.html)** - Test your worker deployment
+- **[Publisher Config Example](https://djdistraction.github.io/publisher-config-example.html)** - Configuration guide
+
+---
+
+## 🏁 Getting Started
+
+### For Users
+
+1. Visit the [live site](https://djdistraction.github.io)
+2. Explore the [Publisher tool](https://djdistraction.github.io/publisher.html)
+3. Read the [documentation](DOCS_INDEX.md)
+
+### For Developers
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/djdistraction/djdistraction.github.io.git
+   cd djdistraction.github.io
+   ```
+
+2. **Set up Cloudflare Workers** (for AI features)
+   ```bash
+   ./deploy-worker.sh
+   ```
+   Or follow the [Quick Start Guide](QUICKSTART.md)
+
+3. **Make changes and test locally**
+   - Open HTML files in your browser
+   - Edit and refresh to see changes
+
+4. **Deploy**
+   - GitHub Pages deploys automatically on push to main
+   - See [DEPLOYMENT.md](DEPLOYMENT.md) for details
+
+### For Contributors
+
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md)
+2. Fork the repository
+3. Create a feature branch
+4. Submit a pull request
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+Ways to contribute:
+- 🐛 Report bugs
+- 💡 Suggest features
+- 📝 Improve documentation
+- 🔧 Submit code changes
+- 🎨 Enhance design
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation is available:
+
+- **[DOCS_INDEX.md](DOCS_INDEX.md)** - Central hub for all documentation
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 5 minutes
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design
+- **[CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md)** - Detailed Cloudflare setup
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute
+- **[SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md)** - Overview of the solution
+- **[MUSIC_HISTORY_GENERATION_GUIDE.md](MUSIC_HISTORY_GENERATION_GUIDE.md)** - Blog post generation
+
+---
+
+## 🔐 Security
+
+- Secrets are stored encrypted in Cloudflare Workers
+- No API keys are exposed in the frontend
+- CORS is properly configured
+- See [DEMONSTRATION.md](DEMONSTRATION.md) for security details
+
+---
+
+## 📝 License
+
+See [LICENSE.txt](LICENSE.txt) for details.
+
+---
+
+## 🌐 Links
+
+- **Website**: [djdistraction.github.io](https://djdistraction.github.io)
+- **Repository**: [github.com/djdistraction/djdistraction.github.io](https://github.com/djdistraction/djdistraction.github.io)
+- **Issues**: [Report a bug or request a feature](https://github.com/djdistraction/djdistraction.github.io/issues)
+
+---
+
+**Built with ❤️ by the uniQue-ue team**
 
