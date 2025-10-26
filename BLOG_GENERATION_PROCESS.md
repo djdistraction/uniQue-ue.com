@@ -8,6 +8,30 @@ All blog posts for the uniQue-ue blog should follow a standardized generation pr
 
 ## Generation Workflow
 
+### Automated Daily Workflow (12:01 AM)
+
+**The blog system now includes automated daily generation via GitHub Actions.**
+
+1. **GitHub Action Triggers**: At 12:01 AM UTC, the workflow runs automatically
+2. **Check Database**: Script scans `data/music-history-articles.json` for existing article
+3. **Conditional Generation**: 
+   - If article exists for current date: Skip generation
+   - If article doesn't exist: Proceed with generation
+4. **Generate Article**: Following the steps below
+5. **Commit & Push**: Automatically commits and pushes new article to repository
+
+### Manual/User-Triggered Generation
+
+**Users can generate articles for any day of the year via the website.**
+
+When a user selects a date on `music-history.html`:
+
+1. **Scan Database**: JavaScript checks for existing article
+2. **Display or Generate**:
+   - If exists: Display immediately
+   - If doesn't exist: Generate on-demand
+3. **Generation Process**: Same as automated workflow (see below)
+
 ### Step 1: Generate Blog Text Content
 
 **First and foremost, generate the written content of the blog post.**
@@ -73,7 +97,14 @@ All blog posts for the uniQue-ue blog should follow a standardized generation pr
 
 - **Format**: Daily blog post about music events on the current date
 - **Author**: Randall Gene
-- **Generation**: Automated daily process
+- **Generation**: 
+  - **Automated**: Daily at 12:01 AM UTC via GitHub Actions
+  - **On-Demand**: User-triggered generation for any day of the year
+- **Workflow**:
+  1. Check database for existing article
+  2. If exists: Display it
+  3. If not: Generate article (text first, then images)
+  4. Save to database (automated generation only)
 - **Content**: Historical music events, artist birthdays, album releases, notable performances
 - **Storage**: JSON file (`data/music-history-articles.json`) indexed by date (MM-DD format)
 - **Navigation**: Users can view posts for any day of the year via date picker
