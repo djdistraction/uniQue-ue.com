@@ -210,8 +210,8 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <p class="text-brand-accent text-lg font-semibold">Loading today's music history...</p>
-                            <p class="text-brand-text-muted text-sm mt-2">Fetching article for this day</p>
+                            <p id="loading-message" class="text-brand-accent text-lg font-semibold">Loading today's music history...</p>
+                            <p class="text-brand-text-muted text-sm mt-2">Please wait while we process your request</p>
                         </div>
                     </div>
 
@@ -461,23 +461,34 @@
                     // Update displayed date
                     currentDateElement.textContent = selectedFullDateString;
                     
-                    // Load articles from JSON file
+                    // Step 1: Scan database for existing article
+                    updateLoadingMessage('Scanning database for existing article...');
                     const response = await fetch('data/music-history-articles.json');
                     if (!response.ok) {
                         throw new Error('Failed to load articles database');
                     }
                     
                     const articles = await response.json();
+                    let article = articles[dateKey];
                     
-                    // Get article for selected date
-                    const article = articles[dateKey];
-                    
+                    // Step 2: Check if article exists
                     if (!article) {
-                        showError(`No article found for ${selectedDateString}. We're working on adding articles for all days of the year!`);
-                        return;
+                        // Article doesn't exist - need to generate it
+                        updateLoadingMessage('No existing article found. Generating new article...');
+                        
+                        // Step 3: Generate article (client-side generation for user-triggered requests)
+                        article = await generateArticleForDate(selectedDateString, month, day);
+                        
+                        if (!article) {
+                            showError(`Unable to generate article for ${selectedDateString}. Please try again later.`);
+                            return;
+                        }
+                        
+                        // Note: In a real implementation, the generated article would be saved to the database
+                        // via an API endpoint. For now, it's only shown to the user.
                     }
                     
-                    // Parse and display the content
+                    // Step 4: Parse and display the content
                     const htmlContent = parseMarkdownToHTML(article.content);
                     blogArticle.innerHTML = htmlContent;
                     
@@ -494,6 +505,119 @@
                 } catch (error) {
                     showError(`Failed to load music history article: ${error.message}`);
                 }
+            }
+            
+            function updateLoadingMessage(message) {
+                const loadingMessage = document.getElementById('loading-message');
+                if (loadingMessage) {
+                    loadingMessage.textContent = message;
+                }
+            }
+            
+            async function generateArticleForDate(dateString, month, day) {
+                try {
+                    // Step 1: Generate article text (without images)
+                    updateLoadingMessage('Generating article text...');
+                    const articleText = await generateArticleText(dateString, month, day);
+                    
+                    // Step 2: Generate images for the article
+                    updateLoadingMessage('Generating images for article...');
+                    const articleWithImages = await generateImagesForArticle(articleText, dateString);
+                    
+                    // Step 3: Return the complete article
+                    return {
+                        date: dateString,
+                        title: `${dateString} in Music History`,
+                        content: articleWithImages,
+                        generated_date: new Date().toISOString().split('T')[0],
+                        author: 'Randall Gene'
+                    };
+                } catch (error) {
+                    console.error('Error generating article:', error);
+                    return null;
+                }
+            }
+            
+            async function generateArticleText(dateString, month, day) {
+                // This would call your AI proxy (Cloudflare Worker) to generate the article
+                // For now, using a placeholder implementation
+                const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev';
+                
+                // Check if AI URL is configured
+                if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
+                    // Return a placeholder article for demonstration
+                    return generatePlaceholderArticle(dateString);
+                }
+                
+                const response = await fetch(AI_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a music historian and expert writer.'
+                            },
+                            {
+                                role: 'user',
+                                content: `Write a factual blog post about music history events on ${dateString}. Include 3-5 major events with years. Use [IMAGE_PLACEHOLDER] where images should go. Format with ## and ### headers.`
+                            }
+                        ],
+                        model: 'gpt-4o-mini',
+                        temperature: 0.7
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to generate article text');
+                }
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
+            
+            function generatePlaceholderArticle(dateString) {
+                // Generate a basic placeholder article structure
+                return `## Music History on ${dateString}
+
+[IMAGE_PLACEHOLDER]
+
+${dateString} has witnessed numerous significant moments in music history. From groundbreaking recordings to legendary performances, this date holds a special place in the timeline of musical achievement.
+
+### Notable Events Throughout History
+
+[IMAGE_PLACEHOLDER]
+
+Throughout the decades, ${dateString} has been marked by important milestones in music. Artists have been born, albums have been released, and historic performances have taken place on this day.
+
+### Artist Contributions
+
+[IMAGE_PLACEHOLDER]
+
+Many influential musicians and performers have contributed to the rich tapestry of music history on ${dateString}. Their work continues to inspire and influence artists today.
+
+## The Legacy Continues
+
+These ${dateString} moments remind us of music's enduring power to shape culture and bring people together. Each event represents a chapter in the ongoing story of musical innovation and creativity.`;
+            }
+            
+            async function generateImagesForArticle(articleText, dateString) {
+                // Replace [IMAGE_PLACEHOLDER] with actual image markdown
+                const colors = ['00F6FF', 'F000B8'];
+                let colorIndex = 0;
+                let result = articleText;
+                
+                // Simple replacement with placeholder images
+                // In a full implementation, this would call an image generation API
+                while (result.includes('[IMAGE_PLACEHOLDER]')) {
+                    const color = colors[colorIndex % colors.length];
+                    const searchTerm = `Music+History+${dateString.replace(/ /g, '+')}`;
+                    const imageMarkdown = `![Music History](https://placehold.co/800x400/020418/${color}?text=${searchTerm})`;
+                    result = result.replace('[IMAGE_PLACEHOLDER]', imageMarkdown);
+                    colorIndex++;
+                }
+                
+                return result;
             }
 
             function updateSocialShareLinks() {
