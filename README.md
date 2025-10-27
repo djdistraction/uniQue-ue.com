@@ -144,7 +144,7 @@ wrangler deploy
 
 You'll get a URL like: `https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev`
 
-Then update line 269 in `publisher.html` with your worker URL.
+Then update line 269 in `ghost-writer.html` with your worker URL.
 
 ---
 
