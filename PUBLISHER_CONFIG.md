@@ -1,11 +1,11 @@
-# Publisher.html Configuration Guide
+# Ghost-Writer.html Configuration Guide
 
-After deploying your Cloudflare Worker, you need to update one line in `publisher.html` to use the secure proxy.
+After deploying your Cloudflare Worker, you need to update one line in `ghost-writer.html` to use the secure proxy.
 
 ## What to Change
 
 ### Location
-- **File**: `publisher.html`
+- **File**: `ghost-writer.html`
 - **Line**: 269
 - **Section**: JavaScript configuration
 
@@ -41,7 +41,7 @@ Copy the URL shown in your terminal!
 
 ## Step-by-Step Update
 
-1. **Open publisher.html in your editor**
+1. **Open ghost-writer.html in your editor**
 
 2. **Find line 269** (in the `<script>` section)
    - Use `Ctrl+G` (or `Cmd+G` on Mac) to "Go to line"
@@ -66,14 +66,14 @@ Copy the URL shown in your terminal!
 
 6. **Commit and push**
    ```bash
-   git add publisher.html
+   git add ghost-writer.html
    git commit -m "Update AI endpoint to use Cloudflare Worker"
    git push
    ```
 
 ## Full Example
 
-Here's the relevant section of `publisher.html` with the change:
+Here's the relevant section of `ghost-writer.html` with the change:
 
 ```javascript
 // --- State Management ---
@@ -93,7 +93,7 @@ Before going live, verify:
 - [ ] Worker URL copied correctly (no typos!)
 - [ ] URL starts with `https://`
 - [ ] URL ends with `.workers.dev`
-- [ ] Line 269 in `publisher.html` updated
+- [ ] Line 269 in `ghost-writer.html` updated
 - [ ] File saved
 - [ ] `test-ai-proxy.html` tests pass
 - [ ] No secrets in git (`git diff` should show only the URL change)
@@ -109,9 +109,9 @@ Before going live, verify:
 4. Click "Send Message"
 5. If both work, you're good!
 
-### Method 2: Test in Publisher
+### Method 2: Test in Ghost-Writer
 
-1. Open `publisher.html` in your browser
+1. Open `ghost-writer.html` in your browser
 2. Type a message in the chat
 3. Click send
 4. Wait for Draven's response
@@ -119,7 +119,7 @@ Before going live, verify:
 
 ### Method 3: Use Browser DevTools
 
-1. Open `publisher.html`
+1. Open `ghost-writer.html`
 2. Press F12 to open DevTools
 3. Go to Network tab
 4. Send a message
@@ -201,7 +201,7 @@ const AI_FUNCTION_URL = 'https://api.unique-ue.com';
 - Monitor worker logs for errors
 
 ### ❌ DON'T:
-- Hardcode your `GITHUB_PAT` in publisher.html
+- Hardcode your `GITHUB_PAT` in ghost-writer.html
 - Commit `.env` files with secrets
 - Use direct API calls to GitHub/OpenAI
 - Share your worker URL publicly (it's not secret, but limit sharing)

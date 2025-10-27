@@ -23,7 +23,7 @@ The official hub for uniQue-ue projects and directives. This repository hosts th
 
 This project uses a hybrid architecture to provide a secure, real-time AI chat experience with **ZERO COST**:
 
-1. **Frontend (GitHub Pages):** The static website (index.html, publisher.html, etc.) is hosted directly from this repository using GitHub Pages.
+1. **Frontend (GitHub Pages):** The static website (index.html, ghost-writer.html, etc.) is hosted directly from this repository using GitHub Pages.
 2. **Backend (Cloudflare Workers - RECOMMENDED):** A single, lightweight serverless worker that securely proxies AI requests. **100% free** with 100,000 requests/day.
 3. **AI Models:** Choose from multiple free options:
    - **GitHub Models API** (GPT-4o-mini, etc.) - Free during preview
@@ -65,7 +65,7 @@ To enable image generation, see [IMAGE_GENERATION_SETUP.md](IMAGE_GENERATION_SET
 
 ## **AI Chat Feature** (Text Generation)
 
-The publisher.html page features an AI-powered creative assistant ("Draven").
+The ghost-writer.html page features an AI-powered creative assistant ("Draven").
 
 ### **Setup Options**
 
@@ -165,7 +165,7 @@ Then update line 269 in `publisher.html` with your worker URL.
 
 ### Developer Pages
 - **[AI Proxy Test](https://djdistraction.github.io/test-ai-proxy.html)** - Test your worker deployment
-- **[Publisher Config Example](https://djdistraction.github.io/publisher-config-example.html)** - Configuration guide
+- **[Ghost-Writer Config Example](https://djdistraction.github.io/publisher-config-example.html)** - Configuration guide
 
 ---
 
@@ -174,7 +174,7 @@ Then update line 269 in `publisher.html` with your worker URL.
 ### For Users
 
 1. Visit the [live site](https://djdistraction.github.io)
-2. Explore the [Publisher tool](https://djdistraction.github.io/publisher.html)
+2. Explore the [Ghost-Writer tool](https://djdistraction.github.io/ghost-writer.html)
 3. Read the [documentation](DOCS_INDEX.md)
 
 ### For Developers

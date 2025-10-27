@@ -218,10 +218,10 @@ Should return a valid AI response.
 3. Run all tests
 4. Verify all pass ✅
 
-### Test 3: Publisher Integration
+### Test 3: Ghost-Writer Integration
 
-1. Update `publisher.html` line 269 with worker URL
-2. Open `publisher.html` in browser
+1. Update `ghost-writer.html` line 269 with worker URL
+2. Open `ghost-writer.html` in browser
 3. Send a chat message
 4. Verify Draven responds
 

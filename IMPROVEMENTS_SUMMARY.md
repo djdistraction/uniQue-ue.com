@@ -55,14 +55,14 @@ Created all missing navigation pages with consistent design:
 - Company vision and mission
 - Explanation of intelligence philosophy
 - Current and upcoming products
-- Call-to-action to Publisher
+- Call-to-action to Ghost-Writer
 - **Features:** SEO meta tags, OG tags, Twitter cards, ARIA labels
 
 #### downloads.html (17.8 KB)
 - Central hub for all resources
 - Documentation links (Quick Start, Docs Index, Architecture)
 - Tools and scripts (deployment, validation)
-- Live tools showcase (Publisher, test suite, music blog)
+- Live tools showcase (Ghost-Writer, test suite, music blog)
 - GitHub repository link
 - **Features:** Resource cards, icons, organized sections
 

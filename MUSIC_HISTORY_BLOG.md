@@ -12,7 +12,7 @@ The "On This Day in Music History" blog series is an AI-powered feature that aut
 - Generates content specific to that calendar day (month + day)
 
 ### 🤖 AI-Powered Content Generation
-- Uses the same Cloudflare Worker AI proxy as the Publisher page
+- Uses the same Cloudflare Worker AI proxy as the Ghost-Writer page
 - Generates 100% factual, historically accurate content
 - Includes:
   - Significant music events from history
@@ -53,12 +53,12 @@ The "On This Day in Music History" blog series is an AI-powered feature that aut
 ```
 music-history.html          # Main blog page with generation logic
 blog.html                   # Blog index (updated to include music history series)
-worker.js                   # Cloudflare Worker AI proxy (shared with Publisher)
+worker.js                   # Cloudflare Worker AI proxy (shared with Ghost-Writer)
 ```
 
 ### Integration with Existing Infrastructure
 
-The music history blog uses the same AI infrastructure as the Publisher page:
+The music history blog uses the same AI infrastructure as the Ghost-Writer page:
 
 1. **Cloudflare Worker**: Same proxy endpoint for secure API calls
 2. **GitHub Models API**: Uses GPT-4o-mini for content generation
