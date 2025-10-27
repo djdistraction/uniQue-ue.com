@@ -9,11 +9,12 @@ The `generate-daily-blog.js` script is responsible for automatically generating 
 The script follows this process:
 
 1. **Check Database**: Scans `data/music-history-articles.json` for an existing article for the current date
-2. **Skip if Exists**: If an article already exists, the script exits without making changes
-3. **Generate Text**: If no article exists, generates article text using AI (without images)
-4. **Generate Images**: Creates image descriptions based on the article content
-5. **Insert Images**: Inserts placeholder images into the article at designated locations
-6. **Save to Database**: Saves the complete article with images to the JSON database
+2. **Check Content Quality**: If article exists, determines if it's a placeholder or real content
+3. **Skip if Real Content**: If an article with real content already exists, the script exits without making changes
+4. **Generate or Regenerate**: If no article exists or if it's a placeholder, generates new article text using AI (without images)
+5. **Generate Images**: Creates image descriptions based on the article content
+6. **Insert Images**: Inserts placeholder images into the article at designated locations
+7. **Save to Database**: Saves the complete article with images to the JSON database
 
 ## Usage
 
@@ -37,8 +38,10 @@ node generate-daily-blog.js
 ```
 
 The script will:
-- Generate an article for today's date
-- Skip if an article already exists
+- Check if an article exists for today's date
+- Determine if existing article is real content or a placeholder
+- Skip generation if article has real content
+- Generate new article if no article exists or if it's a placeholder
 - Save the new article to `data/music-history-articles.json`
 
 ### Generate for Specific Date
@@ -103,6 +106,15 @@ After text is complete:
 3. Creates placeholder image URLs with brand colors (cyan #00F6FF and magenta #F000B8)
 4. Inserts images at `[IMAGE_PLACEHOLDER]` locations
 
+### Placeholder Detection
+
+The script automatically detects placeholder articles that need regeneration by checking for common placeholder phrases:
+- "represents another day in the rich tapestry of music history"
+- "From legendary performances to groundbreaking recordings"
+- "Many influential musicians were born on this day"
+
+If an article contains these phrases, it will be regenerated with factual content even if it exists in the database.
+
 ## Error Handling
 
 The script includes error handling for:
@@ -141,8 +153,13 @@ The generated articles are used by:
 
 ### Script Exits Immediately
 
-**Cause**: Article already exists for today
-**Solution**: This is expected behavior. Articles are only generated once per date.
+**Cause**: Article with real content already exists for today
+**Solution**: This is expected behavior. Articles with real content are only generated once per date. Placeholder articles will be automatically regenerated.
+
+### Script Regenerates Existing Article
+
+**Cause**: Existing article is detected as a placeholder
+**Solution**: This is expected behavior. The script will regenerate placeholder articles with factual content.
 
 ### API Error
 
