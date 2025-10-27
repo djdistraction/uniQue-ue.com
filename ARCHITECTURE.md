@@ -8,7 +8,7 @@
 │  GitHub Pages (djdistraction.github.io)                        │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │                                                          │  │
-│  │  publisher.html                                          │  │
+│  │  ghost-writer.html                                          │  │
 │  │  ┌────────────────────────────────────────────────┐     │  │
 │  │  │ JavaScript                                     │     │  │
 │  │  │                                                │     │  │
@@ -59,7 +59,7 @@
 │  GitHub Pages (djdistraction.github.io)                        │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │                                                          │  │
-│  │  publisher.html                                          │  │
+│  │  ghost-writer.html                                          │  │
 │  │  ┌────────────────────────────────────────────────┐     │  │
 │  │  │ JavaScript                                     │     │  │
 │  │  │                                                │     │  │
@@ -164,7 +164,7 @@
 
 ```
 ┌──────────────────────────────────────────┐
-│  publisher.html                          │
+│  ghost-writer.html                          │
 │  ┌────────────────────────────────────┐  │
 │  │ const GITHUB_PAT = 'ghp_abc123...'│  │ ← 🚨 EXPOSED!
 │  │                                    │  │
@@ -190,7 +190,7 @@
 
 ```
 ┌──────────────────────────────────────────┐
-│  publisher.html                          │
+│  ghost-writer.html                          │
 │  ┌────────────────────────────────────┐  │
 │  │ const WORKER_URL =                 │  │
 │  │   'https://your-worker.workers.dev'│  │ ← ✅ Public URL (safe)
@@ -231,7 +231,7 @@
 ### Step-by-Step with Cloudflare Worker
 
 ```
-1. User types message in publisher.html
+1. User types message in ghost-writer.html
    ├─ Input: "Hello, tell me a joke"
    └─ No secrets involved
 
@@ -303,7 +303,7 @@ Developer Machine              Cloudflare Cloud
       https://unique-ue-ai-proxy
        .abc123.workers.dev
 
-5. Update publisher.html
+5. Update ghost-writer.html
    └─ Change AI_FUNCTION_URL
       to worker URL
 
@@ -311,7 +311,7 @@ Developer Machine              Cloudflare Cloud
                                            (Static hosting)
 
 7. User visits site
-   └─ Browser loads publisher.html ◀──  📄 GitHub Pages
+   └─ Browser loads ghost-writer.html ◀──  📄 GitHub Pages
       ├─ Sees worker URL (public)
       ├─ Sends chat message ──────────▶  ⚡ Cloudflare Worker
       │                                    (Gets secret from env)
@@ -380,7 +380,7 @@ Even at 1,000,000 requests/month:
 ### Next Steps
 
 1. Deploy worker: `wrangler deploy`
-2. Update publisher.html with worker URL
+2. Update ghost-writer.html with worker URL
 3. Test with test-ai-proxy.html
 4. Push to GitHub
 5. Enjoy secure, fast AI chat!

@@ -80,7 +80,7 @@ git commit -m "Add feature: brief description of changes"
 - `Fix: Correct navigation link on about page`
 - `Add: Music history blog post for January 15`
 - `Update: Improve README quick start section`
-- `Refactor: Simplify publisher.html error handling`
+- `Refactor: Simplify ghost-writer.html error handling`
 
 ### 4. Push and Create Pull Request
 

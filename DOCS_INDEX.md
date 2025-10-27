@@ -38,7 +38,7 @@ Welcome! This repository contains a complete solution for powering the publisher
 |------|---------|-------------|
 | [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | Detailed Cloudflare setup | For step-by-step deployment instructions |
 | [IMAGE_GENERATION_SETUP.md](IMAGE_GENERATION_SETUP.md) | Image generation setup 🆕 | To enable AI image generation in Graphics Studio |
-| [PUBLISHER_CONFIG.md](PUBLISHER_CONFIG.md) | How to update publisher.html | After deploying the worker |
+| [PUBLISHER_CONFIG.md](PUBLISHER_CONFIG.md) | How to update ghost-writer.html | After deploying the worker |
 | [publisher-config-example.html](publisher-config-example.html) | Visual configuration guide | To see exactly what to change |
 
 ### Technical Documentation
@@ -65,7 +65,7 @@ Welcome! This repository contains a complete solution for powering the publisher
 2. **Manual way**: Follow [QUICKSTART.md](QUICKSTART.md)
 3. **Detailed way**: Read [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md)
 
-### I deployed and need to configure publisher.html
+### I deployed and need to configure ghost-writer.html
 
 1. **Visual guide**: Open [publisher-config-example.html](publisher-config-example.html)
 2. **Text guide**: Read [PUBLISHER_CONFIG.md](PUBLISHER_CONFIG.md)
@@ -75,7 +75,7 @@ Welcome! This repository contains a complete solution for powering the publisher
 
 1. **Interactive**: Open [test-ai-proxy.html](test-ai-proxy.html)
 2. **CLI**: Run `curl -X POST YOUR-WORKER-URL -d '...'`
-3. **Manual**: Test in publisher.html directly
+3. **Manual**: Test in ghost-writer.html directly
 
 ### I want to understand how it works
 
@@ -136,7 +136,7 @@ Do you want to deploy?
 │
 ├─ I already deployed, now what?
 │  ├─► Open publisher-config-example.html
-│  ├─► Update publisher.html
+│  ├─► Update ghost-writer.html
 │  └─► Test with test-ai-proxy.html
 │
 ├─ I want to understand the architecture
@@ -156,7 +156,7 @@ Do you want to deploy?
 
 1. ✅ Read [QUICKSTART.md](QUICKSTART.md) (5 min)
 2. ✅ Run `./deploy-worker.sh` (5 min)
-3. ✅ Update publisher.html (2 min)
+3. ✅ Update ghost-writer.html (2 min)
 4. ✅ Test with [test-ai-proxy.html](test-ai-proxy.html) (2 min)
 5. 🎉 **Done!** (14 minutes total)
 
@@ -202,7 +202,7 @@ Do you want to deploy?
 
 ### test-ai-proxy.html
 **What**: Interactive test page for your worker  
-**Why**: Verify worker works before updating publisher.html  
+**Why**: Verify worker works before updating ghost-writer.html  
 **How**: Opens in browser, runs health checks and chat tests  
 **When to use**: After deploying, before going live
 
@@ -222,7 +222,7 @@ Do you want to deploy?
 **What**: Visual guide showing exactly what to change  
 **Why**: Makes configuration clear and easy  
 **How**: Opens in browser, shows before/after comparisons  
-**When to use**: When updating publisher.html
+**When to use**: When updating ghost-writer.html
 
 ## ❓ FAQ
 
@@ -244,8 +244,8 @@ A: No, and that's good! Secrets are encrypted in Cloudflare. Use `wrangler secre
 **Q: What if something goes wrong?**  
 A: Run `./validate-solution.sh` to check for issues. Check troubleshooting in [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md).
 
-**Q: Do I need to change anything else besides publisher.html?**  
-A: No! Just line 269 in publisher.html. Everything else stays the same.
+**Q: Do I need to change anything else besides ghost-writer.html?**  
+A: No! Just line 269 in ghost-writer.html. Everything else stays the same.
 
 **Q: How do I know it's working?**  
 A: Test with [test-ai-proxy.html](test-ai-proxy.html). If all tests pass, you're good!
@@ -264,10 +264,10 @@ Before considering your deployment complete:
 
 - [ ] Worker deployed successfully
 - [ ] Worker URL obtained
-- [ ] publisher.html updated (line 269)
+- [ ] ghost-writer.html updated (line 269)
 - [ ] test-ai-proxy.html tests all pass
 - [ ] No secrets visible in browser DevTools
-- [ ] Chat works in publisher.html
+- [ ] Chat works in ghost-writer.html
 - [ ] Changes committed to git
 - [ ] Live site tested
 

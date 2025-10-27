@@ -229,5 +229,5 @@ If you don't have a GitHub PAT or want 100% free forever:
 
 1. Follow [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) for detailed setup
 2. Test with [test-ai-proxy.html](test-ai-proxy.html)
-3. Update `publisher.html` with your worker URL
+3. Update `ghost-writer.html` with your worker URL
 4. Deploy and enjoy secure, fast AI chat!

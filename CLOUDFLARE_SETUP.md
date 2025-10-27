@@ -56,7 +56,7 @@ This will deploy your worker and give you a URL like:
 
 ### Step 6: Update Your Frontend
 
-In `publisher.html`, change line 269 from:
+In `ghost-writer.html`, change line 269 from:
 
 ```javascript
 const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';
@@ -141,4 +141,4 @@ This runs the worker locally at `http://localhost:8787`
 
 ## Next Steps
 
-Once deployed, your publisher.html page will work with the AI assistant without exposing any secrets!
+Once deployed, your ghost-writer.html page will work with the AI assistant without exposing any secrets!

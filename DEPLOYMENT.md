@@ -179,11 +179,11 @@ jobs:
 
 ## 🔧 Configuration After Deployment
 
-### Update Publisher HTML
+### Update Ghost-Writer HTML
 
-After deploying the worker, update `publisher.html`:
+After deploying the worker, update `ghost-writer.html`:
 
-1. Open `publisher.html`
+1. Open `ghost-writer.html`
 2. Find line ~269:
    ```javascript
    const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';
@@ -194,7 +194,7 @@ After deploying the worker, update `publisher.html`:
    ```
 4. Commit and push:
    ```bash
-   git add publisher.html
+   git add ghost-writer.html
    git commit -m "Update AI proxy URL"
    git push
    ```
@@ -286,9 +286,9 @@ View current usage in Cloudflare Dashboard.
 
 3. **Test the AI API directly** to ensure tokens are valid
 
-### Publisher Not Connecting
+### Ghost-Writer Not Connecting
 
-1. Verify worker URL in `publisher.html` is correct
+1. Verify worker URL in `ghost-writer.html` is correct
 2. Check browser console for CORS errors
 3. Verify worker is deployed: visit URL directly
 4. Use `test-ai-proxy.html` to debug
@@ -348,7 +348,7 @@ Before going live:
 - [ ] All tests pass locally
 - [ ] Worker deployed successfully
 - [ ] Secrets configured correctly
-- [ ] Publisher.html updated with worker URL
+- [ ] Ghost-Writer.html updated with worker URL
 - [ ] Test page verifies functionality
 - [ ] All navigation links work
 - [ ] Mobile responsiveness verified

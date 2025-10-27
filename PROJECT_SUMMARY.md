@@ -224,7 +224,7 @@ wrangler deploy
 
 ## Configuration Required
 
-After deployment, **one change** to publisher.html:
+After deployment, **one change** to ghost-writer.html:
 
 **Line 269:**
 ```javascript
@@ -268,7 +268,7 @@ Result: ✅ ALL CHECKS PASSED
 5. Get worker URL
 
 ### Configuration (2 minutes)
-1. Open `publisher.html`
+1. Open `ghost-writer.html`
 2. Update line 269
 3. Save file
 
@@ -380,7 +380,7 @@ DOCS_INDEX.md (you are here)
 4. ✅ Test with `test-ai-proxy.html`
 
 ### Soon (This Week)
-1. ✅ Update `publisher.html`
+1. ✅ Update `ghost-writer.html`
 2. ✅ Test in browser
 3. ✅ Deploy to production
 4. ✅ Monitor usage

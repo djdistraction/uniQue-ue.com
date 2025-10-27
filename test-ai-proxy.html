@@ -90,10 +90,10 @@
     </div>
 
     <div class="test-section">
-        <h2>Test 3: Full Publisher Workflow</h2>
+        <h2>Test 3: Full Ghost-Writer Workflow</h2>
         <p>This simulates the actual ghost-writer.html workflow:</p>
-        <button onclick="testPublisherWorkflow()">Run Publisher Test</button>
-        <div id="publisher-result" class="result"></div>
+        <button onclick="testGhostWriterWorkflow()">Run Ghost-Writer Test</button>
+        <div id="ghost-writer-result" class="result"></div>
     </div>
 
     <div class="test-section">
@@ -217,18 +217,18 @@ wrangler secret put HUGGINGFACE_TOKEN</pre>
             }
         }
 
-        async function testPublisherWorkflow() {
+        async function testGhostWriterWorkflow() {
             const url = getWorkerUrl();
             if (!url) return;
 
-            const resultEl = document.getElementById('publisher-result');
+            const resultEl = document.getElementById('ghost-writer-result');
             resultEl.innerHTML = '';
 
-            log('publisher-result', '🎭 Starting Publisher workflow test...', 'info');
+            log('ghost-writer-result', '🎭 Starting Ghost-Writer workflow test...', 'info');
 
             try {
                 // Step 1: Initial chat
-                log('publisher-result', 'Step 1: User starts conversation...', 'info');
+                log('ghost-writer-result', 'Step 1: User starts conversation...', 'info');
                 let chatHistory = [];
 
                 const response1 = await fetch(url, {
@@ -243,16 +243,16 @@ wrangler secret put HUGGINGFACE_TOKEN</pre>
 
                 if (!response1.ok) {
                     const error = await response1.json();
-                    log('publisher-result', `❌ Step 1 failed: ${error.error}`, 'error');
+                    log('ghost-writer-result', `❌ Step 1 failed: ${error.error}`, 'error');
                     return;
                 }
 
                 const result1 = await response1.json();
                 const greeting = result1.choices?.[0]?.message?.content || 'Hello!';
-                log('publisher-result', `✅ Draven: ${greeting.substring(0, 100)}...`, 'success');
+                log('ghost-writer-result', `✅ Draven: ${greeting.substring(0, 100)}...`, 'success');
 
                 // Step 2: User asks about writing a blog post
-                log('publisher-result', 'Step 2: User asks about blog writing...', 'info');
+                log('ghost-writer-result', 'Step 2: User asks about blog writing...', 'info');
                 chatHistory.push({ role: 'model', parts: [{ text: greeting }] });
                 chatHistory.push({ role: 'user', parts: [{ text: 'I want to write about AI and creativity' }] });
 
@@ -267,16 +267,16 @@ wrangler secret put HUGGINGFACE_TOKEN</pre>
                 });
 
                 if (!response2.ok) {
-                    log('publisher-result', `❌ Step 2 failed`, 'error');
+                    log('ghost-writer-result', `❌ Step 2 failed`, 'error');
                     return;
                 }
 
                 const result2 = await response2.json();
                 const advice = result2.choices?.[0]?.message?.content || 'Great topic!';
-                log('publisher-result', `✅ Draven provides guidance: ${advice.substring(0, 100)}...`, 'success');
+                log('ghost-writer-result', `✅ Draven provides guidance: ${advice.substring(0, 100)}...`, 'success');
 
                 // Step 3: Generate content
-                log('publisher-result', 'Step 3: Generating final document...', 'info');
+                log('ghost-writer-result', 'Step 3: Generating final document...', 'info');
                 const response3 = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -288,19 +288,19 @@ wrangler secret put HUGGINGFACE_TOKEN</pre>
                 });
 
                 if (!response3.ok) {
-                    log('publisher-result', `❌ Step 3 failed`, 'error');
+                    log('ghost-writer-result', `❌ Step 3 failed`, 'error');
                     return;
                 }
 
                 const result3 = await response3.json();
                 const blogPost = result3.choices?.[0]?.message?.content || 'Content generated!';
-                log('publisher-result', `✅ Document generated (${blogPost.length} characters)`, 'success');
-                log('publisher-result', `Preview: ${blogPost.substring(0, 200)}...`, 'success');
+                log('ghost-writer-result', `✅ Document generated (${blogPost.length} characters)`, 'success');
+                log('ghost-writer-result', `Preview: ${blogPost.substring(0, 200)}...`, 'success');
 
-                log('publisher-result', '🎉 Publisher workflow test complete!', 'success');
+                log('ghost-writer-result', '🎉 Ghost-Writer workflow test complete!', 'success');
 
             } catch (error) {
-                log('publisher-result', `❌ Workflow error: ${error.message}`, 'error');
+                log('ghost-writer-result', `❌ Workflow error: ${error.message}`, 'error');
             }
         }
     </script>
