@@ -87,7 +87,7 @@ A **Cloudflare Workers** implementation that:
     - Cost breakdown
 
 12. **`PUBLISHER_CONFIG.md`** - Configuration guide
-    - How to update publisher.html
+    - How to update ghost-writer.html
     - Testing instructions
     - Troubleshooting
 
@@ -181,7 +181,7 @@ wrangler secret put HUGGINGFACE_TOKEN
 wrangler deploy
 
 # Copy the worker URL from output
-# Update publisher.html line 269 with your worker URL
+# Update ghost-writer.html line 269 with your worker URL
 
 # Test
 # Open test-ai-proxy.html in browser
@@ -311,7 +311,7 @@ Easy to switch AI providers:
 2. ✅ Choose option (Cloudflare + GitHub Models recommended)
 3. ✅ Follow [QUICKSTART.md](QUICKSTART.md) for 5-minute setup
 4. ✅ Run `deploy-worker.sh` or deploy manually
-5. ✅ Update `publisher.html` line 269 with worker URL
+5. ✅ Update `ghost-writer.html` line 269 with worker URL
 6. ✅ Test with `test-ai-proxy.html`
 7. ✅ Deploy and enjoy secure AI-powered publisher!
 

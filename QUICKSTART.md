@@ -48,7 +48,7 @@ This is the fastest way to get your AI-powered publisher working securely.
    - Paste your worker URL
    - Click "Run Health Check"
 
-8. **Update publisher.html**
+8. **Update ghost-writer.html**
    - Edit line 269
    - Change: `const AI_FUNCTION_URL = '/.netlify/functions/getAiResponse';`
    - To: `const AI_FUNCTION_URL = 'YOUR-WORKER-URL';`
@@ -94,7 +94,7 @@ Done! 🎉
    wrangler deploy
    ```
 
-7. **Copy your worker URL** and update `publisher.html` (same as Option A, step 8)
+7. **Copy your worker URL** and update `ghost-writer.html` (same as Option A, step 8)
 
 Done! 🎉
 
@@ -199,7 +199,7 @@ That's about 3 million requests per month - plenty for most projects!
 ## Next Steps After Setup
 
 1. ✅ Test with `test-ai-proxy.html`
-2. ✅ Update `publisher.html` with your worker URL
+2. ✅ Update `ghost-writer.html` with your worker URL
 3. ✅ Commit and push to GitHub
 4. ✅ Your publisher is now live with secure AI!
 

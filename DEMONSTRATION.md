@@ -22,7 +22,7 @@ This document demonstrates why the Cloudflare Workers solution is superior to th
 When using direct API calls (what you should NEVER do):
 
 ```javascript
-// ❌ DANGEROUS - In publisher.html JavaScript
+// ❌ DANGEROUS - In ghost-writer.html JavaScript
 const response = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
         'Authorization': 'Bearer sk-proj-ABC123...' // YOUR SECRET IS VISIBLE!
@@ -117,7 +117,7 @@ That's it!
 ### ❌ Bad: Exposed Secret (NEVER DO THIS)
 
 ```html
-<!-- In publisher.html -->
+<!-- In ghost-writer.html -->
 <script>
     const API_KEY = 'ghp_abcd1234...'; // EXPOSED IN SOURCE CODE!
     
@@ -141,7 +141,7 @@ That's it!
 ### ✅ Good: Secure Proxy
 
 ```html
-<!-- In publisher.html -->
+<!-- In ghost-writer.html -->
 <script>
     const WORKER_URL = 'https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev';
     
