@@ -217,6 +217,19 @@
 
                     <!-- Blog Content -->
                     <div id="blog-content" class="hidden">
+                        <!-- Info Banner for Generated Articles -->
+                        <div id="generated-article-notice" class="hidden bg-blue-900/20 border border-brand-accent/50 text-brand-text px-6 py-4 rounded-lg mb-6 animate-fade-in-up">
+                            <div class="flex items-start">
+                                <svg class="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-bold mb-1 text-brand-accent">Newly Generated Article</p>
+                                    <p class="text-sm text-brand-text-muted">This article was just generated for this date. While the AI provides factual information about music history, newly generated articles are shown to you but not automatically saved to the site's database. Quality articles are reviewed and added to the permanent collection over time.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <article class="bg-brand-secondary/50 p-8 rounded-lg panel-3d animate-fade-in-up">
                             <div id="blog-article" class="blog-content text-brand-text"></div>
                         </article>
@@ -330,6 +343,7 @@
             const errorMessage = document.getElementById('error-message');
             const errorText = document.getElementById('error-text');
             const currentDateElement = document.getElementById('current-date');
+            const generatedArticleNotice = document.getElementById('generated-article-notice');
             const submitCommentButton = document.getElementById('submit-comment');
             const commentsList = document.getElementById('comments-list');
             const datePicker = document.getElementById('date-picker');
@@ -470,6 +484,7 @@
                     
                     const articles = await response.json();
                     let article = articles[dateKey];
+                    let wasGenerated = false;
                     
                     // Step 2: Check if article exists
                     if (!article) {
@@ -484,13 +499,19 @@
                             return;
                         }
                         
-                        // Note: In a real implementation, the generated article would be saved to the database
-                        // via an API endpoint. For now, it's only shown to the user.
+                        wasGenerated = true;
                     }
                     
                     // Step 4: Parse and display the content
                     const htmlContent = parseMarkdownToHTML(article.content);
                     blogArticle.innerHTML = htmlContent;
+                    
+                    // Show/hide the generated article notice
+                    if (wasGenerated) {
+                        generatedArticleNotice.classList.remove('hidden');
+                    } else {
+                        generatedArticleNotice.classList.add('hidden');
+                    }
                     
                     // Update social share buttons
                     updateSocialShareLinks();
@@ -539,15 +560,54 @@
             }
             
             async function generateArticleText(dateString, month, day) {
-                // This would call your AI proxy (Cloudflare Worker) to generate the article
-                // For now, using a placeholder implementation
-                const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.YOUR-SUBDOMAIN.workers.dev';
+                // Call the AI proxy (Cloudflare Worker) to generate the article
+                const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
                 
-                // Check if AI URL is configured
-                if (AI_FUNCTION_URL.includes('YOUR-SUBDOMAIN')) {
-                    // Return a placeholder article for demonstration
-                    return generatePlaceholderArticle(dateString);
-                }
+                const prompt = `You are writing a blog post about music history events that occurred on ${dateString} throughout history.
+
+CRITICAL REQUIREMENTS:
+- All information MUST be 100% factual and historically accurate
+- Include REAL events that actually happened on ${dateString} in specific years
+- Research and include at least 3-5 significant events with exact years
+- Cover multiple eras (e.g., 1960s, 1970s, 1980s, etc.) and genres
+- Include artist birthdays, album releases, notable concerts, deaths, and music milestones
+- Provide context about why each event was significant
+- Write in an engaging, informative style
+- Target 800-1000 words
+
+IMPORTANT FORMAT REQUIREMENTS:
+1. Start with a compelling ## header for the introduction
+2. Each major event should have its own ### subheading with the year and event
+3. After each ### subheading, include [IMAGE_PLACEHOLDER]
+4. After each image placeholder, write 2-3 paragraphs about that event
+5. End with a ## concluding section
+
+EXAMPLE STRUCTURE:
+## A Day of Musical Milestones
+
+${dateString} has witnessed remarkable moments in music history, from groundbreaking releases to the birth of legendary artists.
+
+### 1967: The Beatles Release "Strawberry Fields Forever"
+
+[IMAGE_PLACEHOLDER]
+
+On this day in 1967, The Beatles released their psychedelic masterpiece "Strawberry Fields Forever"...
+
+[2-3 more paragraphs about this event]
+
+### 1975: Stevie Wonder Wins Five Grammy Awards
+
+[IMAGE_PLACEHOLDER]
+
+Stevie Wonder made history on ${dateString}, 1975, becoming the first artist to win five Grammy Awards in a single night...
+
+[Continue with more events following this pattern]
+
+## The Legacy Continues
+
+These ${dateString} moments remind us of music's power to shape culture and inspire generations...
+
+Now write a complete, factual blog post about ${dateString} in music history following this structure.`;
                 
                 const response = await fetch(AI_FUNCTION_URL, {
                     method: 'POST',
@@ -556,11 +616,11 @@
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are a music historian and expert writer.'
+                                content: 'You are a music historian and expert writer. You provide only factual, accurate information about music history with specific dates and verifiable events.'
                             },
                             {
                                 role: 'user',
-                                content: `Write a factual blog post about music history events on ${dateString}. Include 3-5 major events with years. Use [IMAGE_PLACEHOLDER] where images should go. Format with ## and ### headers.`
+                                content: prompt
                             }
                         ],
                         model: 'gpt-4o-mini',
@@ -574,31 +634,6 @@
                 
                 const data = await response.json();
                 return data.choices[0].message.content;
-            }
-            
-            function generatePlaceholderArticle(dateString) {
-                // Generate a basic placeholder article structure
-                return `## Music History on ${dateString}
-
-[IMAGE_PLACEHOLDER]
-
-${dateString} has witnessed numerous significant moments in music history. From groundbreaking recordings to legendary performances, this date holds a special place in the timeline of musical achievement.
-
-### Notable Events Throughout History
-
-[IMAGE_PLACEHOLDER]
-
-Throughout the decades, ${dateString} has been marked by important milestones in music. Artists have been born, albums have been released, and historic performances have taken place on this day.
-
-### Artist Contributions
-
-[IMAGE_PLACEHOLDER]
-
-Many influential musicians and performers have contributed to the rich tapestry of music history on ${dateString}. Their work continues to inspire and influence artists today.
-
-## The Legacy Continues
-
-These ${dateString} moments remind us of music's enduring power to shape culture and bring people together. Each event represents a chapter in the ongoing story of musical innovation and creativity.`;
             }
             
             async function generateImagesForArticle(articleText, dateString) {
