@@ -252,6 +252,22 @@ async function generateBlogPost(month, day) {
 }
 
 /**
+ * Check if a post needs to be regenerated (is it just placeholder content?)
+ */
+function needsRegeneration(article) {
+    if (!article || !article.content) return true;
+    
+    // Check for generic placeholder text
+    const placeholderPhrases = [
+        'represents another day in the rich tapestry of music history',
+        'From legendary performances to groundbreaking recordings',
+        'Many influential musicians were born on this day'
+    ];
+    
+    return placeholderPhrases.some(phrase => article.content.includes(phrase));
+}
+
+/**
  * Main execution
  */
 async function main() {
@@ -272,13 +288,17 @@ async function main() {
     console.log(`✓ Loaded ${Object.keys(articles).length} existing articles`);
     
     // Step 2: Check if article already exists for today
-    if (articles[dateKey]) {
-        console.log(`\n✓ Article for ${dateKey} already exists - skipping generation`);
+    if (articles[dateKey] && !needsRegeneration(articles[dateKey])) {
+        console.log(`\n✓ Article for ${dateKey} already exists with real content - skipping generation`);
         console.log('No changes needed.');
         return;
     }
     
-    console.log(`\n→ No article found for ${dateKey} - generating new article...`);
+    if (articles[dateKey] && needsRegeneration(articles[dateKey])) {
+        console.log(`\n→ Article for ${dateKey} exists but is a placeholder - regenerating with real content...`);
+    } else {
+        console.log(`\n→ No article found for ${dateKey} - generating new article...`);
+    }
     
     // Step 3: Generate the blog post
     const { article } = await generateBlogPost(month, day);
