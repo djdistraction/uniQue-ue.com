@@ -9,12 +9,14 @@ The `generate-daily-blog.js` script is responsible for automatically generating 
 The script follows this process:
 
 1. **Check Database**: Scans `data/music-history-articles.json` for an existing article for the current date
-2. **Check Content Quality**: If article exists, determines if it's a placeholder or real content
-3. **Skip if Real Content**: If an article with real content already exists, the script exits without making changes
-4. **Generate or Regenerate**: If no article exists or if it's a placeholder, generates new article text using AI (without images)
-5. **Generate Images**: Creates image descriptions based on the article content
-6. **Insert Images**: Inserts placeholder images into the article at designated locations
-7. **Save to Database**: Saves the complete article with images to the JSON database
+2. **Evaluate Article Quality**: 
+   - If article exists, checks if it contains placeholder phrases
+   - If article has real content, exits without changes
+   - If article is a placeholder or doesn't exist, proceeds to generation
+3. **Generate Article Text**: Creates factual music history content using AI (without images initially)
+4. **Generate Image Descriptions**: AI analyzes the article and creates relevant image descriptions
+5. **Insert Images**: Replaces `[IMAGE_PLACEHOLDER]` markers with actual placeholder image URLs
+6. **Save to Database**: Saves the complete article with images to the JSON database
 
 ## Usage
 
