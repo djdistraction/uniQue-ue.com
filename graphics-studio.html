@@ -470,6 +470,9 @@
                 const prompt = await callAiFunction(chatHistory, imagePrompt);
                 removeThinking();
                 
+                // Show the generated prompt to the user
+                addMessage('model', `I've created this image prompt: "${prompt}"\n\nNow generating the actual image...`);
+                
                 // Generate actual image using HuggingFace API
                 showThinking('Generating image with AI... This may take 10-30 seconds.');
                 
@@ -495,7 +498,7 @@
                     imageGallery.appendChild(imageDiv);
                     generatedImages.push({ prompt: prompt, url: imageUrl, timestamp: Date.now() });
                     imageActions.classList.remove('hidden');
-                    addMessage('model', 'I have successfully generated an image based on our discussion! Click on it to view at full size.');
+                    addMessage('model', 'Image generated successfully! Click on it to view at full size.');
                 } catch (error) {
                     removeThinking();
                     console.error('Image generation error:', error);
