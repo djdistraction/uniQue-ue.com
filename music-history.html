@@ -554,7 +554,17 @@
                     };
                 } catch (error) {
                     console.error('Error generating article:', error);
-                    return null;
+                    // Return fallback article instead of null
+                    const fallbackText = generateFallbackContent(dateString, month, day);
+                    const fallbackWithImages = await generateImagesForArticle(fallbackText, dateString);
+                    return {
+                        date: dateString,
+                        title: `${dateString} in Music History`,
+                        content: fallbackWithImages,
+                        generated_date: new Date().toISOString().split('T')[0],
+                        author: 'Randall Gene',
+                        fallback: true
+                    };
                 }
             }
             
@@ -608,31 +618,67 @@ These ${dateString} moments remind us of music's power to shape culture and insp
 
 Now write a complete, factual blog post about ${dateString} in music history following this structure.`;
                 
-                const response = await fetch(AI_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: [
-                            {
-                                role: 'system',
-                                content: 'You are a music historian and expert writer. You provide only factual, accurate information about music history with specific dates and verifiable events.'
-                            },
-                            {
-                                role: 'user',
-                                content: prompt
-                            }
-                        ],
-                        model: 'gpt-4o-mini',
-                        temperature: 0.7
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to generate article text');
+                try {
+                    const response = await fetch(AI_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are a music historian and expert writer. You provide only factual, accurate information about music history with specific dates and verifiable events.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: prompt
+                                }
+                            ],
+                            model: 'gpt-4o-mini',
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        console.error('AI API error:', response.status);
+                        throw new Error('AI API returned error');
+                    }
+                    
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+                } catch (error) {
+                    console.error('Error calling AI:', error);
+                    // Return fallback content if AI fails
+                    return generateFallbackContent(dateString, month, day);
                 }
-                
-                const data = await response.json();
-                return data.choices[0].message.content;
+            }
+            
+            function generateFallbackContent(dateString, month, day) {
+                // Generate a basic fallback article when AI is unavailable
+                return `## Music History: ${dateString}
+
+Welcome to our Music History series! Today we're exploring significant events that occurred on ${dateString} throughout music history.
+
+### Explore Music History
+
+[IMAGE_PLACEHOLDER]
+
+Throughout history, ${dateString} has been a significant date in the world of music. From legendary album releases to memorable performances, this day has seen countless moments that have shaped the musical landscape we know today.
+
+Music historians and enthusiasts celebrate the events of this day, recognizing how they've influenced genres, artists, and fans across generations. Whether it's the birth of an iconic musician, the release of a groundbreaking album, or a historic concert, ${dateString} holds a special place in music history.
+
+### The Power of Music
+
+[IMAGE_PLACEHOLDER]
+
+Music has always been a universal language that transcends boundaries and brings people together. The events that occurred on ${dateString} throughout various years remind us of this enduring power. From classical compositions to contemporary hits, music continues to evolve while honoring its rich history.
+
+Each era has contributed uniquely to the tapestry of music we enjoy today. The artists, producers, and musicians who made their mark on this date have left lasting legacies that continue to inspire new generations of creators and listeners alike.
+
+### Looking Forward
+
+As we reflect on the musical milestones of ${dateString}, we're reminded that music history is continuously being written. Today's artists stand on the shoulders of those who came before, creating new sounds while respecting tradition.
+
+*Note: This article is a general overview. For detailed historical events specific to this date, please check back later or explore our music history archives.*`;
             }
             
             async function generateImagesForArticle(articleText, dateString) {
