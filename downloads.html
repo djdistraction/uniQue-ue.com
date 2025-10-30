@@ -69,6 +69,9 @@
             transform: translateY(-4px);
             box-shadow: 0 8px 16px rgba(0, 246, 255, 0.3);
         }
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
     </style>
 </head>
 <body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
@@ -105,8 +108,8 @@
     </header>
 
     <main>
-        <section class="py-20 md:py-32 bg-brand-secondary/50">
-            <div class="container mx-auto px-6">
+        <section class="py-20 md:py-32 bg-brand-secondary/50 particle-container"><canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z" mx-auto px-6">
                 <div class="max-w-6xl mx-auto">
                     <h1 class="text-5xl font-display font-bold mb-6 text-brand-accent text-center">Downloads & Resources</h1>
                     <p class="text-xl text-brand-text-muted text-center mb-12">Access documentation, tools, and resources for the uniQue-ue platform</p>
@@ -256,6 +259,70 @@
             </div>
         </div>
     </footer>
+    
+    <script>
+        // Particle Background Animation
+        const setupParticleCanvas = (canvas) => {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const parent = canvas.parentElement;
+
+            const resizeCanvas = () => {
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+                initParticles();
+            };
+
+            const initParticles = () => {
+                const area = canvas.width * canvas.height;
+                const particleCount = Math.max(20, Math.floor(area / 25000));
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    const size = Math.random() * 1.5 + 0.5;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const speedX = (Math.random() * 0.4) - 0.2;
+                    const speedY = (Math.random() * 0.4) - 0.2;
+                    const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                    particles.push({x, y, size, speedX, speedY, color});
+                }
+            };
+            
+            let animationFrameId;
+            const animateParticles = () => {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                animationFrameId = requestAnimationFrame(animateParticles);
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    if (!animationFrameId) {
+                       resizeCanvas();
+                       animateParticles();
+                    }
+                } else {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            });
+            observer.observe(canvas);
+
+            new ResizeObserver(resizeCanvas).observe(parent);
+        };
+        document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+    </script>
 
 </body>
 </html>

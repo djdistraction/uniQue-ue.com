@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>On This Day in Music History - uniQue-ue</title>
+    <title>On This Day in Motion Picture History - uniQue-ue</title>
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -177,12 +177,12 @@
             <canvas class="particle-canvas"></canvas>
             <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
                 <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
-                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted mb-2">Music History Series</h2>
-                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">On This Day in Music History</h1>
-                <p class="text-base md:text-lg text-brand-text-muted max-w-3xl mx-auto font-sans mb-2">by Randall Gene</p>
+                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted mb-2">Motion Picture History Series</h2>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">On This Day in Motion Picture History</h1>
+                <p class="text-base md:text-lg text-brand-text-muted max-w-3xl mx-auto font-sans mb-2">by Cinema Historian</p>
                 <p id="current-date" class="text-lg md:text-xl text-brand-accent max-w-3xl mx-auto font-sans mb-2"></p>
                 <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
-                    Discover the moments that shaped music on this day throughout history
+                    Discover the cinematic moments that shaped film history on this day
                 </p>
             </div>
         </section>
@@ -210,7 +210,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <p id="loading-message" class="text-brand-accent text-lg font-semibold">Loading today's music history...</p>
+                            <p id="loading-message" class="text-brand-accent text-lg font-semibold">Loading today's motion picture history...</p>
                             <p class="text-brand-text-muted text-sm mt-2">Please wait while we process your request</p>
                         </div>
                     </div>
@@ -225,7 +225,7 @@
                                 </svg>
                                 <div>
                                     <p class="font-bold mb-1 text-brand-accent">Newly Generated Article</p>
-                                    <p class="text-sm text-brand-text-muted">This article was just generated for this date. While the AI provides factual information about music history, newly generated articles are shown to you but not automatically saved to the site's database. Quality articles are reviewed and added to the permanent collection over time.</p>
+                                    <p class="text-sm text-brand-text-muted">This article was just generated for this date. While the AI provides factual information about motion picture history, newly generated articles are shown to you but not automatically saved to the site's database. Quality articles are reviewed and added to the permanent collection over time.</p>
                                 </div>
                             </div>
                         </div>
@@ -261,7 +261,7 @@
                         <div id="comment-section" class="mt-8 animate-fade-in-up" style="animation-delay: 0.3s;">
                             <div class="bg-brand-secondary/50 p-8 rounded-lg panel-3d">
                                 <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Share Your Thoughts</h2>
-                                <p class="text-brand-text-muted mb-6">What are your memories or thoughts about these music history moments? Share your comments below!</p>
+                                <p class="text-brand-text-muted mb-6">What are your memories or thoughts about these motion picture history moments? Share your comments below!</p>
                                 
                                 <div class="comment-box mb-6">
                                     <label for="comment-name" class="block text-brand-text-muted text-sm font-semibold mb-2">Your Name</label>
@@ -476,7 +476,7 @@
                     
                     // Step 1: Scan database for existing article
                     updateLoadingMessage('Scanning database for existing article...');
-                    const response = await fetch('data/music-history-articles.json');
+                    const response = await fetch('data/motion-picture-history-articles.json');
                     if (!response.ok) {
                         throw new Error('Failed to load articles database');
                     }
@@ -523,7 +523,7 @@
                     blogContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     
                 } catch (error) {
-                    showError(`Failed to load music history article: ${error.message}`);
+                    showError(`Failed to load motion picture history article: ${error.message}`);
                 }
             }
             
@@ -547,10 +547,10 @@
                     // Step 3: Return the complete article
                     return {
                         date: dateString,
-                        title: `${dateString} in Music History`,
+                        title: `${dateString} in Motion Picture History`,
                         content: articleWithImages,
                         generated_date: new Date().toISOString().split('T')[0],
-                        author: 'Randall Gene'
+                        author: 'Cinema Historian'
                     };
                 } catch (error) {
                     console.error('Error generating article:', error);
@@ -559,10 +559,10 @@
                     const fallbackWithImages = await generateImagesForArticle(fallbackText, dateString);
                     return {
                         date: dateString,
-                        title: `${dateString} in Music History`,
+                        title: `${dateString} in Motion Picture History`,
                         content: fallbackWithImages,
                         generated_date: new Date().toISOString().split('T')[0],
-                        author: 'Randall Gene',
+                        author: 'Cinema Historian',
                         fallback: true
                     };
                 }
@@ -572,14 +572,14 @@
                 // Call the AI proxy (Cloudflare Worker) to generate the article
                 const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
                 
-                const prompt = `You are writing a blog post about music history events that occurred on ${dateString} throughout history.
+                const prompt = `You are writing a blog post about motion picture history events that occurred on ${dateString} throughout history.
 
 CRITICAL REQUIREMENTS:
 - All information MUST be 100% factual and historically accurate
 - Include REAL events that actually happened on ${dateString} in specific years
 - Research and include at least 3-5 significant events with exact years
-- Cover multiple eras (e.g., 1960s, 1970s, 1980s, etc.) and genres
-- Include artist birthdays, album releases, notable concerts, deaths, and music milestones
+- Cover multiple eras (e.g., silent era, golden age, new Hollywood, modern cinema, etc.)
+- Include film premieres, actor/director birthdays, award ceremonies, studio milestones, and significant cinematic achievements
 - Provide context about why each event was significant
 - Write in an engaging, informative style
 - Target 800-1000 words
@@ -592,9 +592,9 @@ IMPORTANT FORMAT REQUIREMENTS:
 5. End with a ## concluding section
 
 EXAMPLE STRUCTURE:
-## A Day of Musical Milestones
+## A Day of Cinematic Milestones
 
-${dateString} has witnessed remarkable moments in music history, from groundbreaking releases to the birth of legendary artists.
+${dateString} has witnessed remarkable moments in motion picture history, from groundbreaking releases to the birth of legendary artists.
 
 ### 1967: The Beatles Release "Strawberry Fields Forever"
 
@@ -616,7 +616,7 @@ Stevie Wonder made history on ${dateString}, 1975, becoming the first artist to 
 
 These ${dateString} moments remind us of music's power to shape culture and inspire generations...
 
-Now write a complete, factual blog post about ${dateString} in music history following this structure.`;
+Now write a complete, factual blog post about ${dateString} in motion picture history following this structure.`;
                 
                 try {
                     const response = await fetch(AI_FUNCTION_URL, {
@@ -626,7 +626,7 @@ Now write a complete, factual blog post about ${dateString} in music history fol
                             messages: [
                                 {
                                     role: 'system',
-                                    content: 'You are a music historian and expert writer. You provide only factual, accurate information about music history with specific dates and verifiable events.'
+                                    content: 'You are a film historian and expert writer. You provide only factual, accurate information about motion picture history with specific dates and verifiable events.'
                                 },
                                 {
                                     role: 'user',
@@ -654,17 +654,17 @@ Now write a complete, factual blog post about ${dateString} in music history fol
             
             function generateFallbackContent(dateString, month, day) {
                 // Generate a basic fallback article when AI is unavailable
-                return `## Music History: ${dateString}
+                return `## Cinema History: ${dateString}
 
-Welcome to our Music History series! Today we're exploring significant events that occurred on ${dateString} throughout music history.
+Welcome to our Cinema History series! Today we're exploring significant events that occurred on ${dateString} throughout motion picture history.
 
-### Explore Music History
+### Explore Motion Picture History
 
 [IMAGE_PLACEHOLDER]
 
-Throughout history, ${dateString} has been a significant date in the world of music. From legendary album releases to memorable performances, this day has seen countless moments that have shaped the musical landscape we know today.
+Throughout history, ${dateString} has been a significant date in the world of cinema. From legendary film premieres to memorable performances, this day has seen countless moments that have shaped the cinematic landscape we know today.
 
-Music historians and enthusiasts celebrate the events of this day, recognizing how they've influenced genres, artists, and fans across generations. Whether it's the birth of an iconic musician, the release of a groundbreaking album, or a historic concert, ${dateString} holds a special place in music history.
+Music historians and enthusiasts celebrate the events of this day, recognizing how they've influenced genres, artists, and fans across generations. Whether it's the birth of an iconic musician, the release of a groundbreaking album, or a historic concert, ${dateString} holds a special place in motion picture history.
 
 ### The Power of Music
 
@@ -676,9 +676,9 @@ Each era has contributed uniquely to the tapestry of music we enjoy today. The a
 
 ### Looking Forward
 
-As we reflect on the musical milestones of ${dateString}, we're reminded that music history is continuously being written. Today's artists stand on the shoulders of those who came before, creating new sounds while respecting tradition.
+As we reflect on the musical milestones of ${dateString}, we're reminded that motion picture history is continuously being written. Today's artists stand on the shoulders of those who came before, creating new sounds while respecting tradition.
 
-*Note: This article is a general overview. For detailed historical events specific to this date, please check back later or explore our music history archives.*`;
+*Note: This article is a general overview. For detailed historical events specific to this date, please check back later or explore our motion picture history archives.*`;
             }
             
             async function generateImagesForArticle(articleText, dateString) {
@@ -692,7 +692,7 @@ As we reflect on the musical milestones of ${dateString}, we're reminded that mu
                 while (result.includes('[IMAGE_PLACEHOLDER]')) {
                     const color = colors[colorIndex % colors.length];
                     const searchTerm = `Music+History+${dateString.replace(/ /g, '+')}`;
-                    const imageMarkdown = `![Music History](https://placehold.co/800x400/020418/${color}?text=${searchTerm})`;
+                    const imageMarkdown = `![Motion Picture History](https://placehold.co/800x400/020418/${color}?text=${searchTerm})`;
                     result = result.replace('[IMAGE_PLACEHOLDER]', imageMarkdown);
                     colorIndex++;
                 }
