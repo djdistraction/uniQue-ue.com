@@ -30,7 +30,8 @@ jobs:
       
       - name: Generate music history blog post
         env:
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node generate-daily-blog.js
       
