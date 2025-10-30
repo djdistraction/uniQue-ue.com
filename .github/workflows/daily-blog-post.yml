@@ -2,7 +2,7 @@ name: Daily Blog Post Generation
 
 on:
   schedule:
-    # Run music blog at 12:01 AM UTC every day
+    # Run all blogs at 12:01 AM UTC every day
     - cron: '1 0 * * *'
   workflow_dispatch: # Allow manual triggering
 
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  generate-music-blog:
+  generate-all-blogs:
     runs-on: ubuntu-latest
     
     steps:
@@ -35,14 +35,28 @@ jobs:
         run: |
           node generate-daily-blog.js
       
+      - name: Generate AI technology blog post
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node generate-ai-blog.js
+      
+      - name: Generate motion picture history blog post
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node generate-motion-picture-blog.js
+      
       - name: Commit and push if changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/music-history-articles.json
+          git add data/music-history-articles.json data/ai-technology-blog-articles.json data/motion-picture-history-articles.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Add daily music history blog post for $(date +%Y-%m-%d)"
+            git commit -m "Add daily blog posts for $(date +%Y-%m-%d)"
             git push
           fi
