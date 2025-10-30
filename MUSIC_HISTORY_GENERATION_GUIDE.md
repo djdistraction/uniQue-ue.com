@@ -92,12 +92,15 @@ Then run: `python3 add-critical-dates.py`
 ### 2. Node.js Script (AI-Powered)
 **File:** `generate-music-posts.js`
 
-Requires GITHUB_PAT environment variable:
+Requires GITHUB_PAT or GITHUB_TOKEN environment variable:
 
 ```bash
 export GITHUB_PAT="your_github_pat"
 node generate-music-posts.js 07-04  # Single date
 node generate-music-posts.js        # All remaining (with confirmation)
+
+# Or in GitHub Actions, GITHUB_TOKEN is automatically available
+# The script will use GITHUB_PAT if set, otherwise falls back to GITHUB_TOKEN
 ```
 
 ## Research Sources
