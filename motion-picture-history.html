@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On This Day in Motion Picture History - uniQue-ue</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'pulse-once': 'pulse-once 1s ease-out'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 4px rgba(0, 246, 255, 0.5)', boxShadow: '0 0 10px -5px #00F6FF, inset 0 0 2px rgba(0, 246, 255, 0.7)' },
+                            'to': { textShadow: '0 0 8px rgba(0, 246, 255, 0.7)', boxShadow: '0 0 20px -5px #00F6FF, inset 0 0 3px rgba(0, 246, 255, 0.9)' },
+                        },
+                        'pulse-once': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        .heading-glow { text-shadow: 0 0 2px rgba(0, 246, 255, 0.6), 0 0 5px rgba(0, 246, 255, 0.3); }
+        .panel-3d {
+            background-color: rgba(16, 20, 44, 0.6);
+            border: 1px solid rgba(0, 246, 255, 0.15);
+            box-shadow: inset 0 1px 2px rgba(0, 246, 255, 0.2), 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
+        }
+        .nav-link:hover {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 6px 8px rgba(0, 246, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 2px 4px rgba(0, 246, 255, 0.3), inset 0 -1px 0 rgba(0, 246, 255, 0.2);
+        }
+        .comment-box {
+            background-color: rgba(16, 20, 44, 0.4);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .blog-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #00F6FF;
+        }
+        .blog-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #9EFFFD;
+        }
+        .blog-content p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+        }
+        .blog-content ul, .blog-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .blog-content li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="index.html" class="nav-link text-brand-text-muted">Home</a>
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Ghost-Writer</a>
+                            <a href="graphics-studio.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Graphics Studio</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="blog.html" class="nav-link text-brand-accent active">Blog</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="index.html#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="index.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Home</a>
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
+                <a href="ghost-writer.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Ghost-Writer</a>
+                <a href="graphics-studio.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Graphics Studio</a>
+            </div>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="blog.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Blog</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
+            <a href="index.html#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-16 md:py-24 particle-container bg-brand-secondary/50">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
+                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted mb-2">Motion Picture History Series</h2>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">On This Day in Motion Picture History</h1>
+                <p class="text-base md:text-lg text-brand-text-muted max-w-3xl mx-auto font-sans mb-2">by Cinema Historian</p>
+                <p id="current-date" class="text-lg md:text-xl text-brand-accent max-w-3xl mx-auto font-sans mb-2"></p>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                    Discover the cinematic moments that shaped film history on this day
+                </p>
+            </div>
+        </section>
+
+        <section class="py-12 md:py-16 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Date Navigation -->
+                    <div class="bg-brand-secondary/50 p-6 rounded-lg panel-3d mb-8">
+                        <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">View Another Day</h3>
+                        <div class="flex flex-col md:flex-row gap-4 items-center">
+                            <label for="date-picker" class="text-brand-text-muted font-sans">Select a date:</label>
+                            <input type="date" id="date-picker" class="flex-1 bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base">
+                            <button id="load-date-button" class="bg-brand-accent text-brand-primary font-bold px-6 py-3 rounded-md transition-all duration-300 hover:bg-brand-accent-hover whitespace-nowrap">
+                                Load Article
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loading-indicator" class="text-center py-12">
+                        <div class="inline-block animate-pulse">
+                            <svg class="animate-spin h-12 w-12 text-brand-accent mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p id="loading-message" class="text-brand-accent text-lg font-semibold">Loading today's motion picture history...</p>
+                            <p class="text-brand-text-muted text-sm mt-2">Please wait while we process your request</p>
+                        </div>
+                    </div>
+
+                    <!-- Blog Content -->
+                    <div id="blog-content" class="hidden">
+                        <!-- Info Banner for Generated Articles -->
+                        <div id="generated-article-notice" class="hidden bg-blue-900/20 border border-brand-accent/50 text-brand-text px-6 py-4 rounded-lg mb-6 animate-fade-in-up">
+                            <div class="flex items-start">
+                                <svg class="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-bold mb-1 text-brand-accent">Newly Generated Article</p>
+                                    <p class="text-sm text-brand-text-muted">This article was just generated for this date. While the AI provides factual information about motion picture history, newly generated articles are shown to you but not automatically saved to the site's database. Quality articles are reviewed and added to the permanent collection over time.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <article class="bg-brand-secondary/50 p-8 rounded-lg panel-3d animate-fade-in-up">
+                            <div id="blog-article" class="blog-content text-brand-text"></div>
+                        </article>
+
+                        <!-- Social Media Share -->
+                        <div class="bg-brand-secondary/50 p-6 rounded-lg panel-3d mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <h3 class="text-lg font-display font-bold mb-4 text-brand-accent">Share This Article</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <a id="share-twitter" href="#" target="_blank" class="inline-flex items-center bg-brand-primary hover:bg-brand-accent hover:text-brand-primary text-brand-text px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                                    Twitter
+                                </a>
+                                <a id="share-facebook" href="#" target="_blank" class="inline-flex items-center bg-brand-primary hover:bg-brand-accent hover:text-brand-primary text-brand-text px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                    Facebook
+                                </a>
+                                <a id="share-linkedin" href="#" target="_blank" class="inline-flex items-center bg-brand-primary hover:bg-brand-accent hover:text-brand-primary text-brand-text px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                    LinkedIn
+                                </a>
+                                <button id="share-copy" class="inline-flex items-center bg-brand-primary hover:bg-brand-accent hover:text-brand-primary text-brand-text px-4 py-2 rounded-md transition-all duration-300 border border-brand-accent/30">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    Copy Link
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div id="comment-section" class="mt-8 animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <div class="bg-brand-secondary/50 p-8 rounded-lg panel-3d">
+                                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Share Your Thoughts</h2>
+                                <p class="text-brand-text-muted mb-6">What are your memories or thoughts about these motion picture history moments? Share your comments below!</p>
+                                
+                                <div class="comment-box mb-6">
+                                    <label for="comment-name" class="block text-brand-text-muted text-sm font-semibold mb-2">Your Name</label>
+                                    <input type="text" id="comment-name" class="w-full bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base mb-4" placeholder="Enter your name">
+                                    
+                                    <label for="comment-text" class="block text-brand-text-muted text-sm font-semibold mb-2">Your Comment</label>
+                                    <textarea id="comment-text" rows="4" class="w-full bg-brand-primary p-3 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base mb-4" placeholder="Share your thoughts..."></textarea>
+                                    
+                                    <button id="submit-comment" class="bg-brand-accent text-brand-primary font-bold px-6 py-2 rounded-md transition-all duration-300 hover:bg-brand-accent-hover">
+                                        Post Comment
+                                    </button>
+                                </div>
+
+                                <div id="comments-list" class="space-y-4">
+                                    <!-- Comments will be dynamically added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="hidden bg-red-900/20 border border-red-500/50 text-red-200 px-6 py-4 rounded-lg">
+                        <p class="font-bold mb-2">Error</p>
+                        <p id="error-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="ghost-writer.html" class="text-brand-text-muted hover:text-brand-accent transition">Ghost-Writer</a>
+                        <a href="graphics-studio.html" class="text-brand-text-muted hover:text-brand-accent transition">Graphics Studio</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="blog.html" class="text-brand-text-muted hover:text-brand-accent transition">Blog</a>
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- UI Elements ---
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const blogContent = document.getElementById('blog-content');
+            const blogArticle = document.getElementById('blog-article');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const currentDateElement = document.getElementById('current-date');
+            const generatedArticleNotice = document.getElementById('generated-article-notice');
+            const submitCommentButton = document.getElementById('submit-comment');
+            const commentsList = document.getElementById('comments-list');
+            const datePicker = document.getElementById('date-picker');
+            const loadDateButton = document.getElementById('load-date-button');
+
+            // --- State Management ---
+            let comments = [];
+            const today = new Date();
+            const dateString = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+            const fullDateString = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // Set today as default date in picker
+            const todayString = today.toISOString().split('T')[0];
+            datePicker.value = todayString;
+            
+            // Display current date
+            currentDateElement.textContent = fullDateString;
+
+            // --- Helper Functions ---
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
+                loadingIndicator.classList.add('hidden');
+            }
+
+            function hideError() {
+                errorMessage.classList.add('hidden');
+            }
+
+            function parseMarkdownToHTML(markdown) {
+                // Convert markdown to HTML with basic formatting
+                let html = markdown;
+                
+                // Process line by line to handle formatting properly
+                const lines = html.split('\n');
+                const processedLines = [];
+                let inList = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i];
+                    const trimmed = line.trim();
+                    
+                    // Skip empty lines
+                    if (trimmed.length === 0) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push('');
+                        continue;
+                    }
+                    
+                    // Handle markdown images: ![alt text](url)
+                    if (trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)/)) {
+                        line = trimmed.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-md my-4 w-full h-auto shadow-lg">');
+                        processedLines.push(line);
+                        continue;
+                    }
+                    
+                    // Handle headers (must be at start of line)
+                    if (trimmed.startsWith('### ')) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push(`<h3>${trimmed.substring(4)}</h3>`);
+                        continue;
+                    }
+                    
+                    if (trimmed.startsWith('## ')) {
+                        if (inList) {
+                            processedLines.push('</ul>');
+                            inList = false;
+                        }
+                        processedLines.push(`<h2>${trimmed.substring(3)}</h2>`);
+                        continue;
+                    }
+                    
+                    // Handle list items
+                    if (trimmed.match(/^[\*\-] /)) {
+                        if (!inList) {
+                            processedLines.push('<ul>');
+                            inList = true;
+                        }
+                        processedLines.push(`<li>${trimmed.substring(2)}</li>`);
+                        continue;
+                    }
+                    
+                    // Close list if we're in one and hit non-list content
+                    if (inList) {
+                        processedLines.push('</ul>');
+                        inList = false;
+                    }
+                    
+                    // Regular paragraph
+                    processedLines.push(`<p>${trimmed}</p>`);
+                }
+                
+                // Close any open lists
+                if (inList) {
+                    processedLines.push('</ul>');
+                }
+                
+                html = processedLines.join('\n');
+                
+                // Handle inline formatting (bold, italic, etc.)
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                
+                return html;
+            }
+
+            async function loadArticle() {
+                hideError();
+                loadingIndicator.classList.remove('hidden');
+                blogContent.classList.add('hidden');
+
+                try {
+                    // Get selected date from picker or use today
+                    const selectedDate = datePicker.value ? new Date(datePicker.value + 'T00:00:00') : new Date();
+                    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(selectedDate.getDate()).padStart(2, '0');
+                    const dateKey = `${month}-${day}`;
+                    
+                    const selectedDateString = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+                    const selectedFullDateString = selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                    
+                    // Update displayed date
+                    currentDateElement.textContent = selectedFullDateString;
+                    
+                    // Step 1: Scan database for existing article
+                    updateLoadingMessage('Scanning database for existing article...');
+                    const response = await fetch('data/motion-picture-history-articles.json');
+                    if (!response.ok) {
+                        throw new Error('Failed to load articles database');
+                    }
+                    
+                    const articles = await response.json();
+                    let article = articles[dateKey];
+                    let wasGenerated = false;
+                    
+                    // Step 2: Check if article exists
+                    if (!article) {
+                        // Article doesn't exist - need to generate it
+                        updateLoadingMessage('No existing article found. Generating new article...');
+                        
+                        // Step 3: Generate article (client-side generation for user-triggered requests)
+                        article = await generateArticleForDate(selectedDateString, month, day);
+                        
+                        if (!article) {
+                            showError(`Unable to generate article for ${selectedDateString}. Please try again later.`);
+                            return;
+                        }
+                        
+                        wasGenerated = true;
+                    }
+                    
+                    // Step 4: Parse and display the content
+                    const htmlContent = parseMarkdownToHTML(article.content);
+                    blogArticle.innerHTML = htmlContent;
+                    
+                    // Show/hide the generated article notice
+                    if (wasGenerated) {
+                        generatedArticleNotice.classList.remove('hidden');
+                    } else {
+                        generatedArticleNotice.classList.add('hidden');
+                    }
+                    
+                    // Update social share buttons
+                    updateSocialShareLinks();
+                    
+                    // Show the blog content
+                    loadingIndicator.classList.add('hidden');
+                    blogContent.classList.remove('hidden');
+                    
+                    // Scroll to content
+                    blogContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                } catch (error) {
+                    showError(`Failed to load motion picture history article: ${error.message}`);
+                }
+            }
+            
+            function updateLoadingMessage(message) {
+                const loadingMessage = document.getElementById('loading-message');
+                if (loadingMessage) {
+                    loadingMessage.textContent = message;
+                }
+            }
+            
+            async function generateArticleForDate(dateString, month, day) {
+                try {
+                    // Step 1: Generate article text (without images)
+                    updateLoadingMessage('Generating article text...');
+                    const articleText = await generateArticleText(dateString, month, day);
+                    
+                    // Step 2: Generate images for the article
+                    updateLoadingMessage('Generating images for article...');
+                    const articleWithImages = await generateImagesForArticle(articleText, dateString);
+                    
+                    // Step 3: Return the complete article
+                    return {
+                        date: dateString,
+                        title: `${dateString} in Motion Picture History`,
+                        content: articleWithImages,
+                        generated_date: new Date().toISOString().split('T')[0],
+                        author: 'Cinema Historian'
+                    };
+                } catch (error) {
+                    console.error('Error generating article:', error);
+                    // Return fallback article instead of null
+                    const fallbackText = generateFallbackContent(dateString, month, day);
+                    const fallbackWithImages = await generateImagesForArticle(fallbackText, dateString);
+                    return {
+                        date: dateString,
+                        title: `${dateString} in Motion Picture History`,
+                        content: fallbackWithImages,
+                        generated_date: new Date().toISOString().split('T')[0],
+                        author: 'Cinema Historian',
+                        fallback: true
+                    };
+                }
+            }
+            
+            async function generateArticleText(dateString, month, day) {
+                // Call the AI proxy (Cloudflare Worker) to generate the article
+                const AI_FUNCTION_URL = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev';
+                
+                const prompt = `You are writing a blog post about motion picture history events that occurred on ${dateString} throughout history.
+
+CRITICAL REQUIREMENTS:
+- All information MUST be 100% factual and historically accurate
+- Include REAL events that actually happened on ${dateString} in specific years
+- Research and include at least 3-5 significant events with exact years
+- Cover multiple eras (e.g., silent era, golden age, new Hollywood, modern cinema, etc.)
+- Include film premieres, actor/director birthdays, award ceremonies, studio milestones, and significant cinematic achievements
+- Provide context about why each event was significant
+- Write in an engaging, informative style
+- Target 800-1000 words
+
+IMPORTANT FORMAT REQUIREMENTS:
+1. Start with a compelling ## header for the introduction
+2. Each major event should have its own ### subheading with the year and event
+3. After each ### subheading, include [IMAGE_PLACEHOLDER]
+4. After each image placeholder, write 2-3 paragraphs about that event
+5. End with a ## concluding section
+
+EXAMPLE STRUCTURE:
+## A Day of Cinematic Milestones
+
+${dateString} has witnessed remarkable moments in motion picture history, from groundbreaking releases to the birth of legendary artists.
+
+### 1967: The Beatles Release "Strawberry Fields Forever"
+
+[IMAGE_PLACEHOLDER]
+
+On this day in 1967, The Beatles released their psychedelic masterpiece "Strawberry Fields Forever"...
+
+[2-3 more paragraphs about this event]
+
+### 1975: Stevie Wonder Wins Five Grammy Awards
+
+[IMAGE_PLACEHOLDER]
+
+Stevie Wonder made history on ${dateString}, 1975, becoming the first artist to win five Grammy Awards in a single night...
+
+[Continue with more events following this pattern]
+
+## The Legacy Continues
+
+These ${dateString} moments remind us of music's power to shape culture and inspire generations...
+
+Now write a complete, factual blog post about ${dateString} in motion picture history following this structure.`;
+                
+                try {
+                    const response = await fetch(AI_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are a film historian and expert writer. You provide only factual, accurate information about motion picture history with specific dates and verifiable events.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: prompt
+                                }
+                            ],
+                            model: 'gpt-4o-mini',
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        console.error('AI API error:', response.status);
+                        throw new Error('AI API returned error');
+                    }
+                    
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+                } catch (error) {
+                    console.error('Error calling AI:', error);
+                    // Return fallback content if AI fails
+                    return generateFallbackContent(dateString, month, day);
+                }
+            }
+            
+            function generateFallbackContent(dateString, month, day) {
+                // Generate a basic fallback article when AI is unavailable
+                return `## Cinema History: ${dateString}
+
+Welcome to our Cinema History series! Today we're exploring significant events that occurred on ${dateString} throughout motion picture history.
+
+### Explore Motion Picture History
+
+[IMAGE_PLACEHOLDER]
+
+Throughout history, ${dateString} has been a significant date in the world of cinema. From legendary film premieres to memorable performances, this day has seen countless moments that have shaped the cinematic landscape we know today.
+
+Music historians and enthusiasts celebrate the events of this day, recognizing how they've influenced genres, artists, and fans across generations. Whether it's the birth of an iconic musician, the release of a groundbreaking album, or a historic concert, ${dateString} holds a special place in motion picture history.
+
+### The Power of Music
+
+[IMAGE_PLACEHOLDER]
+
+Music has always been a universal language that transcends boundaries and brings people together. The events that occurred on ${dateString} throughout various years remind us of this enduring power. From classical compositions to contemporary hits, music continues to evolve while honoring its rich history.
+
+Each era has contributed uniquely to the tapestry of music we enjoy today. The artists, producers, and musicians who made their mark on this date have left lasting legacies that continue to inspire new generations of creators and listeners alike.
+
+### Looking Forward
+
+As we reflect on the musical milestones of ${dateString}, we're reminded that motion picture history is continuously being written. Today's artists stand on the shoulders of those who came before, creating new sounds while respecting tradition.
+
+*Note: This article is a general overview. For detailed historical events specific to this date, please check back later or explore our motion picture history archives.*`;
+            }
+            
+            async function generateImagesForArticle(articleText, dateString) {
+                // Replace [IMAGE_PLACEHOLDER] with actual image markdown
+                const colors = ['00F6FF', 'F000B8'];
+                let colorIndex = 0;
+                let result = articleText;
+                
+                // Simple replacement with placeholder images
+                // In a full implementation, this would call an image generation API
+                while (result.includes('[IMAGE_PLACEHOLDER]')) {
+                    const color = colors[colorIndex % colors.length];
+                    const searchTerm = `Music+History+${dateString.replace(/ /g, '+')}`;
+                    const imageMarkdown = `![Motion Picture History](https://placehold.co/800x400/020418/${color}?text=${searchTerm})`;
+                    result = result.replace('[IMAGE_PLACEHOLDER]', imageMarkdown);
+                    colorIndex++;
+                }
+                
+                return result;
+            }
+
+            function updateSocialShareLinks() {
+                const pageUrl = encodeURIComponent(window.location.href);
+                const pageTitle = encodeURIComponent(document.title);
+                
+                document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+                document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+                document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+            }
+
+            function addComment(name, text, timestamp) {
+                const comment = {
+                    name: name || 'Anonymous',
+                    text: text,
+                    timestamp: timestamp || new Date().toLocaleString()
+                };
+                
+                comments.push(comment);
+                renderComments();
+                
+                // Clear form
+                document.getElementById('comment-name').value = '';
+                document.getElementById('comment-text').value = '';
+            }
+
+            function renderComments() {
+                commentsList.innerHTML = '';
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p class="text-brand-text-muted text-center py-4">No comments yet. Be the first to share your thoughts!</p>';
+                    return;
+                }
+                
+                comments.forEach((comment, index) => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment-box';
+                    commentDiv.style.animationDelay = `${index * 0.1}s`;
+                    commentDiv.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-brand-accent">${escapeHtml(comment.name)}</span>
+                            <span class="text-brand-text-muted text-xs">${comment.timestamp}</span>
+                        </div>
+                        <p class="text-brand-text">${escapeHtml(comment.text)}</p>
+                    `;
+                    commentsList.appendChild(commentDiv);
+                });
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // --- Event Listeners ---
+            loadDateButton.addEventListener('click', loadArticle);
+            
+            datePicker.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loadArticle();
+                }
+            });
+
+            document.getElementById('share-copy').addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    const btn = document.getElementById('share-copy');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                } catch (err) {
+                    alert('Failed to copy link to clipboard');
+                }
+            });
+
+            submitCommentButton.addEventListener('click', () => {
+                const name = document.getElementById('comment-name').value.trim();
+                const text = document.getElementById('comment-text').value.trim();
+                
+                if (!text) {
+                    alert('Please enter a comment before submitting.');
+                    return;
+                }
+                
+                addComment(name, text);
+            });
+
+            // --- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Hero Logo Interaction ---
+            const heroLogo = document.getElementById('hero-logo');
+            const heroSection = document.getElementById('hero');
+            heroSection.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = heroSection;
+                const x = ((clientX - offsetLeft) / offsetWidth) - 0.5;
+                const y = ((clientY - offsetTop) / offsetHeight) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 20}deg) rotateX(${-y * 20}deg) scale(1.05)`;
+            });
+            heroSection.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            // --- Particle Background Animation ---
+            const setupParticleCanvas = (canvas) => {
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
+
+                const resizeCanvas = () => {
+                    canvas.width = parent.clientWidth;
+                    canvas.height = parent.clientHeight;
+                    initParticles();
+                };
+
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(20, Math.floor(area / 25000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2;
+                        const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push({x, y, size, speedX, speedY, color});
+                    }
+                };
+                
+                let animationFrameId;
+                const animateParticles = () => {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    animationFrameId = requestAnimationFrame(animateParticles);
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        if (!animationFrameId) {
+                           resizeCanvas();
+                           animateParticles();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+                observer.observe(canvas);
+
+                new ResizeObserver(resizeCanvas).observe(parent);
+            };
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+
+            // --- Initial Page Setup ---
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            
+            // Load today's article automatically on page load
+            loadArticle();
+        });
+    </script>
+</body>
+</html>
