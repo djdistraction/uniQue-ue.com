@@ -2,15 +2,28 @@ name: Daily Blog Post Generation
 
 on:
   schedule:
-    # Run at 12:01 AM UTC every day
+    # Run music and motion picture blogs at 12:01 AM UTC every day
     - cron: '1 0 * * *'
+    # Run AI technology blog at 12:00 PM UTC (4am PST) every day
+    - cron: '0 12 * * *'
   workflow_dispatch: # Allow manual triggering
+    inputs:
+      blog_type:
+        description: 'Blog type to generate'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - music
+          - motion-picture
+          - ai-technology
 
 permissions:
   contents: write
 
 jobs:
-  generate-blog-post:
+  generate-blog-posts:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,20 +41,37 @@ jobs:
         run: |
           npm install
       
-      - name: Generate daily blog post
+      - name: Determine which blogs to generate
+        id: determine-blogs
+        run: |
+          CURRENT_HOUR=$(date -u +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "blog_type=${{ inputs.blog_type }}" >> $GITHUB_OUTPUT
+          elif [ "$CURRENT_HOUR" = "00" ]; then
+            # 12:01 AM UTC - generate music and motion picture
+            echo "blog_type=music,motion-picture" >> $GITHUB_OUTPUT
+          elif [ "$CURRENT_HOUR" = "12" ]; then
+            # 12:00 PM UTC (4am PST) - generate AI technology
+            echo "blog_type=ai-technology" >> $GITHUB_OUTPUT
+          else
+            echo "blog_type=all" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate blog posts
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          BLOG_TYPES: ${{ steps.determine-blogs.outputs.blog_type }}
         run: |
-          node generate-daily-blog.js
+          node generate-daily-blog.js --types="$BLOG_TYPES"
       
       - name: Commit and push if changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/music-history-articles.json
+          git add data/*.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Add daily music history blog post for $(date +%m-%d)"
+            git commit -m "Add daily blog posts for $(date +%Y-%m-%d)"
             git push
           fi
