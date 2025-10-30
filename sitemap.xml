@@ -52,21 +52,6 @@
     <priority>0.6</priority>
   </url>
   
-  <!-- Blog and Content -->
-  <url>
-    <loc>https://djdistraction.github.io/blog.html</loc>
-    <lastmod>2025-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://djdistraction.github.io/music-history.html</loc>
-    <lastmod>2025-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
   <!-- Community -->
   <url>
     <loc>https://djdistraction.github.io/events.html</loc>

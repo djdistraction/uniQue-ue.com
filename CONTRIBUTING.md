@@ -78,7 +78,7 @@ git commit -m "Add feature: brief description of changes"
 
 **Good commit messages:**
 - `Fix: Correct navigation link on about page`
-- `Add: Music history blog post for January 15`
+- `Add: New feature to graphics studio`
 - `Update: Improve README quick start section`
 - `Refactor: Simplify ghost-writer.html error handling`
 

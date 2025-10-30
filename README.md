@@ -155,8 +155,6 @@ Then update line 269 in `ghost-writer.html` with your worker URL.
 - **[About](https://djdistraction.github.io/about.html)** - Company vision and mission
 - **[Ghost-Writer](https://djdistraction.github.io/ghost-writer.html)** - AI-powered creative writing assistant
 - **[Graphics Studio](https://djdistraction.github.io/graphics-studio.html)** - AI-powered image generation 🆕
-- **[Blog](https://djdistraction.github.io/blog.html)** - Latest updates and articles
-- **[Music History](https://djdistraction.github.io/music-history.html)** - Daily music history posts
 - **[Downloads](https://djdistraction.github.io/downloads.html)** - Resources and documentation
 - **[Events](https://djdistraction.github.io/events.html)** - Community events
 - **[Careers](https://djdistraction.github.io/careers.html)** - Join our team
@@ -232,7 +230,6 @@ Comprehensive documentation is available:
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute
 - **[SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md)** - Overview of the solution
-- **[MUSIC_HISTORY_GENERATION_GUIDE.md](MUSIC_HISTORY_GENERATION_GUIDE.md)** - Blog post generation
 
 ---
 
