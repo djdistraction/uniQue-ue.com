@@ -20,11 +20,12 @@ const ARTICLES_FILE = path.join(__dirname, 'data', 'music-history-articles.json'
 const AI_API_URL = 'https://models.inference.ai.azure.com/chat/completions';
 const MODEL = 'gpt-4o-mini';
 
-// Check for GitHub PAT
-const GITHUB_PAT = process.env.GITHUB_PAT;
+// Check for GitHub PAT or TOKEN
+const GITHUB_PAT = process.env.GITHUB_PAT || process.env.GITHUB_TOKEN;
 if (!GITHUB_PAT) {
-    console.error('Error: GITHUB_PAT environment variable is not set.');
+    console.error('Error: GITHUB_PAT or GITHUB_TOKEN environment variable is not set.');
     console.error('This is required for AI API access.');
+    console.error('In GitHub Actions, GITHUB_TOKEN is automatically available.');
     process.exit(1);
 }
 

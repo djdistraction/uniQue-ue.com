@@ -24,7 +24,7 @@ The script follows this process:
 
 The script runs automatically via GitHub Actions every day at 12:01 AM UTC:
 - See `.github/workflows/daily-blog-post.yml`
-- Requires `GITHUB_PAT` secret to be configured in repository settings
+- Uses `GITHUB_PAT` secret if configured, otherwise falls back to `GITHUB_TOKEN`
 - Automatically commits and pushes generated articles
 
 ### Manual Execution
@@ -32,8 +32,10 @@ The script runs automatically via GitHub Actions every day at 12:01 AM UTC:
 To run the script manually:
 
 ```bash
-# Set your GitHub PAT environment variable
+# Set your GitHub PAT or TOKEN environment variable
 export GITHUB_PAT="your_github_personal_access_token"
+# OR use GITHUB_TOKEN if available (e.g., in GitHub Actions)
+# export GITHUB_TOKEN="your_github_token"
 
 # Run the script
 node generate-daily-blog.js
@@ -64,7 +66,10 @@ generateBlogPost(12, 25)  // December 25th
 
 ### Environment Variables
 
-- **GITHUB_PAT** (required): GitHub Personal Access Token with access to GitHub Models API
+- **GITHUB_PAT** (preferred): GitHub Personal Access Token with access to GitHub Models API
+- **GITHUB_TOKEN** (fallback): Standard GitHub token (automatically available in GitHub Actions)
+
+The script will use `GITHUB_PAT` if set, otherwise it will fall back to `GITHUB_TOKEN`.
 
 ### API Configuration
 
@@ -120,7 +125,7 @@ If an article contains these phrases, it will be regenerated with factual conten
 ## Error Handling
 
 The script includes error handling for:
-- Missing GITHUB_PAT environment variable
+- Missing GITHUB_PAT or GITHUB_TOKEN environment variable
 - API failures
 - File system errors
 - JSON parsing errors
@@ -165,8 +170,8 @@ The generated articles are used by:
 
 ### API Error
 
-**Cause**: Invalid or missing GITHUB_PAT
-**Solution**: Ensure GITHUB_PAT is set correctly and has proper permissions
+**Cause**: Invalid or missing GITHUB_PAT or GITHUB_TOKEN
+**Solution**: Ensure GITHUB_PAT or GITHUB_TOKEN is set correctly and has proper permissions
 
 ### File Not Found
 
