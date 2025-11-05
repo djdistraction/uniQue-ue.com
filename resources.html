@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - uniQue-ue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add global styles and fonts here -->
+</head>
+<body class="bg-brand-primary text-brand-text">
+    <!-- TODO: Add new site-wide header -->
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-display mb-8">Resources</h1>
+        
+        <p class="mb-8">Explore our suite of AI-powered creative tools.</p>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Card for Ghost-Writer -->
+            <div class="border border-brand-accent/30 p-6 rounded-lg">
+                <h2 class="text-2xl font-display mb-4">Ghost-Writer</h2>
+                <p class="text-brand-text-muted mb-4">AI-powered creative writing assistant.</p>
+                <a href="ghost-writer.html" class="text-brand-accent hover:underline">Launch Tool &rarr;</a>
+            </div>
+            
+            <!-- Card for Graphics Studio -->
+            <div class="border border-brand-accent/30 p-6 rounded-lg">
+                <h2 class="text-2xl font-display mb-4">Graphics Studio</h2>
+                <p class="text-brand-text-muted mb-4">AI-powered visual and image generation.</p>
+                <a href="graphics-studio.html" class="text-brand-accent hover:underline">Launch Tool &rarr;</a>
+            </div>
+            
+            <!-- TODO: Add cards for subscriptions/upgrades -->
+        </div>
+    </div>
+    
+    <!-- TODO: Add new site-wide footer -->
+    
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        // This page can check auth state to show different content
+        // (e.g., "Manage Subscription" vs "View Plans")
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - uniQue-ue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add global styles and fonts here -->
+</head>
+<body class="bg-brand-primary text-brand-text">
+    <!-- TODO: Add new site-wide header -->
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-display mb-8">Your Profile</h1>
+        
+        <div id="auth-container">
+            <!-- This content will be shown/hidden based on auth state -->
+            <p>Please log in to view your profile.</p>
+        </div>
+        
+        <div id="profile-content" class="hidden">
+            <p>Welcome, <span id="user-name">...</span></p>
+            <!-- TODO: Add profile fields: picture, user ID, etc. -->
+            
+            <h2 class="text-3xl font-display mt-12 mb-4">Your Subscriptions</h2>
+            <!-- TODO: Add subscription management -->
+            
+            <button id="logout-button">Log Out</button>
+        </div>
+    </div>
+    
+    <!-- TODO: Add new site-wide footer -->
+    
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const authContainer = document.getElementById('auth-container');
+        const profileContent = document.getElementById('profile-content');
+        const userName = document.getElementById('user-name');
+        const logoutButton = document.getElementById('logout-button');
+
+        // Listen for auth state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                authContainer.classList.add('hidden');
+                profileContent.classList.remove('hidden');
+                userName.textContent = user.displayName || user.email;
+            } else {
+                // User is signed out
+                authContainer.classList.remove('hidden');
+                profileContent.classList.add('hidden');
+                // Redirect to login page or show login form
+            }
+        });
+
+        // Log out
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('User signed out');
+            } catch (error) {
+                console.error('Sign out error', error);
+            }
+        });
+    </script>
+</body>
+</html>

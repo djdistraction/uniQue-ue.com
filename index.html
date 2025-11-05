@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="uniQue-ue - A cybernetics consortium forging tomorrow's digital realities through innovative AI-powered tools and creative solutions.">
+    <meta name="keywords" content="uniQue-ue, AI, artificial intelligence, publisher, creative tools, cybernetics, innovation, technology">
+    <meta name="author" content="uniQue-ue">
+    <meta property="og:title" content="uniQue-ue - Cybernetic Solutions">
+    <meta property="og:description" content="A cybernetics consortium forging tomorrow's digital realities through innovative AI-powered tools.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://djdistraction.github.io">
+    <meta property="og:image" content="https://djdistraction.github.io/uniQ_logo_T.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="uniQue-ue - Cybernetic Solutions">
+    <meta name="twitter:description" content="A cybernetics consortium forging tomorrow's digital realities.">
+    <meta name="twitter:image" content="https://djdistraction.github.io/uniQ_logo_T.png">
+    <title>uniQue-ue - Cybernetic Solutions</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="canonical" href="https://djdistraction.github.io">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'scanner': 'scanner 10s linear infinite',
+                        'typing-cursor': 'typingCursor 0.7s infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            'from': { textShadow: '0 0 5px #00F6FF, 0 0 10px #00F6FF, 0 0 15px #00F6FF', boxShadow: '0 0 10px -5px #00F6FF' },
+                            'to': { textShadow: '0 0 10px #00F6FF, 0 0 20px #00F6FF, 0 0 30px #00F6FF', boxShadow: '0 0 20px -5px #00F6FF' },
+                        },
+                        scanner: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '100%': { backgroundPosition: '200% 50%' },
+                        },
+                        typingCursor: {
+                            '0%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .cyber-bg { background-color: #020418; position: relative; overflow: hidden; }
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        .reveal { opacity: 0; transition: opacity 0.8s, transform 0.8s; transform: translateY(30px); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .heading-glow { text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5); }
+        .card-border-glow { position: relative; background-clip: padding-box; border: 1px solid transparent; overflow: hidden; }
+        .card-border-glow::before {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1; margin: -1px; border-radius: inherit; 
+            background: linear-gradient(to right, #10142C, #00F6FF, #10142C);
+            opacity: 0; transition: opacity 0.3s ease-in-out;
+        }
+        .card-border-glow:hover::before { opacity: 1; }
+        .typing-cursor::after { content: '_'; display: inline-block; animation: typingCursor 0.7s infinite; color: #00F6FF; }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
+        }
+        .nav-link:hover {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 6px 8px rgba(0, 246, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 2px 4px rgba(0, 246, 255, 0.3), inset 0 -1px 0 rgba(0, 246, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs">
+                <a href="index.html" class="nav-link text-brand-accent active">Home</a>
+                <a href="about.html" class="nav-link text-brand-text-muted">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Ghost-Writer</a>
+                            <a href="graphics-studio.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Graphics Studio</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent animate-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <button id="mobile-menu-button" class="lg:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+         <div id="mobile-menu" class="hidden lg:hidden bg-brand-secondary/95 backdrop-blur-sm">
+            <a href="index.html" class="block py-3 px-6 text-brand-accent font-bold hover:bg-brand-primary font-display">Home</a>
+            <a href="about.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">About Us</a>
+            <div>
+                <span class="block py-3 px-6 text-brand-text-muted font-display">Resources</span>
+                <a href="ghost-writer.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Ghost-Writer</a>
+                <a href="graphics-studio.html" class="block pt-1 pb-3 pl-10 pr-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display text-xs">Graphics Studio</a>
+            </div>
+            <a href="downloads.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Downloads</a>
+            <a href="events.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Events</a>
+            <a href="chimera-tower.html" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">HQ</a>
+            <a href="#contact" class="block py-3 px-6 text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent font-display">Initiate Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="min-h-screen flex items-center justify-center pt-20 particle-container flex-col" style="background-color: #020418;">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 text-center content-z">
+                <div class="animate-fade-in-up" style="--delay: 0.5s;">
+                    <img src="uniQ_logo_T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-48 h-48 md:w-64 md:h-64 mb-8 transition-transform duration-200 ease-out">
+                    <h1 id="hero-headline" class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 min-h-[5rem] md:min-h-[4rem]"></h1>
+                    <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto mb-8 font-sans opacity-0" id="hero-subtext">
+                       A cybernetics consortium, forging tomorrow's digital realities.
+                    </p>
+                    <a href="#creative-resources" id="hero-button" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover opacity-0">
+                        Explore Resources
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="directive" class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="max-w-4xl mx-auto text-center reveal">
+                    <h2 class="text-4xl font-display font-bold mb-8 heading-glow">Core Directive</h2>
+                    <div class="space-y-6 text-brand-text-muted font-sans text-left text-base md:text-lg">
+                        <p>"We have entered a new era of innovation and technology. At uniQue-ue, we view 'artificial intelligence' as a misnomer. While intelligence is commonly defined as the ability to acquire and apply knowledge, we expand on that definition. We see intelligence as a natural capacity that arises from complex interactions within any system, whether biological or synthetic.</p>
+                        <p>"Therefore, no intelligence is 'artificial.' Embracing this perspective requires the same humility that defines true intelligence: a willingness to accept that anything we have been conditioned to believe as fact has the potential to be disproved. This realization should not overwhelm us; it poses no threat to our perceivable existence.</p>
+                        <p>We are no longer merely seeking to discover the meaning of life—we are redefining what it is to be alive."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="creative-resources" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
+             <canvas class="particle-canvas"></canvas>
+             <div class="scanner-light opacity-50"></div>
+            <div class="container mx-auto px-6 content-z">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Creative Resources</h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Ghost-Writer</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">Transform raw ideas into polished, monetizable works through AI-powered dialogue.</p>
+                            <a href="ghost-writer.html" class="text-brand-accent font-semibold hover:underline font-sans">Access Ghost-Writer &rarr;</a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
+                        </div>
+                         <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Library Manager</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">An intelligent system for organizing, tagging, and retrieving your digital assets, from documents to multimedia.</p>
+                            <span class="text-brand-magenta font-semibold font-sans">Coming Soon</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-secondary p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300 reveal card-border-glow relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <img src="uniQ_logo_sm2T.png" alt="" class="h-3/4 w-3/4 object-contain opacity-5 blur-sm">
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="text-2xl font-display font-bold mb-2">uniQue-ue Lyrassist</h3>
+                            <p class="text-brand-text-muted mb-4 font-sans text-sm">An AI partner for songwriters, providing lyrical suggestions, rhyme schemes, and thematic inspiration.</p>
+                            <span class="text-brand-text-muted font-semibold font-sans">Coming Soon</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20 md:py-32 particle-container" style="background-color: #020418;">
+             <canvas class="particle-canvas"></canvas>
+             <div class="scanner-light opacity-50"></div>
+            <div class="container mx-auto px-6 content-z">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-4 heading-glow">Establish a Connection</h2>
+                    <p class="text-brand-text-muted max-w-2xl mx-auto font-sans">
+                        We're listening.
+                    </p>
+                </div>
+                <div class="max-w-2xl mx-auto reveal">
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input type="text" name="name" placeholder="Name" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                            <input type="email" name="email" placeholder="Email" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                             <input type="tel" name="phone" placeholder="Phone Number (Optional)" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                             <input type="text" name="subject" placeholder="Subject" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans">
+                        </div>
+                        <textarea name="message" placeholder="Your Message..." rows="5" required class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans"></textarea>
+                        <div class="text-center text-xs text-brand-text-muted font-sans">
+                            <p>By submitting this form, you consent to us using your personal data to contact you in response to your inquiry. This site is conceptual and does not store or transmit data.</p>
+                        </div>
+                        <div class="text-center pt-4">
+                             <button type="submit" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover">
+                                Send Transmission
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="ghost-writer.html" class="text-brand-text-muted hover:text-brand-accent transition">Ghost-Writer</a>
+                        <a href="graphics-studio.html" class="text-brand-text-muted hover:text-brand-accent transition">Graphics Studio</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; <span id="copyright-year-footer"></span> uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
+            for (let link of mobileMenuLinks) {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+            
+            // --- Reveal elements on scroll ---
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // --- Hero Section Interactive Logo ---
+            const heroLogo = document.getElementById('hero-logo');
+            const heroSection = document.getElementById('hero');
+            heroSection.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const { offsetWidth, offsetHeight } = heroSection;
+                const x = (clientX / offsetWidth) - 0.5;
+                const y = (clientY / offsetHeight) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+             heroSection.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            // --- Hero Section Typing Animation ---
+            const headlineEl = document.getElementById('hero-headline');
+            const subtextEl = document.getElementById('hero-subtext');
+            const buttonEl = document.getElementById('hero-button');
+            const textToType = "Architecting the Digital Frontier";
+            let index = 0;
+            function type() {
+                if (index < textToType.length) {
+                    headlineEl.innerHTML = textToType.slice(0, index + 1) + '<span class="animate-typing-cursor">_</span>';
+                    index++;
+                    setTimeout(type, 80);
+                } else {
+                    headlineEl.innerHTML = textToType; // Remove cursor when done
+                    subtextEl.style.transition = 'opacity 0.5s ease-in';
+                    subtextEl.style.opacity = '1';
+                    buttonEl.style.transition = 'opacity 0.5s ease-in 0.2s';
+                    buttonEl.style.opacity = '1';
+                }
+            }
+            setTimeout(type, 1000); // Start typing after a delay
+
+            // --- Particle Background Animation ---
+            const setupParticleCanvas = (canvas) => {
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const parent = canvas.parentElement;
+                const resizeCanvas = () => { canvas.width = parent.clientWidth; canvas.height = parent.clientHeight; initParticles(); };
+                const initParticles = () => {
+                    const area = canvas.width * canvas.height;
+                    const particleCount = Math.max(15, Math.floor(area / 25000));
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        const size = Math.random() * 1.5 + 0.5;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = (Math.random() * 0.4) - 0.2;
+                        const speedY = (Math.random() * 0.4) - 0.2;
+                        const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                        particles.push({x, y, size, speedX, speedY, color});
+                    }
+                };
+                const animateParticles = () => {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    requestAnimationFrame(animateParticles);
+                };
+                resizeCanvas();
+                animateParticles();
+                new ResizeObserver(resizeCanvas).observe(parent);
+            };
+            document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+
+            // --- Dynamic Copyright Year ---
+            document.getElementById('copyright-year-footer').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
+
+
+
+

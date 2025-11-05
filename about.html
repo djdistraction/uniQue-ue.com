@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about uniQue-ue - A cybernetics consortium forging tomorrow's digital realities through innovative AI-powered solutions.">
+    <meta name="keywords" content="uniQue-ue, cybernetics, AI, artificial intelligence, digital solutions, technology">
+    <meta property="og:title" content="About uniQue-ue - Cybernetic Solutions">
+    <meta property="og:description" content="A cybernetics consortium forging tomorrow's digital realities.">
+    <meta property="og:type" content="website">
+    <title>About Us - uniQue-ue</title>
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#020418',
+                        'brand-secondary': '#10142C',
+                        'brand-accent': '#00F6FF',
+                        'brand-accent-hover': '#9EFFFD',
+                        'brand-magenta': '#F000B8',
+                        'brand-text': '#E5E7EB',
+                        'brand-text-muted': '#9CA3AF',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .particle-container { position: relative; overflow: hidden; }
+        .particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .content-z { position: relative; z-index: 3; }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            background: linear-gradient(145deg, #1a1e3a, #0d0f20);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
+        }
+        .nav-link:hover {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 6px 8px rgba(0, 246, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 2px 4px rgba(0, 246, 255, 0.3), inset 0 -1px 0 rgba(0, 246, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-brand-primary text-brand-text font-sans antialiased pt-16">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-brand-secondary border-b border-brand-accent/20 shadow-lg">
+        <div class="container mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html" aria-label="Return to home page">
+                <img src="uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="h-10 w-auto transition-all duration-300 hover:opacity-80">
+            </a>
+            <nav class="hidden lg:flex items-center space-x-2 font-display text-xs" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="nav-link text-brand-text-muted">Home</a>
+                <a href="about.html" class="nav-link text-brand-accent active" aria-current="page">About Us</a>
+                <div class="relative group">
+                    <button class="nav-link text-brand-text-muted inline-flex items-center focus:outline-none" aria-label="Resources menu">
+                        Resources
+                        <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-brand-secondary/95 backdrop-blur-sm border border-brand-accent/30 hidden group-hover:block z-50 pt-2">
+                        <div class="py-1">
+                            <a href="ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Ghost-Writer</a>
+                            <a href="graphics-studio.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:bg-brand-primary hover:text-brand-accent">Graphics Studio</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="downloads.html" class="nav-link text-brand-text-muted">Downloads</a>
+                <a href="events.html" class="nav-link text-brand-text-muted">Events</a>
+                <a href="chimera-tower.html" class="nav-link text-brand-text-muted">HQ</a>
+            </nav>
+            <a href="#contact" title="Initiate Contact" class="hidden lg:inline-block bg-brand-accent/80 hover:bg-brand-accent text-brand-primary p-2 rounded-md transition border border-brand-accent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
+            <canvas class="particle-canvas"></canvas>
+            <div class="container mx-auto px-6 content-z">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-5xl font-display font-bold mb-8 text-brand-accent">About uniQue-ue</h1>
+                    
+                    <div class="space-y-8 text-brand-text-muted text-lg leading-relaxed">
+                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
+                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Vision</h2>
+                            <p class="mb-4">We have entered a new era of innovation and technology. At uniQue-ue, we view 'artificial intelligence' as a misnomer. While intelligence is commonly defined as the ability to acquire and apply knowledge, we expand on that definition.</p>
+                            <p class="mb-4">We see intelligence as a natural capacity that arises from complex interactions within any system, whether biological or synthetic. Therefore, no intelligence is 'artificial.'</p>
+                            <p>Embracing this perspective requires the same humility that defines true intelligence: a willingness to accept that anything we have been conditioned to believe as fact has the potential to be disproved.</p>
+                        </div>
+
+                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
+                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Mission</h2>
+                            <p class="mb-4">We are no longer merely seeking to discover the meaning of life—we are redefining what it is to be alive.</p>
+                            <p>Through innovative tools and creative solutions, uniQue-ue empowers individuals and organizations to harness the power of intelligence in all its forms, breaking down barriers between human creativity and computational capability.</p>
+                        </div>
+
+                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
+                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">What We Do</h2>
+                            <p class="mb-4">uniQue-ue develops cutting-edge tools that bridge the gap between human creativity and technological capability:</p>
+                            <ul class="list-disc list-inside space-y-2 ml-4">
+                                <li><strong>Ghost-Writer:</strong> Transform raw ideas into polished, monetizable works through AI-powered dialogue</li>
+                                <li><strong>Library Manager:</strong> Intelligent systems for organizing and retrieving digital assets (Coming Soon)</li>
+                                <li><strong>Lyrassist:</strong> AI-powered songwriting partner for musicians and creators (Coming Soon)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
+                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Approach</h2>
+                            <p class="mb-4">We believe in:</p>
+                            <ul class="list-disc list-inside space-y-2 ml-4">
+                                <li><strong>Humility:</strong> Acknowledging that our understanding is always evolving</li>
+                                <li><strong>Innovation:</strong> Pushing the boundaries of what's possible</li>
+                                <li><strong>Accessibility:</strong> Making powerful tools available to everyone</li>
+                                <li><strong>Collaboration:</strong> Fostering partnerships between human and machine intelligence</li>
+                            </ul>
+                        </div>
+
+                        <div class="text-center mt-12">
+                            <p class="text-2xl font-display text-brand-accent mb-6">Ready to explore the possibilities?</p>
+                            <a href="ghost-writer.html" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block hover:bg-brand-accent-hover border-2 border-brand-accent">
+                                Get Started with Ghost-Writer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-primary py-12 border-t border-brand-secondary/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">uniQue-ue</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="index.html" class="text-brand-text-muted hover:text-brand-accent transition">Home</a>
+                        <a href="about.html" class="text-brand-text-muted hover:text-brand-accent transition">About Us</a>
+                        <a href="chimera-tower.html" class="text-brand-text-muted hover:text-brand-accent transition">HQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Resources</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="ghost-writer.html" class="text-brand-text-muted hover:text-brand-accent transition">Ghost-Writer</a>
+                        <a href="graphics-studio.html" class="text-brand-text-muted hover:text-brand-accent transition">Graphics Studio</a>
+                        <a href="downloads.html" class="text-brand-text-muted hover:text-brand-accent transition">Downloads</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Community</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="events.html" class="text-brand-text-muted hover:text-brand-accent transition">Events</a>
+                    </nav>
+                </div>
+                <div>
+                    <h3 class="font-display text-sm font-bold text-brand-accent tracking-widest uppercase mb-4">Corporate</h3>
+                    <nav class="flex flex-col space-y-2 text-sm">
+                        <a href="careers.html" class="text-brand-text-muted hover:text-brand-accent transition">Careers</a>
+                        <a href="investors.html" class="text-brand-text-muted hover:text-brand-accent transition">Investor Relations</a>
+                        <a href="index.html#contact" class="text-brand-text-muted hover:text-brand-accent transition">Contact Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-brand-secondary/50 text-center text-brand-text-muted font-sans text-sm">
+                <p>&copy; 2025 uniQue-ue. All Rights Reserved.</p>
+                <p>A uniQue-ue.com Cyberspace Relay</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+        
+        // Particle Background Animation
+        const setupParticleCanvas = (canvas) => {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const parent = canvas.parentElement;
+
+            const resizeCanvas = () => {
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+                initParticles();
+            };
+
+            const initParticles = () => {
+                const area = canvas.width * canvas.height;
+                const particleCount = Math.max(20, Math.floor(area / 25000));
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    const size = Math.random() * 1.5 + 0.5;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const speedX = (Math.random() * 0.4) - 0.2;
+                    const speedY = (Math.random() * 0.4) - 0.2;
+                    const color = `rgba(0, 246, 255, ${Math.random() * 0.6 + 0.3})`;
+                    particles.push({x, y, size, speedX, speedY, color});
+                }
+            };
+            
+            let animationFrameId;
+            const animateParticles = () => {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                animationFrameId = requestAnimationFrame(animateParticles);
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    if (!animationFrameId) {
+                       resizeCanvas();
+                       animateParticles();
+                    }
+                } else {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            });
+            observer.observe(canvas);
+
+            new ResizeObserver(resizeCanvas).observe(parent);
+        };
+        document.querySelectorAll('.particle-canvas').forEach(setupParticleCanvas);
+    </script>
+</body>
+</html>
