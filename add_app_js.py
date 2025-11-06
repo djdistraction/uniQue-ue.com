@@ -1,316 +1,181 @@
 import os
+import re
 
 # --- Configuration ---
 
-# This dictionary holds the new app.js file.
-new_file_content = {
+# This is the new, standardized <head> content for every page.
+# It includes Tailwind, our new stylesheet, and our new JS modules.
+new_head_content = """
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{TITLE_PLACEHOLDER}</title>
     
-    "app.js": """
-/*
-  Main Application JavaScript
-  This file handles all site-wide logic:
-  1. Component Loading (Header/Footer)
-  2. Particle Background Effect
-  3. "Warp Drive" Page Transitions
-  4. Firebase Auth State (Sign In / Profile Button)
-  5. Mobile Menu Toggle
-  6. AI Host Toggle
-  7. Global Helper Functions
-*/
-
-// Import Firebase services (we need auth for the header)
-import { auth } from './firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-// --- Main App Initialization ---
-document.addEventListener('DOMContentLoaded', () => {
-  // This is the entry point for all our JS.
-  // We wait for the page's HTML to be ready before running.
-  
-  loadComponents();
-  initParticleEffect();
-  initWarpDrive();
-  initMobileMenu();
-  initAIHost();
-  initAuthStateListener();
-  
-  // Set copyright year in footer (after it's loaded)
-  // We use a small delay to ensure _footer.html is in place.
-  setTimeout(setCopyrightYear, 200);
-});
-
-
-// --- 1. Component Loading ---
-async function loadComponents() {
-  // Find the placeholder divs in our HTML pages
-  const headerPlaceholder = document.getElementById('header-placeholder');
-  const footerPlaceholder = document.getElementById('footer-placeholder');
-
-  // Load _header.html
-  if (headerPlaceholder) {
-    try {
-      const response = await fetch('_header.html');
-      if (!response.ok) throw new Error('Failed to load header');
-      const headerHTML = await response.text();
-      headerPlaceholder.innerHTML = headerHTML;
-      // After loading, find the new elements to make them interactive
-      initMobileMenu(); // Re-init for mobile
-      initAIHost(); // Re-init for AI host button
-      initAuthStateListener(); // Re-init for auth buttons
-      setActiveNavLink(); // Highlight the current page
-    } catch (error) {
-      console.error('Error loading header:', error);
-      headerPlaceholder.innerHTML = '<p class="text-red-500 text-center">Error loading header.</p>';
-    }
-  }
-
-  // Load _footer.html
-  if (footerPlaceholder) {
-    try {
-      const response = await fetch('_footer.html');
-      if (!response.ok) throw new Error('Failed to load footer');
-      const footerHTML = await response.text();
-      footerPlaceholder.innerHTML = footerHTML;
-      // Set copyright year after loading
-      setCopyrightYear();
-    } catch (error) {
-      console.error('Error loading footer:', error);
-      footerPlaceholder.innerHTML = '<p class="text-red-500 text-center">Error loading footer.</p>';
-    }
-  }
-}
-
-// --- 2. Particle Background Effect ---
-function initParticleEffect() {
-  const canvas = document.getElementById('particle-canvas');
-  if (!canvas) {
-    console.warn('Particle canvas not found. Skipping effect.');
-    return;
-  }
-  
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-
-  const resizeCanvas = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  };
-
-  const createParticles = () = > {
-    particles = [];
-    const particleCount = Math.floor((canvas.width * canvas.height) / 10000); // More particles
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        // More varied speed
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 1, // Sizes from 1 to 3
-        // Brighter, more varied opacity
-        opacity: Math.random() * 0.5 + 0.3, // Opacity from 0.3 to 0.8
-      });
-    }
-  };
-
-  const animateParticles = () = > {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p = > {
-      p.x += p.vx;
-      p.y += p.vy;
-
-      // Wrap particles around edges
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
-
-      // Draw particle
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(0, 246, 255, ${p.opacity})`; // brand-accent
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    requestAnimationFrame(animateParticles);
-  };
-
-  // Set up
-  window.addEventListener('resize', () = > {
-    resizeCanvas();
-    createParticles();
-  });
-  resizeCanvas();
-  createParticles();
-  animateParticles();
-}
-
-
-// --- 3. "Warp Drive" Page Transitions ---
-function initWarpDrive() {
-  const prefetchCache = new Map();
-
-  // 1. Pre-fetch on hover
-  const prefetchLink = (e) = > {
-    if (e.target.tagName === 'A') {
-      const url = e.target.href;
-      // Check if it's an internal link and not already cached
-      if (url.startsWith(window.location.origin) && !prefetchCache.has(url)) {
-        prefetchCache.set(url, fetch(url));
-        console.log(`Prefetching ${url}`);
-      }
-    }
-  };
-
-  // 2. Handle navigation click
-  const navigate = (e) = > {
-    if (e.target.tagName === 'A') {
-      const url = e.target.href;
-      // Only for internal links
-      if (url.startsWith(window.location.origin) && url !== window.location.href) {
-        e.preventDefault(); // Stop the browser's default navigation
-        
-        // Add "navigating" class to fade out
-        document.body.classList.add('is-navigating');
-        
-        // Wait for the fade-out, then change page
-        setTimeout(() = > {
-          window.location.href = url;
-        }, 300); // 300ms matches the CSS transition
-      }
-    }
-  };
-
-  // Add listeners to the document
-  document.addEventListener('mouseover', prefetchLink, { passive: true });
-  document.addEventListener('click', navigate);
-}
-
-
-// --- 4. Firebase Auth State Listener ---
-function initAuthStateListener() {
-  const authContainer = document.getElementById('auth-nav-container');
-  const mobileAuthContainer = document.getElementById('mobile-auth-nav-container');
-  
-  // This function runs every time the auth state changes (login/logout)
-  onAuthStateChanged(auth, (user) = > {
-    if (!authContainer || !mobileAuthContainer) {
-      // Header might not be loaded yet.
-      return;
-    }
-
-    if (user) {
-      // --- User is SIGNED IN ---
-      const displayName = user.displayName || user.email;
-      const profileButtonHTML = `
-        <a href="profile.html" class="nav-link flex items-center gap-2" data-navlink="profile">
-          <img src="${user.photoURL || 'https://placehold.co/32x32/10142C/00F6FF?text=' + displayName.charAt(0).toUpperCase()}" alt="Profile" class="h-6 w-6 rounded-full border border-brand-accent/50">
-          <span>Profile</span>
-        </a>
-      `;
-      authContainer.innerHTML = profileButtonHTML;
-      mobileAuthContainer.innerHTML = profileButtonHTML;
-      
-    } else {
-      // --- User is SIGNED OUT ---
-      const signInButtonHTML = `
-        <a href="profile.html" class="nav-link" data-navlink="profile">
-          Sign In
-        </a>
-      `;
-      authContainer.innerHTML = signInButtonHTML;
-      mobileAuthContainer.innerHTML = signInButtonHTML;
-    }
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
-    // Re-highlight the active link after updating header HTML
-    setActiveNavLink();
-  });
-}
-
-
-// --- 5. Mobile Menu Toggle ---
-function initMobileMenu() {
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () = > {
-      mobileMenu.classList.toggle('hidden');
-    });
-  }
-}
-
-// --- 6. AI Host Toggle ---
-function initAIHost() {
-  const aiHostToggle = document.getElementById('ai-host-toggle');
-  const aiHostWindow = document.getElementById('ai-host-window'); // We will create this in HTML
-
-  if (aiHostToggle) {
-    aiHostToggle.addEventListener('click', () = > {
-      // TODO: Add logic to show/hide the AI Host chat window
-      console.log('AI Host Toggled');
-      if (aiHostWindow) {
-        aiHostWindow.classList.toggle('hidden');
-      } else {
-        alert('AI Host window not built yet.');
-      }
-    });
-  }
-}
-
-// --- 7. Global Helper Functions ---
-
-// Sets the copyright year in the footer
-function setCopyrightYear() {
-  const yearSpan = document.getElementById('copyright-year');
-  if (yearSpan) {
-    yearSpan.textContent = new Date().getFullYear();
-  }
-}
-
-// Highlights the active navigation link
-function setActiveNavLink() {
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  const navLinks = document.querySelectorAll('.nav-link');
-  
-  navLinks.forEach(link = > {
-    const linkPage = link.getAttribute('href').split('/').pop() || 'index.html';
-    const dataNav = link.dataset.navlink;
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
     
-    // Check if href matches or data-navlink matches
-    if (linkPage === currentPage || (dataNav && currentPage.startsWith(dataNav))) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
-    }
-  });
-}
+    <!-- Firebase & Main App Logic -->
+    <!-- We use type="module" to enable import/export -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <!-- We'll keep the old logo files for now -->
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
 """
-}
+
+# This is the new, standardized <body> structure for every page.
+# It includes the particle canvas and our header/footer placeholders.
+new_body_content = """
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- 
+      Page Wrapper
+      This holds all content and sits on top of the particle canvas.
+      It has padding-top to account for the 80px fixed header.
+    -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <!-- app.js will load _header.html into this div -->
+        <div id="header-placeholder">
+            <!-- Skeleton loader for the header -->
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- 
+          Main Content
+          The unique content for each page will be placed inside this <main> tag.
+        -->
+        <main class="container mx-auto px-6 py-12">
+            {MAIN_CONTENT_PLACEHOLDER}
+        </main>
+        
+        <!-- Global Footer Component -->
+        <!-- app.js will load _footer.html into this div -->
+        <div id="footer-placeholder">
+            <!-- Skeleton loader for the footer -->
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+</body>
+"""
+
+# List of all HTML files to update
+html_files_to_update = [
+    "index.html",
+    "about.html",
+    "ghost-writer.html",
+    "graphics-studio.html",
+    "contact.html",
+    "profile.html",
+    "resources.html",
+    "privacy.html",
+    "terms.html",
+]
+
+# Regex patterns to find old content
+# 1. Finds the <title> tag content
+title_pattern = re.compile(r"<title>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+# 2. Finds the <main> tag and all its content
+main_content_pattern = re.compile(r"<main(.*?)>(.*?)</main>", re.IGNORECASE | re.DOTALL)
+# 3. Finds the <body> tag and all its content (fallback)
+body_content_pattern = re.compile(r"<body(.*?)>(.*?)</body>", re.IGNORECASE | re.DOTALL)
+
+
+def get_existing_content(content):
+    """
+    Tries to extract the <title> and <main> content from an old HTML file.
+    """
+    title_match = title_pattern.search(content)
+    title = title_match.group(1).strip() if title_match else "uniQue-ue"
+    
+    main_content_match = main_content_pattern.search(content)
+    if main_content_match:
+        # Found a <main> tag, use its content
+        main_content = main_content_match.group(2).strip()
+    else:
+        # No <main> tag found, try to find <body> content
+        body_content_match = body_content_pattern.search(content)
+        if body_content_match:
+            # Found <body>, but we need to strip old headers/footers
+            # This is complex, so for now, we'll just grab it all.
+            # This works well for the *new* placeholder pages from the first script.
+            main_content = body_content_match.group(2).strip()
+        else:
+            main_content = f"<!-- Could not find existing content for this page. -->"
+            
+    # Special case for our placeholder files: clean up the wrapper divs
+    if "<!-- TODO: Add new site-wide header -->" in main_content:
+        main_content = main_content.replace("<!-- TODO: Add new site-wide header -->", "")
+    if "<!-- TODO: Add new site-wide footer -->" in main_content:
+        main_content = main_content.replace("<!-- TODO: Add new site-wide footer -->", "")
+        
+    return title, main_content.strip()
 
 def main():
-    print("🚀 Creating the main app.js file...")
+    print("🚀 Upgrading all HTML pages to the new global shell...")
     
     project_dir = os.getcwd()
     print(f"Running in: {project_dir}\n")
     
-    # --- Create the new app.js file ---
-    for filename, content in new_file_content.items():
+    files_updated = 0
+    files_failed = 0
+    
+    for filename in html_files_to_update:
         file_path = os.path.join(project_dir, filename)
+        
+        if not os.path.exists(file_path):
+            print(f"⚠️  SKIPPED: {filename} (does not exist)")
+            continue
+            
         try:
+            # --- 1. Read the old file content ---
+            with open(file_path, 'r', encoding='utf-8') as f:
+                old_content = f.read()
+                
+            # --- 2. Extract the useful parts (title and main content) ---
+            title, main_content = get_existing_content(old_content)
+            
+            print(f"ℹ️  Processing: {filename} (Title: {title})")
+            
+            # --- 3. Build the new, complete HTML file ---
+            new_html = "<!DOCTYPE html>\n<html lang=\"en\">\n"
+            new_html += new_head_content.replace("{TITLE_PLACEHOLDER}", title)
+            new_html += new_body_content.replace("{MAIN_CONTENT_PLACEHOLDER}", main_content)
+            new_html += "\n</html>"
+            
+            # --- 4. Write the new content back to the file ---
             with open(file_path, 'w', encoding='utf-8') as f:
-                # .strip() removes the extra newlines at the start/end
-                f.write(content.strip())
-            print(f"✅ CREATED: {filename}")
+                f.write(new_html)
+                
+            print(f"✅ UPDATED: {filename}")
+            files_updated += 1
+            
         except Exception as e:
-            print(f"❌ ERROR: Could not write {filename}. {e}")
+            print(f"❌ ERROR: Could not process {filename}. {e}")
+            files_failed += 1
 
-    print("\n🎉 app.js created successfully!")
+    print("\n" + "="*30)
+    print("🎉 HTML Upgrade Complete!")
+    print(f"   {files_updated} files successfully updated.")
+    print(f"   {files_failed} files failed.")
+    print("="*30)
     print("\n--- NEXT STEPS ---")
-    print("1. We now need to update all our HTML pages to use these new files.")
-    print("2. Run 'git add app.js' and 'git commit' to save this file to your repo.")
+    print("1. Your local HTML pages are now all using the new `app.js` system.")
+    print("2. Now we can start redesigning the *content* of each page (Phase 3).")
+    print("3. Run 'git add .' and 'git commit' to save these changes to your repo.")
 
 if __name__ == "__main__":
     main()
