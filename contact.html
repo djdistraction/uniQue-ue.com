@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - uniQue-ue</title>
+    <title>Contact - uniQue-ue</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,71 +21,231 @@
     <script src="firebase-config.js" type="module"></script>
     <script src="app.js" type="module"></script>
     
-    <!-- We'll keep the old logo files for now -->
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Page-specific styles for form inputs -->
+    <style>
+      .form-input {
+        @apply w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/50 focus:outline-none transition-all duration-300 font-sans text-brand-text placeholder-brand-text-muted;
+      }
+      .form-input:focus {
+        box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+      }
+      .form-button {
+        @apply w-full bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover disabled:bg-brand-text-muted disabled:animate-none;
+      }
+      .faq-item {
+        @apply bg-brand-secondary/50 border border-brand-accent/20 rounded-lg overflow-hidden;
+      }
+      .faq-question {
+        @apply w-full flex justify-between items-center p-6 text-left font-display text-lg text-brand-accent;
+      }
+      .faq-answer {
+        @apply p-6 pt-0 text-brand-text-muted max-h-0 opacity-0 transition-all duration-500 ease-in-out;
+      }
+      .faq-item.open .faq-answer {
+        @apply max-h-screen opacity-100;
+      }
+      .faq-item.open .faq-arrow {
+        @apply rotate-180;
+      }
+    </style>
 </head>
 
 <body>
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
         <!-- 
           Main Content
-          The unique content for each page will be placed inside this <main> tag.
+          This is the new "Contact Us" page content.
         -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-display mb-4">Contact Us</h1>
-        <p class="mb-8">Have a question or want to get in touch? Send us a message.</p>
-        
-        <form id="contact-form" class="max-w-xl">
-            <!-- Form fields: Name, Email, Subject, Message -->
-            <button typeD="submit">Send Message</button>
-        </form>
-        <p id="form-status" class="mt-4"></p>
-        
-        <h2 class="text-3xl font-display mt-12 mb-4">Frequently Asked Questions (FAQ)</h2>
-        <!-- TODO: Add FAQ content -->
-    </div>
-    
-    
-    
-    <!-- Import Firebase and our contact form logic -->
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        // TODO: Add contact form submission logic
-        // This will POST to our '/contact' worker endpoint
-    </script>
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                <div class="grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
+                    
+                    <!-- Column 1: Contact Form -->
+                    <div class="max-w-xl">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-4 heading-glow">
+                            Establish Connection
+                        </h1>
+                        <p class="text-lg text-brand-text-muted mb-8">
+                            We are listening. Send a transmission, and our network will route it to the appropriate operative.
+                        </p>
+                        
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-brand-text-muted mb-2">Callsign / Name</label>
+                                    <input type="text" id="name" name="name" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-brand-text-muted mb-2">Secure Comms / Email</label>
+                                    <input type="email" id="email" name="email" class="form-input" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-brand-text-muted mb-2">Subject</label>
+                                <input type="text" id="subject" name="subject" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-brand-text-muted mb-2">Transmission / Message</label>
+                                <textarea id="message" name="message" rows="5" class="form-input" required></textarea>
+                            </div>
+                            <div>
+                                <button type="submit" id="form-submit-button" class="form-button">
+                                    Send Transmission
+                                </button>
+                            </div>
+                        </form>
+                        <p id="form-status" class="mt-6 text-center text-brand-accent"></p>
+                    </div>
+                    
+                    <!-- Column 2: FAQ -->
+                    <div class="mt-0 md:mt-16">
+                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent text-center md:text-left">
+                            Frequently Accessed Queries
+                        </h2>
+                        <div class="space-y-4" id="faq-container">
+                            <!-- FAQ items will be injected here -->
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
-    </div>
-</body>
+    </div> <!-- End Page Wrapper -->
 
+    <!-- Page-Specific JavaScript Module -->
+    <script type="module">
+        // --- FAQ Content ---
+        const faqs = [
+            {
+                q: "What is uniQue-ue?",
+                a: "uniQue-ue is a cybernetics consortium and a forward-thinking project. Our mission is to build tools that bridge human creativity and artificial intelligence, operating as a symbiotic partnership between human oversight and specialized AI models."
+            },
+            {
+                q: "What is Ghost-Writer?",
+                a: "Ghost-Writer is an AI-powered creative writing assistant. It's designed to be a collaborative partner, helping you brainstorm, refine ideas, and transform your raw concepts into polished, monetizable works through an interactive dialogue."
+            },
+            {
+                q: "How do I sign up?",
+                a: "You can create a free account by clicking the 'Sign In' button in the navigation header. We offer sign-in via Google or with a traditional Email and Password."
+            },
+            {
+                q: "Is this really free?",
+                a: "Yes, our platform is free to use. We provide generous free tiers for all our services, including Firebase (for your account) and our AI tools. We plan to introduce optional paid subscription plans in the future for advanced features and higher usage limits."
+            }
+        ];
+
+        // --- DOM Elements ---
+        const faqContainer = document.getElementById('faq-container');
+        const contactForm = document.getElementById('contact-form');
+        const submitButton = document.getElementById('form-submit-button');
+        const formStatus = document.getElementById('form-status');
+        
+        // --- Get Worker URL (from app.js or directly) ---
+        // This relies on the WORKER_URL being available globally or imported
+        // For simplicity, we'll redefine it here.
+        // In a real build system, this would be a shared constant.
+        const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
+
+        // --- 1. Populate FAQs ---
+        function initFAQs() {
+            if (!faqContainer) return;
+            faqContainer.innerHTML = '';
+            
+            faqs.forEach(faq => {
+                const item = document.createElement('div');
+                item.className = 'faq-item';
+                item.innerHTML = `
+                    <button class="faq-question">
+                        <span>${faq.q}</span>
+                        <svg class="faq-arrow w-6 h-6 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>${faq.a}</p>
+                    </div>
+                `;
+                faqContainer.appendChild(item);
+            });
+
+            // Add click event listener to all FAQ questions
+            faqContainer.addEventListener('click', (e) => {
+                const questionButton = e.target.closest('.faq-question');
+                if (questionButton) {
+                    const faqItem = questionButton.closest('.faq-item');
+                    faqItem.classList.toggle('open');
+                }
+            });
+        }
+        
+        // --- 2. Handle Contact Form Submission ---
+        async function handleFormSubmit(e) {
+            e.preventDefault(); // Stop default form submission
+            
+            submitButton.disabled = true;
+            submitButton.textContent = "Transmitting...";
+            formStatus.textContent = "";
+
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message')
+            };
+
+            try {
+                const response = await fetch(`${WORKER_URL}/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Success!
+                    formStatus.textContent = "Transmission received. We will be in touch.";
+                    formStatus.classList.remove('text-brand-magenta');
+                    formStatus.classList.add('text-brand-accent');
+                    contactForm.reset();
+                } else {
+                    // Server-side error
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "A network error occurred.");
+                }
+
+            } catch (error) {
+                console.error("Contact Form Error:", error);
+                formStatus.textContent = `Transmission failed. ${error.message}`;
+                formStatus.classList.add('text-brand-magenta');
+                formStatus.classList.remove('text-brand-accent');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Send Transmission";
+            }
+        }
+
+        // --- Initialization ---
+        initFAQs();
+        if (contactForm) {
+            contactForm.addEventListener('submit', handleFormSubmit);
+        }
+
+    </script>
+</body>
 </html>
