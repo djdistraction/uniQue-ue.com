@@ -12,7 +12,7 @@
 
 // Import Firebase services (we need auth for the header)
 // Use relative path for local file testing
-import { auth } from './firebase-config.js'; 
+import { auth } from 'firebase-config.js'; 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Main App Initialization ---
@@ -40,7 +40,7 @@ async function loadComponents() {
   if (headerPlaceholder) {
     try {
       // Use relative path
-      const response = await fetch('./_header.html'); 
+      const response = await fetch('_header.html'); 
       if (!response.ok) throw new Error('Failed to load header');
       const headerHTML = await response.text();
       headerPlaceholder.innerHTML = headerHTML;
@@ -59,7 +59,7 @@ async function loadComponents() {
   if (footerPlaceholder) {
     try {
       // Use relative path
-      const response = await fetch('./_footer.html'); 
+      const response = await fetch('_footer.html'); 
       if (!response.ok) throw new Error('Failed to load footer');
       const footerHTML = await response.text();
       footerPlaceholder.innerHTML = footerHTML;
