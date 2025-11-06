@@ -12,11 +12,15 @@
 @tailwind utilities;
 
 /* --- Base Theme & Typography --- */
+html {
+  scroll-behavior: smooth;
+}
 body {
   background-color: #020418; /* brand-primary */
   color: #E5E7EB; /* brand-text */
   font-family: 'Inter', sans-serif;
-  antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -62,6 +66,10 @@ h1, h2, h3, h4, h5, h6 {
 /* --- Glow Animation --- */
 .animate-glow {
   animation: glow 3s ease-in-out infinite alternate;
+}
+
+.heading-glow {
+  text-shadow: 0 0 3px rgba(0, 246, 255, 0.7), 0 0 5px rgba(0, 246, 255, 0.5);
 }
 
 @keyframes glow {
@@ -122,4 +130,10 @@ body.is-navigating {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-accent);
+}
+
+/* --- Misc Helper Classes --- */
+.chat-bubble-3d {
+    border: 1px solid rgba(0, 246, 255, 0.1);
+    box-shadow: inset 0 1px 1px rgba(0, 246, 255, 0.15), 0 1px 3px rgba(0,0,0,0.4);
 }

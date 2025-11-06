@@ -6,13 +6,14 @@
   3. "Warp Drive" Page Transitions
   4. Firebase Auth State (Sign In / Profile Button)
   5. Mobile Menu Toggle
-  6. AI Host Toggle
+  6. AI Host Toggle (if AI Host window exists)
   7. Global Helper Functions
 */
 
 // Import Firebase services (we need auth for the header)
-import { auth } from './firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// Use relative path for local file testing
+import { auth } from './firebase-config.js'; 
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Main App Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,13 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
   loadComponents();
   initParticleEffect();
   initWarpDrive();
-  initMobileMenu();
-  initAIHost();
-  initAuthStateListener();
   
   // Set copyright year in footer (after it's loaded)
   // We use a small delay to ensure _footer.html is in place.
-  setTimeout(setCopyrightYear, 200);
+  setTimeout(setCopyrightYear, 300);
 });
 
 
@@ -41,14 +39,15 @@ async function loadComponents() {
   // Load _header.html
   if (headerPlaceholder) {
     try {
-      const response = await fetch('_header.html');
+      // Use relative path
+      const response = await fetch('./_header.html'); 
       if (!response.ok) throw new Error('Failed to load header');
       const headerHTML = await response.text();
       headerPlaceholder.innerHTML = headerHTML;
       // After loading, find the new elements to make them interactive
-      initMobileMenu(); // Re-init for mobile
-      initAIHost(); // Re-init for AI host button
-      initAuthStateListener(); // Re-init for auth buttons
+      initMobileMenu(); 
+      initAIHost(); 
+      initAuthStateListener();
       setActiveNavLink(); // Highlight the current page
     } catch (error) {
       console.error('Error loading header:', error);
@@ -59,7 +58,8 @@ async function loadComponents() {
   // Load _footer.html
   if (footerPlaceholder) {
     try {
-      const response = await fetch('_footer.html');
+      // Use relative path
+      const response = await fetch('./_footer.html'); 
       if (!response.ok) throw new Error('Failed to load footer');
       const footerHTML = await response.text();
       footerPlaceholder.innerHTML = footerHTML;
@@ -88,28 +88,30 @@ function initParticleEffect() {
     canvas.height = window.innerHeight;
   };
 
-  const createParticles = () = > {
+  const createParticles = () => {
     particles = [];
-    const particleCount = Math.floor((canvas.width * canvas.height) / 10000); // More particles
+    // More particles, based on screen area
+    const particleCount = Math.floor((canvas.width * canvas.height) / 8000); 
     
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         // More varied speed
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 2 + 1, // Sizes from 1 to 3
         // Brighter, more varied opacity
-        opacity: Math.random() * 0.5 + 0.3, // Opacity from 0.3 to 0.8
+        opacity: Math.random() * 0.7 + 0.3, // Opacity from 0.3 to 1.0
       });
     }
   };
 
-  const animateParticles = () = > {
+  const animateParticles = () => {
+    if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    particles.forEach(p = > {
+    particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
 
@@ -121,7 +123,8 @@ function initParticleEffect() {
 
       // Draw particle
       ctx.beginPath();
-      ctx.fillStyle = `rgba(0, 246, 255, ${p.opacity})`; // brand-accent
+      // More vibrant color
+      ctx.fillStyle = `rgba(0, 246, 255, ${p.opacity})`; 
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
     });
@@ -130,7 +133,7 @@ function initParticleEffect() {
   };
 
   // Set up
-  window.addEventListener('resize', () = > {
+  window.addEventListener('resize', () => {
     resizeCanvas();
     createParticles();
   });
@@ -143,33 +146,34 @@ function initParticleEffect() {
 // --- 3. "Warp Drive" Page Transitions ---
 function initWarpDrive() {
   const prefetchCache = new Map();
+  let isNavigating = false;
 
   // 1. Pre-fetch on hover
-  const prefetchLink = (e) = > {
+  const prefetchLink = (e) => {
     if (e.target.tagName === 'A') {
-      const url = e.target.href;
+      const url = new URL(e.target.href, window.location.origin);
       // Check if it's an internal link and not already cached
-      if (url.startsWith(window.location.origin) && !prefetchCache.has(url)) {
-        prefetchCache.set(url, fetch(url));
-        console.log(`Prefetching ${url}`);
+      if (url.origin === window.location.origin && !prefetchCache.has(url.href)) {
+        prefetchCache.set(url.href, fetch(url.href));
       }
     }
   };
 
   // 2. Handle navigation click
-  const navigate = (e) = > {
+  const navigate = (e) => {
     if (e.target.tagName === 'A') {
-      const url = e.target.href;
-      // Only for internal links
-      if (url.startsWith(window.location.origin) && url !== window.location.href) {
+      const url = new URL(e.target.href, window.location.origin);
+      // Only for internal links, not hashes, and not already navigating
+      if (url.origin === window.location.origin && url.href !== window.location.href && !url.hash && !isNavigating) {
         e.preventDefault(); // Stop the browser's default navigation
+        isNavigating = true;
         
         // Add "navigating" class to fade out
         document.body.classList.add('is-navigating');
         
         // Wait for the fade-out, then change page
-        setTimeout(() = > {
-          window.location.href = url;
+        setTimeout(() => {
+          window.location.href = url.href;
         }, 300); // 300ms matches the CSS transition
       }
     }
@@ -178,6 +182,11 @@ function initWarpDrive() {
   // Add listeners to the document
   document.addEventListener('mouseover', prefetchLink, { passive: true });
   document.addEventListener('click', navigate);
+
+  // On page load, fade in
+  window.addEventListener('load', () => {
+    document.body.classList.remove('is-navigating');
+  });
 }
 
 
@@ -187,7 +196,7 @@ function initAuthStateListener() {
   const mobileAuthContainer = document.getElementById('mobile-auth-nav-container');
   
   // This function runs every time the auth state changes (login/logout)
-  onAuthStateChanged(auth, (user) = > {
+  onAuthStateChanged(auth, (user) => {
     if (!authContainer || !mobileAuthContainer) {
       // Header might not be loaded yet.
       return;
@@ -195,9 +204,9 @@ function initAuthStateListener() {
 
     if (user) {
       // --- User is SIGNED IN ---
-      const displayName = user.displayName || user.email;
+      const displayName = user.email ? user.email.split('@')[0] : 'User';
       const profileButtonHTML = `
-        <a href="profile.html" class="nav-link flex items-center gap-2" data-navlink="profile">
+        <a href="./profile.html" class="nav-link flex items-center gap-2" data-navlink="profile">
           <img src="${user.photoURL || 'https://placehold.co/32x32/10142C/00F6FF?text=' + displayName.charAt(0).toUpperCase()}" alt="Profile" class="h-6 w-6 rounded-full border border-brand-accent/50">
           <span>Profile</span>
         </a>
@@ -208,7 +217,7 @@ function initAuthStateListener() {
     } else {
       // --- User is SIGNED OUT ---
       const signInButtonHTML = `
-        <a href="profile.html" class="nav-link" data-navlink="profile">
+        <a href="./profile.html" class="nav-link" data-navlink="profile">
           Sign In
         </a>
       `;
@@ -228,7 +237,8 @@ function initMobileMenu() {
   const mobileMenu = document.getElementById('mobile-menu');
 
   if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () = > {
+    mobileMenuButton.addEventListener('click', (e) => {
+      e.stopPropagation();
       mobileMenu.classList.toggle('hidden');
     });
   }
@@ -237,16 +247,14 @@ function initMobileMenu() {
 // --- 6. AI Host Toggle ---
 function initAIHost() {
   const aiHostToggle = document.getElementById('ai-host-toggle');
-  const aiHostWindow = document.getElementById('ai-host-window'); // We will create this in HTML
+  const aiHostWindow = document.getElementById('ai-host-window'); // This ID is in index.html
 
-  if (aiHostToggle) {
-    aiHostToggle.addEventListener('click', () = > {
-      // TODO: Add logic to show/hide the AI Host chat window
-      console.log('AI Host Toggled');
-      if (aiHostWindow) {
-        aiHostWindow.classList.toggle('hidden');
-      } else {
-        alert('AI Host window not built yet.');
+  if (aiHostToggle && aiHostWindow) {
+    aiHostToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // This is defined in index.html
+      if(typeof toggleHostWindow === 'function') {
+        toggleHostWindow();
       }
     });
   }
@@ -264,15 +272,14 @@ function setCopyrightYear() {
 
 // Highlights the active navigation link
 function setActiveNavLink() {
+  // Use a relative path to get the current page, default to index.html
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   const navLinks = document.querySelectorAll('.nav-link');
   
-  navLinks.forEach(link = > {
-    const linkPage = link.getAttribute('href').split('/').pop() || 'index.html';
-    const dataNav = link.dataset.navlink;
+  navLinks.forEach(link => {
+    const linkPage = new URL(link.href, window.location.origin).pathname.split('/').pop() || 'index.html';
     
-    // Check if href matches or data-navlink matches
-    if (linkPage === currentPage || (dataNav && currentPage.startsWith(dataNav))) {
+    if (linkPage === currentPage) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
