@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Profile - uniQue-ue</title>
+    <title>Profile - uniQue-ue</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,111 +14,282 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
     <!-- Our New Global Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Use relative path for local testing -->
+    <link rel="stylesheet" href="./style.css">
     
     <!-- Firebase & Main App Logic -->
     <!-- We use type="module" to enable import/export -->
-    <script src="firebase-config.js" type="module"></script>
-    <script src="app.js" type="module"></script>
+    <!-- Use relative paths starting with './' to ensure correct module resolution -->
+    <script src="./firebase-config.js" type="module"></script>
+    <script src="./app.js" type="module"></script>
     
-    <!-- We'll keep the old logo files for now -->
-    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <!-- Use relative path for local testing -->
+    <link rel="icon" href="./uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Page-specific styles for auth forms -->
+    <style>
+      .form-input {
+        @apply w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/50 focus:outline-none transition-all duration-300 font-sans text-brand-text placeholder-brand-text-muted;
+      }
+      .form-input:focus {
+        box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+      }
+      .auth-button {
+        @apply w-full bg-brand-accent text-brand-primary font-bold px-6 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover disabled:bg-brand-text-muted disabled:animate-none;
+      }
+      .google-button {
+        @apply w-full bg-white text-gray-800 font-semibold px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-3 hover:bg-gray-200 border-2 border-transparent;
+      }
+      .auth-tab {
+        @apply px-6 py-3 font-display text-lg text-brand-text-muted transition-colors;
+      }
+      .auth-tab.active {
+        @apply text-brand-accent border-b-2 border-brand-accent;
+      }
+    </style>
 </head>
 
 <body>
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
         <!-- 
           Main Content
-          The unique content for each page will be placed inside this <main> tag.
+          This will show *either* the auth forms OR the user's profile.
         -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-display mb-8">Your Profile</h1>
-        
-        <div id="auth-container">
-            <!-- This content will be shown/hidden based on auth state -->
-            <p>Please log in to view your profile.</p>
-        </div>
-        
-        <div id="profile-content" class="hidden">
-            <p>Welcome, <span id="user-name">...</span></p>
-            <!-- TODO: Add profile fields: picture, user ID, etc. -->
-            
-            <h2 class="text-3xl font-display mt-12 mb-4">Your Subscriptions</h2>
-            <!-- TODO: Add subscription management -->
-            
-            <button id="logout-button">Log Out</button>
-        </div>
-    </div>
-    
-    
-    
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                
+                <!-- This container is hidden when the user is logged OUT -->
+                <div id="profile-view" class="hidden max-w-xl mx-auto">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow">
+                        Your Profile
+                    </h1>
+                    <div class="bg-brand-secondary/50 border border-brand-accent/20 rounded-lg p-8 space-y-4">
+                        <p class="text-lg">Welcome, <strong id="profile-email" class="text-brand-accent">...</strong></p>
+                        <p class="text-sm text-brand-text-muted">User ID: <span id="profile-uid" class="text-xs">...</span></p>
+                        
+                        <!-- TODO: Add profile picture upload, user ID change, etc. -->
+                        
+                        <h2 class="text-2xl font-display pt-8">Subscriptions</h2>
+                        <p class="text-brand-text-muted">You are currently on the 'Free' plan.</p>
+                        <!-- TODO: Add 'Upgrade' button -->
 
-        const authContainer = document.getElementById('auth-container');
-        const profileContent = document.getElementById('profile-content');
-        const userName = document.getElementById('user-name');
-        const logoutButton = document.getElementById('logout-button');
+                        <button id="logout-button" class="auth-button w-auto bg-brand-magenta/80 border-brand-magenta hover:bg-brand-magenta mt-8">
+                            Log Out
+                        </button>
+                    </div>
+                </div>
 
-        // Listen for auth state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                authContainer.classList.add('hidden');
-                profileContent.classList.remove('hidden');
-                userName.textContent = user.displayName || user.email;
-            } else {
-                // User is signed out
-                authContainer.classList.remove('hidden');
-                profileContent.classList.add('hidden');
-                // Redirect to login page or show login form
-            }
-        });
+                <!-- This container is hidden when the user is logged IN -->
+                <div id="auth-view" class="hidden max-w-md mx-auto">
+                    <!-- Tabbed Interface -->
+                    <div class="flex mb-8 border-b border-brand-accent/20">
+                        <button id="tab-login" class="auth-tab active">Sign In</button>
+                        <button id="tab-signup" class="auth-tab">Sign Up</button>
+                    </div>
 
-        // Log out
-        logoutButton.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                console.log('User signed out');
-            } catch (error) {
-                console.error('Sign out error', error);
-            }
-        });
-    </script>
+                    <!-- Error Message Area -->
+                    <p id="auth-error" class="mb-4 text-center text-brand-magenta"></p>
+
+                    <!-- Sign In Form -->
+                    <form id="login-form" class="space-y-6">
+                        <button type="button" id="google-signin-button" class="google-button">
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l.003-..002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+                            Sign In with Google
+                        </button>
+                        <div class="text-center text-brand-text-muted">or</div>
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-brand-text-muted mb-2">Email</label>
+                            <input type="email" id="login-email" class="form-input" required>
+                        </div>
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-brand-text-muted mb-2">Password</label>
+                            <input type="password" id="login-password" class="form-input" required>
+                        </div>
+                        <button type="submit" class="auth-button">Sign In</button>
+                    </form>
+
+                    <!-- Sign Up Form (hidden by default) -->
+                    <form id="signup-form" class="space-y-6 hidden">
+                        <button type="button" id="google-signup-button" class="google-button">
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l.003-..002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+                            Sign Up with Google
+                        </button>
+                        <div class="text-center text-brand-text-muted">or</div>
+                        <div>
+                            <label for="signup-email" class="block text-sm font-medium text-brand-text-muted mb-2">Email</label>
+                            <input type="email" id="signup-email" class="form-input" required>
+                        </div>
+                        <div>
+                            <label for="signup-password" class="block text-sm font-medium text-brand-text-muted mb-2">Password</label>
+                            <input type="password" id="signup-password" class="form-input" required>
+                        </div>
+                        <button type="submit" class="auth-button">Create Account</button>
+                    </form>
+                </div>
+            </div>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
-    </div>
-</body>
+    </div> <!-- End Page Wrapper -->
 
+    <!-- Page-Specific JavaScript Module -->
+    <script type="module">
+        // Import all required auth functions from Firebase
+        // Use relative path for firebase-config
+        import { auth, db } from './firebase-config.js'; 
+        import { 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // --- DOM Elements ---
+        const profileView = document.getElementById('profile-view');
+        const authView = document.getElementById('auth-view');
+        const profileEmail = document.getElementById('profile-email');
+        const profileUid = document.getElementById('profile-uid');
+        const logoutButton = document.getElementById('logout-button');
+        
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        
+        const googleSignInButton = document.getElementById('google-signin-button');
+        const googleSignUpButton = document.getElementById('google-signup-button');
+        
+        const authError = document.getElementById('auth-error');
+
+        // --- Auth State Listener ---
+        // This is the main controller for the page. It shows/hides content based on auth state.
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // --- USER IS LOGGED IN ---
+                profileView.classList.remove('hidden');
+                authView.classList.add('hidden');
+                
+                profileEmail.textContent = user.email;
+                profileUid.textContent = user.uid;
+                
+                // TODO: Here we would fetch user data (like subscription) from Firestore
+                // e.g., loadUserProfile(user.uid);
+
+            } else {
+                // --- USER IS LOGGED OUT ---
+                profileView.classList.add('hidden');
+                authView.classList.remove('hidden');
+            }
+        });
+
+        // --- Tab Switching ---
+        tabLogin.addEventListener('click', () => {
+            tabLogin.classList.add('active');
+            tabSignup.classList.remove('active');
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            authError.textContent = '';
+        });
+
+        tabSignup.addEventListener('click', () => {
+            tabLogin.classList.remove('active');
+            tabSignup.classList.add('active');
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            authError.textContent = '';
+        });
+
+        // --- Error Handling ---
+        function setAuthError(message) {
+            // Firebase returns "auth/..." codes. Let's make them user-friendly.
+            let friendlyMessage = message;
+            if (message.includes('auth/invalid-email')) {
+                friendlyMessage = "Invalid email format.";
+            } else if (message.includes('auth/wrong-password') || message.includes('auth/invalid-credential')) {
+                friendlyMessage = "Incorrect email or password.";
+            } else if (message.includes('auth/email-already-in-use')) {
+                friendlyMessage = "An account with this email already exists.";
+            } else if (message.includes('auth/weak-password')) {
+                friendlyMessage = "Password must be at least 6 characters long.";
+            }
+            authError.textContent = friendlyMessage;
+        }
+
+        // --- Sign-In with Google ---
+        const provider = new GoogleAuthProvider();
+        const signInWithGoogle = async () => {
+            authError.textContent = '';
+            try {
+                await signInWithPopup(auth, provider);
+                // Auth state listener will handle the redirect
+            } catch (error) {
+                console.error("Google Sign-In Error:", error);
+                setAuthError(error.message);
+            }
+        };
+        googleSignInButton.addEventListener('click', signInWithGoogle);
+        googleSignUpButton.addEventListener('click', signInWithGoogle);
+
+        // --- Sign-Up with Email/Password ---
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            authError.textContent = '';
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                // Auth state listener will handle the page change
+                // TODO: We would also create a new user document in Firestore here.
+                // e.g., createUserProfileInFirestore(userCredential.user.uid, email);
+            } catch (error) {
+                console.error("Email Sign-Up Error:", error);
+                setAuthError(error.message);
+            }
+        });
+
+        // --- Sign-In with Email/Password ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            authError.textContent = '';
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // Auth state listener will handle the page change
+            } catch (error) {
+                console.error("Email Sign-In Error:", error);
+                setAuthError(error.message);
+            }
+        });
+
+        // --- Log Out ---
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // Auth state listener will handle the page change
+            } catch (error) {
+                console.error("Sign Out Error:", error);
+            }
+        });
+
+    </script>
+</body>
 </html>
