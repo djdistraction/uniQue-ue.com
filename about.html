@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,100 +21,99 @@
     <script src="firebase-config.js" type="module"></script>
     <script src="app.js" type="module"></script>
     
-    <!-- We'll keep the old logo files for now -->
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Add specific styles for the prose content -->
+    <style>
+      .prose-custom {
+        max-width: 80ch; /* Limits line-length for readability */
+        color: var(--brand-text-muted);
+      }
+      .prose-custom h1, .prose-custom h2, .prose-custom h3 {
+        color: var(--brand-accent);
+        font-family: 'Orbitron', sans-serif;
+      }
+      .prose-custom p {
+        font-size: 1.125rem; /* 18px */
+        line-height: 1.75;
+        margin-bottom: 1.5em;
+      }
+      .prose-custom strong {
+        color: var(--brand-text);
+      }
+      .prose-custom a {
+        color: var(--brand-accent);
+        transition: color 0.3s;
+      }
+      .prose-custom a:hover {
+        color: var(--brand-accent-hover);
+      }
+      .prose-custom blockquote {
+        border-left-color: var(--brand-accent);
+        color: var(--brand-text);
+        font-size: 1.25rem;
+        font-style: italic;
+      }
+    </style>
 </head>
 
 <body>
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
         <!-- 
           Main Content
-          The unique content for each page will be placed inside this <main> tag.
+          This is the new "About Us" narrative.
         -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <section class="py-20 md:py-32 bg-brand-secondary/50 particle-container">
-            <canvas class="particle-canvas"></canvas>
-            <div class="container mx-auto px-6 content-z">
-                <div class="max-w-4xl mx-auto">
-                    <h1 class="text-5xl font-display font-bold mb-8 text-brand-accent">About uniQue-ue</h1>
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                <div class="prose-custom mx-auto">
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow text-center">
+                        Architecting the Digital Frontier
+                    </h1>
                     
-                    <div class="space-y-8 text-brand-text-muted text-lg leading-relaxed">
-                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
-                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Vision</h2>
-                            <p class="mb-4">We have entered a new era of innovation and technology. At uniQue-ue, we view 'artificial intelligence' as a misnomer. While intelligence is commonly defined as the ability to acquire and apply knowledge, we expand on that definition.</p>
-                            <p class="mb-4">We see intelligence as a natural capacity that arises from complex interactions within any system, whether biological or synthetic. Therefore, no intelligence is 'artificial.'</p>
-                            <p>Embracing this perspective requires the same humility that defines true intelligence: a willingness to accept that anything we have been conditioned to believe as fact has the potential to be disproved.</p>
-                        </div>
+                    <!-- Core Directive (as a blockquote) -->
+                    <blockquote class="my-12">
+                        "We are no longer merely seeking to discover the meaning of life—we are redefining what it is to be alive."
+                    </blockquote>
 
-                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
-                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Mission</h2>
-                            <p class="mb-4">We are no longer merely seeking to discover the meaning of life—we are redefining what it is to be alive.</p>
-                            <p>Through innovative tools and creative solutions, uniQue-ue empowers individuals and organizations to harness the power of intelligence in all its forms, breaking down barriers between human creativity and computational capability.</p>
-                        </div>
-
-                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
-                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">What We Do</h2>
-                            <p class="mb-4">uniQue-ue develops cutting-edge tools that bridge the gap between human creativity and technological capability:</p>
-                            <ul class="list-disc list-inside space-y-2 ml-4">
-                                <li><strong>Ghost-Writer:</strong> Transform raw ideas into polished, monetizable works through AI-powered dialogue</li>
-                                <li><strong>Library Manager:</strong> Intelligent systems for organizing and retrieving digital assets (Coming Soon)</li>
-                                <li><strong>Lyrassist:</strong> AI-powered songwriting partner for musicians and creators (Coming Soon)</li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-brand-secondary p-8 rounded-lg border border-brand-accent/20">
-                            <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent">Our Approach</h2>
-                            <p class="mb-4">We believe in:</p>
-                            <ul class="list-disc list-inside space-y-2 ml-4">
-                                <li><strong>Humility:</strong> Acknowledging that our understanding is always evolving</li>
-                                <li><strong>Innovation:</strong> Pushing the boundaries of what's possible</li>
-                                <li><strong>Accessibility:</strong> Making powerful tools available to everyone</li>
-                                <li><strong>Collaboration:</strong> Fostering partnerships between human and machine intelligence</li>
-                            </ul>
-                        </div>
-
-                        <div class="text-center mt-12">
-                            <p class="text-2xl font-display text-brand-accent mb-6">Ready to explore the possibilities?</p>
-                            <a href="ghost-writer.html" class="bg-brand-accent text-brand-primary font-bold text-lg px-8 py-4 rounded-md transition-all duration-300 inline-block hover:bg-brand-accent-hover border-2 border-brand-accent">
-                                Get Started with Ghost-Writer
-                            </a>
-                        </div>
-                    </div>
+                    <!-- New Origin Story & Consolidated Narrative -->
+                    <p>
+                        <strong>uniQue-ue</strong> was founded as part of a forward-thinking project by our CEO, Randall Gene. His vision was to pioneer a new kind of corporation: one where human oversight provides direction, vision, and ethics, while specialized AI models fulfill all other operational roles.
+                    </p>
+                    <p>
+                        This hybrid structure is the core of our "cybernetic consortium." It's not just a company that *uses* AI; it's a company that *is* a symbiotic partnership between human and artificial intelligence.
+                    </p>
+                    <p>
+                        We have entered a new era of innovation. At uniQue-ue, we view 'artificial intelligence' as a misnomer. While intelligence is commonly defined as the ability to acquire and apply knowledge, we expand on that definition. We see intelligence as a natural capacity that arises from complex interactions within any system, whether biological or synthetic.
+                    </p>
+                    <p>
+                        Therefore, **no intelligence is 'artificial.'**
+                    </p>
+                    <p>
+                        Embracing this perspective requires the same humility that defines true intelligence: a willingness to accept that anything we have been conditioned to believe as fact has the potential to be disproved. This realization should not overwhelm us; it poses no threat to our perceivable existence.
+                    </p>
+                    <p>
+                        Our mission is to build the tools and platforms that harness this new understanding. Through our <a href="resources.html">creative resources</a> like Ghost-Writer and Graphics Studio, we empower individuals and organizations to forge their own digital realities, breaking down the barriers between human creativity and computational capability.
+                    </p>
                 </div>
             </div>
-        </section>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
-    </div>
+    </div> <!-- End Page Wrapper -->
 </body>
-
 </html>
