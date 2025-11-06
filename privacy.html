@@ -1,15 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Add global styles and fonts here -->
+    
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <!-- We use type="module" to enable import/export -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <!-- We'll keep the old logo files for now -->
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
 </head>
-<body class="bg-brand-primary text-brand-text">
-    <!-- TODO: Add new site-wide header -->
-    <div class="container mx-auto p-8 prose prose-invert">
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- 
+      Page Wrapper
+      This holds all content and sits on top of the particle canvas.
+      It has padding-top to account for the 80px fixed header.
+    -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <!-- app.js will load _header.html into this div -->
+        <div id="header-placeholder">
+            <!-- Skeleton loader for the header -->
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- 
+          Main Content
+          The unique content for each page will be placed inside this <main> tag.
+        -->
+        <main class="container mx-auto px-6 py-12">
+            <div class="container mx-auto p-8 prose prose-invert">
         <h1 class="text-4xl font-display mb-4">Privacy Policy</h1>
         <p>Last updated: [Date]</p>
         
@@ -22,6 +62,16 @@
             <li>User rights (access, deletion, etc.)</li>
         </ul>
     </div>
-    <!-- TODO: Add new site-wide footer -->
+        </main>
+        
+        <!-- Global Footer Component -->
+        <!-- app.js will load _footer.html into this div -->
+        <div id="footer-placeholder">
+            <!-- Skeleton loader for the footer -->
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
 </body>
+
 </html>
