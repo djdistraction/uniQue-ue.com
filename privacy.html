@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,69 +14,115 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
     <!-- Our New Global Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     
     <!-- Firebase & Main App Logic -->
-    <!-- We use type="module" to enable import/export -->
-    <script src="firebase-config.js" type="module"></script>
-    <script src="app.js" type="module"></script>
+    <script src="./firebase-config.js" type="module"></script>
+    <script src="./app.js" type="module"></script>
     
-    <!-- We'll keep the old logo files for now -->
-    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="icon" href="./uniQ_logo_sm2T.png" type="image/png">
+
+    <!-- Styles for simple text content -->
+    <style>
+      .prose-custom {
+        max-width: 80ch; /* Limits line-length for readability */
+        color: var(--brand-text-muted);
+      }
+      .prose-custom h1 {
+        color: var(--brand-accent);
+        font-family: 'Orbitron', sans-serif;
+        text-align: center;
+        font-size: 2.5rem; /* 40px */
+        margin-bottom: 2rem;
+      }
+      .prose-custom h2 {
+        color: var(--brand-text);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem; /* 24px */
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      .prose-custom p, .prose-custom li {
+        font-size: 1rem; /* 16px */
+        line-height: 1.75;
+      }
+      .prose-custom ul {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+      }
+      .prose-custom a {
+        color: var(--brand-accent);
+        transition: color 0.3s;
+      }
+      .prose-custom a:hover {
+        color: var(--brand-accent-hover);
+      }
+    </style>
 </head>
 
 <body>
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
-        <!-- 
-          Main Content
-          The unique content for each page will be placed inside this <main> tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <div class="container mx-auto p-8 prose prose-invert">
-        <h1 class="text-4xl font-display mb-4">Privacy Policy</h1>
-        <p>Last updated: [Date]</p>
-        
-        <p>TODO: Add placeholder legal text for a Privacy Policy.</p>
-        <p>This policy must explain:</p>
-        <ul>
-            <li>What data we collect (email, name, usage data, etc.)</li>
-            <li>How we use that data (to provide services, improve app, etc.)</li>
-            <li>How we store and protect that data (using Firebase, etc.)</li>
-            <li>User rights (access, deletion, etc.)</li>
-        </ul>
-    </div>
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                <div class="prose-custom mx-auto">
+                    
+                    <h1 class="heading-glow">Privacy Policy</h1>
+                    <p class="text-center">Last Updated: November 6, 2025</p>
+
+                    <h2>1. Introduction</h2>
+                    <p>Welcome to uniQue-ue. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, including any other media form, media channel, mobile website, or mobile application related or connected thereto (collectively, the “Site”).</p>
+
+                    <h2>2. Collection of Your Information</h2>
+                    <p>We may collect information about you in a variety of ways. The information we may collect on the Site includes:</p>
+                    <ul>
+                        <li><strong>Personal Data:</strong> Personally identifiable information, such as your name, email address, and demographic information, that you voluntarily give to us when you register with the Site.</li>
+                        <li><strong>Derivative Data:</strong> Information our servers automatically collect when you access the Site, such as your IP address, your browser type, your operating system, your access times, and the pages you have viewed directly before and after accessing the Site.</li>
+                        <li><strong>Financial Data:</strong> We do not collect or store any financial data. All payment information is processed by a third-party payment processor (e.g., Stripe, PayPal) at the time of purchase.</li>
+                        <li><strong>Firebase & Google Analytics:</strong> We use Firebase for authentication and database services. This may include the collection of data as governed by Google's Privacy Policy.</li>
+                    </ul>
+
+                    <h2>3. Use of Your Information</h2>
+                    <p>Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Site to:</p>
+                    <ul>
+                        <li>Create and manage your account.</li>
+                        <li>Process your transactions and manage subscriptions.</li>
+                        <li>Email you regarding your account or order.</li>
+                        <li>Monitor and analyze usage and trends to improve your experience with the Site.</li>
+                        <li>Notify you of updates to the Site.</li>
+                    </ul>
+
+                    <h2>4. Storage of Your Information</h2>
+                    <p>Your data is securely stored in Google's Firebase (Firestore) databases. We implement a variety of security measures to maintain the safety of your personal information. All authentication data is managed by Firebase Authentication, which uses industry-standard security and encryption.</p>
+
+                    <h2>5. Disclosure of Your Information</h2>
+                    <p>We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information unless we provide users with advance notice. This does not include website hosting partners and other parties who assist us in operating our website, so long as those parties agree to keep this information confidential.</p>
+
+                    <h2>6. Your Rights</h2>
+                    <p>You have the right to access, correct, or delete your personal information at any time. You can manage your account information by logging into your profile page or by contacting us directly.</p>
+
+                    <h2>7. Contact Us</h2>
+                    <p>If you have questions or comments about this Privacy Policy, please contact us via our <a href="contact.html">contact page</a>.</p>
+
+                </div>
+            </div>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
-    </div>
+    </div> <!-- End Page Wrapper -->
 </body>
-
 </html>

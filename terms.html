@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,70 +14,111 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
     <!-- Our New Global Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     
     <!-- Firebase & Main App Logic -->
-    <!-- We use type="module" to enable import/export -->
-    <script src="firebase-config.js" type="module"></script>
-    <script src="app.js" type="module"></script>
+    <script src="./firebase-config.js" type="module"></script>
+    <script src="./app.js" type="module"></script>
     
-    <!-- We'll keep the old logo files for now -->
-    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="icon" href="./uniQ_logo_sm2T.png" type="image/png">
+
+    <!-- Styles for simple text content -->
+    <style>
+      .prose-custom {
+        max-width: 80ch; /* Limits line-length for readability */
+        color: var(--brand-text-muted);
+      }
+      .prose-custom h1 {
+        color: var(--brand-accent);
+        font-family: 'Orbitron', sans-serif;
+        text-align: center;
+        font-size: 2.5rem; /* 40px */
+        margin-bottom: 2rem;
+      }
+      .prose-custom h2 {
+        color: var(--brand-text);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem; /* 24px */
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      .prose-custom p, .prose-custom li {
+        font-size: 1rem; /* 16px */
+        line-height: 1.75;
+      }
+      .prose-custom ul {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+      }
+      .prose-custom a {
+        color: var(--brand-accent);
+        transition: color 0.3s;
+      }
+      .prose-custom a:hover {
+        color: var(--brand-accent-hover);
+      }
+    </style>
 </head>
 
 <body>
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
-        <!-- 
-          Main Content
-          The unique content for each page will be placed inside this <main> tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <div class="container mx-auto p-8 prose prose-invert">
-        <h1 class="text-4xl font-display mb-4">Terms of Use</h1>
-        <p>Last updated: [Date]</p>
-        
-        <p>TODO: Add placeholder legal text for Terms of Use.</p>
-        <p>This document must explain:</p>
-        <ul>
-            <li>User responsibilities</li>
-            <li>Subscription terms (payment, cancellations)</li>
-            <li>Acceptable use policies</li>
-            <li>Limitation of liability</li>
-            <li>Intellectual property rights</li>
-        </ul>
-    </div>
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                <div class="prose-custom mx-auto">
+                    
+                    <h1 class="heading-glow">Terms of Use</h1>
+                    <p class="text-center">Last Updated: November 6, 2025</p>
+
+                    <h2>1. Agreement to Terms</h2>
+                    <p>By accessing or using our Site and services, you agree to be bound by these Terms of Use and our Privacy Policy. If you do not agree to these terms, please do not use our services.</p>
+
+                    <h2>2. User Accounts</h2>
+                    <p>You must create an account to access certain features, such as Ghost-Writer and Graphics Studio. You are responsible for safeguarding your account and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account.</p>
+
+                    <h2>3. Subscriptions and Payments</h2>
+                    <p>We offer both free and paid subscription plans. All payments will be processed by a third-party payment processor. You agree to provide current, complete, and accurate purchase and account information for all purchases made via the Site. We reserve the right to change our subscription plans or pricing at any time.</p>
+
+                    <h2>4. Acceptable Use Policy</h2>
+                    <p>You agree not to use the Site or its services to:</p>
+                    <ul>
+                        <li>Generate content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.</li>
+                        <li>Violate any intellectual property rights of others.</li>
+                        <li>Engage in any activity that interferes with or disrupts the Site or the servers and networks connected to the Site.</li>
+                        <li>Attempt to gain unauthorized access to any portion of the Site or any other accounts.</li>
+                    </ul>
+
+                    <h2>5. Intellectual Property</h2>
+                    <p>The Site and its original content (excluding content generated by you) are and will remain the exclusive property of uniQue-ue. Our services allow you to create content ("User-Generated Content"). You retain all rights to your User-Generated Content, but you grant us a license to use, store, and process that content solely for the purpose of providing and improving our services to you.</p>
+
+                    <h2>6. Limitation of Liability</h2>
+                    <p>The Site and its services are provided on an "as is" and "as available" basis. uniQue-ue makes no warranties, expressed or implied, and hereby disclaims all other warranties. In no event shall uniQue-ue be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on our website.</p>
+                    
+                    <h2>7. Changes to Terms</h2>
+                    <p>We reserve the right, in our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days' notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+
+                    <h2>8. Contact Us</h2>
+                    <p>If you have any questions about these Terms, please contact us via our <a href="contact.html">contact page</a>.</p>
+
+                </div>
+            </div>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
-    </div>
+    </div> <!-- End Page Wrapper -->
 </body>
-
 </html>
