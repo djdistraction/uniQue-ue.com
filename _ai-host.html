@@ -1,0 +1,29 @@
+<!-- 
+  This is the new global AI Host chat window.
+  It is loaded by app.js into the <body> of every page.
+-->
+<div id="ai-host-window" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] max-w-md h-[70vh] max-h-[500px] bg-brand-secondary/90 backdrop-blur-lg border border-brand-accent/30 rounded-lg shadow-2xl z-50 flex flex-col transition-all duration-300 hidden translate-y-4 opacity-0">
+  
+  <!-- Host Header -->
+  <div class="flex justify-between items-center p-4 border-b border-brand-accent/20">
+    <h3 class="font-display text-lg text-brand-accent">AI Host</h3>
+    <button id="ai-host-close" class="text-brand-text-muted hover:text-white transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+  
+  <!-- Chat Message Container -->
+  <div id="ai-host-chat-container" class="flex-grow p-4 overflow-y-auto space-y-4">
+    <!-- Messages will be added here -->
+  </div>
+  
+  <!-- Chat Input Area -->
+  <div class="p-4 border-t border-brand-accent/20">
+    <div class="relative">
+      <textarea id="ai-host-input" rows="3" class="w-full bg-brand-primary p-3 pr-16 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-sm resize-none" placeholder="Ask me anything..."></textarea>
+      <button id="ai-host-send" class="absolute right-3 top-3 p-2 rounded-md bg-brand-accent text-brand-primary transition-colors hover:bg-brand-accent-hover">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </div>
+</div>

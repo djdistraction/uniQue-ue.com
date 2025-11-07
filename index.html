@@ -77,72 +77,18 @@
 
     <!-- 
       AI Host Chat Window
-      This is hidden by default and positioned fixed on the screen.
-      The 'ai-host-toggle' button in the header will show/hide this.
+      This has been MOVED to _ai-host.html and is loaded by app.js
     -->
-    <div id="ai-host-window" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] max-w-md h-[70vh] max-h-[500px] bg-brand-secondary/90 backdrop-blur-lg border border-brand-accent/30 rounded-lg shadow-2xl z-50 flex flex-col transition-all duration-300 hidden translate-y-4 opacity-0">
-      
-      <!-- Host Header -->
-      <div class="flex justify-between items-center p-4 border-b border-brand-accent/20">
-        <h3 class="font-display text-lg text-brand-accent">AI Host</h3>
-        <button id="ai-host-close" class="text-brand-text-muted hover:text-white transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      
-      <!-- Chat Message Container -->
-      <div id="ai-host-chat-container" class="flex-grow p-4 overflow-y-auto space-y-4">
-        <!-- Messages will be added here -->
-      </div>
-      
-      <!-- Chat Input Area -->
-      <div class="p-4 border-t border-brand-accent/20">
-        <div class="relative">
-          <textarea id="ai-host-input" rows="3" class="w-full bg-brand-primary p-3 pr-16 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-sm resize-none" placeholder="Ask me anything..."></textarea>
-          <button id="ai-host-send" class="absolute right-3 top-3 p-2 rounded-md bg-brand-accent text-brand-primary transition-colors hover:bg-brand-accent-hover">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          </button>
-        </div>
-      </div>
-    </div>
 
     <!-- 
       Page-Specific JavaScript Module
-      This handles the logic for *this page only* (Logo follow + AI Host).
+      This handles the logic for *this page only* (Logo follow).
+      The AI Host logic has been moved to app.js.
     -->
     <script type="module">
-        // Get the full URL for our deployed worker
-        const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
-        
-        let aiHostHistory = [];
-        let aiHostVisible = false;
-
         // --- DOM Elements ---
         const heroLogo = document.getElementById('hero-logo');
-        const aiHostWindow = document.getElementById('ai-host-window');
-        const aiHostClose = document.getElementById('ai-host-close');
-        const aiHostChatContainer = document.getElementById('ai-host-chat-container');
-        const aiHostInput = document.getElementById('ai-host-input');
-        const aiHostSend = document.getElementById('ai-host-send');
         
-        // We need to wait for the header to be loaded by app.js, so we use a small delay
-        setTimeout(() => {
-            const aiHostToggle = document.getElementById('ai-host-toggle');
-            if(aiHostToggle) {
-                aiHostToggle.addEventListener('click', toggleHostWindow);
-            }
-        }, 500); // 500ms should be enough for _header.html to load
-
-        // --- Event Listeners ---
-        if (aiHostClose) aiHostClose.addEventListener('click', toggleHostWindow);
-        if (aiHostSend) aiHostSend.addEventListener('click', handleSendChat);
-        if (aiHostInput) aiHostInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendChat();
-            }
-        });
-
         // --- 1. Enhanced Hero Logo Mouse-Follow ---
         if (heroLogo) {
             heroLogo.parentElement.addEventListener('mousemove', (e) => {
@@ -159,105 +105,7 @@
         }
 
         // --- 2. AI Host Logic ---
-        function toggleHostWindow() {
-            aiHostVisible = !aiHostVisible;
-            if (aiHostVisible) {
-                aiHostWindow.classList.remove('hidden');
-                setTimeout(() => {
-                  aiHostWindow.classList.remove('translate-y-4', 'opacity-0');
-                }, 10); // Start transition
-            } else {
-                aiHostWindow.classList.add('translate-y-4', 'opacity-0');
-                setTimeout(() => {
-                  aiHostWindow.classList.add('hidden');
-                }, 300); // Hide after transition
-            }
-        }
-
-        async function handleSendChat() {
-            const userMessage = aiHostInput.value.trim();
-            if (!userMessage) return;
-
-            addMessageToHost('user', userMessage);
-            aiHostInput.value = '';
-            aiHostInput.disabled = true;
-            aiHostSend.disabled = true;
-
-            // Add thinking indicator
-            addMessageToHost('model', '...', true);
-
-            try {
-                const aiMessage = await callAiHost(userMessage);
-                
-                // Remove thinking indicator
-                const thinkingIndicator = aiHostChatContainer.querySelector('.is-thinking');
-                if (thinkingIndicator) thinkingIndicator.remove();
-
-                addMessageToHost('model', aiMessage);
-
-            } catch (error) {
-                console.error("AI Host Error:", error);
-                addMessageToHost('model', "Sorry, I seem to be having trouble connecting. Please try again in a moment.");
-            } finally {
-                aiHostInput.disabled = false;
-                aiHostSend.disabled = false;
-                aiHostInput.focus();
-            }
-        }
-
-        async function callAiHost(userMessage) {
-            aiHostHistory.push({ role: 'user', parts: [{ text: userMessage }] });
-
-            const systemPrompt = "You are the uniQue-ue AI Host. Your job is to welcome visitors and guide them. Be friendly, helpful, and slightly futuristic. Keep your answers concise (1-2 sentences) unless asked for more detail. Help users understand the site (Home, About, Resources, Contact) and its tools (Ghost-Writer, Graphics Studio).";
-            
-            const response = await fetch(`${WORKER_URL}/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chatHistory: aiHostHistory,
-                    systemPrompt: systemPrompt,
-                    model: 'openai/gpt-4o-mini'
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
-            }
-
-            const result = await response.json();
-            const aiMessage = result.choices[0].message.content;
-
-            aiHostHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
-            return aiMessage;
-        }
-
-        function addMessageToHost(sender, message, isThinking = false) {
-            const messageDiv = document.createElement('div');
-            const senderName = sender === 'user' ? 'You' : 'AI Host';
-            const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
-            
-            let messageContent = '';
-            if (isThinking) {
-                messageDiv.classList.add('is-thinking');
-                messageContent = '<div class="animate-pulse">...</div>';
-            } else {
-                messageContent = message.replace(/\\n/g, '<br>'); // Format newlines
-            }
-            
-            messageDiv.className = `p-3 rounded-lg max-w-[85%] text-sm chat-bubble-3d ${sender === 'user' ? 'bg-brand-primary self-end' : 'bg-brand-secondary self-start'}`;
-            messageDiv.innerHTML = `<p class="font-bold ${senderColor} mb-1">${senderName}</p><p class="text-white">${messageContent}</p>`;
-            
-            aiHostChatContainer.appendChild(messageDiv);
-            aiHostChatContainer.scrollTop = aiHostChatContainer.scrollHeight;
-        }
-
-        // Send a welcome message when the page loads
-        setTimeout(() => {
-            const welcomeMsg = "Welcome to uniQue-ue! I'm the site's AI Host. How can I help you today? You can ask me about our resources, our company, or how to get in touch.";
-            addMessageToHost('model', welcomeMsg);
-            aiHostHistory.push({ role: 'model', parts: [{ text: welcomeMsg }] });
-        }, 1000); // Welcome after 1 second
+        // ALL LOGIC has been MOVED to app.js.
 
     </script>
 </body>

@@ -1,40 +1,22 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, enablePersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-// --- PASTE YOUR FIREBASE CONFIG OBJECT HERE ---
-// This config was copied from your canvas.
-const firebaseConfig = {
-    apiKey: "AIzaSyC2A5a83w_XAv1XT4_ES5S2jNRkPci9w5U",
-    authDomain: "unique-ue-website.firebaseapp.com",
-    projectId: "unique-ue-website",
-    storageBucket: "unique-ue-website.firebasestorage.app",
-    messagingSenderId: "26306347057",
+// ... existing code ...
     appId: "1:26306347057:web:a2f5c0e893cb99f5585510",
     measurementId: "G-5K4TBEBTB3"
   };
 
 // ---------------------------------------------
 
+// --- NEW: Define Worker URL (Task 3) ---
+export const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Enable offline persistence (for Ghost-Writer)
-// This will cache data locally so users don't lose work if they go offline
-(async () => {
-  try {
-    await enablePersistence(db);
-    console.log("Firebase Offline Persistence enabled.");
-  } catch (error) {
-    if (error.code == 'failed-precondition') {
-      console.warn("Firebase Persistence failed (multiple tabs open?).");
-    } else if (error.code == 'unimplemented') {
-      console.log("Firebase Persistence is not available in this browser.");
+// ... existing code ...
     }
   }
 })();
 
 // Export the initialized services
-export { app, auth, db };
+// MODIFIED: Added WORKER_URL
+export { app, auth, db, WORKER_URL };

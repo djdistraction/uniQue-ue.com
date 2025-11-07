@@ -161,10 +161,8 @@
         const formStatus = document.getElementById('form-status');
         
         // --- Get Worker URL (from app.js or directly) ---
-        // This relies on the WORKER_URL being available globally or imported
-        // For simplicity, we'll redefine it here.
-        // In a real build system, this would be a shared constant.
-        const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
+        // MODIFIED: Import WORKER_URL from firebase-config.js (Task 3)
+        import { WORKER_URL } from './firebase-config.js';
 
         // --- 1. Populate FAQs ---
         function initFAQs() {

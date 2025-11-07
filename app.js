@@ -12,7 +12,8 @@
 
 // Import Firebase services (we need auth for the header)
 // Use relative path for local file testing
-import { auth } from 'firebase-config.js'; 
+// MODIFIED: Added WORKER_URL for Task 3
+import { auth, WORKER_URL } from 'firebase-config.js'; 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Main App Initialization ---
@@ -69,6 +70,25 @@ async function loadComponents() {
       console.error('Error loading footer:', error);
       footerPlaceholder.innerHTML = '<p class="text-red-500 text-center">Error loading footer.</p>';
     }
+  }
+
+  // --- NEW: Load Global AI Host (Task 2) ---
+  // This placeholder is created dynamically, not in the HTML
+  const aiHostPlaceholder = document.createElement('div');
+  aiHostPlaceholder.id = 'ai-host-global-placeholder';
+  document.body.appendChild(aiHostPlaceholder);
+
+  try {
+    // Use relative path
+    const response = await fetch('_ai-host.html'); 
+    if (!response.ok) throw new Error('Failed to load AI host');
+    const aiHostHTML = await response.text();
+    aiHostPlaceholder.innerHTML = aiHostHTML;
+    // Now that the HTML is loaded, initialize its logic
+    initAIHostLogic(); 
+  } catch (error) {
+    console.error('Error loading AI Host:', error);
+    // You could add a fallback here, but it's non-critical
   }
 }
 
@@ -245,14 +265,14 @@ function initMobileMenu() {
 }
 
 // --- 6. AI Host Toggle ---
+// MODIFIED: This now just finds the button. The window is loaded globally.
 function initAIHost() {
   const aiHostToggle = document.getElementById('ai-host-toggle');
-  const aiHostWindow = document.getElementById('ai-host-window'); // This ID is in index.html
-
-  if (aiHostToggle && aiHostWindow) {
+  
+  if (aiHostToggle) { // We no longer need to check for aiHostWindow
     aiHostToggle.addEventListener('click', (e) => {
       e.stopPropagation();
-      // This is defined in index.html
+      // This is defined in initAIHostLogic() which is now at window scope
       if(typeof toggleHostWindow === 'function') {
         toggleHostWindow();
       }
@@ -285,4 +305,145 @@ function setActiveNavLink() {
       link.classList.remove('active');
     }
   });
+}
+
+// --- NEW: Global AI Host Logic (Moved from index.html - Task 2) ---
+
+let aiHostHistory = [];
+let aiHostVisible = false;
+
+// This function is now global and will be called by loadComponents
+function initAIHostLogic() {
+  // --- DOM Elements ---
+  const aiHostWindow = document.getElementById('ai-host-window');
+  const aiHostClose = document.getElementById('ai-host-close');
+  const aiHostChatContainer = document.getElementById('ai-host-chat-container');
+  const aiHostInput = document.getElementById('ai-host-input');
+  const aiHostSend = document.getElementById('ai-host-send');
+  
+  // The toggle button is in the header, its listener is set in initAIHost()
+  
+  // --- Event Listeners ---
+  if (aiHostClose) aiHostClose.addEventListener('click', toggleHostWindow);
+  if (aiHostSend) aiHostSend.addEventListener('click', handleSendChat);
+  if (aiHostInput) aiHostInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSendChat();
+      }
+  });
+
+  // Send a welcome message when the page loads
+  setTimeout(() => {
+      const welcomeMsg = "Welcome to uniQue-ue! I'm the site's AI Host. How can I help you today? You can ask me about our resources, our company, or how to get in touch.";
+      addMessageToHost('model', welcomeMsg);
+      aiHostHistory.push({ role: 'model', parts: [{ text: welcomeMsg }] });
+  }, 1000); // Welcome after 1 second
+}
+
+// Make toggleHostWindow global so initAIHost() can find it
+// Note: This is now attached to the window object to be globally accessible
+window.toggleHostWindow = function() {
+  const aiHostWindow = document.getElementById('ai-host-window');
+  if (!aiHostWindow) return; // Guard clause
+
+  aiHostVisible = !aiHostVisible;
+  if (aiHostVisible) {
+      aiHostWindow.classList.remove('hidden');
+      setTimeout(() => {
+        aiHostWindow.classList.remove('translate-y-4', 'opacity-0');
+      }, 10); // Start transition
+  } else {
+      aiHostWindow.classList.add('translate-y-4', 'opacity-0');
+      setTimeout(() => {
+        aiHostWindow.classList.add('hidden');
+      }, 300); // Hide after transition
+  }
+}
+
+async function handleSendChat() {
+  const aiHostInput = document.getElementById('ai-host-input');
+  const aiHostSend = document.getElementById('ai-host-send');
+  if (!aiHostInput || !aiHostSend) return;
+
+  const userMessage = aiHostInput.value.trim();
+  if (!userMessage) return;
+
+  addMessageToHost('user', userMessage);
+  aiHostInput.value = '';
+  aiHostInput.disabled = true;
+  aiHostSend.disabled = true;
+
+  // Add thinking indicator
+  addMessageToHost('model', '...', true);
+
+  try {
+      const aiMessage = await callAiHost(userMessage);
+      
+      // Remove thinking indicator
+      const aiHostChatContainer = document.getElementById('ai-host-chat-container');
+      const thinkingIndicator = aiHostChatContainer.querySelector('.is-thinking');
+      if (thinkingIndicator) thinkingIndicator.remove();
+
+      addMessageToHost('model', aiMessage);
+
+  } catch (error) {
+      console.error("AI Host Error:", error);
+      addMessageToHost('model', "Sorry, I seem to be having trouble connecting. Please try again in a moment.");
+  } finally {
+      aiHostInput.disabled = false;
+      aiHostSend.disabled = false;
+      aiHostInput.focus();
+  }
+}
+
+async function callAiHost(userMessage) {
+  aiHostHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+
+  const systemPrompt = "You are the uniQue-ue AI Host. Your job is to welcome visitors and guide them. Be friendly, helpful, and slightly futuristic. Keep your answers concise (1-2 sentences) unless asked for more detail. Help users understand the site (Home, About, Resources, Contact) and its tools (Ghost-Writer, Graphics Studio).";
+  
+  // Uses the global WORKER_URL constant
+  const response = await fetch(`${WORKER_URL}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+          chatHistory: aiHostHistory,
+          systemPrompt: systemPrompt,
+          model: 'openai/gpt-4o-mini'
+      })
+  });
+
+  if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
+  }
+
+  const result = await response.json();
+  const aiMessage = result.choices[0].message.content;
+
+  aiHostHistory.push({ role: 'model', parts: [{ text: aiMessage }] });
+  return aiMessage;
+}
+
+function addMessageToHost(sender, message, isThinking = false) {
+  const aiHostChatContainer = document.getElementById('ai-host-chat-container');
+  if (!aiHostChatContainer) return;
+
+  const messageDiv = document.createElement('div');
+  const senderName = sender === 'user' ? 'You' : 'AI Host';
+  const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
+  
+  let messageContent = '';
+  if (isThinking) {
+      messageDiv.classList.add('is-thinking');
+      messageContent = '<div class="animate-pulse">...</div>';
+  } else {
+      messageContent = message.replace(/\\n/g, '<br>'); // Format newlines
+  }
+  
+  messageDiv.className = `p-3 rounded-lg max-w-[85%] text-sm chat-bubble-3d ${sender === 'user' ? 'bg-brand-primary self-end' : 'bg-brand-secondary self-start'}`;
+  messageDiv.innerHTML = `<p class="font-bold ${senderColor} mb-1">${senderName}</p><p class="text-white">${messageContent}</p>`;
+  
+  aiHostChatContainer.appendChild(messageDiv);
+  aiHostChatContainer.scrollTop = aiHostChatContainer.scrollHeight;
 }

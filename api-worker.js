@@ -84,7 +84,7 @@ async function handleChat(request, env) {
     let refinedPromptForLog = null;
     if (chatHistory.length > 0) {
       const lastMessage = chatHistory[chatHistory.length - 1];
-      const lastMessageText = lastMessage.parts.map((part) => part.text).join("\n"); // <-- FIX HERE
+      const lastMessageText = lastMessage.parts.map((part) => part.text).join("\n");
 
       // Check if the last message is a short prompt from the user
       if (lastMessage.role === "user" && lastMessageText.length < 100) {
@@ -94,7 +94,7 @@ async function handleChat(request, env) {
           { role: "system", content: "You are a silent prompt refinement AI. Do not answer the user's prompt. Your *only* job is to refine the user's last message to be more effective, using the chat history for context. Output *only* the refined prompt and nothing else." },
           ...chatHistory.slice(0, -1).map((msg) => ({ // All but the last
             role: msg.role === "model" ? "assistant" : msg.role,
-            content: msg.parts.map((part) => part.text).join("\n"), // <-- FIX HERE
+            content: msg.parts.map((part) => part.text).join("\n"),
           })),
           // 2. Add the refinement instruction
           {
@@ -143,7 +143,7 @@ async function handleChat(request, env) {
       },
       ...chatHistory.map((msg) => ({
         role: msg.role === "model" ? "assistant" : msg.role,
-        content: msg.parts.map((part) => part.text).join("\n"), // <-- FIX HERE
+        content: msg.parts.map((part) => part.text).join("\n"),
       })),
     ];
 
@@ -221,7 +221,7 @@ async function handleImageGeneration(request, env) {
     }
 
     const model = "runwayml/stable-diffusion-v1-5";
-    const apiResponse = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+    const apiResponse = await fetch(`https.api-inference.huggingface.co/models/${model}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.HUGGINGFACE_TOKEN}`,
