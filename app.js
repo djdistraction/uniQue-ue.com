@@ -13,7 +13,7 @@
 // Import Firebase services (we need auth for the header)
 // Use relative path for local file testing
 // MODIFIED: Added WORKER_URL for Task 3
-import { auth, WORKER_URL } from 'firebase-config.js'; 
+import { auth, WORKER_URL } from './firebase-config.js'; 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Main App Initialization ---
