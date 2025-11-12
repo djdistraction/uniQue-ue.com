@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 // --- Define Worker URL ---
 // This was correct in your file.
-export const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
+const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev";
 
 // --- Initialize Firebase and Services ---
 const app = initializeApp(firebaseConfig);
