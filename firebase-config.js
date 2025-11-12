@@ -32,4 +32,3 @@ const db = getFirestore(app);
 // --- Export the initialized services ---
 // Now 'app', 'auth', 'db', and 'WORKER_URL' are all correctly defined and exported.
 export { app, auth, db, WORKER_URL };
-export { app, auth, db, WORKER_URL };
