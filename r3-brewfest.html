@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R3 Brewfest - uniQue-ue</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+
+    <style>
+        /* --- R3 Brewfest Specific Theme Overrides --- */
+        :root {
+            /* Gritty / Rock Palette */
+            --r3-bg: #1a1a1a;
+            --r3-panel: #2d2d2d;
+            --r3-accent: #ff3333; /* Red for Rock/Energy */
+            --r3-metal: #5a5a5a;
+            --r3-gold: #d4af37;
+        }
+
+        /* Overwrite the particle canvas for this page specifically to be darker */
+        .particle-canvas {
+            opacity: 0.2 !important;
+        }
+
+        body {
+            background-color: var(--r3-bg);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Black Ops One', cursive !important;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* --- Boombox CSS Construction --- */
+        .boombox-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .boombox-body {
+            background: linear-gradient(180deg, #444 0%, #222 100%);
+            border-radius: 20px;
+            border: 4px solid #111;
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.8),
+                inset 0 2px 5px rgba(255,255,255,0.1);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            /* Texture */
+            background-image: radial-gradient(#333 15%, transparent 16%), radial-gradient(#333 15%, transparent 16%);
+            background-size: 10px 10px;
+        }
+
+        /* Handle */
+        .boombox-handle {
+            position: absolute;
+            top: -40px;
+            left: 20%;
+            right: 20%;
+            height: 40px;
+            background: linear-gradient(90deg, #333, #666, #333);
+            border-radius: 10px 10px 0 0;
+            border: 4px solid #111;
+            border-bottom: none;
+            z-index: -1;
+        }
+
+        /* Speakers */
+        .speaker-housing {
+            width: 30%;
+            aspect-ratio: 1/1;
+            background: #111;
+            border-radius: 50%;
+            border: 6px solid #555;
+            box-shadow: inset 0 0 20px #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .speaker-cone {
+            width: 85%;
+            height: 85%;
+            background: radial-gradient(circle, #222 0%, #111 100%);
+            border-radius: 50%;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.05s ease-out; /* Fast transition for vibration */
+        }
+
+        .speaker-dustcap {
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, #444 0%, #000 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* Center Console */
+        .center-console {
+            flex-grow: 1;
+            height: 100%;
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Cassette Deck / Display */
+        .cassette-deck {
+            background: #000;
+            border: 2px solid #555;
+            border-radius: 5px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tape-window {
+            width: 80%;
+            height: 60%;
+            background: #333;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Spinning Tape Animation */
+        .tape-reel {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            margin: 0 10px;
+            position: relative;
+        }
+        .tape-reel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 15px;
+            width: 4px; height: 32px;
+            background: #fff;
+        }
+        .tape-reel::before {
+            content: '';
+            position: absolute;
+            top: 15px; left: 0;
+            width: 32px; height: 4px;
+            background: #fff;
+        }
+
+        .is-playing .tape-reel {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Controls */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            background: #222;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #666, #333);
+            border: 1px solid #111;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 3px 0 #000;
+            transition: all 0.1s;
+        }
+
+        .control-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #000;
+        }
+
+        .control-btn.play-btn {
+            background: linear-gradient(to bottom, #cc0000, #880000); /* Red Play Button */
+        }
+
+        /* Vumeter (Fake LEDs) */
+        .vu-meter {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            margin-top: 5px;
+        }
+        .led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #330000;
+            transition: background-color 0.1s;
+        }
+        .led.active {
+            background-color: #ff0000;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        /* --- Playlist Styles --- */
+        .playlist-item {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #444;
+            transition: all 0.2s;
+        }
+        .playlist-item:hover, .playlist-item.active {
+            background: rgba(255, 51, 51, 0.1); /* Red Tint */
+            border-color: var(--r3-accent);
+        }
+        .playlist-item.active .song-title {
+            color: var(--r3-accent);
+        }
+
+        .btn-download {
+            background-color: var(--r3-metal);
+            color: white;
+        }
+        .btn-donate {
+            background-color: var(--r3-accent);
+            color: black;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .btn-donate:hover {
+            background-color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-black/80 backdrop-blur-md"></div>
+        </div>
+        
+        <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+            
+            <div class="text-center mb-12">
+                <h1 class="text-5xl md:text-7xl text-white mb-2" style="text-shadow: 3px 3px 0px #ff3333;">R3 BREWFEST</h1>
+                <p class="text-gray-400 font-mono uppercase tracking-widest">Music &bull; Rucking &bull; Revelry</p>
+            </div>
+
+            <div class="boombox-container mb-16">
+                <div class="boombox-handle"></div>
+                <div class="boombox-body">
+                    
+                    <div class="speaker-housing">
+                        <div class="speaker-cone" id="speaker-left">
+                            <div class="speaker-dustcap"></div>
+                        </div>
+                    </div>
+
+                    <div class="center-console">
+                        <div class="cassette-deck">
+                            <div class="tape-window" id="tape-window">
+                                <div class="tape-reel"></div>
+                                <div class="tape-reel"></div>
+                            </div>
+                            <div class="absolute bottom-2 left-0 right-0 text-center">
+                                <span id="current-track-name" class="text-green-500 font-mono text-xs bg-black px-2 py-1">SELECT A TRACK</span>
+                            </div>
+                        </div>
+
+                        <div class="vu-meter" id="vu-meter">
+                            <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+                        </div>
+
+                        <div class="controls-row">
+                            <button class="control-btn" id="prev-btn">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10 3.5a.5.5 0 0 0-.5-.5H9a.5.5 0 0 0 0 1h.5v11H9a.5.5 0 0 0 0 1h.5a.5.5 0 0 0 .5-.5v-11zM6 3.5a.5.5 0 0 0-.5-.5H5a.5.5 0 0 0 0 1h.5v11H5a.5.5 0 0 0 0 1h.5a.5.5 0 0 0 .5-.5v-11z"/></svg>
+                            </button>
+                            <button class="control-btn play-btn" id="play-pause-btn">
+                                <svg id="icon-play" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/></svg>
+                                <svg id="icon-pause" class="hidden" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg>
+                            </button>
+                            <button class="control-btn" id="next-btn">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6 12.5a.5.5 0 0 0 .5.5H7a.5.5 0 0 0 0-1h-.5V1H7a.5.5 0 0 0 0-1h-.5a.5.5 0 0 0-.5.5v11zM10 12.5a.5.5 0 0 0 .5.5H11a.5.5 0 0 0 0-1h-.5V1H11a.5.5 0 0 0 0-1h-.5a.5.5 0 0 0-.5.5v11z"/></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-center mt-1">
+                            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-red-600">
+                        </div>
+                    </div>
+
+                    <div class="speaker-housing">
+                        <div class="speaker-cone" id="speaker-right">
+                            <div class="speaker-dustcap"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-2xl text-white mb-6 border-b border-gray-700 pb-2">Event Tracks</h3>
+                
+                <div id="playlist-container" class="space-y-4">
+                    </div>
+            </div>
+
+            <audio id="audio-player" crossorigin="anonymous"></audio>
+
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <script type="module">
+        // --- Updated Playlist Data ---
+        const songs = [
+            {
+                id: 1,
+                title: "Ruck Rock & Revelry",
+                artist: "R3 Brewfest",
+                src: "audio/ruck-rock-revelry.mp3",
+                price: "Donate"
+            },
+            {
+                id: 2,
+                title: "Ruck Rock & Revelry (Remix)",
+                artist: "R3 Brewfest",
+                src: "audio/ruck-rock-revelry_remix.mp3",
+                price: "Donate"
+            },
+            {
+                id: 3,
+                title: "Ruck March",
+                artist: "R3 Brewfest",
+                src: "audio/ruck_march.mp3",
+                price: "Donate"
+            },
+            {
+                id: 4,
+                title: "R3 Cadence V1",
+                artist: "R3 Brewfest",
+                src: "audio/r3_cadence_v1.mp3",
+                price: "Donate"
+            },
+            {
+                id: 5,
+                title: "R3 Cadence V2",
+                artist: "R3 Brewfest",
+                src: "audio/r3_cadence_v2.mp3",
+                price: "Donate"
+            },
+            {
+                id: 6,
+                title: "R3 Cadence V3",
+                artist: "R3 Brewfest",
+                src: "audio/r3_cadence_v3.mp3",
+                price: "Donate"
+            },
+            {
+                id: 7,
+                title: "R3 Cadence V4",
+                artist: "R3 Brewfest",
+                src: "audio/r3_cadence_v4.mp3",
+                price: "Donate"
+            },
+            {
+                id: 8,
+                title: "Houston Pride",
+                artist: "R3 Brewfest",
+                src: "audio/houston_pride.mp3",
+                price: "Donate"
+            },
+            {
+                id: 9,
+                title: "Legacy",
+                artist: "R3 Brewfest",
+                src: "audio/legacy.mp3",
+                price: "Donate"
+            },
+            {
+                id: 10,
+                title: "The Weight",
+                artist: "R3 Brewfest",
+                src: "audio/the_weight.mp3",
+                price: "Donate"
+            },
+            {
+                id: 11,
+                title: "Under The Sun",
+                artist: "R3 Brewfest",
+                src: "audio/under_the_sun.mp3",
+                price: "Donate"
+            }
+        ];
+
+        // --- Elements ---
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        const trackNameDisplay = document.getElementById('current-track-name');
+        const tapeWindow = document.getElementById('tape-window');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const playlistContainer = document.getElementById('playlist-container');
+        const speakerLeft = document.getElementById('speaker-left');
+        const speakerRight = document.getElementById('speaker-right');
+        const leds = document.querySelectorAll('.led');
+
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        
+        // --- Audio Context & Visualizer Setup ---
+        let audioContext;
+        let analyser;
+        let source;
+        let animationId;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; // Higher value = more detailed, but 256 is good for "bass" detection
+                
+                source = audioContext.createMediaElementSource(audioPlayer);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+        }
+
+        // --- Visualizer Loop ---
+        function animateSpeakers() {
+            if (!isPlaying) {
+                // Reset transforms
+                speakerLeft.style.transform = 'scale(1)';
+                speakerRight.style.transform = 'scale(1)';
+                leds.forEach(led => led.classList.remove('active'));
+                return;
+            }
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+
+            // 1. Calculate "Bass" (average of lower frequencies)
+            let bassSum = 0;
+            // Take the first 10 bins (low frequencies)
+            for (let i = 0; i < 10; i++) {
+                bassSum += dataArray[i];
+            }
+            const bassAverage = bassSum / 10;
+
+            // 2. Map bass to scale (1.0 to 1.15)
+            const scale = 1 + (bassAverage / 255) * 0.20; 
+
+            // 3. Apply to speakers
+            speakerLeft.style.transform = `scale(${scale})`;
+            speakerRight.style.transform = `scale(${scale})`;
+
+            // 4. LED Vu-Meter Logic
+            const maxVol = Math.max(...dataArray); // Peak volume
+            const activeLeds = Math.ceil((maxVol / 255) * leds.length);
+            
+            leds.forEach((led, index) => {
+                if (index < activeLeds) {
+                    led.classList.add('active');
+                } else {
+                    led.classList.remove('active');
+                }
+            });
+
+            animationId = requestAnimationFrame(animateSpeakers);
+        }
+
+        // --- Player Logic ---
+        function loadTrack(index) {
+            if (index < 0) index = songs.length - 1;
+            if (index >= songs.length) index = 0;
+            
+            currentTrackIndex = index;
+            const song = songs[index];
+            
+            audioPlayer.src = song.src;
+            trackNameDisplay.textContent = `${index + 1}. ${song.title}`;
+            
+            // Update Playlist UI
+            document.querySelectorAll('.playlist-item').forEach((el, i) => {
+                if (i === index) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+        }
+
+        function togglePlay() {
+            // Initialize AudioContext on first user interaction (browser policy)
+            initAudioContext();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                iconPlay.classList.remove('hidden');
+                iconPause.classList.add('hidden');
+                tapeWindow.classList.remove('is-playing');
+                cancelAnimationFrame(animationId);
+                animateSpeakers(); // Run once to reset
+            } else {
+                audioPlayer.play();
+                isPlaying = true;
+                iconPlay.classList.add('hidden');
+                iconPause.classList.remove('hidden');
+                tapeWindow.classList.add('is-playing');
+                animateSpeakers();
+            }
+        }
+
+        // --- Playlist Generation ---
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+            songs.forEach((song, index) => {
+                const div = document.createElement('div');
+                div.className = 'playlist-item rounded-lg p-4 flex flex-col md:flex-row justify-between items-center gap-4';
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-4 w-full md:w-auto cursor-pointer flex-grow" onclick="playTrackFromList(${index})">
+                        <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-500 font-black ops-font">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <h4 class="song-title font-bold text-white text-lg leading-tight">${song.title}</h4>
+                            <p class="text-gray-400 text-sm">${song.artist}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <a href="${song.src}" download class="btn-download flex-1 md:flex-none px-4 py-2 rounded text-sm font-bold uppercase flex items-center justify-center gap-2 hover:bg-gray-600 transition">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                            Free DL
+                        </a>
+                        
+                        <a href="https://www.paypal.com/donate" target="_blank" class="btn-donate flex-1 md:flex-none px-6 py-2 rounded text-sm flex items-center justify-center gap-2 transition shadow-[0_0_15px_rgba(255,51,51,0.4)]">
+                            Donate
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/></svg>
+                        </a>
+                    </div>
+                `;
+                playlistContainer.appendChild(div);
+            });
+        }
+
+        // Global access for onclick in HTML string
+        window.playTrackFromList = (index) => {
+            loadTrack(index);
+            if (!isPlaying) togglePlay();
+        };
+
+        // --- Event Listeners ---
+        playBtn.addEventListener('click', togglePlay);
+        
+        prevBtn.addEventListener('click', () => {
+            loadTrack(currentTrackIndex - 1);
+            if (isPlaying) audioPlayer.play();
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            loadTrack(currentTrackIndex + 1);
+            if (isPlaying) audioPlayer.play();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            audioPlayer.volume = e.target.value;
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            // Auto play next song
+            loadTrack(currentTrackIndex + 1);
+            audioPlayer.play();
+        });
+
+        // --- Initialization ---
+        renderPlaylist();
+        loadTrack(0);
+
+    </script>
+</body>
+</html>
