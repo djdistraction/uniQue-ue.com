@@ -105,7 +105,7 @@ async function handleChat(request, env) {
         
         // 3. Call AI to refine the prompt
         try {
-            const refineResponse = await fetch("https.models.github.ai/inference/chat/completions", {
+            const refineResponse = await fetch("https://models.github.ai/inference/chat/completions", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -148,7 +148,7 @@ async function handleChat(request, env) {
     ];
 
     // Call GitHub Models API
-    const apiResponse = await fetch("https.models.github.ai/inference/chat/completions", {
+    const apiResponse = await fetch("https://models.github.ai/inference/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -221,7 +221,7 @@ async function handleImageGeneration(request, env) {
     }
 
     const model = "runwayml/stable-diffusion-v1-5";
-    const apiResponse = await fetch(`https.api-inference.huggingface.co/models/${model}`, {
+    const apiResponse = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.HUGGINGFACE_TOKEN}`,
@@ -324,7 +324,7 @@ ${message}
       ],
     };
 
-    const sendgridResponse = await fetch("https.api.sendgrid.com/v3/mail/send", {
+    const sendgridResponse = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.SENDGRID_API_KEY}`,
