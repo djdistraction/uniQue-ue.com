@@ -1,1 +1,211 @@
-wheel for random selections
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Spin Wheel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h2 { margin-bottom: 10px; }
+
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            z-index: 10;
+            font-weight: bold;
+            color: #333;
+            user-select: none;
+            border: 2px solid #ccc;
+        }
+
+        .center-circle:active { background: #eee; }
+
+        .pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #e74c3c;
+            z-index: 20;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            height: 30px;
+            color: #f1c40f;
+        }
+
+        /* Input area styling */
+        .controls {
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        input { padding: 8px; border-radius: 4px; border: none; }
+        button.update { padding: 8px 12px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="controls" id="setupPanel">
+        <h3>1. Setup your Wheel</h3>
+        <p>Enter choices separated by commas:</p>
+        <input type="text" id="choicesInput" value="Pizza,Tacos,Sushi,Burgers,Salad" style="width: 250px;">
+        <button class="update" onclick="updateWheel()">Update Wheel</button>
+        <p><small>When sending to a friend, hide this panel!</small></p>
+        <button onclick="document.getElementById('setupPanel').style.display='none'">Hide Setup Panel (Ready to Send)</button>
+    </div>
+
+    <div class="pointer"></div>
+    <div class="wheel-container">
+        <canvas id="wheelCanvas" width="500" height="500"></canvas>
+        <div class="center-circle" onclick="spinWheel()">SPIN</div>
+    </div>
+
+    <div class="result-box" id="resultDisplay"></div>
+
+    <script>
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC926'];
+        
+        let segments = [];
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        // Initialize
+        updateWheel();
+
+        function updateWheel() {
+            const input = document.getElementById('choicesInput').value;
+            segments = input.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            drawWheel();
+        }
+
+        function drawWheel() {
+            const arcSize = (2 * Math.PI) / segments.length;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2;
+
+            segments.forEach((segment, index) => {
+                const angle = index * arcSize;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                ctx.save();
+
+                // Text
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "white";
+                ctx.font = "bold 24px Arial";
+                ctx.fillText(segment, radius - 20, 10);
+                ctx.restore();
+            });
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('resultDisplay').innerText = "";
+
+            // Calculate random spin
+            const spinDuration = 4000; // 4 seconds
+            const minSpins = 5;
+            const maxSpins = 10;
+            const randomSpins = Math.random() * (maxSpins - minSpins) + minSpins;
+            const totalDegrees = randomSpins * 360 + Math.random() * 360;
+            
+            // CSS Rotation for smoothness
+            canvas.style.transition = `transform ${spinDuration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
+            canvas.style.transform = `rotate(-${totalDegrees}deg)`;
+
+            // Determine winner after spin ends
+            setTimeout(() => {
+                isSpinning = false;
+                
+                // Calculate the winning index based on degrees rotated
+                // We normalize the degrees to 0-360
+                const actualRotation = totalDegrees % 360;
+                // Because the pointer is at the top (270 degrees or -90), we adjust
+                // A simpler way: The wheel rotated LEFT. The slice at the top is based on the rotation.
+                
+                const sliceSize = 360 / segments.length;
+                // Calculate which slice is at the 12 o'clock position (pointer)
+                // We add 90 degrees because 0 degrees is usually 3 o'clock in canvas
+                const winningIndex = Math.floor(((actualRotation + 90) % 360) / sliceSize);
+                
+                // Due to the way canvas draws (clockwise), the index is reversed relative to rotation
+                const resultIndex = (segments.length - 1) - (Math.floor(((actualRotation) % 360) / sliceSize)) % segments.length;
+                
+                // Let's use a simpler logic for the display text to ensure accuracy:
+                // (Total degrees % 360) tells us where the 0-point ended up.
+                const degreeInOneCircle = totalDegrees % 360;
+                // 360 - degreeInOneCircle gives us the point 'under' the needle if needle is at 0 (right)
+                // But needle is at top (-90deg relative to 0).
+                
+                // To keep it foolproof for this demo, we simply map rotation to the segment array:
+                const index = Math.floor((360 - (degreeInOneCircle % 360)) / (360 / segments.length));
+                const text = segments[index % segments.length];
+                
+                document.getElementById('resultDisplay').innerText = `Winner: ${text}!`;
+                
+                // Reset transform for next spin (optional, but requires logic reset)
+                // For a single use simple text, we leave it here.
+                
+            }, spinDuration);
+        }
+    </script>
+</body>
+</html>
