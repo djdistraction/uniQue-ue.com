@@ -1,1 +1,64 @@
-create file
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel Creator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #333; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        input { padding: 12px; width: 80%; font-size: 16px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 5px; }
+        button { padding: 12px 24px; background: #27ae60; color: white; border: none; font-size: 18px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
+        button:hover { background: #219150; }
+        .output { margin-top: 20px; padding: 15px; background: #e8f6f3; border: 1px solid #a9dfbf; border-radius: 5px; display: none; }
+        code { display: block; background: #fff; padding: 10px; margin: 10px 0; word-break: break-all; border: 1px solid #ddd; color: #c0392b; }
+        a.test-btn { display: inline-block; margin-top: 10px; text-decoration: none; color: #2980b9; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create a Custom Wheel</h1>
+        <p>Enter choices separated by commas:</p>
+        
+        <input type="text" id="choices" placeholder="Ex: Pizza, Tacos, Sushi, Burgers">
+        <br>
+        <button onclick="generateLink()">Create Wheel Link</button>
+
+        <div class="output" id="outputPanel">
+            <h3>Send this to your friend:</h3>
+            <code id="finalLink"></code>
+            <button onclick="copyToClipboard()" style="background:#3498db; font-size: 14px; padding: 8px 16px;">Copy Link</button>
+            <br>
+            <a id="previewLink" class="test-btn" href="#" target="_blank">Test Link</a>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const input = document.getElementById('choices').value;
+            if(!input) return alert("Please enter some choices!");
+            
+            const encodedChoices = encodeURIComponent(input);
+            
+            // AUTOMATICALLY finds your domain name
+            // It looks for wheel.html in the same folder as this file
+            const currentPath = window.location.pathname;
+            const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+            const baseURL = window.location.origin + directory + "/wheel.html";
+            
+            const fullURL = `${baseURL}?options=${encodedChoices}`;
+
+            document.getElementById('finalLink').innerText = fullURL;
+            document.getElementById('previewLink').href = fullURL;
+            document.getElementById('outputPanel').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const linkText = document.getElementById('finalLink').innerText;
+            navigator.clipboard.writeText(linkText);
+            alert("Link copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
