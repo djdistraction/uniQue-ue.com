@@ -30,7 +30,7 @@
             height: 100%;
             border-radius: 50%;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
+            /* Note: Transition is handled in JS now for better control */
         }
         .center-circle {
             position: absolute;
@@ -79,9 +79,9 @@
         
         let segments = [];
         let isSpinning = false;
+        let currentRotation = 0; // Stores the total rotation to prevent "backwards" spin
 
         function init() {
-            // This is the "Smart" part: reading the link
             const urlParams = new URLSearchParams(window.location.search);
             const options = urlParams.get('options');
 
@@ -124,20 +124,48 @@
             isSpinning = true;
             document.getElementById('resultDisplay').innerText = "";
 
-            const spinDuration = 4000; 
-            const randomSpins = Math.random() * (10 - 5) + 5;
-            const totalDegrees = randomSpins * 360 + Math.random() * 360;
+            // 1. Calculate a NEW random amount to add to the CURRENT rotation
+            const minSpins = 5;
+            const maxSpins = 10;
+            const spinDuration = 4000;
             
+            // Random degrees between minSpins and maxSpins (e.g., 1800 to 3600 degrees)
+            const additionalDegrees = (Math.random() * (maxSpins - minSpins) + minSpins) * 360 + Math.random() * 360;
+            
+            // Add to the existing rotation so it always spins forward
+            currentRotation += additionalDegrees;
+            
+            // Apply the spin
             canvas.style.transition = `transform ${spinDuration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
-            canvas.style.transform = `rotate(-${totalDegrees}deg)`;
+            canvas.style.transform = `rotate(-${currentRotation}deg)`; // Negative for Counter-Clockwise spin
 
             setTimeout(() => {
                 isSpinning = false;
-                const degreeInOneCircle = totalDegrees % 360;
-                const index = Math.floor((360 - (degreeInOneCircle % 360)) / (360 / segments.length));
-                const text = segments[index % segments.length];
-                document.getElementById('resultDisplay').innerText = `${text}!`;
+                calculateWinner();
             }, spinDuration);
+        }
+
+        function calculateWinner() {
+            const sliceSize = 360 / segments.length;
+            
+            // Math explanation: 
+            // 1. We spun 'currentRotation' degrees.
+            // 2. We use modulo 360 to find the "effective" rotation within a single circle.
+            // 3. The pointer is at the TOP (270 degrees).
+            // 4. Because we spun Counter-Clockwise (negative), the formula to find the slice at the top is:
+            //    (270 + Rotation) % 360
+            
+            const effectiveRotation = currentRotation % 360;
+            
+            // Calculate the angle on the wheel that is currently under the pointer
+            const winningAngle = (270 + effectiveRotation) % 360;
+            
+            // Convert that angle to an index
+            const winningIndex = Math.floor(winningAngle / sliceSize);
+            
+            // Get text
+            const text = segments[winningIndex];
+            document.getElementById('resultDisplay').innerText = `${text}!`;
         }
 
         init();
