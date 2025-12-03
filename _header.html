@@ -8,7 +8,14 @@
     <nav class="hidden lg:flex items-center space-x-2 font-display text-sm">
       <a href="/index.html" class="nav-link" data-navlink="index">Home</a>
       <a href="/about.html" class="nav-link" data-navlink="about">About</a>
-      <a href="/resources.html" class="nav-link" data-navlink="resources">Resources</a>
+      <div class="relative group">
+        <a href="/resources.html" class="nav-link" data-navlink="resources">Resources</a>
+        <div class="absolute left-0 mt-1 w-48 bg-brand-secondary/95 backdrop-blur-sm rounded-lg shadow-lg border border-brand-accent/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+          <a href="/ghost-writer.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:text-brand-accent hover:bg-brand-accent/10 transition-colors" data-navlink="ghost-writer">Ghost-Writer</a>
+          <a href="/graphics-studio.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:text-brand-accent hover:bg-brand-accent/10 transition-colors" data-navlink="graphics-studio">Graphics Studio</a>
+          <a href="/rate_comparison.html" class="block px-4 py-2 text-sm text-brand-text-muted hover:text-brand-accent hover:bg-brand-accent/10 transition-colors" data-navlink="rate_comparison">Rate Calculator</a>
+        </div>
+      </div>
       <a href="/r3-brewfest.html" class="nav-link text-brand-accent" data-navlink="r3-brewfest">R3 Brewfest</a>
       <a href="/contact.html" class="nav-link" data-navlink="contact">Contact</a>
     </nav>
@@ -41,6 +48,9 @@
       <a href="/index.html" class="nav-link" data-navlink="index">Home</a>
       <a href="/about.html" class="nav-link" data-navlink="about">About</a>
       <a href="/resources.html" class="nav-link" data-navlink="resources">Resources</a>
+      <a href="/ghost-writer.html" class="nav-link pl-8 text-sm" data-navlink="ghost-writer">Ghost-Writer</a>
+      <a href="/graphics-studio.html" class="nav-link pl-8 text-sm" data-navlink="graphics-studio">Graphics Studio</a>
+      <a href="/rate_comparison.html" class="nav-link pl-8 text-sm" data-navlink="rate_comparison">Rate Calculator</a>
       <a href="/r3-brewfest.html" class="nav-link text-brand-accent" data-navlink="r3-brewfest">R3 Brewfest</a>
       <a href="/contact.html" class="nav-link" data-navlink="contact">Contact</a>
       <div id="mobile-auth-nav-container" class="pt-2"></div>
