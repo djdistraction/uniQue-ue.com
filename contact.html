@@ -27,28 +27,83 @@
     <!-- Page-specific styles for form inputs -->
     <style>
       .form-input {
-        @apply w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/50 focus:outline-none transition-all duration-300 font-sans text-brand-text placeholder-brand-text-muted;
+        width: 100%;
+        background-color: var(--brand-secondary);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(0, 246, 255, 0.3);
+        color: var(--brand-text);
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+      }
+      .form-input::placeholder {
+        color: var(--brand-text-muted);
       }
       .form-input:focus {
-        box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+        outline: none;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 2px rgba(0, 246, 255, 0.2), 0 0 15px rgba(0, 246, 255, 0.3);
       }
       .form-button {
-        @apply w-full bg-brand-accent text-brand-primary font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 inline-block animate-glow border-2 border-brand-accent hover:bg-brand-accent-hover disabled:bg-brand-text-muted disabled:animate-none;
+        width: 100%;
+        background: linear-gradient(145deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+        color: var(--brand-primary);
+        font-weight: 700;
+        font-size: 1.125rem;
+        padding: 0.875rem 2rem;
+        border-radius: 0.5rem;
+        border: 2px solid var(--brand-accent);
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px -5px rgba(0, 246, 255, 0.5);
+      }
+      .form-button:hover {
+        background: linear-gradient(145deg, var(--brand-accent-hover), var(--brand-accent));
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px -5px rgba(0, 246, 255, 0.7);
+      }
+      .form-button:disabled {
+        background: var(--brand-text-muted);
+        border-color: var(--brand-text-muted);
+        box-shadow: none;
+        cursor: not-allowed;
       }
       .faq-item {
-        @apply bg-brand-secondary/50 border border-brand-accent/20 rounded-lg overflow-hidden;
+        background: linear-gradient(145deg, rgba(16, 20, 44, 0.9), rgba(2, 4, 24, 0.9));
+        border: 1px solid rgba(0, 246, 255, 0.2);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
       }
       .faq-question {
-        @apply w-full flex justify-between items-center p-6 text-left font-display text-lg text-brand-accent;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        text-align: left;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.125rem;
+        color: var(--brand-accent);
+        transition: all 0.3s ease;
+      }
+      .faq-question:hover {
+        background: rgba(0, 246, 255, 0.05);
       }
       .faq-answer {
-        @apply p-6 pt-0 text-brand-text-muted max-h-0 opacity-0 transition-all duration-500 ease-in-out;
+        padding: 0 1.5rem;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+        color: var(--brand-text-muted);
       }
       .faq-item.open .faq-answer {
-        @apply max-h-screen opacity-100;
+        padding: 0 1.5rem 1.5rem;
+        max-height: 500px;
+        opacity: 1;
       }
       .faq-item.open .faq-arrow {
-        @apply rotate-180;
+        transform: rotate(180deg);
       }
     </style>
 
@@ -66,16 +121,20 @@
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
-        <!-- 
-          Main Content
-          This is the new "Contact Us" page content.
-        -->
+        <!-- Main Content -->
         <main class="flex-grow">
             <div class="container mx-auto px-6 py-12 md:py-20">
+                <!-- Hero Section with Logo -->
+                <div class="text-center mb-12">
+                    <div class="hero-logo-container animate-fade-in-up">
+                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                    </div>
+                </div>
+                
                 <div class="grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
                     
                     <!-- Column 1: Contact Form -->
-                    <div class="max-w-xl">
+                    <div class="content-box-3d max-w-xl">
                         <h1 class="text-4xl md:text-5xl font-bold mb-4 heading-glow">
                             Establish Connection
                         </h1>
@@ -113,7 +172,7 @@
                     
                     <!-- Column 2: FAQ -->
                     <div class="mt-0 md:mt-16">
-                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent text-center md:text-left">
+                        <h2 class="text-3xl font-display font-bold mb-8 text-brand-accent text-center md:text-left heading-glow">
                             Frequently Accessed Queries
                         </h2>
                         <div class="space-y-4" id="faq-container">
@@ -159,9 +218,9 @@
         const contactForm = document.getElementById('contact-form');
         const submitButton = document.getElementById('form-submit-button');
         const formStatus = document.getElementById('form-status');
+        const heroLogo = document.getElementById('hero-logo');
         
         // --- Get Worker URL (from app.js or directly) ---
-        // MODIFIED: Import WORKER_URL from firebase-config.js (Task 3)
         import { WORKER_URL } from './firebase-config.js';
 
         // --- 1. Populate FAQs ---
@@ -240,8 +299,26 @@
             }
         }
 
+        // --- 3. Logo Mouse-Follow Effect ---
+        function initLogoFollow() {
+            if (heroLogo) {
+                const container = heroLogo.parentElement;
+                container.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const rect = container.getBoundingClientRect();
+                    const x = ((clientX - rect.left) / rect.width) - 0.5;
+                    const y = ((clientY - rect.top) / rect.height) - 0.5;
+                    heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+                });
+                container.addEventListener('mouseleave', () => {
+                    heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+                });
+            }
+        }
+
         // --- Initialization ---
         initFAQs();
+        initLogoFollow();
         if (contactForm) {
             contactForm.addEventListener('submit', handleFormSubmit);
         }

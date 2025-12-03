@@ -23,6 +23,65 @@
     <script src="app.js" type="module"></script>
     
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <!-- Page-specific styles for form inputs -->
+    <style>
+      /* Custom select styling for visibility */
+      .rate-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: var(--brand-secondary);
+        border: 1px solid rgba(0, 246, 255, 0.4);
+        border-radius: 0.5rem;
+        padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+        font-size: 0.875rem;
+        color: var(--brand-text);
+        transition: all 0.3s ease;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2300F6FF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        cursor: pointer;
+      }
+      
+      .rate-select:focus {
+        outline: none;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 2px rgba(0, 246, 255, 0.3), 0 0 15px rgba(0, 246, 255, 0.2);
+      }
+      
+      .rate-select option {
+        background-color: var(--brand-secondary);
+        color: var(--brand-text);
+        padding: 0.75rem;
+      }
+      
+      .rate-select-icon {
+        padding-left: 2.5rem;
+      }
+      
+      .rate-input {
+        background-color: var(--brand-secondary);
+        border: 1px solid rgba(0, 246, 255, 0.4);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--brand-accent);
+        font-weight: 700;
+        transition: all 0.3s ease;
+      }
+      
+      .rate-input:focus {
+        outline: none;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 2px rgba(0, 246, 255, 0.3), 0 0 15px rgba(0, 246, 255, 0.2);
+      }
+      
+      .rate-input::placeholder {
+        color: var(--brand-text-muted);
+      }
+    </style>
 
 </head>
 
@@ -42,6 +101,9 @@
             <!-- Hero Section -->
             <section class="py-8 md:py-12 text-center">
                 <div class="animate-fade-in-up">
+                    <div class="hero-logo-container mb-6">
+                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                    </div>
                     <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
                     <h1 class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 heading-glow">Rate Calculator</h1>
                     <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
@@ -52,15 +114,15 @@
 
             <!-- Navigation Tabs -->
             <div class="flex gap-2 border-b border-brand-accent/20 overflow-x-auto mb-8">
-                <button onclick="setActiveTab('dashboard')" id="tab-dashboard" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-brand-accent text-brand-accent">
+                <button onclick="setActiveTab('dashboard')" id="tab-dashboard" class="nav-button px-4 py-2 text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap capitalize border-b-2 border-brand-accent text-brand-accent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
                     Dashboard
                 </button>
-                <button onclick="setActiveTab('tour')" id="tab-tour" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-transparent text-brand-text-muted hover:text-brand-accent">
+                <button onclick="setActiveTab('tour')" id="tab-tour" class="nav-button px-4 py-2 text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap capitalize border-b-2 border-transparent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
                     Tour Mode
                 </button>
-                <button onclick="setActiveTab('negotiate')" id="tab-negotiate" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-transparent text-brand-text-muted hover:text-brand-accent">
+                <button onclick="setActiveTab('negotiate')" id="tab-negotiate" class="nav-button px-4 py-2 text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap capitalize border-b-2 border-transparent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     Negotiate
                 </button>
@@ -69,7 +131,7 @@
             <!-- Dashboard Tab -->
             <div id="content-dashboard" class="tab-content space-y-6">
                 <!-- Input Section -->
-                <section class="bg-brand-secondary/50 rounded-xl shadow-lg border border-brand-accent/20 p-6 backdrop-blur-md">
+                <section class="panel-3d p-6">
                     <div class="mb-6 border-b border-brand-accent/20 pb-4">
                         <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -84,8 +146,8 @@
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Original Year</label>
                             <div class="relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                                <select id="baseYear" onchange="updateCalculations()" class="w-full pl-10 p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-accent z-10" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                <select id="baseYear" onchange="updateCalculations()" class="rate-select rate-select-icon w-full">
                                     <option value="2010">2010</option>
                                     <option value="2011">2011</option>
                                     <option value="2012">2012</option>
@@ -106,7 +168,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Region</label>
-                            <select id="selectedRegion" onchange="updateCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                            <select id="selectedRegion" onchange="updateCalculations()" class="rate-select w-full">
                                 <option value="National Avg">National Average</option>
                                 <option value="Northeast">Northeast (NY, MA, PA)</option>
                                 <option value="West Coast">West Coast (CA, WA, OR)</option>
@@ -117,8 +179,8 @@
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Gig Type</label>
                             <div class="relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                                <select id="selectedRole" onchange="handleRoleChange()" class="w-full pl-10 p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-accent z-10" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                <select id="selectedRole" onchange="handleRoleChange()" class="rate-select rate-select-icon w-full">
                                     <option value="Solo Musician">Solo Acoustic/Vocal</option>
                                     <option value="DJ">Club/Event DJ</option>
                                     <option value="Band (4-piece)">Full Band</option>
@@ -131,8 +193,8 @@
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Fee</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold">$</span>
-                                <input type="number" id="userFee" value="300" onchange="updateCalculations()" class="w-full pl-8 p-3 bg-brand-primary border border-brand-accent/50 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none font-bold text-brand-accent placeholder-brand-text-muted transition-colors" />
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold z-10">$</span>
+                                <input type="number" id="userFee" value="300" onchange="updateCalculations()" class="rate-input w-full pl-8" />
                             </div>
                         </div>
                     </div>
@@ -270,7 +332,7 @@
 
             <!-- Tour Mode Tab -->
             <div id="content-tour" class="tab-content hidden space-y-6">
-                <section class="bg-brand-secondary/50 rounded-xl shadow-lg border border-brand-accent/20 p-6 backdrop-blur-md">
+                <section class="panel-3d p-6">
                     <h2 class="text-lg font-display font-bold text-brand-accent mb-4 flex items-center gap-2 heading-glow">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                         Price Relocation Calculator
@@ -279,7 +341,7 @@
                     <div class="grid md:grid-cols-3 gap-6 items-end">
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Current Home Base</label>
-                            <select id="tourOrigin" onchange="updateTourCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white">
+                            <select id="tourOrigin" onchange="updateTourCalculations()" class="rate-select w-full">
                                 <option value="National Avg">National Average</option>
                                 <option value="Northeast">Northeast (NY, MA, PA)</option>
                                 <option value="West Coast">West Coast (CA, WA, OR)</option>
@@ -292,7 +354,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Target Destination</label>
-                            <select id="tourDestination" onchange="updateTourCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white">
+                            <select id="tourDestination" onchange="updateTourCalculations()" class="rate-select w-full">
                                 <option value="National Avg">National Average</option>
                                 <option value="Northeast" selected>Northeast (NY, MA, PA)</option>
                                 <option value="West Coast">West Coast (CA, WA, OR)</option>
@@ -305,13 +367,13 @@
                     <div class="mt-6">
                         <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Standard Rate at Home Base</label>
                         <div class="relative max-w-xs">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold">$</span>
-                            <input type="number" id="tourBaseFee" value="300" onchange="updateTourCalculations()" class="w-full pl-8 p-3 bg-brand-primary border border-brand-accent/50 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none font-bold text-brand-accent" />
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold z-10">$</span>
+                            <input type="number" id="tourBaseFee" value="300" onchange="updateTourCalculations()" class="rate-input w-full pl-8" />
                         </div>
                     </div>
                 </section>
 
-                <section class="bg-brand-secondary/80 rounded-xl shadow-lg border border-brand-accent/20 overflow-hidden p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                <section class="panel-3d p-8 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
                         <h3 class="text-brand-text-muted text-sm font-bold uppercase tracking-widest mb-1">Equivalent Market Rate</h3>
                         <div class="text-5xl font-bold mb-2 text-white heading-glow">$<span id="tour-adjusted-fee">441</span></div>
@@ -335,20 +397,20 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                             Email Generator
                         </h2>
-                        <div class="bg-brand-secondary/50 rounded-lg p-4 border border-brand-accent/20">
+                        <div class="panel-3d p-4">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-brand-text-muted text-sm">Email Draft</h3>
-                                <button onclick="copyScript()" id="copy-button" class="flex items-center gap-1 text-xs bg-brand-accent text-brand-primary px-3 py-1.5 rounded-md hover:opacity-80 transition-colors font-bold">
+                                <button onclick="copyScript()" id="copy-button" class="nav-button flex items-center gap-1 text-xs px-3 py-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                                     Copy
                                 </button>
                             </div>
-                            <textarea id="email-script" readonly class="w-full h-64 p-3 text-sm text-brand-text-muted bg-brand-primary border border-brand-accent/20 rounded-md font-mono resize-none focus:outline-none focus:border-brand-accent"></textarea>
+                            <textarea id="email-script" readonly class="w-full h-64 p-3 text-sm text-brand-text bg-brand-primary border border-brand-accent/20 rounded-md font-mono resize-none focus:outline-none focus:border-brand-accent"></textarea>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <h2 class="text-lg font-display font-bold text-brand-accent mb-4 heading-glow">Key Talking Points</h2>
-                        <div class="bg-brand-secondary/50 p-4 rounded-lg border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                        <div class="panel-3d p-4">
                             <h4 class="font-bold text-brand-accent text-sm mb-1">"We can't afford that increase."</h4>
                             <p class="text-sm text-brand-text-muted">"I understand margins are tight. However, your own menu prices have increased by <span id="talking-point-pct">30.8</span>% since <span id="talking-point-year">2016</span> to cover those costs. I'm simply asking for the same adjustment."</p>
                         </div>
@@ -738,10 +800,29 @@ Best,
             }
         }
 
+        // --- LOGO MOUSE-FOLLOW ---
+        function initLogoFollow() {
+            const heroLogo = document.getElementById('hero-logo');
+            if (heroLogo) {
+                const container = heroLogo.parentElement;
+                container.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const rect = container.getBoundingClientRect();
+                    const x = ((clientX - rect.left) / rect.width) - 0.5;
+                    const y = ((clientY - rect.top) / rect.height) - 0.5;
+                    heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+                });
+                container.addEventListener('mouseleave', () => {
+                    heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+                });
+            }
+        }
+
         // --- INITIALIZE ---
         document.addEventListener('DOMContentLoaded', function() {
             updateCalculations();
             updateTourCalculations();
+            initLogoFollow();
         });
     </script>
 </body>

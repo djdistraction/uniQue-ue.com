@@ -32,79 +32,88 @@
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
             <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
-        <!-- 
-          Main Content
-          The unique content for each page will be placed inside this <main> tag.
-        -->
+        <!-- Main Content -->
         <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-display mb-8">Resources</h1>
-        
-        <p class="mb-8">Explore our suite of AI-powered creative tools.</p>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Card for Ghost-Writer -->
-            <div class="border border-brand-accent/30 p-6 rounded-lg">
-                <h2 class="text-2xl font-display mb-4">Ghost-Writer</h2>
-                <p class="text-brand-text-muted mb-4">AI-powered creative writing assistant.</p>
-                <a href="ghost-writer.html" class="text-brand-accent hover:underline">Launch Tool &rarr;</a>
+            <!-- Hero Section with Logo -->
+            <div class="text-center mb-12">
+                <div class="hero-logo-container animate-fade-in-up">
+                    <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                </div>
+                <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">Resources</h1>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-2xl mx-auto">Explore our suite of AI-powered creative tools.</p>
             </div>
             
-            <!-- Card for Graphics Studio -->
-            <div class="border border-brand-accent/30 p-6 rounded-lg">
-                <h2 class="text-2xl font-display mb-4">Graphics Studio</h2>
-                <p class="text-brand-text-muted mb-4">AI-powered visual and image generation.</p>
-                <a href="graphics-studio.html" class="text-brand-accent hover:underline">Launch Tool &rarr;</a>
+            <!-- Resource Cards Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Card for Ghost-Writer -->
+                <div class="resource-card-3d">
+                    <h2 class="text-2xl font-display mb-4">Ghost-Writer</h2>
+                    <p class="text-brand-text-muted mb-4">AI-powered creative writing assistant. Transform raw ideas into polished, monetizable works through AI-powered dialogue.</p>
+                    <a href="ghost-writer.html" class="card-link">
+                        Launch Tool 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                
+                <!-- Card for Graphics Studio -->
+                <div class="resource-card-3d">
+                    <h2 class="text-2xl font-display mb-4">Graphics Studio</h2>
+                    <p class="text-brand-text-muted mb-4">AI-powered visual and image generation. Transform your documents into stunning visual narratives.</p>
+                    <a href="graphics-studio.html" class="card-link">
+                        Launch Tool 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                
+                <!-- Card for Rate Calculator -->
+                <div class="resource-card-3d">
+                    <h2 class="text-2xl font-display mb-4">Rate Calculator</h2>
+                    <p class="text-brand-text-muted mb-4">Compare your gig rate to venue price inflation and calculate fair adjustments for your work.</p>
+                    <a href="rate_comparison.html" class="card-link">
+                        Launch Tool 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
             </div>
-            
-            <!-- Card for Rate Calculator -->
-            <div class="border border-brand-accent/30 p-6 rounded-lg">
-                <h2 class="text-2xl font-display mb-4">Rate Calculator</h2>
-                <p class="text-brand-text-muted mb-4">Compare your gig rate to venue price inflation and calculate fair adjustments.</p>
-                <a href="rate_comparison.html" class="text-brand-accent hover:underline">Launch Tool &rarr;</a>
-            </div>
-            
-            <!-- TODO: Add cards for subscriptions/upgrades -->
-        </div>
-    </div>
-    
-    
-    
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        // This page can check auth state to show different content
-        // (e.g., "Manage Subscription" vs "View Plans")
-    </script>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
             <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
     </div>
+
+    <!-- Page-Specific JavaScript for Logo Mouse-Follow -->
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        
+        const heroLogo = document.getElementById('hero-logo');
+        
+        if (heroLogo) {
+            const container = heroLogo.parentElement;
+            container.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const rect = container.getBoundingClientRect();
+                const x = ((clientX - rect.left) / rect.width) - 0.5;
+                const y = ((clientY - rect.top) / rect.height) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+            container.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
+    </script>
 </body>
 
 </html>
