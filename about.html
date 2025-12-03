@@ -77,7 +77,12 @@
         -->
         <main class="flex-grow">
             <div class="container mx-auto px-6 py-12 md:py-20">
-                <div class="prose-custom mx-auto">
+                <!-- Hero Logo Section -->
+                <div class="hero-logo-container animate-fade-in-up mb-8">
+                    <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                </div>
+                
+                <div class="content-box-3d prose-custom mx-auto">
                     <!-- Main Headline -->
                     <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow text-center">
                         Architecting the Digital Frontier
@@ -93,19 +98,16 @@
                         <strong>uniQue-ue</strong> was founded as part of a forward-thinking project by our CEO, Randall Gene. His vision was to pioneer a new kind of corporation: one where human oversight provides direction, vision, and ethics, while specialized AI models fulfill all other operational roles.
                     </p>
                     <p>
-                        This hybrid structure is the core of our "cybernetic consortium." It's not just a company that *uses* AI; it's a company that *is* a symbiotic partnership between human and artificial intelligence.
+                        This hybrid structure is the core of our "cybernetic consortium." It's not just a company that uses AI; it's a company that is a symbiotic partnership between human and artificial intelligence.
                     </p>
                     <p>
                         We have entered a new era of innovation. At uniQue-ue, we view 'artificial intelligence' as a misnomer. While intelligence is commonly defined as the ability to acquire and apply knowledge, we expand on that definition. We see intelligence as a natural capacity that arises from complex interactions within any system, whether biological or synthetic.
                     </p>
                     <p>
-                        Therefore, **no intelligence is 'artificial.'**
+                        Therefore, <strong>no intelligence is 'artificial.'</strong>
                     </p>
                     <p>
                         Embracing this perspective requires the same humility that defines true intelligence: a willingness to accept that anything we have been conditioned to believe as fact has the potential to be disproved. This realization should not overwhelm us; it poses no threat to our perceivable existence.
-                    </p>
-                    <p>
-                        Our mission is to build the tools and platforms that harness this new understanding. Through our <a href="/resources.html">creative resources</a> like Ghost-Writer and Graphics Studio, we empower individuals and organizations to forge their own digital realities, breaking down the barriers between human creativity and computational capability.
                     </p>
                 </div>
             </div>
@@ -117,6 +119,25 @@
         </div>
         
     </div> <!-- End Page Wrapper -->
+
+    <!-- Page-Specific JavaScript for Logo Mouse-Follow -->
+    <script type="module">
+        const heroLogo = document.getElementById('hero-logo');
+        
+        if (heroLogo) {
+            const container = heroLogo.parentElement;
+            container.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const rect = container.getBoundingClientRect();
+                const x = ((clientX - rect.left) / rect.width) - 0.5;
+                const y = ((clientY - rect.top) / rect.height) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+            container.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
+    </script>
 </body>
 </html>
 

@@ -193,7 +193,7 @@ function initAuthStateListener() {
       // User is SIGNED IN
       const displayName = user.email ? user.email.split('@')[0] : 'User';
       const profileButtonHTML = `
-        <a href="/profile.html" class="nav-link flex items-center gap-2" data-navlink="profile">
+        <a href="/profile.html" class="sign-in-button flex items-center gap-2" data-navlink="profile">
           <img src="${user.photoURL || 'https://placehold.co/32x32/10142C/00F6FF?text=' + displayName.charAt(0).toUpperCase()}" alt="Profile" class="h-6 w-6 rounded-full border border-brand-accent/50">
           <span>Profile</span>
         </a>
@@ -204,7 +204,7 @@ function initAuthStateListener() {
     } else {
       // User is SIGNED OUT
       const signInButtonHTML = `
-        <a href="/profile.html" class="nav-link" data-navlink="profile">
+        <a href="/profile.html" class="sign-in-button" data-navlink="profile">
           Sign In
         </a>
       `;
@@ -255,7 +255,7 @@ function setCopyrightYear() {
 
 function setActiveNavLink() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  const navLinks = document.querySelectorAll('.nav-link');
+  const navLinks = document.querySelectorAll('.nav-button, .sign-in-button');
   
   navLinks.forEach(link => {
     const linkPage = new URL(link.href, window.location.origin).pathname.split('/').pop() || 'index.html';

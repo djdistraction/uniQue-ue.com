@@ -32,57 +32,44 @@
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
-    <!-- 
-      Page Wrapper
-      This holds all content and sits on top of the particle canvas.
-      It has padding-top to account for the 80px fixed header.
-    -->
+    <!-- Page Wrapper -->
     <div class="page-wrapper">
     
         <!-- Global Header Component -->
-        <!-- app.js will load _header.html into this div -->
         <div id="header-placeholder">
             <!-- Skeleton loader for the header -->
             <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
         </div>
         
-        <!-- 
-          Main Content
-          The unique content for each page will be placed inside this <main> tag.
-        -->
+        <!-- Main Content -->
         <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            tag.
-        -->
-        <main class="container mx-auto px-6 py-12">
-            <section id="hero" class="py-16 md:py-24 particle-container bg-brand-secondary/50">
-            <canvas class="particle-canvas"></canvas>
-            <div class="container mx-auto px-6 text-center content-z animate-fade-in-up">
-                <img src="/uniQ_logo_T.png" alt="uniQue-ue Interactive Logo" id="hero-logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 transition-transform duration-200 ease-out">
-                <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
-                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Ghost-Writer</h1>
-                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
-                   Transform raw ideas into polished, monetizable works through AI-powered dialogue.
-                </p>
-            </div>
-        </section>
+            <!-- Hero Section -->
+            <section class="py-8 md:py-12 text-center">
+                <div class="animate-fade-in-up">
+                    <div class="hero-logo-container mb-6">
+                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
+                    <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Ghost-Writer</h1>
+                    <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                       Transform raw ideas into polished, monetizable works through AI-powered dialogue.
+                    </p>
+                </div>
+            </section>
 
-        <section class="py-12 md:py-16 particle-container">
-            <canvas class="particle-canvas"></canvas>
-            <div class="container mx-auto px-6 content-z">
+            <!-- Main Tool Section -->
+            <section class="py-12 md:py-16">
                 <div class="grid lg:grid-cols-2 gap-8">
                     <!-- Column 1: Chat Interface -->
-                    <div class="p-6 rounded-lg animate-fade-in-up flex flex-col panel-3d" style="animation-delay: 0.2s;">
+                    <div class="panel-3d p-6 rounded-lg animate-fade-in-up flex flex-col" style="animation-delay: 0.2s;">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-display font-bold text-brand-accent heading-glow">Publishing Assistant</h2>
                             <div class="flex gap-2">
-                                <button id="backup-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Save Context</button>
-                                <button id="clear-context-button" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-1.5">Clear Context</button>
+                                <button id="backup-context-button" class="nav-button text-xs px-3 py-1.5">Save Context</button>
+                                <button id="clear-context-button" class="nav-button text-xs px-3 py-1.5">Clear Context</button>
                             </div>
                         </div>
-                        <div id="chat-container" class="flex-grow h-96 min-h-[24rem] overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4">
+                        <div id="chat-container" class="flex-grow h-96 min-h-[24rem] overflow-y-auto bg-brand-primary/50 p-4 rounded-md mb-4 flex flex-col space-y-4 border border-brand-accent/10">
                             <!-- Welcome Message -->
                             <div class="p-3 rounded-lg bg-brand-accent/10 max-w-xs text-sm chat-bubble-3d">
                                 <p class="font-bold text-brand-accent">Draven</p>
@@ -91,33 +78,33 @@
                             <!-- Chat messages will appear here -->
                         </div>
                         <div class="relative">
-                            <textarea id="chat-input" rows="3" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base resize-none overflow-y-auto" placeholder="Type your message..."></textarea>
+                            <textarea id="chat-input" rows="3" class="w-full bg-brand-primary p-4 rounded-md border border-brand-accent/30 focus:border-brand-accent focus:ring-brand-accent focus:outline-none transition font-sans text-base resize-none overflow-y-auto text-white placeholder-brand-text-muted" placeholder="Type your message..."></textarea>
                         </div>
                         <div class="flex justify-between items-center mt-3">
                             <div class="flex gap-2">
-                                <button id="file-button" title="Add File" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-2 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                <button id="file-button" title="Add File" class="nav-button text-xs px-3 py-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                                     Attach File
                                 </button>
-                                <button id="url-button" title="Add URL" class="nav-link text-brand-text-muted text-xs font-bold px-3 py-2 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                                <button id="url-button" title="Add URL" class="nav-button text-xs px-3 py-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
                                     Attach URL
                                 </button>
                             </div>
-                            <button id="send-button" title="Send" class="nav-link text-brand-accent font-bold px-4 py-2 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            <button id="send-button" title="Send" class="nav-button text-brand-accent font-bold px-4 py-2 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                                 Send
                             </button>
                         </div>
                     </div>
 
                     <!-- Column 2: Document Editor -->
-                    <div class="p-6 rounded-lg animate-fade-in-up panel-3d flex flex-col" style="animation-delay: 0.6s;">
+                    <div class="panel-3d p-6 rounded-lg animate-fade-in-up flex flex-col" style="animation-delay: 0.6s;">
                         <h2 class="text-2xl font-display font-bold mb-4 text-brand-accent heading-glow">Document Editor</h2>
-                        <div id="editor-container" class="flex-grow"></div>
+                        <div id="editor-container" class="flex-grow bg-brand-primary/50 rounded-md border border-brand-accent/10 min-h-[24rem]"></div>
                         <div id="document-actions" class="flex justify-between items-center mt-4 hidden">
-                            <button id="save-button" class="nav-link text-brand-accent font-bold px-6 py-2">Save Document</button>
-                            <button id="next-button" class="nav-link text-brand-text-muted px-6 py-2" disabled>Next</button>
+                            <button id="save-button" class="nav-button text-brand-accent font-bold px-6 py-2">Save Document</button>
+                            <button id="next-button" class="nav-button px-6 py-2" disabled>Next</button>
                         </div>
                     </div>
                 </div>
@@ -128,18 +115,35 @@
                         <span class="text-lg">Generate</span>
                     </button>
                 </div>
-            </div>
-        </section>
+            </section>
         </main>
         
         <!-- Global Footer Component -->
-        <!-- app.js will load _footer.html into this div -->
         <div id="footer-placeholder">
             <!-- Skeleton loader for the footer -->
             <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
         </div>
         
     </div>
+
+    <!-- Page-Specific JavaScript for Logo Mouse-Follow -->
+    <script type="module">
+        const heroLogo = document.getElementById('hero-logo');
+        
+        if (heroLogo) {
+            const container = heroLogo.parentElement;
+            container.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const rect = container.getBoundingClientRect();
+                const x = ((clientX - rect.left) / rect.width) - 0.5;
+                const y = ((clientY - rect.top) / rect.height) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+            container.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
+    </script>
 </body>
 
 </html>
