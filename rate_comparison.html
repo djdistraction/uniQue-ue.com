@@ -1,534 +1,749 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { TrendingUp, DollarSign, AlertCircle, Info, MapPin, Music, Wine, ArrowRight, Calendar, Copy, Check, BarChart3, Mail, Plane, ArrowRightLeft, Truck, Home, Briefcase } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
 
-const App = () => {
-  // --- STATE ---
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'negotiate' | 'tour'
-  const [selectedRegion, setSelectedRegion] = useState('National Avg');
-  const [baseYear, setBaseYear] = useState('2016');
-  const [userFee, setUserFee] = useState(300); // Default to generic solo rate
-  const [selectedRole, setSelectedRole] = useState('Solo Musician');
-  const [includeOverhead, setIncludeOverhead] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  // Tour Mode State
-  const [tourOrigin, setTourOrigin] = useState('Midwest');
-  const [tourDestination, setTourDestination] = useState('Northeast');
-  const [tourBaseFee, setTourBaseFee] = useState(userFee);
-
-  // --- DATA MODELS ---
-  
-  // Gig Worker Roles & Historical Averages (Est. 2016 National Avgs for mid-tier)
-  const workerRoles = {
-    'Solo Musician': { avg2016: 250, label: 'Solo Acoustic/Vocal' },
-    'DJ': { avg2016: 350, label: 'Club/Event DJ' },
-    'Band (4-piece)': { avg2016: 1200, label: 'Full Band' },
-    'Sound Engineer': { avg2016: 250, label: 'FOH/Sound Tech' },
-    'Wedding Band': { avg2016: 3500, label: 'Wedding/Corporate' },
-    'Custom': { avg2016: 0, label: 'Custom Entry' }
-  };
-
-  // Indices: PPI (Supply), CPI (Menu Prices), PLUS Gas, Hotel, Rent
-  // Sources: BLS Data approximations for Gas (Motor Fuel), Shelter (Rent), Lodging Away from Home
-  const indices = {
-    2010: { ppi: 88.7, cpi: 295.3, gas: 2.78, hotel: 140.2, rent: 250.1 },
-    2011: { ppi: 90.5, cpi: 304.4, gas: 3.52, hotel: 145.5, rent: 255.4 },
-    2012: { ppi: 92.4, cpi: 314.2, gas: 3.60, hotel: 150.1, rent: 260.2 },
-    2013: { ppi: 94.3, cpi: 321.7, gas: 3.50, hotel: 155.8, rent: 267.1 },
-    2014: { ppi: 96.2, cpi: 327.7, gas: 3.36, hotel: 162.3, rent: 275.4 },
-    2015: { ppi: 98.2, cpi: 334.5, gas: 2.43, hotel: 168.1, rent: 284.2 },
-    2016: { ppi: 100.2, cpi: 340.7, gas: 2.14, hotel: 172.5, rent: 293.4 }, // Low gas prices in 2016
-    2017: { ppi: 103.2, cpi: 347.7, gas: 2.41, hotel: 176.2, rent: 304.1 },
-    2018: { ppi: 106.3, cpi: 355.3, gas: 2.72, hotel: 180.5, rent: 315.3 },
-    2019: { ppi: 109.5, cpi: 359.6, gas: 2.60, hotel: 183.1, rent: 327.2 },
-    2020: { ppi: 112.8, cpi: 367.6, gas: 2.17, hotel: 165.0, rent: 335.5 }, // Covid dip
-    2021: { ppi: 116.1, cpi: 378.0, gas: 3.01, hotel: 190.4, rent: 342.1 },
-    2022: { ppi: 127.7, cpi: 399.6, gas: 3.95, hotel: 215.3, rent: 360.5 },
-    2023: { ppi: 137.9, cpi: 423.6, gas: 3.52, hotel: 228.1, rent: 385.2 },
-    2024: { ppi: 143.4, cpi: 434.5, gas: 3.45, hotel: 235.4, rent: 405.1 },
-    2025: { ppi: 151.6, cpi: 445.7, gas: 3.55, hotel: 245.8, rent: 420.5 } // Est
-  };
-
-  const years = Object.keys(indices).filter(y => y !== '2025');
-
-  const regions = {
-    'National Avg': { multiplier: 1.0, label: 'National Average', note: 'Standard US inflation rates.' },
-    'Northeast': { multiplier: 1.25, label: 'Northeast (NY, MA, PA)', note: 'High service inflation (~3.9% ann).' },
-    'West Coast': { multiplier: 1.2, label: 'West Coast (CA, WA, OR)', note: 'Labor & Gas costs drive prices higher.' },
-    'South': { multiplier: 0.9, label: 'South (TX, FL, GA)', note: 'Consistent with national average.' },
-    'Midwest': { multiplier: 0.85, label: 'Midwest (OH, IL, MI)', note: 'Consistent with national average.' },
-  };
-
-  const BASE_MONTHLY_SPEND_2016 = 10000; 
-  const TARGET_POUR_COST = 0.22;
-
-  // --- HANDLERS ---
-  const handleRoleChange = (role) => {
-    setSelectedRole(role);
-  };
-
-  // --- EFFECT: Update Fee on Gig Type, Year, or Region Change ---
-  useEffect(() => {
-    if (selectedRole !== 'Custom') {
-      const baseAvg = workerRoles[selectedRole].avg2016;
-      const regionMult = regions[selectedRegion].multiplier;
-      
-      // Calculate Inflation Factor relative to 2016
-      // Using CPI (Consumer Price Index) as the proxy for general wage/cost growth
-      const yearCPI = indices[baseYear].cpi;
-      const baseCPI = indices['2016'].cpi;
-      const inflationFactor = yearCPI / baseCPI;
-
-      const adjustedFee = Math.round(baseAvg * inflationFactor * regionMult);
-      
-      setUserFee(adjustedFee);
-      setTourBaseFee(adjustedFee);
-    }
-  }, [selectedRole, baseYear, selectedRegion]);
-
-  // --- CALCULATIONS ---
-  const calculateMetrics = (yearKey) => {
-    const regionMult = regions[selectedRegion].multiplier;
-    const yearData = indices[yearKey];
-    const baselineData = indices['2016'];
-
-    const estimatedSupplyCost = BASE_MONTHLY_SPEND_2016 * (yearData.ppi / baselineData.ppi) * regionMult;
-    const baseRevenue2016 = (BASE_MONTHLY_SPEND_2016 / TARGET_POUR_COST);
-    const estimatedRevenue = baseRevenue2016 * (yearData.cpi / baselineData.cpi) * regionMult;
-
-    return {
-      supplyCost: estimatedSupplyCost,
-      revenue: estimatedRevenue,
-      profit: estimatedRevenue - estimatedSupplyCost,
-      pourCost: (estimatedSupplyCost / estimatedRevenue) * 100
-    };
-  };
-
-  const metricsBase = useMemo(() => calculateMetrics(baseYear), [baseYear, selectedRegion]);
-  const metricsCurrent = useMemo(() => calculateMetrics('2025'), [selectedRegion]);
-
-  const analysis = useMemo(() => {
-    const revenueIncrease = ((metricsCurrent.revenue - metricsBase.revenue) / metricsBase.revenue);
-    const costIncrease = ((metricsCurrent.supplyCost - metricsBase.supplyCost) / metricsBase.supplyCost);
-    const yearDiff = 2025 - parseInt(baseYear);
-    const generalInflation = yearDiff * 0.031;
-
-    // Specific Overhead Inflation
-    const baseData = indices[baseYear];
-    const currentData = indices['2025'];
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Calculator - uniQue-ue</title>
     
-    const gasInflation = (currentData.gas - baseData.gas) / baseData.gas;
-    const hotelInflation = (currentData.hotel - baseData.hotel) / baseData.hotel;
-    const rentInflation = (currentData.rent - baseData.rent) / baseData.rent;
-
-    // Weighted Touring Inflation 
-    const touringBlendedInflation = (0.7 * generalInflation) + (0.15 * gasInflation) + (0.15 * hotelInflation);
-
-    // Buying Power
-    const buyingPower = userFee / (1 + generalInflation);
-
-    return {
-      conservative: userFee * (1 + generalInflation),
-      survival: userFee * (1 + rentInflation),
-      market: userFee * (1 + revenueIncrease),
-      aggressive: userFee * (1 + costIncrease),
-      touring: userFee * (1 + touringBlendedInflation),
-      pctRevenue: (revenueIncrease * 100).toFixed(1),
-      pctCost: (costIncrease * 100).toFixed(1),
-      pctGeneral: (generalInflation * 100).toFixed(1),
-      pctGas: (gasInflation * 100).toFixed(1),
-      pctHotel: (hotelInflation * 100).toFixed(1),
-      pctRent: (rentInflation * 100).toFixed(1),
-      realValueNow: buyingPower
-    };
-  }, [baseYear, userFee, metricsBase, metricsCurrent]);
-
-  const tourAnalysis = useMemo(() => {
-    const originMult = regions[tourOrigin].multiplier;
-    const destMult = regions[tourDestination].multiplier;
-    const ratio = destMult / originMult;
-    const adjustedFee = tourBaseFee * ratio;
-    const difference = adjustedFee - tourBaseFee;
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    return { adjustedFee, difference, ratio, isHigher: difference > 0 };
-  }, [tourOrigin, tourDestination, tourBaseFee]);
-
-  // --- COMPONENTS ---
-  const TrendChart = () => {
-    // Simple SVG Chart
-    const width = 300;
-    const height = 150;
-    const padding = 20;
-    const points = Object.entries(indices).filter(([y]) => parseInt(y) >= parseInt(baseYear));
-    const startYear = parseInt(baseYear);
-    const endYear = 2025;
-    const totalYears = endYear - startYear;
-
-    const makePath = (type) => {
-      return points.map(([year, data], i) => {
-        const x = padding + (i / totalYears) * (width - (padding * 2));
-        const val = type === 'gas' ? data.gas : (type === 'hotel' ? data.hotel : (type === 'rent' ? data.rent : (type === 'ppi' ? data.ppi : data.cpi)));
-        const baseVal = type === 'gas' ? indices[baseYear].gas : (type === 'hotel' ? indices[baseYear].hotel : (type === 'rent' ? indices[baseYear].rent : (type === 'ppi' ? indices[baseYear].ppi : indices[baseYear].cpi)));
-        const growth = (val - baseVal) / baseVal;
-        const y = height - padding - (growth / 1.0) * (height - (padding * 2));
-        return `${x},${Math.max(padding, Math.min(height-padding, y))}`; // Clamp
-      }).join(' ');
-    };
-
-    return (
-      <div className="w-full h-48 bg-slate-900/50 rounded-lg p-4 relative overflow-hidden border border-slate-700">
-        <div className="absolute top-2 left-4 text-xs font-bold text-slate-400">Expense Trends ({baseYear}-2025)</div>
-        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#334155" strokeWidth="1" />
-          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-          
-          <polyline points={makePath('ppi')} fill="none" stroke="#64748b" strokeWidth="2" strokeDasharray="2 2" />
-          <polyline points={makePath('cpi')} fill="none" stroke="#2dd4bf" strokeWidth="3" />
-          
-          {includeOverhead && (
-            <>
-              <polyline points={makePath('rent')} fill="none" stroke="#c084fc" strokeWidth="2" />
-              <polyline points={makePath('gas')} fill="none" stroke="#fb7185" strokeWidth="2" strokeDasharray="2 2"/>
-            </>
-          )}
-
-          <g transform={`translate(${width - 60}, ${height - 60})`}>
-             <text x="0" y="0" fill="#2dd4bf" fontSize="9" fontWeight="bold">Prices</text>
-             <text x="0" y="10" fill="#64748b" fontSize="9">Supplies</text>
-             {includeOverhead && (
-               <>
-                 <text x="0" y="20" fill="#c084fc" fontSize="9">Rent</text>
-                 <text x="0" y="30" fill="#fb7185" fontSize="9">Gas</text>
-               </>
-             )}
-          </g>
-        </svg>
-      </div>
-    );
-  };
-
-  const NegotiationScript = () => {
-    const regionNote = regions[selectedRegion].label.includes('West') 
-      ? "Additionally, with the high labor cost increases in our region, I know operational overhead is up."
-      : "Regional data for the " + regions[selectedRegion].label + " confirms that hospitality service prices have risen consistently.";
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
     
-    const overheadNote = includeOverhead 
-      ? `\n3. Survival Metrics: Rent costs are up ${analysis.pctRent}% and Travel/Gas is up ${analysis.pctGas}% since ${baseYear}, drastically increasing my cost of living.` 
-      : "";
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
 
-    const script = `Hi [Promoter Name],
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+            <!-- Hero Section -->
+            <section class="py-8 md:py-12 text-center">
+                <div class="animate-fade-in-up">
+                    <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
+                    <h1 class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 heading-glow">Rate Calculator</h1>
+                    <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                       Compare your gig rate to venue price inflation and calculate how much you should adjust for fair compensation.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Navigation Tabs -->
+            <div class="flex gap-2 border-b border-brand-accent/20 overflow-x-auto mb-8">
+                <button onclick="setActiveTab('dashboard')" id="tab-dashboard" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-brand-accent text-brand-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    Dashboard
+                </button>
+                <button onclick="setActiveTab('tour')" id="tab-tour" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-transparent text-brand-text-muted hover:text-brand-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+                    Tour Mode
+                </button>
+                <button onclick="setActiveTab('negotiate')" id="tab-negotiate" class="tab-button px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize border-transparent text-brand-text-muted hover:text-brand-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    Negotiate
+                </button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="content-dashboard" class="tab-content space-y-6">
+                <!-- Input Section -->
+                <section class="bg-brand-secondary/50 rounded-xl shadow-lg border border-brand-accent/20 p-6 backdrop-blur-md">
+                    <div class="mb-6 border-b border-brand-accent/20 pb-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Step 1: Configure Your Baseline
+                        </h2>
+                        <p class="text-sm text-brand-text-muted">
+                            Select your role, region, and the year you last set your standard rate. The calculator will estimate how industry costs and prices have changed since then.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Original Year</label>
+                            <div class="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                <select id="baseYear" onchange="updateCalculations()" class="w-full pl-10 p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                                    <option value="2010">2010</option>
+                                    <option value="2011">2011</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2016" selected>2016</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Region</label>
+                            <select id="selectedRegion" onchange="updateCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                                <option value="National Avg">National Average</option>
+                                <option value="Northeast">Northeast (NY, MA, PA)</option>
+                                <option value="West Coast">West Coast (CA, WA, OR)</option>
+                                <option value="South">South (TX, FL, GA)</option>
+                                <option value="Midwest">Midwest (OH, IL, MI)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Gig Type</label>
+                            <div class="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                <select id="selectedRole" onchange="handleRoleChange()" class="w-full pl-10 p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white transition-colors">
+                                    <option value="Solo Musician">Solo Acoustic/Vocal</option>
+                                    <option value="DJ">Club/Event DJ</option>
+                                    <option value="Band (4-piece)">Full Band</option>
+                                    <option value="Sound Engineer">FOH/Sound Tech</option>
+                                    <option value="Wedding Band">Wedding/Corporate</option>
+                                    <option value="Custom">Custom Entry</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Fee</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold">$</span>
+                                <input type="number" id="userFee" value="300" onchange="updateCalculations()" class="w-full pl-8 p-3 bg-brand-primary border border-brand-accent/50 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none font-bold text-brand-accent placeholder-brand-text-muted transition-colors" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Overhead Toggle -->
+                    <div class="mt-6 flex items-center justify-between bg-brand-primary/50 p-4 rounded-lg border border-brand-accent/20">
+                        <div class="flex items-center gap-3">
+                            <div id="overhead-icon" class="p-2 rounded-full bg-brand-secondary text-brand-text-muted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                            </div>
+                            <div>
+                                <h3 id="overhead-title" class="text-sm font-bold text-brand-text-muted">Include Overhead & Expenses?</h3>
+                                <p class="text-xs text-brand-text-muted">Adds Rent, Gas, and Hotel inflation to calculations.</p>
+                            </div>
+                        </div>
+                        <button id="overhead-toggle" onclick="toggleOverhead()" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-primary bg-brand-secondary">
+                            <span id="overhead-toggle-dot" class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Economic Indicators -->
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 heading-glow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></svg>
+                            Economic Indicators
+                        </h2>
+                        
+                        <!-- Metrics Grid -->
+                        <div class="grid grid-cols-2 gap-4" id="metrics-grid">
+                            <!-- Revenue Card -->
+                            <div class="bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                                <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Venue Menu Prices</h3>
+                                <div class="flex items-end justify-between">
+                                    <div class="text-lg font-bold text-brand-text-muted">$<span id="base-revenue">45,455</span></div>
+                                    <div class="text-right"><div class="text-xl font-bold text-white">$<span id="current-revenue">59,452</span></div></div>
+                                </div>
+                                <div class="mt-2 text-xs font-bold text-green-400 bg-green-950/30 py-1 px-2 rounded inline-block border border-green-900/50">+<span id="pct-revenue">30.8</span>%</div>
+                            </div>
+
+                            <!-- Supply Card -->
+                            <div class="bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                                <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Venue Supply Costs</h3>
+                                <div class="flex items-end justify-between">
+                                    <div class="text-lg font-bold text-brand-text-muted">$<span id="base-supply">10,000</span></div>
+                                    <div class="text-right"><div class="text-xl font-bold text-white">$<span id="current-supply">15,130</span></div></div>
+                                </div>
+                                <div class="mt-2 text-xs font-bold text-rose-400 bg-rose-950/30 py-1 px-2 rounded inline-block border border-rose-900/50">+<span id="pct-cost">51.3</span>%</div>
+                            </div>
+
+                            <!-- Overhead Cards (Hidden by default) -->
+                            <div id="gas-card" class="hidden bg-brand-secondary/50 p-4 rounded-xl border border-rose-900/30 bg-rose-950/10 shadow-sm backdrop-blur-sm">
+                                <h3 class="text-xs font-bold text-rose-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                                    Gas Prices
+                                </h3>
+                                <div class="text-xl font-bold text-white">+<span id="pct-gas">65.9</span>%</div>
+                                <p class="text-[10px] text-rose-400/70">Since <span class="gas-base-year">2016</span></p>
+                            </div>
+                            <div id="rent-card" class="hidden bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/30 bg-brand-accent/5 shadow-sm backdrop-blur-sm">
+                                <h3 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    Rent/Shelter
+                                </h3>
+                                <div class="text-xl font-bold text-white">+<span id="pct-rent">43.3</span>%</div>
+                                <p class="text-[10px] text-brand-accent/70">Since <span class="rent-base-year">2016</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Column -->
+                    <div>
+                        <div class="w-full h-48 bg-brand-secondary/50 rounded-lg p-4 relative overflow-hidden border border-brand-accent/20">
+                            <div class="absolute top-2 left-4 text-xs font-bold text-brand-text-muted">Expense Trends (<span id="chart-year-range">2016</span>-2025)</div>
+                            <canvas id="trend-chart" class="w-full h-full"></canvas>
+                        </div>
+                        <div class="mt-4 text-xs text-brand-text-muted italic">
+                            *Visual comparison of how costs and venue revenue have trended since your base year.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <section class="bg-brand-secondary/80 rounded-xl shadow-2xl border border-brand-accent/20 overflow-hidden mt-6">
+                    <div class="p-6 border-b border-brand-accent/20 flex justify-between items-center bg-brand-secondary/50">
+                        <div>
+                            <h2 class="text-xl font-display font-bold flex items-center gap-2 text-white heading-glow">
+                                <span class="text-brand-accent">$</span>
+                                Your 2025 Rate Card
+                            </h2>
+                            <p class="text-brand-text-muted text-sm mt-1">For a <span id="role-label">Solo Acoustic/Vocal</span></p>
+                        </div>
+                    </div>
+
+                    <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-accent/20">
+                        <!-- Cost of Living -->
+                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                            <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2" id="conservative-label">
+                                Cost of Living
+                            </div>
+                            <div class="text-3xl font-bold text-white mb-1">
+                                $<span id="conservative-rate">328</span>
+                            </div>
+                            <p class="text-xs text-brand-text-muted mt-2" id="conservative-desc">
+                                Just keeps up with general inflation.
+                            </p>
+                        </div>
+
+                        <!-- Market Match -->
+                        <div class="p-6 bg-brand-accent/10 border-b-4 border-brand-accent relative hover:bg-brand-accent/15 transition-colors" id="market-card">
+                            <div class="absolute top-0 right-0 bg-brand-accent text-brand-primary text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">RECOMMENDED</div>
+                            <div class="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Market Adjusted</div>
+                            <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="market-rate">392</span></div>
+                            <p class="text-xs text-brand-text-muted mt-2">Matches the venue's <span id="market-pct">30.8</span>% menu price increase.</p>
+                        </div>
+
+                        <!-- Supply Match -->
+                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                            <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2">Supply Match</div>
+                            <div class="text-3xl font-bold text-white mb-1">$<span id="aggressive-rate">454</span></div>
+                            <p class="text-xs text-brand-text-muted mt-2">Matches the <span id="aggressive-pct">51.3</span>% rise in supply costs.</p>
+                        </div>
+
+                        <!-- Touring Premium (Hidden by default) -->
+                        <div id="touring-card" class="hidden p-6 bg-rose-900/20 hover:bg-rose-900/30 transition-colors relative border-b-4 border-rose-500">
+                            <div class="absolute top-0 right-0 bg-rose-600 text-white text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">TOURING RATE</div>
+                            <div class="text-rose-300 text-xs font-bold uppercase tracking-widest mb-2">Touring Premium</div>
+                            <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="touring-rate">412</span></div>
+                            <p class="text-xs text-brand-text-muted mt-2">Accounts for <span id="touring-gas">65.9</span>% Gas and <span id="touring-hotel">42.5</span>% Hotel inflation.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Tour Mode Tab -->
+            <div id="content-tour" class="tab-content hidden space-y-6">
+                <section class="bg-brand-secondary/50 rounded-xl shadow-lg border border-brand-accent/20 p-6 backdrop-blur-md">
+                    <h2 class="text-lg font-display font-bold text-brand-accent mb-4 flex items-center gap-2 heading-glow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Price Relocation Calculator
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 items-end">
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Current Home Base</label>
+                            <select id="tourOrigin" onchange="updateTourCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white">
+                                <option value="National Avg">National Average</option>
+                                <option value="Northeast">Northeast (NY, MA, PA)</option>
+                                <option value="West Coast">West Coast (CA, WA, OR)</option>
+                                <option value="South">South (TX, FL, GA)</option>
+                                <option value="Midwest" selected>Midwest (OH, IL, MI)</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-center pb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-text-muted hidden md:block"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Target Destination</label>
+                            <select id="tourDestination" onchange="updateTourCalculations()" class="w-full p-3 bg-brand-primary border border-brand-accent/30 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none text-sm text-white">
+                                <option value="National Avg">National Average</option>
+                                <option value="Northeast" selected>Northeast (NY, MA, PA)</option>
+                                <option value="West Coast">West Coast (CA, WA, OR)</option>
+                                <option value="South">South (TX, FL, GA)</option>
+                                <option value="Midwest">Midwest (OH, IL, MI)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Standard Rate at Home Base</label>
+                        <div class="relative max-w-xs">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold">$</span>
+                            <input type="number" id="tourBaseFee" value="300" onchange="updateTourCalculations()" class="w-full pl-8 p-3 bg-brand-primary border border-brand-accent/50 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent outline-none font-bold text-brand-accent" />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-brand-secondary/80 rounded-xl shadow-lg border border-brand-accent/20 overflow-hidden p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h3 class="text-brand-text-muted text-sm font-bold uppercase tracking-widest mb-1">Equivalent Market Rate</h3>
+                        <div class="text-5xl font-bold mb-2 text-white heading-glow">$<span id="tour-adjusted-fee">441</span></div>
+                        <div id="tour-difference" class="text-sm font-medium text-green-400">
+                            +<span id="tour-diff-amount">141</span> difference from home rate
+                        </div>
+                    </div>
+                    <div class="bg-brand-primary/50 p-6 rounded-lg max-w-md border border-brand-accent/20">
+                        <p class="text-brand-text-muted text-sm leading-relaxed">
+                            The cost of doing business in <strong id="tour-dest-name" class="text-white">Northeast</strong> is approx. <strong id="tour-ratio" class="text-brand-accent">47.1% higher</strong> than in <span id="tour-origin-name">Midwest</span>.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Negotiate Tab -->
+            <div id="content-negotiate" class="tab-content hidden">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-lg font-display font-bold text-brand-accent mb-4 flex items-center gap-2 heading-glow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            Email Generator
+                        </h2>
+                        <div class="bg-brand-secondary/50 rounded-lg p-4 border border-brand-accent/20">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-brand-text-muted text-sm">Email Draft</h3>
+                                <button onclick="copyScript()" id="copy-button" class="flex items-center gap-1 text-xs bg-brand-accent text-brand-primary px-3 py-1.5 rounded-md hover:opacity-80 transition-colors font-bold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <textarea id="email-script" readonly class="w-full h-64 p-3 text-sm text-brand-text-muted bg-brand-primary border border-brand-accent/20 rounded-md font-mono resize-none focus:outline-none focus:border-brand-accent"></textarea>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent mb-4 heading-glow">Key Talking Points</h2>
+                        <div class="bg-brand-secondary/50 p-4 rounded-lg border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                            <h4 class="font-bold text-brand-accent text-sm mb-1">"We can't afford that increase."</h4>
+                            <p class="text-sm text-brand-text-muted">"I understand margins are tight. However, your own menu prices have increased by <span id="talking-point-pct">30.8</span>% since <span id="talking-point-year">2016</span> to cover those costs. I'm simply asking for the same adjustment."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Rate Calculator JavaScript -->
+    <script>
+        // --- DATA MODELS ---
+        const workerRoles = {
+            'Solo Musician': { avg2016: 250, label: 'Solo Acoustic/Vocal' },
+            'DJ': { avg2016: 350, label: 'Club/Event DJ' },
+            'Band (4-piece)': { avg2016: 1200, label: 'Full Band' },
+            'Sound Engineer': { avg2016: 250, label: 'FOH/Sound Tech' },
+            'Wedding Band': { avg2016: 3500, label: 'Wedding/Corporate' },
+            'Custom': { avg2016: 0, label: 'Custom Entry' }
+        };
+
+        const indices = {
+            2010: { ppi: 88.7, cpi: 295.3, gas: 2.78, hotel: 140.2, rent: 250.1 },
+            2011: { ppi: 90.5, cpi: 304.4, gas: 3.52, hotel: 145.5, rent: 255.4 },
+            2012: { ppi: 92.4, cpi: 314.2, gas: 3.60, hotel: 150.1, rent: 260.2 },
+            2013: { ppi: 94.3, cpi: 321.7, gas: 3.50, hotel: 155.8, rent: 267.1 },
+            2014: { ppi: 96.2, cpi: 327.7, gas: 3.36, hotel: 162.3, rent: 275.4 },
+            2015: { ppi: 98.2, cpi: 334.5, gas: 2.43, hotel: 168.1, rent: 284.2 },
+            2016: { ppi: 100.2, cpi: 340.7, gas: 2.14, hotel: 172.5, rent: 293.4 },
+            2017: { ppi: 103.2, cpi: 347.7, gas: 2.41, hotel: 176.2, rent: 304.1 },
+            2018: { ppi: 106.3, cpi: 355.3, gas: 2.72, hotel: 180.5, rent: 315.3 },
+            2019: { ppi: 109.5, cpi: 359.6, gas: 2.60, hotel: 183.1, rent: 327.2 },
+            2020: { ppi: 112.8, cpi: 367.6, gas: 2.17, hotel: 165.0, rent: 335.5 },
+            2021: { ppi: 116.1, cpi: 378.0, gas: 3.01, hotel: 190.4, rent: 342.1 },
+            2022: { ppi: 127.7, cpi: 399.6, gas: 3.95, hotel: 215.3, rent: 360.5 },
+            2023: { ppi: 137.9, cpi: 423.6, gas: 3.52, hotel: 228.1, rent: 385.2 },
+            2024: { ppi: 143.4, cpi: 434.5, gas: 3.45, hotel: 235.4, rent: 405.1 },
+            2025: { ppi: 151.6, cpi: 445.7, gas: 3.55, hotel: 245.8, rent: 420.5 }
+        };
+
+        const regions = {
+            'National Avg': { multiplier: 1.0, label: 'National Average', note: 'Standard US inflation rates.' },
+            'Northeast': { multiplier: 1.25, label: 'Northeast (NY, MA, PA)', note: 'High service inflation (~3.9% ann).' },
+            'West Coast': { multiplier: 1.2, label: 'West Coast (CA, WA, OR)', note: 'Labor & Gas costs drive prices higher.' },
+            'South': { multiplier: 0.9, label: 'South (TX, FL, GA)', note: 'Consistent with national average.' },
+            'Midwest': { multiplier: 0.85, label: 'Midwest (OH, IL, MI)', note: 'Consistent with national average.' },
+        };
+
+        const BASE_MONTHLY_SPEND_2016 = 10000;
+        const TARGET_POUR_COST = 0.22;
+
+        // --- STATE ---
+        let includeOverhead = false;
+
+        // --- TAB NAVIGATION ---
+        function setActiveTab(tabName) {
+            const tabs = ['dashboard', 'tour', 'negotiate'];
+            tabs.forEach(tab => {
+                const button = document.getElementById('tab-' + tab);
+                const content = document.getElementById('content-' + tab);
+                if (tab === tabName) {
+                    button.classList.add('border-brand-accent', 'text-brand-accent');
+                    button.classList.remove('border-transparent', 'text-brand-text-muted');
+                    content.classList.remove('hidden');
+                } else {
+                    button.classList.remove('border-brand-accent', 'text-brand-accent');
+                    button.classList.add('border-transparent', 'text-brand-text-muted');
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- OVERHEAD TOGGLE ---
+        function toggleOverhead() {
+            includeOverhead = !includeOverhead;
+            const toggle = document.getElementById('overhead-toggle');
+            const dot = document.getElementById('overhead-toggle-dot');
+            const icon = document.getElementById('overhead-icon');
+            const title = document.getElementById('overhead-title');
+            const gasCard = document.getElementById('gas-card');
+            const rentCard = document.getElementById('rent-card');
+            const touringCard = document.getElementById('touring-card');
+            const rateCards = document.getElementById('rate-cards');
+            const marketCard = document.getElementById('market-card');
+
+            if (includeOverhead) {
+                toggle.classList.remove('bg-brand-secondary');
+                toggle.classList.add('bg-brand-accent');
+                dot.classList.remove('translate-x-1');
+                dot.classList.add('translate-x-6');
+                icon.classList.remove('bg-brand-secondary', 'text-brand-text-muted');
+                icon.classList.add('bg-brand-accent/20', 'text-brand-accent');
+                title.classList.remove('text-brand-text-muted');
+                title.classList.add('text-brand-accent');
+                gasCard.classList.remove('hidden');
+                rentCard.classList.remove('hidden');
+                touringCard.classList.remove('hidden');
+                rateCards.classList.remove('lg:grid-cols-3');
+                rateCards.classList.add('lg:grid-cols-4');
+                marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent');
+                marketCard.classList.add('bg-transparent', 'border-transparent');
+                marketCard.querySelector('.absolute')?.classList.add('hidden');
+            } else {
+                toggle.classList.add('bg-brand-secondary');
+                toggle.classList.remove('bg-brand-accent');
+                dot.classList.add('translate-x-1');
+                dot.classList.remove('translate-x-6');
+                icon.classList.add('bg-brand-secondary', 'text-brand-text-muted');
+                icon.classList.remove('bg-brand-accent/20', 'text-brand-accent');
+                title.classList.add('text-brand-text-muted');
+                title.classList.remove('text-brand-accent');
+                gasCard.classList.add('hidden');
+                rentCard.classList.add('hidden');
+                touringCard.classList.add('hidden');
+                rateCards.classList.add('lg:grid-cols-3');
+                rateCards.classList.remove('lg:grid-cols-4');
+                marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent');
+                marketCard.classList.remove('bg-transparent', 'border-transparent');
+                marketCard.querySelector('.absolute')?.classList.remove('hidden');
+            }
+            updateCalculations();
+        }
+
+        // --- ROLE CHANGE ---
+        function handleRoleChange() {
+            const selectedRole = document.getElementById('selectedRole').value;
+            const baseYear = document.getElementById('baseYear').value;
+            const selectedRegion = document.getElementById('selectedRegion').value;
+            
+            if (selectedRole !== 'Custom') {
+                const baseAvg = workerRoles[selectedRole].avg2016;
+                const regionMult = regions[selectedRegion].multiplier;
+                const yearCPI = indices[baseYear].cpi;
+                const baseCPI = indices['2016'].cpi;
+                const inflationFactor = yearCPI / baseCPI;
+                const adjustedFee = Math.round(baseAvg * inflationFactor * regionMult);
+                
+                document.getElementById('userFee').value = adjustedFee;
+                document.getElementById('tourBaseFee').value = adjustedFee;
+            }
+            document.getElementById('role-label').textContent = workerRoles[selectedRole].label;
+            updateCalculations();
+        }
+
+        // --- CALCULATIONS ---
+        function calculateMetrics(yearKey, regionKey) {
+            const regionMult = regions[regionKey].multiplier;
+            const yearData = indices[yearKey];
+            const baselineData = indices['2016'];
+
+            const estimatedSupplyCost = BASE_MONTHLY_SPEND_2016 * (yearData.ppi / baselineData.ppi) * regionMult;
+            const baseRevenue2016 = (BASE_MONTHLY_SPEND_2016 / TARGET_POUR_COST);
+            const estimatedRevenue = baseRevenue2016 * (yearData.cpi / baselineData.cpi) * regionMult;
+
+            return {
+                supplyCost: estimatedSupplyCost,
+                revenue: estimatedRevenue,
+                profit: estimatedRevenue - estimatedSupplyCost,
+                pourCost: (estimatedSupplyCost / estimatedRevenue) * 100
+            };
+        }
+
+        function updateCalculations() {
+            const baseYear = document.getElementById('baseYear').value;
+            const selectedRegion = document.getElementById('selectedRegion').value;
+            const userFee = parseFloat(document.getElementById('userFee').value) || 300;
+
+            const metricsBase = calculateMetrics(baseYear, selectedRegion);
+            const metricsCurrent = calculateMetrics('2025', selectedRegion);
+
+            const revenueIncrease = ((metricsCurrent.revenue - metricsBase.revenue) / metricsBase.revenue);
+            const costIncrease = ((metricsCurrent.supplyCost - metricsBase.supplyCost) / metricsBase.supplyCost);
+            const yearDiff = 2025 - parseInt(baseYear);
+            const generalInflation = yearDiff * 0.031;
+
+            const baseData = indices[baseYear];
+            const currentData = indices['2025'];
+            
+            const gasInflation = (currentData.gas - baseData.gas) / baseData.gas;
+            const hotelInflation = (currentData.hotel - baseData.hotel) / baseData.hotel;
+            const rentInflation = (currentData.rent - baseData.rent) / baseData.rent;
+            const touringBlendedInflation = (0.7 * generalInflation) + (0.15 * gasInflation) + (0.15 * hotelInflation);
+
+            const conservative = userFee * (1 + generalInflation);
+            const survival = userFee * (1 + rentInflation);
+            const market = userFee * (1 + revenueIncrease);
+            const aggressive = userFee * (1 + costIncrease);
+            const touring = userFee * (1 + touringBlendedInflation);
+
+            // Update DOM
+            document.getElementById('base-revenue').textContent = Math.round(metricsBase.revenue).toLocaleString();
+            document.getElementById('current-revenue').textContent = Math.round(metricsCurrent.revenue).toLocaleString();
+            document.getElementById('base-supply').textContent = Math.round(metricsBase.supplyCost).toLocaleString();
+            document.getElementById('current-supply').textContent = Math.round(metricsCurrent.supplyCost).toLocaleString();
+            document.getElementById('pct-revenue').textContent = (revenueIncrease * 100).toFixed(1);
+            document.getElementById('pct-cost').textContent = (costIncrease * 100).toFixed(1);
+            document.getElementById('pct-gas').textContent = (gasInflation * 100).toFixed(1);
+            document.getElementById('pct-rent').textContent = (rentInflation * 100).toFixed(1);
+
+            // Update year labels
+            document.querySelectorAll('.gas-base-year, .rent-base-year').forEach(el => el.textContent = baseYear);
+            document.getElementById('chart-year-range').textContent = baseYear;
+
+            // Update rate cards
+            if (includeOverhead) {
+                document.getElementById('conservative-label').textContent = 'Survival (Rent Match)';
+                document.getElementById('conservative-rate').textContent = Math.round(survival);
+                document.getElementById('conservative-desc').textContent = `Matches the ${(rentInflation * 100).toFixed(1)}% increase in rent.`;
+            } else {
+                document.getElementById('conservative-label').textContent = 'Cost of Living';
+                document.getElementById('conservative-rate').textContent = Math.round(conservative);
+                document.getElementById('conservative-desc').textContent = 'Just keeps up with general inflation.';
+            }
+
+            document.getElementById('market-rate').textContent = Math.round(market);
+            document.getElementById('market-pct').textContent = (revenueIncrease * 100).toFixed(1);
+            document.getElementById('aggressive-rate').textContent = Math.round(aggressive);
+            document.getElementById('aggressive-pct').textContent = (costIncrease * 100).toFixed(1);
+            document.getElementById('touring-rate').textContent = Math.round(touring);
+            document.getElementById('touring-gas').textContent = (gasInflation * 100).toFixed(1);
+            document.getElementById('touring-hotel').textContent = (hotelInflation * 100).toFixed(1);
+
+            // Update negotiate tab
+            document.getElementById('talking-point-pct').textContent = (revenueIncrease * 100).toFixed(1);
+            document.getElementById('talking-point-year').textContent = baseYear;
+            
+            updateEmailScript(baseYear, selectedRegion, userFee, revenueIncrease, costIncrease, rentInflation, gasInflation, conservative, survival, market, touring);
+            drawChart(baseYear);
+        }
+
+        function updateTourCalculations() {
+            const tourOrigin = document.getElementById('tourOrigin').value;
+            const tourDestination = document.getElementById('tourDestination').value;
+            const tourBaseFee = parseFloat(document.getElementById('tourBaseFee').value) || 300;
+
+            const originMult = regions[tourOrigin].multiplier;
+            const destMult = regions[tourDestination].multiplier;
+            const ratio = destMult / originMult;
+            const adjustedFee = tourBaseFee * ratio;
+            const difference = adjustedFee - tourBaseFee;
+            const isHigher = difference > 0;
+
+            document.getElementById('tour-adjusted-fee').textContent = Math.round(adjustedFee);
+            document.getElementById('tour-diff-amount').textContent = Math.abs(Math.round(difference));
+            
+            const diffEl = document.getElementById('tour-difference');
+            if (isHigher) {
+                diffEl.classList.remove('text-orange-400');
+                diffEl.classList.add('text-green-400');
+                diffEl.innerHTML = `+<span id="tour-diff-amount">${Math.round(difference)}</span> difference from home rate`;
+            } else {
+                diffEl.classList.remove('text-green-400');
+                diffEl.classList.add('text-orange-400');
+                diffEl.innerHTML = `<span id="tour-diff-amount">${Math.round(difference)}</span> difference from home rate`;
+            }
+
+            document.getElementById('tour-dest-name').textContent = regions[tourDestination].label.split('(')[0].trim();
+            document.getElementById('tour-origin-name').textContent = regions[tourOrigin].label.split('(')[0].trim();
+            
+            const pctDiff = ((ratio - 1) * 100).toFixed(1);
+            document.getElementById('tour-ratio').textContent = `${Math.abs(pctDiff)}% ${isHigher ? 'higher' : 'lower'}`;
+        }
+
+        function updateEmailScript(baseYear, selectedRegion, userFee, revenueIncrease, costIncrease, rentInflation, gasInflation, conservative, survival, market, touring) {
+            const regionLabel = regions[selectedRegion].label;
+            const regionNote = regionLabel.includes('West') 
+                ? "Additionally, with the high labor cost increases in our region, I know operational overhead is up."
+                : "Regional data for the " + regionLabel + " confirms that hospitality service prices have risen consistently.";
+            
+            const overheadNote = includeOverhead 
+                ? `\n3. Survival Metrics: Rent costs are up ${(rentInflation * 100).toFixed(1)}% and Travel/Gas is up ${(gasInflation * 100).toFixed(1)}% since ${baseYear}, drastically increasing my cost of living.` 
+                : "";
+
+            const recommendedRate = includeOverhead ? Math.round(touring) : Math.round(market);
+            const baselineRate = includeOverhead ? Math.round(survival) : Math.round(conservative);
+
+            const script = `Hi [Promoter Name],
 
 I'm looking forward to our upcoming dates. I'm writing to discuss the rate for the 2025 season.
 
 I haven't adjusted my fee since ${baseYear}, but looking at the industry data, the landscape has changed significantly. ${regionNote}
 
 According to Bureau of Labor Statistics indices for the hospitality sector:
-1. Venue Menu Prices (Revenue) have increased by roughly ${analysis.pctRevenue}% since ${baseYear}.
-2. Operational Costs (Wholesale Supply) have surged by over ${analysis.pctCost}%.${overheadNote}
+1. Venue Menu Prices (Revenue) have increased by roughly ${(revenueIncrease * 100).toFixed(1)}% since ${baseYear}.
+2. Operational Costs (Wholesale Supply) have surged by over ${(costIncrease * 100).toFixed(1)}%.${overheadNote}
 
-To simply match the rent and purchasing power I had in ${baseYear}, I would need to charge $${Math.round(includeOverhead ? analysis.survival : analysis.conservative)}. However, to stay aligned with the market's current pricing structure${includeOverhead ? " and cover rising touring costs" : ""}, a fee of $${Math.round(includeOverhead ? analysis.touring : analysis.market)} is appropriate.
+To simply match the rent and purchasing power I had in ${baseYear}, I would need to charge $${baselineRate}. However, to stay aligned with the market's current pricing structure${includeOverhead ? " and cover rising touring costs" : ""}, a fee of $${recommendedRate} is appropriate.
 
-Let's lock this in at $${Math.round(includeOverhead ? analysis.touring : analysis.market)} for the upcoming calendar.
+Let's lock this in at $${recommendedRate} for the upcoming calendar.
 
 Best,
 [Your Name]`;
 
-    return (
-      <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-bold text-slate-300 text-sm">Email Draft</h3>
-          <button onClick={() => { navigator.clipboard.writeText(script); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="flex items-center gap-1 text-xs bg-violet-600 text-white px-3 py-1.5 rounded-md hover:bg-violet-700 transition-colors">
-            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />} {copied ? 'Copied!' : 'Copy'}
-          </button>
-        </div>
-        <textarea readOnly className="w-full h-64 p-3 text-sm text-slate-300 bg-slate-900 border border-slate-700 rounded-md font-mono resize-none focus:outline-none focus:border-violet-500" value={script} />
-      </div>
-    );
-  };
+            document.getElementById('email-script').value = script;
+        }
 
-  return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 pb-12 selection:bg-violet-500 selection:text-white">
-      <header className="bg-gradient-to-r from-violet-900/50 to-slate-900 border-b border-slate-800 p-6 shadow-2xl backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between">
-          <div className="flex items-center gap-3 mb-4 md:mb-0">
-            <div className="bg-violet-600 p-2 rounded-lg shadow-lg shadow-violet-500/20"><Music className="w-6 h-6 text-white" /></div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white">uniQue-ue <span className="text-violet-400 font-light">Rate Calc</span></h1>
-              <p className="text-slate-400 text-sm">Gig Inflation & Relocation Analyzer ({Object.keys(indices)[0]} - 2025)</p>
-            </div>
-          </div>
-        </div>
-      </header>
+        function copyScript() {
+            const script = document.getElementById('email-script').value;
+            navigator.clipboard.writeText(script).then(() => {
+                const btn = document.getElementById('copy-button');
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+                setTimeout(() => {
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Copy`;
+                }, 2000);
+            });
+        }
 
-      <main className="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
-        
-        {/* Navigation Tabs */}
-        <div className="flex gap-2 border-b border-slate-800 overflow-x-auto">
-          {['dashboard', 'tour', 'negotiate'].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap capitalize ${activeTab === tab ? 'border-violet-500 text-violet-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}>
-              {tab === 'dashboard' && <BarChart3 className="w-4 h-4" />}
-              {tab === 'tour' && <Plane className="w-4 h-4" />}
-              {tab === 'negotiate' && <Mail className="w-4 h-4" />}
-              {tab}
-            </button>
-          ))}
-        </div>
+        // --- SIMPLE CHART ---
+        function drawChart(baseYear) {
+            const canvas = document.getElementById('trend-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            canvas.width = width;
+            canvas.height = height;
 
-        {activeTab === 'dashboard' && (
-          <div className="animate-fadeIn space-y-6">
-            {/* Input Section */}
-            <section className="bg-slate-900/50 rounded-xl shadow-lg border border-slate-800 p-6 backdrop-blur-md">
-              <div className="mb-6 border-b border-slate-800 pb-4">
-                <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2 mb-2">
-                  <MapPin className="w-5 h-5 text-violet-500" />
-                  Step 1: Configure Your Baseline
-                </h2>
-                <p className="text-sm text-slate-400">
-                  Select your role, region, and the year you last set your standard rate. The calculator will estimate how industry costs and prices have changed since then.
-                </p>
-              </div>
+            ctx.clearRect(0, 0, width, height);
 
-              <div className="grid md:grid-cols-4 gap-6">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Original Year</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <select value={baseYear} onChange={(e) => setBaseYear(e.target.value)} className="w-full pl-10 p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-sm text-slate-200 transition-colors">
-                      {years.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Region</label>
-                  <select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)} className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-sm text-slate-200 transition-colors">
-                    {Object.entries(regions).map(([key, data]) => <option key={key} value={key}>{data.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Gig Type</label>
-                  <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <select value={selectedRole} onChange={(e) => handleRoleChange(e.target.value)} className="w-full pl-10 p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-sm text-slate-200 transition-colors">
-                      {Object.entries(workerRoles).map(([key, data]) => <option key={key} value={key}>{data.label}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Industry Average Fee</label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500" />
-                    <input type="number" value={userFee} onChange={(e) => setUserFee(Number(e.target.value))} className="w-full pl-9 p-3 bg-slate-950 border border-violet-900/50 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none font-bold text-violet-300 placeholder-slate-600 transition-colors" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Overhead Toggle */}
-              <div className="mt-6 flex items-center justify-between bg-slate-950/50 p-4 rounded-lg border border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-full ${includeOverhead ? 'bg-violet-900/50 text-violet-400' : 'bg-slate-800 text-slate-600'}`}>
-                    <Truck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className={`text-sm font-bold ${includeOverhead ? 'text-violet-200' : 'text-slate-400'}`}>Include Overhead & Expenses?</h3>
-                    <p className="text-xs text-slate-500">Adds Rent, Gas, and Hotel inflation to calculations.</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setIncludeOverhead(!includeOverhead)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${includeOverhead ? 'bg-violet-600' : 'bg-slate-700'}`}
-                >
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${includeOverhead ? 'translate-x-6' : 'translate-x-1'}`} />
-                </button>
-              </div>
-            </section>
+            const padding = 20;
+            const startYear = parseInt(baseYear);
+            const years = [];
+            for (let y = startYear; y <= 2025; y++) {
+                years.push(y);
+            }
 
-            {/* Venue Stats & Charts */}
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <Wine className="w-5 h-5 text-rose-500" />
-                    Economic Indicators
-                  </h2>
-                </div>
+            const baseData = indices[baseYear];
+
+            // Calculate growth for each metric
+            const cpiGrowth = years.map(y => (indices[y].cpi - baseData.cpi) / baseData.cpi);
+            const ppiGrowth = years.map(y => (indices[y].ppi - baseData.ppi) / baseData.ppi);
+            const gasGrowth = years.map(y => (indices[y].gas - baseData.gas) / baseData.gas);
+            const rentGrowth = years.map(y => (indices[y].rent - baseData.rent) / baseData.rent);
+
+            const maxGrowth = Math.max(...cpiGrowth, ...ppiGrowth, ...(includeOverhead ? [...gasGrowth, ...rentGrowth] : [])) * 1.1 || 0.5;
+
+            // Draw lines
+            function drawLine(data, color, dashed = false) {
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                if (dashed) ctx.setLineDash([4, 4]);
+                else ctx.setLineDash([]);
                 
-                {/* Metrics Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Revenue Card */}
-                  <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800 shadow-sm backdrop-blur-sm">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Venue Menu Prices</h3>
-                    <div className="flex items-end justify-between">
-                      <div className="text-lg font-bold text-slate-400">${Math.round(metricsBase.revenue).toLocaleString()}</div>
-                      <div className="text-right"><div className="text-xl font-bold text-white">${Math.round(metricsCurrent.revenue).toLocaleString()}</div></div>
-                    </div>
-                    <div className="mt-2 text-xs font-bold text-emerald-400 bg-emerald-950/30 py-1 px-2 rounded inline-block border border-emerald-900/50">+{analysis.pctRevenue}%</div>
-                  </div>
+                data.forEach((val, i) => {
+                    const x = padding + (i / (years.length - 1)) * (width - padding * 2);
+                    const y = height - padding - (val / maxGrowth) * (height - padding * 2);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
 
-                  {/* Supply Card */}
-                  <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800 shadow-sm backdrop-blur-sm">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Venue Supply Costs</h3>
-                    <div className="flex items-end justify-between">
-                      <div className="text-lg font-bold text-slate-400">${Math.round(metricsBase.supplyCost).toLocaleString()}</div>
-                      <div className="text-right"><div className="text-xl font-bold text-white">${Math.round(metricsCurrent.supplyCost).toLocaleString()}</div></div>
-                    </div>
-                    <div className="mt-2 text-xs font-bold text-rose-400 bg-rose-950/30 py-1 px-2 rounded inline-block border border-rose-900/50">+{analysis.pctCost}%</div>
-                  </div>
+            // Draw baseline
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
 
-                  {/* Overhead Cards (Conditional) */}
-                  {includeOverhead && (
-                    <>
-                       <div className="bg-slate-900/50 p-4 rounded-xl border border-rose-900/30 bg-rose-950/10 shadow-sm backdrop-blur-sm">
-                        <h3 className="text-xs font-bold text-rose-300 uppercase tracking-wider mb-2 flex items-center gap-1"><Truck className="w-3 h-3"/> Gas Prices</h3>
-                        <div className="text-xl font-bold text-white">+{analysis.pctGas}%</div>
-                        <p className="text-[10px] text-rose-400/70">Since {baseYear}</p>
-                      </div>
-                      <div className="bg-slate-900/50 p-4 rounded-xl border border-violet-900/30 bg-violet-950/10 shadow-sm backdrop-blur-sm">
-                        <h3 className="text-xs font-bold text-violet-300 uppercase tracking-wider mb-2 flex items-center gap-1"><Home className="w-3 h-3"/> {includeOverhead ? 'Rent/Shelter' : 'Hotel'}</h3>
-                        <div className="text-xl font-bold text-white">+{analysis.pctRent}%</div>
-                        <p className="text-[10px] text-violet-400/70">Since {baseYear}</p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
+            // Draw lines
+            drawLine(ppiGrowth, '#64748b', true); // Supply - dashed gray
+            drawLine(cpiGrowth, '#00F6FF', false); // Menu prices - cyan
+            
+            if (includeOverhead) {
+                drawLine(rentGrowth, '#c084fc', false); // Rent - purple
+                drawLine(gasGrowth, '#fb7185', true); // Gas - rose dashed
+            }
 
-              {/* Chart Column */}
-              <div>
-                <TrendChart />
-                <div className="mt-4 text-xs text-slate-500 italic">
-                  *Visual comparison of how your costs (Gas/Hotels) and Venue Revenue (Prices) have trended since {baseYear}.
-                </div>
-              </div>
-            </div>
+            // Legend
+            ctx.font = '10px Inter, sans-serif';
+            ctx.fillStyle = '#00F6FF';
+            ctx.fillText('Prices', width - 50, height - 50);
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('Supplies', width - 50, height - 40);
+            if (includeOverhead) {
+                ctx.fillStyle = '#c084fc';
+                ctx.fillText('Rent', width - 50, height - 30);
+                ctx.fillStyle = '#fb7185';
+                ctx.fillText('Gas', width - 50, height - 20);
+            }
+        }
 
-            {/* Results */}
-            <section className="bg-slate-900 rounded-xl shadow-2xl border border-slate-800 overflow-hidden mt-6">
-              <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2 text-white">
-                    <DollarSign className="w-6 h-6 text-emerald-400" />
-                    Your 2025 Rate Card
-                  </h2>
-                  <p className="text-slate-400 text-sm mt-1">For a {workerRoles[selectedRole].label}</p>
-                </div>
-              </div>
+        // --- INITIALIZE ---
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCalculations();
+            updateTourCalculations();
+        });
+    </script>
+</body>
 
-              <div className={`grid grid-cols-1 md:grid-cols-2 lg:${includeOverhead ? 'grid-cols-4' : 'grid-cols-3'} divide-y md:divide-y-0 md:divide-x divide-slate-800`}>
-                
-                {/* 1. Conservative (CPI) OR Survival (Rent) */}
-                <div className="p-6 hover:bg-slate-800/80 transition-colors">
-                  <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">
-                    {includeOverhead ? 'Survival (Rent Match)' : 'Cost of Living'}
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">
-                    ${Math.round(includeOverhead ? analysis.survival : analysis.conservative)}
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2">
-                    {includeOverhead ? `Matches the ${analysis.pctRent}% increase in rent.` : 'Just keeps up with general inflation.'}
-                  </p>
-                </div>
-
-                {/* 2. Market Match */}
-                <div className={`p-6 ${!includeOverhead ? 'bg-violet-900/20 border-b-4 border-violet-500 relative hover:bg-violet-900/30 transition-colors' : 'hover:bg-slate-800/80 transition-colors'}`}>
-                   {!includeOverhead && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">RECOMMENDED</div>}
-                  <div className="text-violet-300 text-xs font-bold uppercase tracking-widest mb-2">Market Adjusted</div>
-                  <div className="text-4xl font-bold text-white mb-1 drop-shadow-md">${Math.round(analysis.market)}</div>
-                  <p className="text-xs text-slate-300/80 mt-2">Matches the venue's {analysis.pctRevenue}% menu price increase.</p>
-                </div>
-
-                {/* 3. Aggressive (Supply) */}
-                <div className="p-6 hover:bg-slate-800/80 transition-colors">
-                  <div className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2">Supply Match</div>
-                  <div className="text-3xl font-bold text-white mb-1">${Math.round(analysis.aggressive)}</div>
-                  <p className="text-xs text-slate-400 mt-2">Matches the {analysis.pctCost}% rise in alcohol supply costs.</p>
-                </div>
-
-                {/* 4. Touring Premium (Only if overhead is on) */}
-                {includeOverhead && (
-                  <div className="p-6 bg-rose-900/20 hover:bg-rose-900/30 transition-colors relative border-b-4 border-rose-500">
-                    <div className="absolute top-0 right-0 bg-rose-600 text-white text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">TOURING RATE</div>
-                    <div className="text-rose-300 text-xs font-bold uppercase tracking-widest mb-2">Touring Premium</div>
-                    <div className="text-4xl font-bold text-white mb-1 drop-shadow-md">${Math.round(analysis.touring)}</div>
-                    <p className="text-xs text-slate-300/80 mt-2">Accounts for {analysis.pctGas}% Gas and {analysis.pctHotel}% Hotel inflation.</p>
-                  </div>
-                )}
-              </div>
-            </section>
-          </div>
-        )}
-
-        {activeTab === 'tour' && (
-          <div className="animate-fadeIn space-y-6">
-            <section className="bg-slate-900/50 rounded-xl shadow-lg border border-slate-800 p-6 backdrop-blur-md">
-              <h2 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-violet-500" />
-                Price Relocation Calculator
-              </h2>
-              
-              <div className="grid md:grid-cols-3 gap-6 items-end">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Current Home Base</label>
-                  <select value={tourOrigin} onChange={(e) => setTourOrigin(e.target.value)} className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-sm text-slate-200">
-                    {Object.entries(regions).map(([key, data]) => <option key={key} value={key}>{data.label}</option>)}
-                  </select>
-                </div>
-                <div className="flex justify-center pb-3"><ArrowRightLeft className="text-slate-500 w-6 h-6 hidden md:block" /></div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Destination</label>
-                  <select value={tourDestination} onChange={(e) => setTourDestination(e.target.value)} className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-sm text-slate-200">
-                    {Object.entries(regions).map(([key, data]) => <option key={key} value={key}>{data.label}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Your Standard Rate in {regions[tourOrigin].label.split('(')[0]}</label>
-                <div className="relative max-w-xs">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500" />
-                  <input type="number" value={tourBaseFee} onChange={(e) => setTourBaseFee(Number(e.target.value))} className="w-full pl-9 p-3 bg-slate-950 border border-violet-900/50 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none font-bold text-violet-300" />
-                </div>
-              </div>
-            </section>
-
-            <section className="bg-slate-900 rounded-xl shadow-lg border border-slate-800 overflow-hidden p-8 flex flex-col md:flex-row items-center justify-between gap-8">
-              <div>
-                <h3 className="text-slate-500 text-sm font-bold uppercase tracking-widest mb-1">Equivalent Market Rate</h3>
-                <div className="text-5xl font-bold mb-2 text-white">${Math.round(tourAnalysis.adjustedFee)}</div>
-                <div className={`text-sm font-medium ${tourAnalysis.isHigher ? 'text-emerald-400' : 'text-orange-400'}`}>
-                  {tourAnalysis.isHigher ? '+' : ''}{Math.round(tourAnalysis.difference)} difference from home rate
-                </div>
-              </div>
-              <div className="bg-slate-950 p-6 rounded-lg max-w-md border border-slate-800">
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  The cost of doing business in <strong>{regions[tourDestination].label.split('(')[0]}</strong> is approx. <strong>{((tourAnalysis.ratio - 1) * 100).toFixed(1)}% {tourAnalysis.isHigher ? 'higher' : 'lower'}</strong> than in {regions[tourOrigin].label.split('(')[0]}.
-                </p>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {activeTab === 'negotiate' && (
-          <div className="grid md:grid-cols-2 gap-6 animate-fadeIn">
-            <div>
-              <h2 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                <Mail className="w-5 h-5 text-violet-500" /> Email Generator
-              </h2>
-              <NegotiationScript />
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-slate-200 mb-4">Key Talking Points</h2>
-              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800 shadow-sm backdrop-blur-sm">
-                <h4 className="font-bold text-violet-400 text-sm mb-1">"We can't afford that increase."</h4>
-                <p className="text-sm text-slate-300">"I understand margins are tight. However, your own menu prices have increased by {analysis.pctRevenue}% since {baseYear} to cover those costs. I'm simply asking for the same adjustment."</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </main>
-    </div>
-  );
-};
-
-export default App;
+</html>
