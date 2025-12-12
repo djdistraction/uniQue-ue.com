@@ -1,1 +1,11 @@
-robots.txt for www.unique-ue.comUser-agent: *Allow: /Sitemap locationSitemap: https://www.google.com/search?q=https://www.unique-ue.com/sitemap.xml
+# robots.txt for www.unique-ue.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin pages from indexing
+Disallow: /admin-revenue-system.html
+Disallow: /admin-*
+
+# Sitemap location
+Sitemap: https://www.unique-ue.com/sitemap.xml
