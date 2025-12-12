@@ -322,7 +322,7 @@
                         </p>
                     </div>
                     
-                    <div class="grid md:grid-cols-3 gap-6">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
                             <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Rate</h3>
                             <div class="text-3xl font-bold text-white mb-2">$<span id="comparison-user-rate">300</span></div>
@@ -330,17 +330,23 @@
                         </div>
                         
                         <div class="bg-brand-accent/10 p-6 rounded-xl border border-brand-accent/30">
-                            <h3 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-2">Regional Average</h3>
-                            <div class="text-3xl font-bold text-brand-accent mb-2">$<span id="comparison-regional-avg">325</span></div>
-                            <p class="text-xs text-brand-text-muted">For <span id="comparison-role-name">Solo Acoustic/Vocal</span></p>
+                            <h3 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-2">Industry Average</h3>
+                            <div class="text-3xl font-bold text-brand-accent mb-2">$<span id="comparison-industry-avg">275</span></div>
+                            <p class="text-xs text-brand-text-muted">National baseline</p>
                         </div>
                         
                         <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
-                            <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Difference</h3>
-                            <div class="text-3xl font-bold mb-2" id="comparison-difference-value">
-                                <span class="text-green-400">+$25</span>
+                            <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Regional Average</h3>
+                            <div class="text-3xl font-bold text-white mb-2">$<span id="comparison-regional-avg">325</span></div>
+                            <p class="text-xs text-brand-text-muted">In <span id="comparison-role-name">Solo Acoustic/Vocal</span></p>
+                        </div>
+                        
+                        <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
+                            <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Recommended</h3>
+                            <div class="text-3xl font-bold mb-2" id="comparison-recommended-value">
+                                <span class="text-green-400">$350</span>
                             </div>
-                            <p class="text-xs text-brand-text-muted" id="comparison-difference-text">Above average</p>
+                            <p class="text-xs text-brand-text-muted" id="comparison-recommended-text">To align with market</p>
                         </div>
                     </div>
                     
@@ -1043,7 +1049,19 @@ Best,
             updateModalProgress();
         }
 
-        function submitModal() {
+        async function submitModal() {
+            // Check authentication - import auth from firebase-config
+            const { auth } = await import('./firebase-config.js');
+            const user = auth.currentUser;
+            
+            if (!user) {
+                // User is not logged in - redirect to profile/login page
+                alert('Please sign in or create an account to view rate recommendations.');
+                window.location.href = '/profile.html';
+                return;
+            }
+            
+            // User is authenticated - proceed
             // Copy values from modal to main form
             document.getElementById('baseYear').value = document.getElementById('modal-baseYear').value;
             document.getElementById('selectedRegion').value = document.getElementById('modal-selectedRegion').value;
@@ -1071,37 +1089,46 @@ Best,
             const selectedRole = document.getElementById('selectedRole').value;
             const userFee = parseFloat(document.getElementById('userFee').value) || 300;
             
-            // Calculate regional average for the role
+            // Calculate industry average (national baseline with inflation)
             const baseAvg = workerRoles[selectedRole].avg2016;
-            const regionMult = regions[selectedRegion].multiplier;
             const yearCPI = indices[baseYear].cpi;
             const baseCPI = indices['2016'].cpi;
             const inflationFactor = yearCPI / baseCPI;
+            const currentCPI = indices['2025'].cpi;
+            const currentInflationFactor = currentCPI / baseCPI;
+            
+            // Industry average adjusted to current year
+            const industryAvg = Math.round(baseAvg * currentInflationFactor);
+            
+            // Regional average for the role
+            const regionMult = regions[selectedRegion].multiplier;
             const regionalAvg = Math.round(baseAvg * inflationFactor * regionMult);
+            
+            // Recommended rate (higher of regional or industry adjusted for current market)
+            const metricsBase = calculateMetrics(baseYear, selectedRegion);
+            const metricsCurrent = calculateMetrics('2025', selectedRegion);
+            const revenueIncrease = ((metricsCurrent.revenue - metricsBase.revenue) / metricsBase.revenue);
+            const recommendedRate = Math.round(userFee * (1 + revenueIncrease));
             
             // Update comparison display
             document.getElementById('comparison-user-rate').textContent = userFee;
             document.getElementById('comparison-base-year').textContent = baseYear;
+            document.getElementById('comparison-industry-avg').textContent = industryAvg;
             document.getElementById('comparison-regional-avg').textContent = regionalAvg;
             document.getElementById('comparison-role-name').textContent = workerRoles[selectedRole].label;
+            document.getElementById('comparison-recommended-value').textContent = '$' + recommendedRate;
             
-            const difference = userFee - regionalAvg;
-            const diffElement = document.getElementById('comparison-difference-value');
-            const diffText = document.getElementById('comparison-difference-text');
+            // Update insight text
             const insightText = document.getElementById('comparison-insight');
+            const diffFromIndustry = userFee - industryAvg;
+            const diffFromRegional = userFee - regionalAvg;
             
-            if (difference > 0) {
-                diffElement.innerHTML = `<span class="text-green-400">+$${Math.abs(difference)}</span>`;
-                diffText.textContent = 'Above average';
-                insightText.textContent = `Your rate is ${Math.abs(difference)} above the regional average. You're positioned competitively in the market. Consider the recommended adjustments below to stay aligned with market changes.`;
-            } else if (difference < 0) {
-                diffElement.innerHTML = `<span class="text-orange-400">-$${Math.abs(difference)}</span>`;
-                diffText.textContent = 'Below average';
-                insightText.textContent = `Your rate is ${Math.abs(difference)} below the regional average for ${workerRoles[selectedRole].label}. The recommended rates below will help you align with market standards.`;
+            if (diffFromRegional >= 0 && diffFromIndustry >= 0) {
+                insightText.textContent = `Your rate is competitive with both industry ($${industryAvg}) and regional ($${regionalAvg}) averages. The recommended rate of $${recommendedRate} accounts for market inflation since ${baseYear}.`;
+            } else if (diffFromRegional < 0 || diffFromIndustry < 0) {
+                insightText.textContent = `Your rate is below market averages. Industry average: $${industryAvg}, Regional average: $${regionalAvg}. Consider the recommended rate of $${recommendedRate} to align with current market conditions.`;
             } else {
-                diffElement.innerHTML = `<span class="text-brand-accent">$0</span>`;
-                diffText.textContent = 'At average';
-                insightText.textContent = 'Your rate matches the regional average. The recommended adjustments below will help you stay competitive as market conditions evolve.';
+                insightText.textContent = `Based on market analysis, we recommend a rate of $${recommendedRate} to stay competitive with inflation and industry trends.`;
             }
         }
 
