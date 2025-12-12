@@ -152,7 +152,7 @@
         <!-- Tool Info Modal -->
         <div id="tool-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
             <div class="panel-3d max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeToolModal()" class="absolute top-4 right-4 text-brand-text-muted hover:text-brand-accent transition-colors">
+                <button onclick="closeToolModal()" class="absolute top-4 right-4 text-brand-text-muted hover:text-brand-accent transition-colors z-10">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
                 <div id="modal-content" class="p-8">
@@ -169,26 +169,8 @@
         
     </div>
 
-    <!-- Page-Specific JavaScript for Logo Mouse-Follow and Modal -->
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        
-        const heroLogo = document.getElementById('hero-logo');
-        
-        if (heroLogo) {
-            const container = heroLogo.parentElement;
-            container.addEventListener('mousemove', (e) => {
-                const { clientX, clientY } = e;
-                const rect = container.getBoundingClientRect();
-                const x = ((clientX - rect.left) / rect.width) - 0.5;
-                const y = ((clientY - rect.top) / rect.height) - 0.5;
-                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
-            });
-            container.addEventListener('mouseleave', () => {
-                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
-            });
-        }
-        
+    <!-- Page-Specific JavaScript for Modal -->
+    <script>
         // Tool information database
         const toolInfo = {
             'ghost-writer': {
@@ -235,8 +217,8 @@
         // Get all available tools for suggestions
         const allTools = ['ghost-writer', 'graphics-studio', 'rate-calculator'];
         
-        // Make functions globally available
-        window.openToolModal = function(toolId) {
+        // Modal functions
+        function openToolModal(toolId) {
             const modal = document.getElementById('tool-modal');
             const modalContent = document.getElementById('modal-content');
             const tool = toolInfo[toolId];
@@ -298,14 +280,18 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
-        };
+        }
         
-        window.closeToolModal = function() {
+        function closeToolModal() {
             const modal = document.getElementById('tool-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.style.overflow = 'auto';
-        };
+        }
+        
+        // Make functions globally available
+        window.openToolModal = openToolModal;
+        window.closeToolModal = closeToolModal;
         
         // Close modal when clicking outside
         document.getElementById('tool-modal')?.addEventListener('click', function(e) {
@@ -320,6 +306,27 @@
                 closeToolModal();
             }
         });
+    </script>
+    
+    <!-- Logo Mouse-Follow -->
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        
+        const heroLogo = document.getElementById('hero-logo');
+        
+        if (heroLogo) {
+            const container = heroLogo.parentElement;
+            container.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const rect = container.getBoundingClientRect();
+                const x = ((clientX - rect.left) / rect.width) - 0.5;
+                const y = ((clientY - rect.top) / rect.height) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+            container.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
     </script>
 </body>
 
