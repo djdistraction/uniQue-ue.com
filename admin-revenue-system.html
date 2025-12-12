@@ -5,18 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revenue System Admin - uniQue-ue</title>
-    
+    <meta name="robots" content="noindex,nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
-    
+
     <style>
         .admin-card {
             background: linear-gradient(135deg, rgba(0, 246, 255, 0.1) 0%, rgba(240, 0, 184, 0.05) 100%);
@@ -25,91 +26,24 @@
             padding: 2rem;
             margin: 1rem 0;
         }
-        
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .status-active {
-            background: #00ff00;
-            box-shadow: 0 0 10px #00ff00;
-            animation: pulse 2s infinite;
-        }
-        
-        .status-inactive {
-            background: #ff0000;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .revenue-metric {
-            background: rgba(0, 246, 255, 0.1);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 246, 255, 0.3);
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #00f6ff;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        .hidden {
-            display: none;
-        }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-active { background: #00ff00; box-shadow: 0 0 10px #00ff00; animation: pulse 2s infinite; }
+        .status-inactive { background: #ff0000; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .revenue-metric { background: rgba(0, 246, 255, 0.1); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(0, 246, 255, 0.3); }
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00f6ff; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .hidden { display: none; }
     </style>
 </head>
 
 <body class="bg-gray-900 text-white">
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
-    
+
     <div class="page-wrapper">
         <!-- Login Screen -->
         <div id="login-screen" class="min-h-screen flex items-center justify-center px-4">
@@ -120,11 +54,11 @@
                 <form id="login-form" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium mb-2">Access Code</label>
-                        <input type="password" id="access-code" 
+                        <input type="password" id="access-code"
                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-cyan-400"
                                placeholder="Enter admin access code">
                     </div>
-                    <button type="submit" 
+                    <button type="submit"
                             class="w-full bg-gradient-to-r from-cyan-400 to-pink-500 text-white font-bold py-3 rounded-lg hover:opacity-90 transition">
                         Access Admin Panel
                     </button>
@@ -239,7 +173,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button id="generate-service-btn" 
+                        <button id="generate-service-btn"
                                 class="w-full bg-gradient-to-r from-cyan-400 to-pink-500 text-white font-bold py-3 rounded-lg hover:opacity-90 transition">
                             ✨ Generate New Service
                         </button>
@@ -267,16 +201,10 @@
 
     <script type="module">
         import { WORKER_URL } from './firebase-config.js';
-        
+
         let systemActive = false;
         let services = [];
 
-        // Helper to get stored access code
-        function getAccessCode() {
-            return sessionStorage.getItem('adminAccessCode') || '';
-        }
-
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             initParticles();
             setupEventListeners();
@@ -284,24 +212,22 @@
         });
 
         function setupEventListeners() {
-            // Login - verify with server
+            // Login - verify with server via secure cookie
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const code = document.getElementById('access-code').value;
-                
+
                 try {
-                    // Verify access code with server
-                    const response = await fetch(WORKER_URL + '/admin/verify-access', {
+                    const response = await fetch(WORKER_URL + '/admin/auth', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ accessCode: code })
+                        body: JSON.stringify({ accessCode: code }),
+                        credentials: 'include' // send/receive secure cookie
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (data.success) {
-                        // Store verified access code for subsequent requests
-                        sessionStorage.setItem('adminAccessCode', code);
                         document.getElementById('login-screen').classList.add('hidden');
                         document.getElementById('admin-dashboard').classList.remove('hidden');
                         logActivity('Admin access granted');
@@ -328,14 +254,12 @@
             systemActive = active;
             const indicator = document.getElementById('status-indicator');
             const statusText = document.getElementById('status-text');
-            
+
             if (active) {
                 indicator.classList.add('status-active');
                 indicator.classList.remove('status-inactive');
                 statusText.textContent = 'System Active';
                 logActivity('✅ Revenue generation system activated');
-                
-                // Start automated service generation cycle
                 startAutomatedGeneration();
             } else {
                 indicator.classList.remove('status-active');
@@ -343,21 +267,19 @@
                 statusText.textContent = 'System Inactive';
                 logActivity('⏸️ Revenue generation system deactivated');
             }
-            
+
             saveSystemState();
         }
 
         async function generateNewService() {
             const category = document.getElementById('service-category').value;
             const priceRange = document.getElementById('price-range').value;
-            
+
             logActivity(`🔄 Generating new ${category} service in ${priceRange} range...`);
-            
+
             try {
-                // Call AI to generate service concept
                 const serviceConcept = await generateServiceWithAI(category, priceRange);
-                
-                // Create service entry
+
                 const service = {
                     id: Date.now(),
                     name: serviceConcept.name,
@@ -369,27 +291,25 @@
                     revenue: 0,
                     created: new Date().toISOString()
                 };
-                
+
                 services.push(service);
                 updateServicesDisplay();
                 updateMetrics();
-                
+
                 logActivity(`✅ Service created: ${service.name} - $${service.price}`);
-                
-                // Simulate service deployment
+
                 setTimeout(() => {
                     logActivity(`🚀 Service deployed: ${service.name}`);
                 }, 2000);
-                
+
             } catch (error) {
                 logActivity(`❌ Error generating service: ${error.message}`);
             }
         }
 
         async function generateServiceWithAI(category, priceRange) {
-            // Build AI prompt for service generation
             const prompt = `As a creative business consultant, generate a unique, profitable service offering.
-            
+
 Category: ${category}
 Price Range: ${priceRange}
 
@@ -417,18 +337,16 @@ Respond in JSON format:
                         chatHistory: [{ role: 'user', parts: [{ text: prompt }] }],
                         systemPrompt: 'You are a business strategy AI focused on creating profitable, automated service offerings. Always respond with valid JSON.',
                         model: 'openai/gpt-4o-mini'
-                    })
+                    }),
+                    credentials: 'include'
                 });
 
                 const data = await response.json();
                 const aiResponse = data.response;
-                
-                // Parse JSON from AI response
                 const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
                     return JSON.parse(jsonMatch[0]);
                 } else {
-                    // Fallback if JSON parsing fails
                     return {
                         name: `${category} Service #${Date.now()}`,
                         description: 'AI-generated service offering',
@@ -439,7 +357,6 @@ Respond in JSON format:
                 }
             } catch (error) {
                 console.error('AI generation error:', error);
-                // Fallback service
                 return {
                     name: `${category} Service #${Date.now()}`,
                     description: 'AI-generated service offering',
@@ -463,17 +380,15 @@ Respond in JSON format:
 
         function startAutomatedGeneration() {
             if (!systemActive) return;
-            
-            // Simulate automated service generation every 5 minutes
+
             const interval = setInterval(() => {
                 if (!systemActive) {
                     clearInterval(interval);
                     return;
                 }
-                
+
                 logActivity('🤖 AI analyzing market opportunities...');
-                
-                // Randomly generate services
+
                 if (Math.random() > 0.5) {
                     setTimeout(generateNewService, 3000);
                 }
@@ -482,12 +397,12 @@ Respond in JSON format:
 
         function updateServicesDisplay() {
             const listDiv = document.getElementById('services-list');
-            
+
             if (services.length === 0) {
                 listDiv.innerHTML = '<p class="text-gray-400 text-center py-8">No services active yet.</p>';
                 return;
             }
-            
+
             listDiv.innerHTML = services.map(service => `
                 <div class="bg-gray-800 p-4 rounded-lg">
                     <div class="flex justify-between items-start">
@@ -500,7 +415,7 @@ Respond in JSON format:
                                 <span class="text-cyan-400">${service.category}</span>
                             </div>
                         </div>
-                        <button onclick="removeService(${service.id})" 
+                        <button onclick="removeService(${service.id})"
                                 class="text-red-400 hover:text-red-300 text-sm">
                             Remove
                         </button>
@@ -530,8 +445,7 @@ Respond in JSON format:
             entry.className = 'text-sm text-gray-300';
             entry.textContent = `[${timestamp}] ${message}`;
             logDiv.insertBefore(entry, logDiv.firstChild);
-            
-            // Keep only last 50 entries
+
             while (logDiv.children.length > 50) {
                 logDiv.removeChild(logDiv.lastChild);
             }
@@ -552,12 +466,12 @@ Respond in JSON format:
                     const state = JSON.parse(saved);
                     services = state.services || [];
                     systemActive = state.active || false;
-                    
+
                     document.getElementById('system-toggle').checked = systemActive;
                     if (systemActive) {
                         toggleSystem(true);
                     }
-                    
+
                     updateServicesDisplay();
                     updateMetrics();
                 } catch (e) {
@@ -570,11 +484,11 @@ Respond in JSON format:
         function initParticles() {
             const canvas = document.getElementById('particle-canvas');
             if (!canvas) return;
-            
+
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
+
             const particles = [];
             for (let i = 0; i < 50; i++) {
                 particles.push({
@@ -585,23 +499,23 @@ Respond in JSON format:
                     size: Math.random() * 2 + 1
                 });
             }
-            
+
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = 'rgba(0, 246, 255, 0.5)';
-                
+
                 particles.forEach(p => {
                     p.x += p.vx;
                     p.y += p.vy;
-                    
+
                     if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
                     if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                    
+
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fill();
                 });
-                
+
                 requestAnimationFrame(animate);
             }
             animate();
