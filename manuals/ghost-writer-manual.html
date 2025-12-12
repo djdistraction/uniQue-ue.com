@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost-Writer User Manual - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12 max-w-4xl">
+            <div class="panel-3d p-8">
+                <h1 class="text-4xl font-display font-bold mb-6 text-brand-accent heading-glow">Ghost-Writer User Manual</h1>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Getting Started</h2>
+                    <p class="text-brand-text-muted mb-4">
+                        Ghost-Writer is your AI-powered creative writing assistant that helps transform raw ideas into polished, monetizable content. Work with Draven, your creative partner, through an intuitive chat interface.
+                    </p>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">How to Use</h2>
+                    <ol class="space-y-4 text-brand-text-muted">
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">1.</span>
+                            <div>
+                                <strong class="text-white">Start a Conversation:</strong> Type your initial idea or concept in the chat box. Be as detailed or as brief as you'd like.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">2.</span>
+                            <div>
+                                <strong class="text-white">Collaborate with Draven:</strong> Draven will respond with suggestions, questions, and creative input. Engage in back-and-forth dialogue to refine your work.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">3.</span>
+                            <div>
+                                <strong class="text-white">Attach Files:</strong> Use the "Attach File" button to upload documents, notes, or reference materials.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">4.</span>
+                            <div>
+                                <strong class="text-white">Add URLs:</strong> Share web links for context or research using the "Attach URL" button.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">5.</span>
+                            <div>
+                                <strong class="text-white">Generate Content:</strong> Click the "Generate" button to have Draven create or expand your content based on the conversation.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">6.</span>
+                            <div>
+                                <strong class="text-white">Edit in Real-Time:</strong> Use the Document Editor panel to review and modify generated content.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">7.</span>
+                            <div>
+                                <strong class="text-white">Save Your Work:</strong> Click "Save Document" to preserve your progress, or "Save Context" to bookmark your conversation.
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Best Practices</h2>
+                    <ul class="space-y-2 text-brand-text-muted">
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Be specific about your goals and target audience
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Iterate through multiple drafts for best results
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Provide feedback to Draven to guide the creative direction
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Save your context regularly to preserve conversation history
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use "Clear Context" to start fresh on a new project
+                        </li>
+                    </ul>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Tips for Success</h2>
+                    <div class="bg-brand-accent/10 p-4 rounded-lg border border-brand-accent/30">
+                        <p class="text-brand-text-muted mb-2">
+                            <strong class="text-brand-accent">Pro Tip:</strong> Ghost-Writer works best when you treat it as a collaborative partner rather than just a tool. Share your vision, ask questions, and don't hesitate to request revisions.
+                        </p>
+                    </div>
+                </section>
+                
+                <div class="flex gap-4 mt-8">
+                    <a href="/ghost-writer.html" class="card-link inline-flex">
+                        Launch Ghost-Writer
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="/resources.html" class="px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300 inline-flex items-center gap-2">
+                        Back to Resources
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+</body>
+
+</html>

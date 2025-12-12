@@ -49,42 +49,117 @@
                     <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
                 </div>
                 <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">Resources</h1>
-                <p class="text-lg md:text-xl text-brand-text-muted max-w-2xl mx-auto">Explore our suite of AI-powered creative tools.</p>
+                <p class="text-lg md:text-xl text-brand-text-muted max-w-2xl mx-auto">Explore our suite of AI-powered creative tools organized by category.</p>
             </div>
             
-            <!-- Resource Cards Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Card for Ghost-Writer -->
-                <div class="resource-card-3d">
-                    <h2 class="text-2xl font-display mb-4">Ghost-Writer</h2>
-                    <p class="text-brand-text-muted mb-4">AI-powered creative writing assistant. Transform raw ideas into polished, monetizable works through AI-powered dialogue.</p>
-                    <a href="ghost-writer.html" class="card-link">
-                        Launch Tool 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+            <!-- Business Tools Category -->
+            <section id="business-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Business Tools</h2>
+                <div class="text-center py-12 panel-3d">
+                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
+                    <p class="text-brand-text-muted text-sm mt-2">Exciting business tools are on the way!</p>
                 </div>
-                
-                <!-- Card for Graphics Studio -->
-                <div class="resource-card-3d">
-                    <h2 class="text-2xl font-display mb-4">Graphics Studio</h2>
-                    <p class="text-brand-text-muted mb-4">AI-powered visual and image generation. Transform your documents into stunning visual narratives.</p>
-                    <a href="graphics-studio.html" class="card-link">
-                        Launch Tool 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+            </section>
+            
+            <!-- Creative Writing Tools Category -->
+            <section id="creative-writing-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Creative Writing Tools</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Ghost-Writer Card -->
+                    <div class="resource-card-3d flex flex-col">
+                        <h3 class="text-2xl font-display mb-4">Ghost-Writer</h3>
+                        <div class="mt-auto space-y-3">
+                            <a href="ghost-writer.html" class="card-link block">
+                                Launch Tool 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                            <button onclick="openToolModal('ghost-writer')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
+                                More Info
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                
-                <!-- Card for Rate Calculator -->
-                <div class="resource-card-3d">
-                    <h2 class="text-2xl font-display mb-4">Rate Calculator</h2>
-                    <p class="text-brand-text-muted mb-4">Compare your gig rate to venue price inflation and calculate fair adjustments for your work.</p>
-                    <a href="rate_comparison.html" class="card-link">
-                        Launch Tool 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+            </section>
+            
+            <!-- Graphic Tools Category -->
+            <section id="graphic-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Graphic Tools</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Graphics Studio Card -->
+                    <div class="resource-card-3d flex flex-col">
+                        <h3 class="text-2xl font-display mb-4">Graphics Studio</h3>
+                        <div class="mt-auto space-y-3">
+                            <a href="graphics-studio.html" class="card-link block">
+                                Launch Tool 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                            <button onclick="openToolModal('graphics-studio')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
+                                More Info
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Audio Tools Category -->
+            <section id="audio-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Audio Tools</h2>
+                <div class="text-center py-12 panel-3d">
+                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
+                    <p class="text-brand-text-muted text-sm mt-2">Audio processing tools are in development!</p>
+                </div>
+            </section>
+            
+            <!-- Integration Tools Category -->
+            <section id="integration-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Integration Tools</h2>
+                <div class="text-center py-12 panel-3d">
+                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
+                    <p class="text-brand-text-muted text-sm mt-2">Integration solutions are being crafted!</p>
+                </div>
+            </section>
+            
+            <!-- Performance Tools Category -->
+            <section id="performance-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Performance Tools</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Rate Calculator Card -->
+                    <div class="resource-card-3d flex flex-col">
+                        <h3 class="text-2xl font-display mb-4">Performance Rate Advisor</h3>
+                        <div class="mt-auto space-y-3">
+                            <a href="rate_comparison.html" class="card-link block">
+                                Launch Tool 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                            <button onclick="openToolModal('rate-calculator')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
+                                More Info
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Misc. Tools Category -->
+            <section id="misc-tools" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Misc. Tools</h2>
+                <div class="text-center py-12 panel-3d">
+                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
+                    <p class="text-brand-text-muted text-sm mt-2">More innovative tools are on the horizon!</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Tool Info Modal -->
+        <div id="tool-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+            <div class="panel-3d max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeToolModal()" class="absolute top-4 right-4 text-brand-text-muted hover:text-brand-accent transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div id="modal-content" class="p-8">
+                    <!-- Content will be dynamically inserted -->
                 </div>
             </div>
-        </main>
+        </div>
         
         <!-- Global Footer Component -->
         <div id="footer-placeholder">
@@ -94,7 +169,7 @@
         
     </div>
 
-    <!-- Page-Specific JavaScript for Logo Mouse-Follow -->
+    <!-- Page-Specific JavaScript for Logo Mouse-Follow and Modal -->
     <script type="module">
         import { auth, db } from './firebase-config.js';
         
@@ -113,6 +188,138 @@
                 heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
             });
         }
+        
+        // Tool information database
+        const toolInfo = {
+            'ghost-writer': {
+                name: 'Ghost-Writer',
+                description: 'Ghost-Writer is an advanced AI-powered creative writing assistant designed to help you transform raw ideas into polished, monetizable works. Through interactive dialogue with Draven, your creative partner, you can develop stories, scripts, articles, and any form of written content with professional quality.',
+                examples: [
+                    'Novel writing and story development',
+                    'Screenplay and script creation',
+                    'Article and blog post composition',
+                    'Poetry and creative prose',
+                    'Content editing and refinement'
+                ],
+                manual: '/manuals/ghost-writer-manual.html',
+                launchUrl: '/ghost-writer.html'
+            },
+            'graphics-studio': {
+                name: 'Graphics Studio',
+                description: 'Graphics Studio harnesses the power of AI to transform your written documents into stunning visual narratives. Upload your content and work with Elena, your visual storytelling companion, to generate compelling images that bring your ideas to life.',
+                examples: [
+                    'Book cover and illustration creation',
+                    'Marketing visual content generation',
+                    'Social media graphics and posts',
+                    'Concept art and character design',
+                    'Infographics and visual storytelling'
+                ],
+                manual: '/manuals/graphics-studio-manual.html',
+                launchUrl: '/graphics-studio.html'
+            },
+            'rate-calculator': {
+                name: 'Performance Rate Advisor',
+                description: 'The Performance Rate Advisor helps performers and entertainers calculate fair compensation rates by comparing their current rates to venue price inflation, supply costs, and cost of living increases. Make data-driven decisions about your pricing strategy.',
+                examples: [
+                    'Calculate adjusted gig rates based on inflation',
+                    'Compare rates across different regions',
+                    'Generate professional rate negotiation emails',
+                    'Track economic indicators affecting your business',
+                    'Plan touring rates for different markets'
+                ],
+                manual: '/manuals/rate-calculator-manual.html',
+                launchUrl: '/rate_comparison.html'
+            }
+        };
+        
+        // Get all available tools for suggestions
+        const allTools = ['ghost-writer', 'graphics-studio', 'rate-calculator'];
+        
+        // Make functions globally available
+        window.openToolModal = function(toolId) {
+            const modal = document.getElementById('tool-modal');
+            const modalContent = document.getElementById('modal-content');
+            const tool = toolInfo[toolId];
+            
+            if (!tool) return;
+            
+            // Get suggested tools (all other tools)
+            const suggestedTools = allTools.filter(t => t !== toolId);
+            
+            const content = `
+                <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent heading-glow">${tool.name}</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-display font-bold mb-3 text-white">Description</h3>
+                    <p class="text-brand-text-muted leading-relaxed">${tool.description}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-display font-bold mb-3 text-white">Examples for Use</h3>
+                    <ul class="space-y-2">
+                        ${tool.examples.map(ex => `<li class="text-brand-text-muted flex items-start gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>${ex}</span>
+                        </li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="mb-6">
+                    <a href="${tool.manual}" class="inline-flex items-center gap-2 text-brand-accent hover:text-brand-accent-hover transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        View User Manual
+                    </a>
+                </div>
+                
+                <div class="mb-8">
+                    <a href="${tool.launchUrl}" class="card-link inline-flex">
+                        Launch Tool 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                
+                <div class="border-t border-brand-accent/20 pt-6">
+                    <h3 class="text-lg font-display font-bold mb-4 text-white">Users who enjoyed this tool also found these tools useful:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${suggestedTools.map(suggId => {
+                            const sugg = toolInfo[suggId];
+                            return `
+                                <button onclick="openToolModal('${suggId}')" class="text-left p-4 bg-brand-secondary rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
+                                    <h4 class="font-display font-bold text-brand-accent mb-1">${sugg.name}</h4>
+                                    <p class="text-sm text-brand-text-muted line-clamp-2">${sugg.description.substring(0, 100)}...</p>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+            
+            modalContent.innerHTML = content;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        window.closeToolModal = function() {
+            const modal = document.getElementById('tool-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Close modal when clicking outside
+        document.getElementById('tool-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeToolModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeToolModal();
+            }
+        });
     </script>
 </body>
 
