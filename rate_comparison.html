@@ -101,6 +101,10 @@
       .modal-step {
         min-height: 120px;
       }
+      
+      .hidden {
+        display: none !important;
+      }
     </style>
 
 </head>
@@ -348,20 +352,20 @@
                 </section>
 
                 <!-- Results Section -->
-                <section class="bg-brand-secondary/80 rounded-xl shadow-2xl border border-brand-accent/20 overflow-hidden mt-6">
-                    <div class="p-6 border-b border-brand-accent/20 flex justify-between items-center bg-brand-secondary/50">
-                        <div>
-                            <h2 class="text-xl font-display font-bold flex items-center gap-2 text-white heading-glow">
-                                <span class="text-brand-accent">$</span>
-                                Your 2025 Rate Card
-                            </h2>
-                            <p class="text-brand-text-muted text-sm mt-1">For a <span id="role-label">Solo Acoustic/Vocal</span></p>
-                        </div>
+                <section class="panel-3d p-6">
+                    <div class="mb-6 border-b border-brand-accent/20 pb-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            Your 2025 Rate Card
+                        </h2>
+                        <p class="text-sm text-brand-text-muted">
+                            Recommended rates for a <span id="role-label">Solo Acoustic/Vocal</span> based on your inputs.
+                        </p>
                     </div>
 
-                    <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-accent/20">
+                    <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cost of Living -->
-                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2" id="conservative-label">
                                 Cost of Living
                             </div>
@@ -374,7 +378,7 @@
                         </div>
 
                         <!-- Market Match -->
-                        <div class="p-6 bg-brand-accent/10 border-b-4 border-brand-accent relative hover:bg-brand-accent/15 transition-colors" id="market-card">
+                        <div class="bg-brand-accent/10 p-6 rounded-xl border border-brand-accent/30 relative" id="market-card">
                             <div class="absolute top-0 right-0 bg-brand-accent text-brand-primary text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">RECOMMENDED</div>
                             <div class="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Market Adjusted</div>
                             <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="market-rate">392</span></div>
@@ -382,14 +386,14 @@
                         </div>
 
                         <!-- Supply Match -->
-                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2">Supply Match</div>
                             <div class="text-3xl font-bold text-white mb-1">$<span id="aggressive-rate">454</span></div>
                             <p class="text-xs text-brand-text-muted mt-2">Matches the <span id="aggressive-pct">51.3</span>% rise in supply costs.</p>
                         </div>
 
                         <!-- Touring Premium (Hidden by default) -->
-                        <div id="touring-card" class="hidden p-6 bg-rose-900/20 hover:bg-rose-900/30 transition-colors relative border-b-4 border-rose-500">
+                        <div id="touring-card" class="hidden bg-rose-900/20 p-6 rounded-xl border border-rose-500/30 relative">
                             <div class="absolute top-0 right-0 bg-rose-600 text-white text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">TOURING RATE</div>
                             <div class="text-rose-300 text-xs font-bold uppercase tracking-widest mb-2">Touring Premium</div>
                             <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="touring-rate">412</span></div>
@@ -686,8 +690,8 @@
                 touringCard.classList.remove('hidden');
                 rateCards.classList.remove('lg:grid-cols-3');
                 rateCards.classList.add('lg:grid-cols-4');
-                marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent');
-                marketCard.classList.add('bg-transparent', 'border-transparent');
+                marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent/30');
+                marketCard.classList.add('bg-brand-secondary/50', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.add('hidden');
             } else {
                 toggle.classList.add('bg-brand-secondary');
@@ -703,8 +707,8 @@
                 touringCard.classList.add('hidden');
                 rateCards.classList.add('lg:grid-cols-3');
                 rateCards.classList.remove('lg:grid-cols-4');
-                marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent');
-                marketCard.classList.remove('bg-transparent', 'border-transparent');
+                marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent/30');
+                marketCard.classList.remove('bg-brand-secondary/50', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.remove('hidden');
             }
             updateCalculations();
