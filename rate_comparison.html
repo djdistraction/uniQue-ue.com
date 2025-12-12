@@ -224,7 +224,7 @@
                     </div>
                     
                     <!-- Overhead Toggle -->
-                    <div class="mt-6 flex items-center justify-between bg-brand-primary/50 p-4 rounded-lg border border-brand-accent/20">
+                    <div class="mt-6 flex items-center justify-between bg-brand-primary/90 p-4 rounded-lg border border-brand-accent/20">
                         <div class="flex items-center gap-3">
                             <div id="overhead-icon" class="p-2 rounded-full bg-brand-secondary text-brand-text-muted">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
@@ -258,7 +258,7 @@
                         <!-- Metrics Grid -->
                         <div class="grid grid-cols-2 gap-4" id="metrics-grid">
                             <!-- Revenue Card -->
-                            <div class="bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                            <div class="bg-brand-secondary/90 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
                                 <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Venue Menu Prices</h3>
                                 <div class="flex items-end justify-between">
                                     <div class="text-lg font-bold text-brand-text-muted">$<span id="base-revenue">45,455</span></div>
@@ -268,7 +268,7 @@
                             </div>
 
                             <!-- Supply Card -->
-                            <div class="bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
+                            <div class="bg-brand-secondary/90 p-4 rounded-xl border border-brand-accent/20 shadow-sm backdrop-blur-sm">
                                 <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Venue Supply Costs</h3>
                                 <div class="flex items-end justify-between">
                                     <div class="text-lg font-bold text-brand-text-muted">$<span id="base-supply">10,000</span></div>
@@ -278,7 +278,7 @@
                             </div>
 
                             <!-- Overhead Cards (Hidden by default) -->
-                            <div id="gas-card" class="hidden bg-brand-secondary/50 p-4 rounded-xl border border-rose-900/30 bg-rose-950/10 shadow-sm backdrop-blur-sm">
+                            <div id="gas-card" class="hidden bg-brand-secondary/90 p-4 rounded-xl border border-rose-900/30 bg-rose-950/10 shadow-sm backdrop-blur-sm">
                                 <h3 class="text-xs font-bold text-rose-300 uppercase tracking-wider mb-2 flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
                                     Gas Prices
@@ -286,7 +286,7 @@
                                 <div class="text-xl font-bold text-white">+<span id="pct-gas">65.9</span>%</div>
                                 <p class="text-[10px] text-rose-400/70">Since <span class="gas-base-year">2016</span></p>
                             </div>
-                            <div id="rent-card" class="hidden bg-brand-secondary/50 p-4 rounded-xl border border-brand-accent/30 bg-brand-accent/5 shadow-sm backdrop-blur-sm">
+                            <div id="rent-card" class="hidden bg-brand-secondary/90 p-4 rounded-xl border border-brand-accent/30 bg-brand-accent/5 shadow-sm backdrop-blur-sm">
                                 <h3 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-2 flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                                     Rent/Shelter
@@ -299,7 +299,7 @@
 
                     <!-- Chart Column -->
                     <div>
-                        <div class="w-full h-48 bg-brand-secondary/50 rounded-lg p-4 relative overflow-hidden border border-brand-accent/20">
+                        <div class="w-full h-48 bg-brand-secondary/90 rounded-lg p-4 relative overflow-hidden border border-brand-accent/20">
                             <div class="absolute top-2 left-4 text-xs font-bold text-brand-text-muted">Expense Trends (<span id="chart-year-range">2016</span>-2025)</div>
                             <canvas id="trend-chart" class="w-full h-full"></canvas>
                         </div>
@@ -323,7 +323,7 @@
                     </div>
                     
                     <div class="grid md:grid-cols-3 gap-6">
-                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                        <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
                             <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Rate</h3>
                             <div class="text-3xl font-bold text-white mb-2">$<span id="comparison-user-rate">300</span></div>
                             <p class="text-xs text-brand-text-muted">In <span id="comparison-base-year">2016</span></p>
@@ -335,7 +335,7 @@
                             <p class="text-xs text-brand-text-muted">For <span id="comparison-role-name">Solo Acoustic/Vocal</span></p>
                         </div>
                         
-                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                        <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
                             <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Difference</h3>
                             <div class="text-3xl font-bold mb-2" id="comparison-difference-value">
                                 <span class="text-green-400">+$25</span>
@@ -344,7 +344,7 @@
                         </div>
                     </div>
                     
-                    <div class="mt-6 bg-brand-primary/50 p-4 rounded-lg border border-brand-accent/20">
+                    <div class="mt-6 bg-brand-primary/90 p-4 rounded-lg border border-brand-accent/20">
                         <p class="text-sm text-brand-text-muted leading-relaxed" id="comparison-insight">
                             Your rate is competitive for your region. Consider the recommended adjustments below to stay aligned with market changes.
                         </p>
@@ -365,7 +365,7 @@
 
                     <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cost of Living -->
-                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                        <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2" id="conservative-label">
                                 Cost of Living
                             </div>
@@ -386,7 +386,7 @@
                         </div>
 
                         <!-- Supply Match -->
-                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                        <div class="bg-brand-secondary/90 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2">Supply Match</div>
                             <div class="text-3xl font-bold text-white mb-1">$<span id="aggressive-rate">454</span></div>
                             <p class="text-xs text-brand-text-muted mt-2">Matches the <span id="aggressive-pct">51.3</span>% rise in supply costs.</p>
@@ -454,7 +454,7 @@
                             +<span id="tour-diff-amount">141</span> difference from home rate
                         </div>
                     </div>
-                    <div class="bg-brand-primary/50 p-6 rounded-lg max-w-md border border-brand-accent/20">
+                    <div class="bg-brand-primary/90 p-6 rounded-lg max-w-md border border-brand-accent/20">
                         <p class="text-brand-text-muted text-sm leading-relaxed">
                             The cost of doing business in <strong id="tour-dest-name" class="text-white">Northeast</strong> is approx. <strong id="tour-ratio" class="text-brand-accent">47.1% higher</strong> than in <span id="tour-origin-name">Midwest</span>.
                         </p>
@@ -500,8 +500,8 @@
     </div>
 
     <!-- Configuration Wizard Modal -->
-    <div id="config-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-primary/95 backdrop-blur-md transition-opacity duration-300">
-        <div class="bg-brand-secondary/90 border border-brand-accent/30 rounded-xl shadow-2xl max-w-2xl w-full mx-4 p-8 animate-fade-in-up">
+    <div id="config-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-primary/98 backdrop-blur-lg transition-opacity duration-300">
+        <div class="bg-brand-secondary/98 border border-brand-accent/30 rounded-xl shadow-2xl max-w-2xl w-full mx-4 p-8 animate-fade-in-up">
             <div class="mb-8 text-center">
                 <h2 class="text-2xl font-display font-bold text-brand-accent mb-2 heading-glow">Configure Your Baseline</h2>
                 <p class="text-sm text-brand-text-muted">Answer a few questions to get your personalized rate recommendations</p>
@@ -691,7 +691,7 @@
                 rateCards.classList.remove('lg:grid-cols-3');
                 rateCards.classList.add('lg:grid-cols-4');
                 marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent/30');
-                marketCard.classList.add('bg-brand-secondary/50', 'border-brand-accent/20');
+                marketCard.classList.add('bg-brand-secondary/90', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.add('hidden');
             } else {
                 toggle.classList.add('bg-brand-secondary');
@@ -708,7 +708,7 @@
                 rateCards.classList.add('lg:grid-cols-3');
                 rateCards.classList.remove('lg:grid-cols-4');
                 marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent/30');
-                marketCard.classList.remove('bg-brand-secondary/50', 'border-brand-accent/20');
+                marketCard.classList.remove('bg-brand-secondary/90', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.remove('hidden');
             }
             updateCalculations();
