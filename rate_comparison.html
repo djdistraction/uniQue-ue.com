@@ -81,6 +81,30 @@
       .rate-input::placeholder {
         color: var(--brand-text-muted);
       }
+      
+      /* Modal styles */
+      .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .modal-step {
+        min-height: 120px;
+      }
+      
+      .hidden {
+        display: none !important;
+      }
     </style>
 
 </head>
@@ -131,11 +155,11 @@
             <!-- Dashboard Tab -->
             <div id="content-dashboard" class="tab-content space-y-6">
                 <!-- Input Section -->
-                <section class="panel-3d p-6">
+                <section id="baseline-section" class="panel-3d p-6 hidden">
                     <div class="mb-6 border-b border-brand-accent/20 pb-4">
                         <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                            Step 1: Configure Your Baseline
+                            Configure Your Baseline
                         </h2>
                         <p class="text-sm text-brand-text-muted">
                             Select your role, region, and the year you last set your standard rate. The calculator will estimate how industry costs and prices have changed since then.
@@ -217,12 +241,19 @@
                 </section>
 
                 <!-- Economic Indicators -->
-                <div class="grid lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 space-y-4">
-                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 heading-glow">
+                <section class="panel-3d p-6">
+                    <div class="mb-6 border-b border-brand-accent/20 pb-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></svg>
                             Economic Indicators
                         </h2>
+                        <p class="text-sm text-brand-text-muted">
+                            Track how venue costs and revenue have changed since your baseline year.
+                        </p>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 space-y-4">
                         
                         <!-- Metrics Grid -->
                         <div class="grid grid-cols-2 gap-4" id="metrics-grid">
@@ -276,23 +307,65 @@
                             *Visual comparison of how costs and venue revenue have trended since your base year.
                         </div>
                     </div>
-                </div>
+                    </div>
+                </section>
 
-                <!-- Results Section -->
-                <section class="bg-brand-secondary/80 rounded-xl shadow-2xl border border-brand-accent/20 overflow-hidden mt-6">
-                    <div class="p-6 border-b border-brand-accent/20 flex justify-between items-center bg-brand-secondary/50">
-                        <div>
-                            <h2 class="text-xl font-display font-bold flex items-center gap-2 text-white heading-glow">
-                                <span class="text-brand-accent">$</span>
-                                Your 2025 Rate Card
-                            </h2>
-                            <p class="text-brand-text-muted text-sm mt-1">For a <span id="role-label">Solo Acoustic/Vocal</span></p>
+                <!-- Regional Comparison Section -->
+                <section id="comparison-section" class="panel-3d p-6 hidden">
+                    <div class="mb-6 border-b border-brand-accent/20 pb-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Rate Comparison
+                        </h2>
+                        <p class="text-sm text-brand-text-muted">
+                            Compare your rate to similar performers in your region.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                            <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Rate</h3>
+                            <div class="text-3xl font-bold text-white mb-2">$<span id="comparison-user-rate">300</span></div>
+                            <p class="text-xs text-brand-text-muted">In <span id="comparison-base-year">2016</span></p>
+                        </div>
+                        
+                        <div class="bg-brand-accent/10 p-6 rounded-xl border border-brand-accent/30">
+                            <h3 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-2">Regional Average</h3>
+                            <div class="text-3xl font-bold text-brand-accent mb-2">$<span id="comparison-regional-avg">325</span></div>
+                            <p class="text-xs text-brand-text-muted">For <span id="comparison-role-name">Solo Acoustic/Vocal</span></p>
+                        </div>
+                        
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
+                            <h3 class="text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Difference</h3>
+                            <div class="text-3xl font-bold mb-2" id="comparison-difference-value">
+                                <span class="text-green-400">+$25</span>
+                            </div>
+                            <p class="text-xs text-brand-text-muted" id="comparison-difference-text">Above average</p>
                         </div>
                     </div>
+                    
+                    <div class="mt-6 bg-brand-primary/50 p-4 rounded-lg border border-brand-accent/20">
+                        <p class="text-sm text-brand-text-muted leading-relaxed" id="comparison-insight">
+                            Your rate is competitive for your region. Consider the recommended adjustments below to stay aligned with market changes.
+                        </p>
+                    </div>
+                </section>
 
-                    <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-accent/20">
+                <!-- Results Section -->
+                <section class="panel-3d p-6">
+                    <div class="mb-6 border-b border-brand-accent/20 pb-4">
+                        <h2 class="text-lg font-display font-bold text-brand-accent flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                            Your 2025 Rate Card
+                        </h2>
+                        <p class="text-sm text-brand-text-muted">
+                            Recommended rates for a <span id="role-label">Solo Acoustic/Vocal</span> based on your inputs.
+                        </p>
+                    </div>
+
+                    <div id="rate-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Cost of Living -->
-                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2" id="conservative-label">
                                 Cost of Living
                             </div>
@@ -305,7 +378,7 @@
                         </div>
 
                         <!-- Market Match -->
-                        <div class="p-6 bg-brand-accent/10 border-b-4 border-brand-accent relative hover:bg-brand-accent/15 transition-colors" id="market-card">
+                        <div class="bg-brand-accent/10 p-6 rounded-xl border border-brand-accent/30 relative" id="market-card">
                             <div class="absolute top-0 right-0 bg-brand-accent text-brand-primary text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">RECOMMENDED</div>
                             <div class="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Market Adjusted</div>
                             <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="market-rate">392</span></div>
@@ -313,14 +386,14 @@
                         </div>
 
                         <!-- Supply Match -->
-                        <div class="p-6 hover:bg-brand-accent/5 transition-colors">
+                        <div class="bg-brand-secondary/50 p-6 rounded-xl border border-brand-accent/20">
                             <div class="text-brand-text-muted text-xs font-bold uppercase tracking-widest mb-2">Supply Match</div>
                             <div class="text-3xl font-bold text-white mb-1">$<span id="aggressive-rate">454</span></div>
                             <p class="text-xs text-brand-text-muted mt-2">Matches the <span id="aggressive-pct">51.3</span>% rise in supply costs.</p>
                         </div>
 
                         <!-- Touring Premium (Hidden by default) -->
-                        <div id="touring-card" class="hidden p-6 bg-rose-900/20 hover:bg-rose-900/30 transition-colors relative border-b-4 border-rose-500">
+                        <div id="touring-card" class="hidden bg-rose-900/20 p-6 rounded-xl border border-rose-500/30 relative">
                             <div class="absolute top-0 right-0 bg-rose-600 text-white text-[10px] px-2 py-1 font-bold rounded-bl-lg shadow-lg">TOURING RATE</div>
                             <div class="text-rose-300 text-xs font-bold uppercase tracking-widest mb-2">Touring Premium</div>
                             <div class="text-4xl font-bold text-white mb-1 drop-shadow-md">$<span id="touring-rate">412</span></div>
@@ -426,6 +499,107 @@
         
     </div>
 
+    <!-- Configuration Wizard Modal -->
+    <div id="config-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-primary/95 backdrop-blur-md transition-opacity duration-300">
+        <div class="bg-brand-secondary/90 border border-brand-accent/30 rounded-xl shadow-2xl max-w-2xl w-full mx-4 p-8 animate-fade-in-up">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-display font-bold text-brand-accent mb-2 heading-glow">Configure Your Baseline</h2>
+                <p class="text-sm text-brand-text-muted">Answer a few questions to get your personalized rate recommendations</p>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="mb-8">
+                <div class="flex justify-between mb-2">
+                    <span class="text-xs text-brand-text-muted">Question <span id="modal-step-number">1</span> of 4</span>
+                    <span class="text-xs text-brand-text-muted"><span id="modal-progress-percent">25</span>%</span>
+                </div>
+                <div class="h-2 bg-brand-primary rounded-full overflow-hidden">
+                    <div id="modal-progress-bar" class="h-full bg-brand-accent transition-all duration-300" style="width: 25%"></div>
+                </div>
+            </div>
+            
+            <!-- Step 1: Base Year -->
+            <div id="modal-step-1" class="modal-step">
+                <label class="block text-sm font-bold text-brand-text mb-4">In what year did you establish the general rate that you charge for a local performance?</label>
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-accent z-10" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    <select id="modal-baseYear" class="rate-select rate-select-icon w-full">
+                        <option value="2010">2010</option>
+                        <option value="2011">2011</option>
+                        <option value="2012">2012</option>
+                        <option value="2013">2013</option>
+                        <option value="2014">2014</option>
+                        <option value="2015">2015</option>
+                        <option value="2016" selected>2016</option>
+                        <option value="2017">2017</option>
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Step 2: Region -->
+            <div id="modal-step-2" class="modal-step hidden">
+                <label class="block text-sm font-bold text-brand-text mb-4">What region do you primarily operate in?</label>
+                <select id="modal-selectedRegion" class="rate-select w-full">
+                    <option value="National Avg">National Average</option>
+                    <option value="Northeast">Northeast (NY, MA, PA)</option>
+                    <option value="West Coast">West Coast (CA, WA, OR)</option>
+                    <option value="South">South (TX, FL, GA)</option>
+                    <option value="Midwest">Midwest (OH, IL, MI)</option>
+                </select>
+            </div>
+            
+            <!-- Step 3: Role -->
+            <div id="modal-step-3" class="modal-step hidden">
+                <label class="block text-sm font-bold text-brand-text mb-4">What type of performance or gig do you offer?</label>
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-accent z-10" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    <select id="modal-selectedRole" class="rate-select rate-select-icon w-full">
+                        <option value="Solo Musician">Solo Acoustic/Vocal</option>
+                        <option value="DJ">Club/Event DJ</option>
+                        <option value="Band (4-piece)">Full Band</option>
+                        <option value="Sound Engineer">FOH/Sound Tech</option>
+                        <option value="Wedding Band">Wedding/Corporate</option>
+                        <option value="Custom">Custom Entry</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Step 4: User Fee -->
+            <div id="modal-step-4" class="modal-step hidden">
+                <label class="block text-sm font-bold text-brand-text mb-4">What was your performance rate in the selected year?</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold text-lg z-10">$</span>
+                    <input type="number" id="modal-userFee" value="300" class="rate-input w-full pl-10 text-lg" />
+                </div>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+                <button id="modal-start-over" onclick="startOverModal()" class="nav-button px-6 py-3 text-sm font-bold hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 mr-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+                    Start Over
+                </button>
+                <div class="ml-auto flex gap-3">
+                    <button id="modal-next" onclick="nextModalStep()" class="nav-button px-6 py-3 text-sm font-bold bg-brand-accent/10 hover:bg-brand-accent/20">
+                        Next
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                    <button id="modal-submit" onclick="submitModal()" class="nav-button px-6 py-3 text-sm font-bold bg-brand-accent text-brand-primary hover:bg-brand-accent-hover hidden">
+                        Submit
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Rate Calculator JavaScript -->
     <script>
         // --- DATA MODELS ---
@@ -516,8 +690,8 @@
                 touringCard.classList.remove('hidden');
                 rateCards.classList.remove('lg:grid-cols-3');
                 rateCards.classList.add('lg:grid-cols-4');
-                marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent');
-                marketCard.classList.add('bg-transparent', 'border-transparent');
+                marketCard.classList.remove('bg-brand-accent/10', 'border-brand-accent/30');
+                marketCard.classList.add('bg-brand-secondary/50', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.add('hidden');
             } else {
                 toggle.classList.add('bg-brand-secondary');
@@ -533,8 +707,8 @@
                 touringCard.classList.add('hidden');
                 rateCards.classList.add('lg:grid-cols-3');
                 rateCards.classList.remove('lg:grid-cols-4');
-                marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent');
-                marketCard.classList.remove('bg-transparent', 'border-transparent');
+                marketCard.classList.add('bg-brand-accent/10', 'border-brand-accent/30');
+                marketCard.classList.remove('bg-brand-secondary/50', 'border-brand-accent/20');
                 marketCard.querySelector('.absolute')?.classList.remove('hidden');
             }
             updateCalculations();
@@ -818,9 +992,127 @@ Best,
             }
         }
 
+        // --- MODAL WIZARD ---
+        let currentModalStep = 1;
+        const totalModalSteps = 4;
+
+        function updateModalProgress() {
+            const progress = (currentModalStep / totalModalSteps) * 100;
+            document.getElementById('modal-progress-bar').style.width = progress + '%';
+            document.getElementById('modal-step-number').textContent = currentModalStep;
+            document.getElementById('modal-progress-percent').textContent = Math.round(progress);
+            
+            // Hide all steps
+            for (let i = 1; i <= totalModalSteps; i++) {
+                document.getElementById('modal-step-' + i).classList.add('hidden');
+            }
+            
+            // Show current step
+            document.getElementById('modal-step-' + currentModalStep).classList.remove('hidden');
+            
+            // Update buttons
+            const nextBtn = document.getElementById('modal-next');
+            const submitBtn = document.getElementById('modal-submit');
+            const startOverBtn = document.getElementById('modal-start-over');
+            
+            if (currentModalStep === totalModalSteps) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+                startOverBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+                startOverBtn.classList.add('hidden');
+            }
+        }
+
+        function nextModalStep() {
+            if (currentModalStep < totalModalSteps) {
+                currentModalStep++;
+                updateModalProgress();
+            }
+        }
+
+        function startOverModal() {
+            currentModalStep = 1;
+            // Reset form values to defaults
+            document.getElementById('modal-baseYear').value = '2016';
+            document.getElementById('modal-selectedRegion').value = 'National Avg';
+            document.getElementById('modal-selectedRole').value = 'Solo Musician';
+            document.getElementById('modal-userFee').value = '300';
+            updateModalProgress();
+        }
+
+        function submitModal() {
+            // Copy values from modal to main form
+            document.getElementById('baseYear').value = document.getElementById('modal-baseYear').value;
+            document.getElementById('selectedRegion').value = document.getElementById('modal-selectedRegion').value;
+            document.getElementById('selectedRole').value = document.getElementById('modal-selectedRole').value;
+            document.getElementById('userFee').value = document.getElementById('modal-userFee').value;
+            
+            // Update role label
+            const selectedRole = document.getElementById('modal-selectedRole').value;
+            document.getElementById('role-label').textContent = workerRoles[selectedRole].label;
+            
+            // Close modal
+            document.getElementById('config-modal').classList.add('hidden');
+            
+            // Show comparison section
+            document.getElementById('comparison-section').classList.remove('hidden');
+            
+            // Update all calculations
+            updateCalculations();
+            updateComparison();
+        }
+
+        function updateComparison() {
+            const baseYear = document.getElementById('baseYear').value;
+            const selectedRegion = document.getElementById('selectedRegion').value;
+            const selectedRole = document.getElementById('selectedRole').value;
+            const userFee = parseFloat(document.getElementById('userFee').value) || 300;
+            
+            // Calculate regional average for the role
+            const baseAvg = workerRoles[selectedRole].avg2016;
+            const regionMult = regions[selectedRegion].multiplier;
+            const yearCPI = indices[baseYear].cpi;
+            const baseCPI = indices['2016'].cpi;
+            const inflationFactor = yearCPI / baseCPI;
+            const regionalAvg = Math.round(baseAvg * inflationFactor * regionMult);
+            
+            // Update comparison display
+            document.getElementById('comparison-user-rate').textContent = userFee;
+            document.getElementById('comparison-base-year').textContent = baseYear;
+            document.getElementById('comparison-regional-avg').textContent = regionalAvg;
+            document.getElementById('comparison-role-name').textContent = workerRoles[selectedRole].label;
+            
+            const difference = userFee - regionalAvg;
+            const diffElement = document.getElementById('comparison-difference-value');
+            const diffText = document.getElementById('comparison-difference-text');
+            const insightText = document.getElementById('comparison-insight');
+            
+            if (difference > 0) {
+                diffElement.innerHTML = `<span class="text-green-400">+$${Math.abs(difference)}</span>`;
+                diffText.textContent = 'Above average';
+                insightText.textContent = `Your rate is ${Math.abs(difference)} above the regional average. You're positioned competitively in the market. Consider the recommended adjustments below to stay aligned with market changes.`;
+            } else if (difference < 0) {
+                diffElement.innerHTML = `<span class="text-orange-400">-$${Math.abs(difference)}</span>`;
+                diffText.textContent = 'Below average';
+                insightText.textContent = `Your rate is ${Math.abs(difference)} below the regional average for ${workerRoles[selectedRole].label}. The recommended rates below will help you align with market standards.`;
+            } else {
+                diffElement.innerHTML = `<span class="text-brand-accent">$0</span>`;
+                diffText.textContent = 'At average';
+                insightText.textContent = 'Your rate matches the regional average. The recommended adjustments below will help you stay competitive as market conditions evolve.';
+            }
+        }
+
         // --- INITIALIZE ---
         document.addEventListener('DOMContentLoaded', function() {
-            updateCalculations();
+            // Show modal on page load
+            document.getElementById('config-modal').classList.remove('hidden');
+            updateModalProgress();
+            
+            // Don't run calculations until modal is submitted
+            // updateCalculations();
             updateTourCalculations();
             initLogoFollow();
         });
