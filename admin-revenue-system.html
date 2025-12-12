@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue System Admin - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        .admin-card {
+            background: linear-gradient(135deg, rgba(0, 246, 255, 0.1) 0%, rgba(240, 0, 184, 0.05) 100%);
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-inactive {
+            background: #ff0000;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .revenue-metric {
+            background: rgba(0, 246, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 246, 255, 0.3);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #00f6ff;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <!-- Login Screen -->
+        <div id="login-screen" class="min-h-screen flex items-center justify-center px-4">
+            <div class="admin-card max-w-md w-full">
+                <h1 class="text-3xl font-bold text-center mb-6" style="font-family: 'Orbitron', sans-serif; color: var(--brand-accent);">
+                    🔒 Admin Access Required
+                </h1>
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Access Code</label>
+                        <input type="password" id="access-code" 
+                               class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-cyan-400"
+                               placeholder="Enter admin access code">
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-cyan-400 to-pink-500 text-white font-bold py-3 rounded-lg hover:opacity-90 transition">
+                        Access Admin Panel
+                    </button>
+                    <p id="login-error" class="text-red-400 text-sm text-center hidden">Invalid access code</p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" class="hidden container mx-auto px-6 py-12">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-4xl font-bold mb-8" style="font-family: 'Orbitron', sans-serif; color: var(--brand-accent);">
+                    💰 AI Revenue Generation System
+                </h1>
+
+                <!-- System Control -->
+                <div class="admin-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-2">System Status</h2>
+                            <div class="flex items-center">
+                                <span class="status-indicator" id="status-indicator"></span>
+                                <span id="status-text">System Inactive</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-400 mb-2">Master Control</p>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="system-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">
+                        Enable the AI-powered revenue generation system to automatically create, deploy, and manage profitable services.
+                    </p>
+                </div>
+
+                <!-- Revenue Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                    <div class="revenue-metric">
+                        <h3 class="text-lg font-semibold mb-2">Total Revenue</h3>
+                        <p class="text-3xl font-bold text-green-400" id="total-revenue">$0.00</p>
+                        <p class="text-sm text-gray-400 mt-1">All-time earnings</p>
+                    </div>
+                    <div class="revenue-metric">
+                        <h3 class="text-lg font-semibold mb-2">Active Services</h3>
+                        <p class="text-3xl font-bold text-cyan-400" id="active-services">0</p>
+                        <p class="text-sm text-gray-400 mt-1">Currently running</p>
+                    </div>
+                    <div class="revenue-metric">
+                        <h3 class="text-lg font-semibold mb-2">Monthly Avg</h3>
+                        <p class="text-3xl font-bold text-purple-400" id="monthly-avg">$0.00</p>
+                        <p class="text-sm text-gray-400 mt-1">Last 30 days</p>
+                    </div>
+                </div>
+
+                <!-- PayPal Configuration -->
+                <div class="admin-card">
+                    <h2 class="text-2xl font-bold mb-4">💳 Payment Configuration</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">PayPal Email</label>
+                            <input type="email" id="paypal-email" value="butler.r@icloud.com" readonly
+                                   class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Auto-Transfer</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="auto-transfer" checked class="mr-2">
+                                <span class="text-sm text-gray-300">Automatically transfer earnings to PayPal</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Minimum Transfer Amount</label>
+                            <input type="number" id="min-transfer" value="10.00" step="0.01"
+                                   class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Service Generator -->
+                <div class="admin-card">
+                    <h2 class="text-2xl font-bold mb-4">🤖 AI Service Generator</h2>
+                    <p class="text-gray-300 mb-4">
+                        The AI automatically analyzes market trends, identifies opportunities, and generates profitable service offerings.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">Generation Settings</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm mb-1">Service Category</label>
+                                    <select id="service-category" class="w-full px-3 py-2 bg-gray-700 rounded border border-gray-600">
+                                        <option value="any">Any Category</option>
+                                        <option value="content">Content Creation</option>
+                                        <option value="design">Design Services</option>
+                                        <option value="consulting">Consulting</option>
+                                        <option value="automation">Automation Tools</option>
+                                        <option value="api">API Services</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-1">Price Range</label>
+                                    <select id="price-range" class="w-full px-3 py-2 bg-gray-700 rounded border border-gray-600">
+                                        <option value="budget">Budget ($5-$25)</option>
+                                        <option value="standard">Standard ($25-$100)</option>
+                                        <option value="premium">Premium ($100-$500)</option>
+                                        <option value="enterprise">Enterprise ($500+)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="generate-service-btn" 
+                                class="w-full bg-gradient-to-r from-cyan-400 to-pink-500 text-white font-bold py-3 rounded-lg hover:opacity-90 transition">
+                            ✨ Generate New Service
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Services List -->
+                <div class="admin-card">
+                    <h2 class="text-2xl font-bold mb-4">📊 Active Services</h2>
+                    <div id="services-list" class="space-y-3">
+                        <p class="text-gray-400 text-center py-8">No services active yet. Enable the system to start generating services.</p>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div class="admin-card">
+                    <h2 class="text-2xl font-bold mb-4">📜 Activity Log</h2>
+                    <div id="activity-log" class="space-y-2 max-h-96 overflow-y-auto">
+                        <p class="text-gray-400 text-sm">System initialized</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, WORKER_URL } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Security: Admin access code (in production, this should be properly secured)
+        const ADMIN_ACCESS_CODE = 'unique-ue-admin-2024';
+        
+        let systemActive = false;
+        let services = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            setupEventListeners();
+            loadSystemState();
+        });
+
+        function setupEventListeners() {
+            // Login
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = document.getElementById('access-code').value;
+                if (code === ADMIN_ACCESS_CODE) {
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('admin-dashboard').classList.remove('hidden');
+                    logActivity('Admin access granted');
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            });
+
+            // System toggle
+            document.getElementById('system-toggle').addEventListener('change', (e) => {
+                toggleSystem(e.target.checked);
+            });
+
+            // Generate service button
+            document.getElementById('generate-service-btn').addEventListener('click', generateNewService);
+        }
+
+        function toggleSystem(active) {
+            systemActive = active;
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            if (active) {
+                indicator.classList.add('status-active');
+                indicator.classList.remove('status-inactive');
+                statusText.textContent = 'System Active';
+                logActivity('✅ Revenue generation system activated');
+                
+                // Start automated service generation cycle
+                startAutomatedGeneration();
+            } else {
+                indicator.classList.remove('status-active');
+                indicator.classList.add('status-inactive');
+                statusText.textContent = 'System Inactive';
+                logActivity('⏸️ Revenue generation system deactivated');
+            }
+            
+            saveSystemState();
+        }
+
+        async function generateNewService() {
+            const category = document.getElementById('service-category').value;
+            const priceRange = document.getElementById('price-range').value;
+            
+            logActivity(`🔄 Generating new ${category} service in ${priceRange} range...`);
+            
+            try {
+                // Call AI to generate service concept
+                const serviceConcept = await generateServiceWithAI(category, priceRange);
+                
+                // Create service entry
+                const service = {
+                    id: Date.now(),
+                    name: serviceConcept.name,
+                    description: serviceConcept.description,
+                    category: category,
+                    priceRange: priceRange,
+                    price: serviceConcept.price,
+                    status: 'active',
+                    revenue: 0,
+                    created: new Date().toISOString()
+                };
+                
+                services.push(service);
+                updateServicesDisplay();
+                updateMetrics();
+                
+                logActivity(`✅ Service created: ${service.name} - $${service.price}`);
+                
+                // Simulate service deployment
+                setTimeout(() => {
+                    logActivity(`🚀 Service deployed: ${service.name}`);
+                }, 2000);
+                
+            } catch (error) {
+                logActivity(`❌ Error generating service: ${error.message}`);
+            }
+        }
+
+        async function generateServiceWithAI(category, priceRange) {
+            // Build AI prompt for service generation
+            const prompt = `As a creative business consultant, generate a unique, profitable service offering.
+            
+Category: ${category}
+Price Range: ${priceRange}
+
+Create a service that:
+- Solves a real problem
+- Can be automated or semi-automated
+- Has clear value proposition
+- Is viable for online delivery
+- Can generate recurring revenue
+
+Respond in JSON format:
+{
+  "name": "Service Name",
+  "description": "Detailed description",
+  "price": 00.00,
+  "deliveryMethod": "How it's delivered",
+  "automation": "How it can be automated"
+}`;
+
+            try {
+                const response = await fetch(WORKER_URL + '/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chatHistory: [{ role: 'user', parts: [{ text: prompt }] }],
+                        systemPrompt: 'You are a business strategy AI focused on creating profitable, automated service offerings. Always respond with valid JSON.',
+                        model: 'openai/gpt-4o-mini'
+                    })
+                });
+
+                const data = await response.json();
+                const aiResponse = data.response;
+                
+                // Parse JSON from AI response
+                const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    return JSON.parse(jsonMatch[0]);
+                } else {
+                    // Fallback if JSON parsing fails
+                    return {
+                        name: `${category} Service #${Date.now()}`,
+                        description: 'AI-generated service offering',
+                        price: getPriceFromRange(priceRange),
+                        deliveryMethod: 'Online',
+                        automation: 'Automated via API'
+                    };
+                }
+            } catch (error) {
+                console.error('AI generation error:', error);
+                // Fallback service
+                return {
+                    name: `${category} Service #${Date.now()}`,
+                    description: 'AI-generated service offering',
+                    price: getPriceFromRange(priceRange),
+                    deliveryMethod: 'Online',
+                    automation: 'Automated via API'
+                };
+            }
+        }
+
+        function getPriceFromRange(range) {
+            const ranges = {
+                budget: [5, 25],
+                standard: [25, 100],
+                premium: [100, 500],
+                enterprise: [500, 2000]
+            };
+            const [min, max] = ranges[range] || [10, 50];
+            return (Math.random() * (max - min) + min).toFixed(2);
+        }
+
+        function startAutomatedGeneration() {
+            if (!systemActive) return;
+            
+            // Simulate automated service generation every 5 minutes
+            const interval = setInterval(() => {
+                if (!systemActive) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                logActivity('🤖 AI analyzing market opportunities...');
+                
+                // Randomly generate services
+                if (Math.random() > 0.5) {
+                    setTimeout(generateNewService, 3000);
+                }
+            }, 300000); // 5 minutes
+        }
+
+        function updateServicesDisplay() {
+            const listDiv = document.getElementById('services-list');
+            
+            if (services.length === 0) {
+                listDiv.innerHTML = '<p class="text-gray-400 text-center py-8">No services active yet.</p>';
+                return;
+            }
+            
+            listDiv.innerHTML = services.map(service => `
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg">${service.name}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${service.description}</p>
+                            <div class="flex gap-4 mt-2 text-sm">
+                                <span class="text-green-400">$${service.price}</span>
+                                <span class="text-gray-400">Revenue: $${service.revenue.toFixed(2)}</span>
+                                <span class="text-cyan-400">${service.category}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeService(${service.id})" 
+                                class="text-red-400 hover:text-red-300 text-sm">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.removeService = function(id) {
+            services = services.filter(s => s.id !== id);
+            updateServicesDisplay();
+            updateMetrics();
+            logActivity(`🗑️ Service removed`);
+        };
+
+        function updateMetrics() {
+            const totalRevenue = services.reduce((sum, s) => sum + s.revenue, 0);
+            document.getElementById('total-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('active-services').textContent = services.length;
+            document.getElementById('monthly-avg').textContent = `$${(totalRevenue / Math.max(1, services.length)).toFixed(2)}`;
+        }
+
+        function logActivity(message) {
+            const logDiv = document.getElementById('activity-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('p');
+            entry.className = 'text-sm text-gray-300';
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.insertBefore(entry, logDiv.firstChild);
+            
+            // Keep only last 50 entries
+            while (logDiv.children.length > 50) {
+                logDiv.removeChild(logDiv.lastChild);
+            }
+        }
+
+        function saveSystemState() {
+            localStorage.setItem('revenueSystemState', JSON.stringify({
+                active: systemActive,
+                services: services,
+                lastUpdate: new Date().toISOString()
+            }));
+        }
+
+        function loadSystemState() {
+            const saved = localStorage.getItem('revenueSystemState');
+            if (saved) {
+                try {
+                    const state = JSON.parse(saved);
+                    services = state.services || [];
+                    systemActive = state.active || false;
+                    
+                    document.getElementById('system-toggle').checked = systemActive;
+                    if (systemActive) {
+                        toggleSystem(true);
+                    }
+                    
+                    updateServicesDisplay();
+                    updateMetrics();
+                } catch (e) {
+                    console.error('Error loading state:', e);
+                }
+            }
+        }
+
+        // Simple particle effect
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2 + 1
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(0, 246, 255, 0.5)';
+                
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
