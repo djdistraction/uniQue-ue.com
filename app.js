@@ -291,7 +291,7 @@ function initAIHostLogic() {
 
   // Send a welcome message
   setTimeout(() => {
-      const welcomeMsg = "Welcome to uniQue-ue! I'm the site's AI Host. How can I help you today? You can ask me about our resources, our company, or how to get in touch.";
+      const welcomeMsg = "Welcome to uniQue-ue! I'm Nexus, your digital guide. How can I help you today? You can ask me about our resources, our company, or how to get in touch.";
       addMessageToHost('model', welcomeMsg);
       aiHostHistory.push({ role: 'model', parts: [{ text: welcomeMsg }] });
   }, 1000);
@@ -352,7 +352,7 @@ async function handleSendChat() {
 async function callAiHost(userMessage) {
   aiHostHistory.push({ role: 'user', parts: [{ text: userMessage }] });
 
-  const systemPrompt = "You are the uniQue-ue AI Host. Your job is to welcome visitors and guide them. Be friendly, helpful, and slightly futuristic. Keep your answers concise (1-2 sentences) unless asked for more detail. Help users understand the site (Home, About, Resources, Contact) and its tools (Ghost-Writer, Graphics Studio).";
+  const systemPrompt = "You are Nexus, the uniQue-ue digital guide. Your job is to welcome visitors and guide them through the site. Be friendly, helpful, and slightly futuristic. Keep your answers concise (1-2 sentences) unless asked for more detail. Help users understand the site (Home, About, Resources, Contact) and its tools (Ghost-Writer with Draven, Graphics Studio with Elena, Rate Advisor).";
   
   const response = await fetch(`${WORKER_URL}/chat`, {
       method: 'POST',
@@ -381,7 +381,7 @@ function addMessageToHost(sender, message, isThinking = false) {
   if (!aiHostChatContainer) return;
 
   const messageDiv = document.createElement('div');
-  const senderName = sender === 'user' ? 'You' : 'AI Host';
+  const senderName = sender === 'user' ? 'You' : 'Nexus';
   const senderColor = sender === 'user' ? 'text-brand-text-muted' : 'text-brand-accent';
   
   let messageContent = '';

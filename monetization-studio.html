@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetization Studio - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        .revenue-card {
+            background: linear-gradient(135deg, rgba(0, 246, 255, 0.1) 0%, rgba(240, 0, 184, 0.05) 100%);
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .revenue-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 246, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .revenue-card:hover::before {
+            left: 100%;
+        }
+        
+        .revenue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 246, 255, 0.3);
+            border-color: var(--brand-accent);
+        }
+        
+        .monetization-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand-accent), var(--brand-magenta));
+            box-shadow: 0 0 20px rgba(0, 246, 255, 0.5);
+            margin: 0 auto 1rem;
+        }
+        
+        .profit-pulse {
+            animation: profitPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes profitPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .feature-highlight {
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 246, 255, 0.05), rgba(240, 0, 184, 0.05));
+            border-left: 4px solid var(--brand-accent);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+            <!-- Hero Section -->
+            <section class="py-8 md:py-12 text-center">
+                <div class="animate-fade-in-up">
+                    <div class="hero-logo-container mb-6">
+                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
+                    <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 heading-glow">Monetization Studio</h1>
+                    <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
+                       Transform your creative skills into sustainable passive income streams. Let AI guide your monetization strategy.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Revenue Streams Grid -->
+            <section class="py-12 md:py-16">
+                <h2 class="text-3xl font-display font-bold text-brand-accent mb-8 text-center heading-glow">Passive Income Streams</h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <!-- Digital Products -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">Digital Products</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">Sell ebooks, templates, courses, and digital downloads created with our AI tools.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ One-time creation, infinite sales</li>
+                            <li>✓ No inventory or shipping costs</li>
+                            <li>✓ Global reach 24/7</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service Marketplace -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse" style="animation-delay: 0.3s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">Service Listings</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">Offer writing, design, or consulting services with AI-generated portfolios and proposals.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ AI-powered client matching</li>
+                            <li>✓ Automated proposal generation</li>
+                            <li>✓ Recurring revenue potential</li>
+                        </ul>
+                    </div>
+
+                    <!-- Membership/Subscription -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse" style="animation-delay: 0.6s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">Subscriptions</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">Create exclusive content, premium templates, or member-only resources.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ Predictable monthly income</li>
+                            <li>✓ Build a loyal community</li>
+                            <li>✓ Compounding growth</li>
+                        </ul>
+                    </div>
+
+                    <!-- Affiliate Marketing -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse" style="animation-delay: 0.9s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">Affiliate Income</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">Recommend tools and resources while earning commissions on sales.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ Zero product creation</li>
+                            <li>✓ Leverage existing content</li>
+                            <li>✓ Multiple income sources</li>
+                        </ul>
+                    </div>
+
+                    <!-- Licensing -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse" style="animation-delay: 1.2s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">Content Licensing</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">License your AI-generated content, graphics, or written work to businesses.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ Retain ownership rights</li>
+                            <li>✓ Multiple license sales</li>
+                            <li>✓ Premium pricing potential</li>
+                        </ul>
+                    </div>
+
+                    <!-- Automation Services -->
+                    <div class="revenue-card p-6 rounded-xl">
+                        <div class="monetization-icon profit-pulse" style="animation-delay: 1.5s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-primary"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold text-brand-accent mb-2">AI Automation</h3>
+                        <p class="text-sm text-brand-text-muted mb-4">Offer AI-powered automation solutions to businesses looking to streamline workflows.</p>
+                        <ul class="text-xs text-brand-text-muted space-y-2">
+                            <li>✓ High-value B2B services</li>
+                            <li>✓ Recurring contracts</li>
+                            <li>✓ Scalable delivery</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Strategy Advisor -->
+            <section class="panel-3d p-8 mb-12">
+                <h2 class="text-2xl font-display font-bold text-brand-accent mb-6 text-center heading-glow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+                    AI-Powered Strategy Advisor
+                </h2>
+                
+                <div class="max-w-3xl mx-auto">
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold text-brand-text-muted mb-3">What creative skills do you have?</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="writing" />
+                                <span>Writing</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="design" />
+                                <span>Design</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="music" />
+                                <span>Music</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="video" />
+                                <span>Video Production</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="consulting" />
+                                <span>Consulting</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-brand-text-muted cursor-pointer hover:text-brand-accent transition">
+                                <input type="checkbox" class="skill-checkbox" value="coding" />
+                                <span>Coding</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="generateStrategy()" class="w-full bg-brand-accent text-brand-primary font-bold py-4 rounded-lg hover:bg-brand-accent-hover transition-all text-lg shadow-lg shadow-brand-accent/50">
+                        Generate My Monetization Strategy
+                    </button>
+                    
+                    <div id="strategy-results" class="mt-8 hidden">
+                        <h3 class="text-xl font-bold text-brand-accent mb-4">Your Personalized Strategy</h3>
+                        <div id="strategy-content" class="space-y-4">
+                            <!-- Strategy results will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Start Guide -->
+            <section class="panel-3d p-8">
+                <h2 class="text-2xl font-display font-bold text-brand-accent mb-6 heading-glow">Quick Start Guide</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl font-bold text-brand-accent">1</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Create Content</h3>
+                        <p class="text-sm text-brand-text-muted">Use Ghost-Writer and Graphics Studio to generate high-quality content</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl font-bold text-brand-accent">2</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Package & Price</h3>
+                        <p class="text-sm text-brand-text-muted">Use Rate Advisor to price your services competitively</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl font-bold text-brand-accent">3</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Launch & Earn</h3>
+                        <p class="text-sm text-brand-text-muted">List on marketplaces and watch passive income grow</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <a href="/resources.html" class="inline-block bg-brand-secondary text-brand-accent font-bold px-8 py-3 rounded-lg hover:bg-brand-accent/10 transition-all border border-brand-accent/30">
+                        Explore All Tools →
+                    </a>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Page-Specific JavaScript -->
+    <script type="module">
+        const heroLogo = document.getElementById('hero-logo');
+        
+        if (heroLogo) {
+            const container = heroLogo.parentElement;
+            container.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const rect = container.getBoundingClientRect();
+                const x = ((clientX - rect.left) / rect.width) - 0.5;
+                const y = ((clientY - rect.top) / rect.height) - 0.5;
+                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
+            });
+            container.addEventListener('mouseleave', () => {
+                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
+        
+        // Strategy Generator
+        window.generateStrategy = function() {
+            const checkboxes = document.querySelectorAll('.skill-checkbox:checked');
+            const skills = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (skills.length === 0) {
+                alert('Please select at least one skill to generate a strategy.');
+                return;
+            }
+            
+            const strategyResults = document.getElementById('strategy-results');
+            const strategyContent = document.getElementById('strategy-content');
+            
+            // Show results
+            strategyResults.classList.remove('hidden');
+            
+            // Generate personalized strategy based on skills
+            let strategies = [];
+            
+            if (skills.includes('writing')) {
+                strategies.push({
+                    title: 'Digital Writing Products',
+                    income: '$500-2000/month',
+                    items: [
+                        'Create ebook templates using Ghost-Writer',
+                        'Offer ghostwriting services on Upwork/Fiverr',
+                        'Start a paid newsletter/Substack ($5-15/subscriber)',
+                        'License content to content aggregators'
+                    ]
+                });
+            }
+            
+            if (skills.includes('design')) {
+                strategies.push({
+                    title: 'Design Assets & Services',
+                    income: '$800-3000/month',
+                    items: [
+                        'Sell Graphics Studio templates on Creative Market',
+                        'Offer logo design packages ($200-500 each)',
+                        'Create social media template bundles',
+                        'License AI-generated artwork'
+                    ]
+                });
+            }
+            
+            if (skills.includes('music')) {
+                strategies.push({
+                    title: 'Music Production Revenue',
+                    income: '$400-2500/month',
+                    items: [
+                        'Sell beats and loops on BeatStars',
+                        'Offer mixing/mastering services',
+                        'Create sample packs for producers',
+                        'License tracks for commercial use'
+                    ]
+                });
+            }
+            
+            if (skills.includes('consulting')) {
+                strategies.push({
+                    title: 'Consulting & Coaching',
+                    income: '$1000-5000/month',
+                    items: [
+                        'Create online course using Ghost-Writer',
+                        'Offer 1-on-1 consulting sessions ($100-300/hr)',
+                        'Start a paid mastermind group ($50-200/member)',
+                        'Build downloadable worksheets and guides'
+                    ]
+                });
+            }
+            
+            // Generate HTML
+            let html = '';
+            strategies.forEach(strategy => {
+                html += `
+                    <div class="feature-highlight">
+                        <h4 class="text-lg font-bold text-brand-accent mb-2">${strategy.title}</h4>
+                        <p class="text-sm text-brand-text-muted mb-3">Potential: <strong class="text-brand-accent">${strategy.income}</strong></p>
+                        <ul class="space-y-2 text-sm text-brand-text-muted">
+                            ${strategy.items.map(item => `<li>→ ${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            // Add summary
+            html += `
+                <div class="mt-6 p-6 bg-brand-accent/10 rounded-lg border border-brand-accent/30">
+                    <h4 class="text-lg font-bold text-brand-accent mb-2">Combined Potential</h4>
+                    <p class="text-3xl font-bold text-white mb-2">$${500 * strategies.length} - $${3000 * strategies.length}/month</p>
+                    <p class="text-sm text-brand-text-muted">Start with one stream, then scale by adding others as you grow.</p>
+                </div>
+            `;
+            
+            strategyContent.innerHTML = html;
+            
+            // Smooth scroll to results
+            strategyResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+    </script>
+</body>
+
+</html>

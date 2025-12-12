@@ -145,20 +145,26 @@
                         <form id="contact-form" class="space-y-6">
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="name" class="block text-sm font-medium text-brand-text-muted mb-2">Callsign / Name</label>
+                                    <label for="name" class="block text-sm font-medium text-brand-text-muted mb-2">Name</label>
                                     <input type="text" id="name" name="name" class="form-input" required>
                                 </div>
                                 <div>
-                                    <label for="email" class="block text-sm font-medium text-brand-text-muted mb-2">Secure Comms / Email</label>
+                                    <label for="email" class="block text-sm font-medium text-brand-text-muted mb-2">Email</label>
                                     <input type="email" id="email" name="email" class="form-input" required>
                                 </div>
                             </div>
-                            <div>
-                                <label for="subject" class="block text-sm font-medium text-brand-text-muted mb-2">Subject</label>
-                                <input type="text" id="subject" name="subject" class="form-input" required>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="subject" class="block text-sm font-medium text-brand-text-muted mb-2">Subject</label>
+                                    <input type="text" id="subject" name="subject" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-brand-text-muted mb-2">Phone Number <span class="text-xs">(Optional)</span></label>
+                                    <input type="tel" id="phone" name="phone" class="form-input">
+                                </div>
                             </div>
                             <div>
-                                <label for="message" class="block text-sm font-medium text-brand-text-muted mb-2">Transmission / Message</label>
+                                <label for="message" class="block text-sm font-medium text-brand-text-muted mb-2">Message</label>
                                 <textarea id="message" name="message" rows="5" class="form-input" required></textarea>
                             </div>
                             <div>
@@ -266,7 +272,8 @@
                 name: formData.get('name'),
                 email: formData.get('email'),
                 subject: formData.get('subject'),
-                message: formData.get('message')
+                message: formData.get('message'),
+                phone: formData.get('phone') || ''
             };
 
             try {
