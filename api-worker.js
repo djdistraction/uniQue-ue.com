@@ -5,6 +5,7 @@
  * - /chat : Handles AI chat requests (proxies to GitHub Models)
  * - /generate-image : Handles AI image generation (proxies to Hugging Face)
  * - /contact : Handles the contact form (sends email via SendGrid)
+ * - /admin/verify-access : Verifies admin access code
  * - /admin/revenue : Admin endpoint for revenue system operations
  * - /admin/paypal-payout : Initiates PayPal payout (admin only)
  *
@@ -16,6 +17,7 @@
  * - ADMIN_ACCESS_CODE: Access code for admin features (optional)
  * - PAYPAL_CLIENT_ID: PayPal API client ID (optional, for automated payouts)
  * - PAYPAL_CLIENT_SECRET: PayPal API secret (optional, for automated payouts)
+ * - PAYPAL_RECEIVER_EMAIL: PayPal email to receive payouts (required for payouts)
  */
 
 export default {
@@ -36,6 +38,8 @@ export default {
         return await handleImageGeneration(request, env);
       } else if (path === "/contact") {
         return await handleContactForm(request, env);
+      } else if (path === "/admin/verify-access") {
+        return await handleVerifyAccess(request, env);
       } else if (path === "/admin/revenue") {
         return await handleRevenueAdmin(request, env);
       } else if (path === "/admin/paypal-payout") {
@@ -367,6 +371,54 @@ ${message}
 }
 
 /**
+ * Handles /admin/verify-access requests
+ * Verifies admin access code
+ */
+async function handleVerifyAccess(request, env) {
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders },
+    });
+  }
+
+  try {
+    const body = await request.json();
+    const { accessCode } = body;
+
+    // Verify admin access
+    const validAccessCode = env.ADMIN_ACCESS_CODE || 'unique-ue-admin-2024';
+    
+    if (accessCode === validAccessCode) {
+      return new Response(JSON.stringify({ 
+        success: true,
+        message: "Access granted" 
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    } else {
+      return new Response(JSON.stringify({ 
+        success: false,
+        message: "Invalid access code" 
+      }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+  } catch (error) {
+    console.error("Error in /admin/verify-access handler:", error.message);
+    return new Response(JSON.stringify({ 
+      success: false,
+      error: "Server error" 
+    }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+}
+
+/**
  * Handles /admin/revenue requests
  * Admin endpoint for revenue system operations
  */
@@ -459,16 +511,18 @@ async function handlePayPalPayout(request, env) {
     }
 
     // Check if PayPal credentials are configured
-    if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) {
+    if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET || !env.PAYPAL_RECEIVER_EMAIL) {
       return new Response(JSON.stringify({ 
         error: "PayPal not configured",
-        message: "PayPal API credentials not set. Please configure PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET secrets.",
-        manualInstructions: "To complete payout manually: Log into PayPal, go to Send Money, and send to butler.r@icloud.com"
+        message: "PayPal API credentials not set. Please configure PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, and PAYPAL_RECEIVER_EMAIL secrets.",
+        manualInstructions: "To complete payout manually: Log into PayPal and send money to your configured PayPal email address"
       }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
+
+    const receiverEmail = env.PAYPAL_RECEIVER_EMAIL;
 
     // Get PayPal OAuth token
     const authResponse = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
@@ -502,7 +556,7 @@ async function handlePayPalPayout(request, env) {
           value: amount.toFixed(2),
           currency: "USD"
         },
-        receiver: "butler.r@icloud.com",
+        receiver: receiverEmail,
         note: "Revenue from AI-generated services",
         sender_item_id: `item_${Date.now()}`
       }]
@@ -526,7 +580,7 @@ async function handlePayPalPayout(request, env) {
 
     return new Response(JSON.stringify({
       success: true,
-      message: `Payout of $${amount.toFixed(2)} initiated to butler.r@icloud.com`,
+      message: `Payout of $${amount.toFixed(2)} initiated to ${receiverEmail}`,
       batchId: payoutResult.batch_header.payout_batch_id,
       status: payoutResult.batch_header.batch_status
     }), {
@@ -539,7 +593,7 @@ async function handlePayPalPayout(request, env) {
     return new Response(JSON.stringify({ 
       error: "Payout failed",
       message: error.message,
-      manualInstructions: "To complete payout manually: Log into PayPal, go to Send Money, and send to butler.r@icloud.com"
+      manualInstructions: "To complete payout manually: Log into PayPal and send money to your configured PayPal email address"
     }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders },

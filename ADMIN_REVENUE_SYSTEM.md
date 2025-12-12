@@ -67,6 +67,9 @@ For automated PayPal payouts, configure these Cloudflare Worker secrets:
 wrangler secret put ADMIN_ACCESS_CODE
 # Enter your custom access code
 
+wrangler secret put PAYPAL_RECEIVER_EMAIL
+# Enter your PayPal email (e.g., butler.r@icloud.com)
+
 wrangler secret put PAYPAL_CLIENT_ID
 # Enter your PayPal REST API client ID
 
@@ -89,6 +92,9 @@ wrangler secret put PAYPAL_CLIENT_SECRET
 | `ADMIN_ACCESS_CODE` | Optional | Custom access code for admin panel (default: unique-ue-admin-2024) |
 | `PAYPAL_CLIENT_ID` | Optional | PayPal API client ID for automated payouts |
 | `PAYPAL_CLIENT_SECRET` | Optional | PayPal API secret for automated payouts |
+| `PAYPAL_RECEIVER_EMAIL` | Required* | PayPal email address to receive payouts (e.g., butler.r@icloud.com) |
+
+*Required only if using automated PayPal payouts
 
 ## How It Works
 
@@ -158,11 +164,15 @@ Initiates PayPal payout
 
 ## Security Considerations
 
-1. **Access Control**: Page requires authentication with access code
-2. **Not Indexed**: Should add to `robots.txt` to prevent search engine indexing
-3. **HTTPS Only**: Always access via HTTPS
-4. **Credential Security**: Never commit PayPal credentials to git
-5. **Rate Limiting**: Consider implementing rate limits on admin endpoints
+1. **Server-Side Authentication**: Access code is verified server-side, not stored in client code
+2. **Session-Based Access**: Access code stored in sessionStorage, cleared on logout/close
+3. **Not Indexed**: Excluded from search engines via `robots.txt`
+4. **HTTPS Only**: Always access via HTTPS
+5. **Credential Security**: 
+   - PayPal email stored as environment variable on server
+   - API credentials never exposed in client code
+   - Never commit secrets to git
+6. **Rate Limiting**: Consider implementing rate limits on admin endpoints in production
 
 ## Usage Recommendations
 
