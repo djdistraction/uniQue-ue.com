@@ -5,7 +5,7 @@
     <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Calculator - uniQue-ue</title>
+    <title>Performance Rate Advisor - uniQue-ue</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -105,9 +105,9 @@
                         <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
                     </div>
                     <h2 class="text-2xl md:text-3xl font-display font-bold leading-tight text-brand-text-muted">uniQue-ue</h2>
-                    <h1 class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 heading-glow">Rate Calculator</h1>
+                    <h1 class="text-4xl md:text-6xl font-display font-extrabold leading-tight mb-4 heading-glow">Performance Rate Advisor</h1>
                     <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans">
-                       Compare your gig rate to venue price inflation and calculate how much you should adjust for fair compensation.
+                       Calculate fair compensation rates by comparing your rates to venue price inflation, supply costs, and cost of living increases.
                     </p>
                 </div>
             </section>
@@ -144,7 +144,7 @@
 
                     <div class="grid md:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Original Year</label>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">In what year did you establish the general rate that you charge for a local performance?</label>
                             <div class="relative">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-accent z-10" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                                 <select id="baseYear" onchange="updateCalculations()" class="rate-select rate-select-icon w-full">
@@ -167,7 +167,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Region</label>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">What region do you primarily operate in?</label>
                             <select id="selectedRegion" onchange="updateCalculations()" class="rate-select w-full">
                                 <option value="National Avg">National Average</option>
                                 <option value="Northeast">Northeast (NY, MA, PA)</option>
@@ -177,7 +177,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Gig Type</label>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">What type of performance or gig do you offer?</label>
                             <div class="relative">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-accent z-10" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                                 <select id="selectedRole" onchange="handleRoleChange()" class="rate-select rate-select-icon w-full">
@@ -191,7 +191,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">Your Current Fee</label>
+                            <label class="block text-xs font-bold text-brand-text-muted uppercase tracking-wider mb-2">What was your performance rate in the selected year?</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-accent font-bold z-10">$</span>
                                 <input type="number" id="userFee" value="300" onchange="updateCalculations()" class="rate-input w-full pl-8" />

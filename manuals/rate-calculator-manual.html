@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Rate Advisor User Manual - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12 max-w-4xl">
+            <div class="panel-3d p-8">
+                <h1 class="text-4xl font-display font-bold mb-6 text-brand-accent heading-glow">Performance Rate Advisor User Manual</h1>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Getting Started</h2>
+                    <p class="text-brand-text-muted mb-4">
+                        The Performance Rate Advisor helps performers, musicians, DJs, and entertainers calculate fair compensation rates by analyzing economic data including venue price inflation, supply costs, cost of living increases, and regional market differences.
+                    </p>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">How to Use</h2>
+                    
+                    <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Dashboard Tab</h3>
+                    <ol class="space-y-4 text-brand-text-muted mb-6">
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">1.</span>
+                            <div>
+                                <strong class="text-white">Select Your Base Year:</strong> Choose the year when you established your current rate. This serves as your baseline for comparisons.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">2.</span>
+                            <div>
+                                <strong class="text-white">Choose Your Region:</strong> Select the geographic area where you primarily perform. Regional multipliers account for local market differences.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">3.</span>
+                            <div>
+                                <strong class="text-white">Select Performance Type:</strong> Choose the category that best describes your service (Solo Acoustic, DJ, Full Band, etc.).
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">4.</span>
+                            <div>
+                                <strong class="text-white">Enter Your Rate:</strong> Input the fee you were charging in your selected base year.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">5.</span>
+                            <div>
+                                <strong class="text-white">Toggle Overhead Costs:</strong> Enable this if you want to factor in travel, gas, and accommodation expenses for touring.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">6.</span>
+                            <div>
+                                <strong class="text-white">Review Your Rate Card:</strong> See recommended rates based on different economic factors:
+                                <ul class="mt-2 ml-4 space-y-1">
+                                    <li>• <strong>Cost of Living:</strong> Matches general inflation</li>
+                                    <li>• <strong>Market Adjusted:</strong> Matches venue menu price increases (recommended)</li>
+                                    <li>• <strong>Supply Match:</strong> Matches the increase in venue supply costs</li>
+                                    <li>• <strong>Touring Premium:</strong> Accounts for gas and hotel inflation (when overhead is enabled)</li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Tour Mode Tab</h3>
+                    <p class="text-brand-text-muted mb-4">
+                        Calculate adjusted rates when performing in different regions. Select your home base and target destination to see the equivalent rate that accounts for regional cost differences.
+                    </p>
+                    
+                    <h3 class="text-xl font-display font-bold mb-3 text-brand-accent">Negotiate Tab</h3>
+                    <p class="text-brand-text-muted mb-4">
+                        Generate professional email templates for rate negotiations. The tool provides data-driven talking points and customized correspondence based on your specific situation.
+                    </p>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Understanding the Metrics</h2>
+                    <div class="space-y-4">
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h4 class="font-bold text-white mb-2">Venue Menu Prices</h4>
+                            <p class="text-sm text-brand-text-muted">Tracks how much venue food and beverage prices have increased based on the Consumer Price Index (CPI). This is typically the most relevant metric for performers.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h4 class="font-bold text-white mb-2">Venue Supply Costs</h4>
+                            <p class="text-sm text-brand-text-muted">Shows the increase in wholesale supply costs using the Producer Price Index (PPI). Venues often cite this when resisting rate increases.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h4 class="font-bold text-white mb-2">Cost of Living</h4>
+                            <p class="text-sm text-brand-text-muted">General inflation rate that affects your personal expenses. This represents the minimum increase needed to maintain purchasing power.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h4 class="font-bold text-white mb-2">Gas & Rent Prices</h4>
+                            <p class="text-sm text-brand-text-muted">Overhead costs that affect touring performers. Gas prices impact travel expenses while rent affects your base operating costs.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Best Practices</h2>
+                    <ul class="space-y-2 text-brand-text-muted">
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use the "Market Adjusted" rate as your primary negotiating point
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Update your baseline year periodically as you raise rates
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use Tour Mode when negotiating rates in new markets
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Reference the economic data in your negotiations to support your position
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Copy and customize the generated email templates
+                        </li>
+                    </ul>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Negotiation Strategy</h2>
+                    <div class="bg-brand-accent/10 p-4 rounded-lg border border-brand-accent/30">
+                        <p class="text-brand-text-muted mb-3">
+                            <strong class="text-brand-accent">Pro Tip:</strong> When venues push back on rate increases, point out that their menu prices have increased by the same percentage you're requesting. This creates a fair and logical argument that's hard to dispute.
+                        </p>
+                        <p class="text-brand-text-muted">
+                            The data shows that if venues can raise prices to match inflation, performers should be able to do the same. You're not asking for a premium—you're asking to maintain the same relative value you provided in your base year.
+                        </p>
+                    </div>
+                </section>
+                
+                <div class="flex gap-4 mt-8">
+                    <a href="/rate_comparison.html" class="card-link inline-flex">
+                        Launch Performance Rate Advisor
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="/resources.html" class="px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300 inline-flex items-center gap-2">
+                        Back to Resources
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+</body>
+
+</html>

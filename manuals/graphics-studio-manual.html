@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphics Studio User Manual - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter & Orbitron) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Our New Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12 max-w-4xl">
+            <div class="panel-3d p-8">
+                <h1 class="text-4xl font-display font-bold mb-6 text-brand-accent heading-glow">Graphics Studio User Manual</h1>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Getting Started</h2>
+                    <p class="text-brand-text-muted mb-4">
+                        Graphics Studio transforms your written documents into stunning visual narratives using AI-powered image generation. Elena, your visual storytelling companion, helps you create professional graphics for any project.
+                    </p>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">How to Use</h2>
+                    <ol class="space-y-4 text-brand-text-muted">
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">1.</span>
+                            <div>
+                                <strong class="text-white">Upload Your Document:</strong> Click "Upload Document" to share your written content. Supported formats include PDF, DOCX, TXT, and more.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">2.</span>
+                            <div>
+                                <strong class="text-white">Chat with Elena:</strong> Describe the type of images you want to create. Be specific about style, mood, colors, and composition.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">3.</span>
+                            <div>
+                                <strong class="text-white">Generate Images:</strong> Click the "Generate" button to create images based on your document and conversation.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">4.</span>
+                            <div>
+                                <strong class="text-white">Review Gallery:</strong> Generated images appear in the Image Gallery panel. Click any image to view it full size.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">5.</span>
+                            <div>
+                                <strong class="text-white">Refine Results:</strong> Provide feedback to Elena about what you like or want to change, then generate again.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">6.</span>
+                            <div>
+                                <strong class="text-white">Download Images:</strong> Use "Download All Images" to save your creations, or right-click individual images to save them.
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-brand-accent font-bold">7.</span>
+                            <div>
+                                <strong class="text-white">Save Context:</strong> Preserve your conversation and settings for future sessions.
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Best Practices</h2>
+                    <ul class="space-y-2 text-brand-text-muted">
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Upload high-quality documents for better context understanding
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Be descriptive when explaining your vision to Elena
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Specify art styles (e.g., "photorealistic," "watercolor," "minimalist")
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Generate multiple variations to find the perfect image
+                        </li>
+                        <li class="flex gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use reference images or examples when describing your needs
+                        </li>
+                    </ul>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Image Style Guide</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h3 class="font-bold text-white mb-2">For Marketing</h3>
+                            <p class="text-sm text-brand-text-muted">Request bold, eye-catching visuals with strong contrast and clear focal points.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h3 class="font-bold text-white mb-2">For Books</h3>
+                            <p class="text-sm text-brand-text-muted">Ask for images that match your genre and evoke the right emotional response.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h3 class="font-bold text-white mb-2">For Social Media</h3>
+                            <p class="text-sm text-brand-text-muted">Create vibrant, attention-grabbing graphics optimized for specific platforms.</p>
+                        </div>
+                        <div class="bg-brand-secondary p-4 rounded-lg border border-brand-accent/30">
+                            <h3 class="font-bold text-white mb-2">For Presentations</h3>
+                            <p class="text-sm text-brand-text-muted">Request clean, professional visuals that support your message without distraction.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="mb-8">
+                    <h2 class="text-2xl font-display font-bold mb-4 text-white">Tips for Success</h2>
+                    <div class="bg-brand-accent/10 p-4 rounded-lg border border-brand-accent/30">
+                        <p class="text-brand-text-muted mb-2">
+                            <strong class="text-brand-accent">Pro Tip:</strong> When generating images for a series (like book chapters), maintain consistency by referencing previous images and keeping your descriptions similar in tone and detail.
+                        </p>
+                    </div>
+                </section>
+                
+                <div class="flex gap-4 mt-8">
+                    <a href="/graphics-studio.html" class="card-link inline-flex">
+                        Launch Graphics Studio
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="/resources.html" class="px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300 inline-flex items-center gap-2">
+                        Back to Resources
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+</body>
+
+</html>
