@@ -859,9 +859,13 @@
         }
         
         function estimateDistance(from, to) {
-            // Simplified distance estimation
-            // In a real implementation, this would use a geocoding API
-            // For now, we'll return a random value between 50-500 miles as a placeholder
+            // PLACEHOLDER: Simplified distance estimation using string hash
+            // TODO: Replace with real geocoding API (Google Maps, MapBox, or OpenStreetMap)
+            // Current implementation generates deterministic but unrealistic values for demo purposes
+            // Real implementation would:
+            // 1. Geocode city/state to lat/lng coordinates
+            // 2. Calculate actual driving distance using routing API
+            // 3. Return accurate mileage between locations
             const hash = (from + to).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             return 50 + (hash % 450);
         }
