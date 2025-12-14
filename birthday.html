@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Mom! - 64</title>
+    
+    <!-- Using the same Tailwind CDN as your other pages -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (Vanilla JS version) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts to match the elegant style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Your Site Icon -->
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020418; /* Your brand primary, roughly */
+            overflow-x: hidden;
+        }
+        
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Purple Rain Animation */
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        .animate-float {
+            animation: float linear infinite;
+        }
+
+        /* Record Spin Animation */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 8s linear infinite;
+        }
+        .paused-spin {
+            animation-play-state: paused;
+        }
+
+        /* Visualizer Animation */
+        @keyframes music-bar {
+            0%, 100% { height: 10%; }
+            50% { height: 100%; }
+        }
+        .animate-music-bar {
+            animation: music-bar 0.8s ease-in-out infinite alternate;
+        }
+        .paused-bar {
+            animation-play-state: paused;
+            height: 10% !important; /* Collapse when paused */
+        }
+
+        /* Fade In Animation */
+        @keyframes fade-in-down {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fade-in-down 1s ease-out forwards;
+        }
+
+        /* Custom Scrollbar for Playlist */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(192, 38, 211, 0.5);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(192, 38, 211, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white selection:bg-fuchsia-500 relative">
+
+    <!-- Background Gradient -->
+    <div class="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-900 to-indigo-950 z-[-2]"></div>
+    
+    <!-- Purple Rain Container -->
+    <div id="rain-container" class="fixed inset-0 pointer-events-none overflow-hidden z-[-1]"></div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audio-player"></audio>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 py-12 flex flex-col items-center">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12 animate-fade-in-down">
+            <!-- Added pb-6 to fix font cutting off descenders -->
+            <h1 class="text-5xl md:text-7xl font-serif italic font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 to-purple-100 mb-2 drop-shadow-lg tracking-wide pb-6 leading-relaxed">
+                Happy 64th Birthday!
+            </h1>
+            <p class="text-xl md:text-2xl text-purple-200 font-serif italic font-light tracking-wider">
+                To the world's greatest Mom
+            </p>
+        </header>
+
+        <!-- Main Player Card -->
+        <div class="w-full max-w-md bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl mb-12 transform transition-transform duration-300 hover:scale-[1.01]">
+            
+            <!-- Visualizer -->
+            <div id="visualizer" class="flex justify-center items-end gap-1 h-16 w-full max-w-xs mx-auto mb-6">
+                <!-- Bars injected via JS -->
+            </div>
+
+            <!-- Record Player Container -->
+            <div class="relative flex justify-center mb-8">
+                <!-- Tone Arm -->
+                <div class="absolute right-4 top-[-20px] z-20 w-16 h-40 pointer-events-none">
+                    <!-- Pivot Base -->
+                    <div class="absolute top-0 right-2 w-12 h-12 rounded-full bg-neutral-800 border-2 border-neutral-600 shadow-lg"></div>
+                    
+                    <!-- Arm Group - Rotates based on playing state -->
+                    <div id="tone-arm" class="absolute top-6 right-6 w-8 h-48 origin-top transition-transform duration-1000 ease-[cubic-bezier(0.4,0,0.2,1)]" style="transform: rotate(0deg);">
+                        <!-- The Arm Stick -->
+                        <div class="w-2 h-32 bg-neutral-400 mx-auto rounded-full shadow-md bg-gradient-to-r from-neutral-300 to-neutral-500"></div>
+                        <!-- The Headshell -->
+                        <div class="w-6 h-10 bg-neutral-800 mx-auto -mt-2 rounded-md transform rotate-12 flex justify-center border border-neutral-700">
+                             <div class="w-1 h-2 bg-white/50 mt-8"></div> <!-- Needle tip -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Record -->
+                <div id="record-disk" class="relative w-48 h-48 rounded-full border-4 border-fuchsia-400/30 shadow-[0_0_30px_rgba(192,38,211,0.4)] flex items-center justify-center bg-black overflow-hidden animate-spin-slow paused-spin">
+                   <div class="absolute inset-0 bg-gradient-to-tr from-purple-900 to-fuchsia-800 opacity-80"></div>
+                   <!-- Vinyl Grooves -->
+                   <div class="absolute inset-2 rounded-full border border-white/10"></div>
+                   <div class="absolute inset-4 rounded-full border border-white/10"></div>
+                   <div class="absolute inset-8 rounded-full border border-white/10"></div>
+                   <div class="absolute inset-12 rounded-full border border-white/10"></div>
+                   
+                   <!-- Center Label -->
+                   <div class="relative z-10 bg-gradient-to-br from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center shadow-inner">
+                     <i data-lucide="music" class="text-white w-6 h-6"></i>
+                   </div>
+                </div>
+            </div>
+
+            <!-- Song Info -->
+            <div class="text-center mb-6">
+                <h2 id="current-title" class="text-2xl font-serif font-bold text-white mb-1 truncate">Loading...</h2>
+                <p id="current-artist" class="text-purple-300 font-sans">Randall Gene</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progress-container" class="w-full bg-white/10 h-2 rounded-full mb-6 cursor-pointer group overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-fuchsia-500 to-purple-400 h-full rounded-full relative w-0 transition-all duration-100 ease-linear">
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-between mb-6">
+                <!-- Mute Toggle -->
+                <button id="mute-btn" class="text-purple-300 hover:text-white transition-colors">
+                    <i data-lucide="volume-2" class="w-5 h-5"></i>
+                </button>
+
+                <div class="flex items-center gap-6">
+                    <button id="prev-btn" class="text-white/70 hover:text-white transition-colors hover:scale-110 active:scale-95">
+                        <i data-lucide="skip-back" class="w-7 h-7"></i>
+                    </button>
+                    
+                    <button id="play-pause-btn" class="w-16 h-16 rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/40 hover:scale-105 active:scale-95 transition-all text-white">
+                        <i id="play-icon" data-lucide="play" class="w-8 h-8 ml-1 fill-current"></i>
+                        <i id="pause-icon" data-lucide="pause" class="w-8 h-8 fill-current hidden"></i>
+                    </button>
+                    
+                    <button id="next-btn" class="text-white/70 hover:text-white transition-colors hover:scale-110 active:scale-95">
+                        <i data-lucide="skip-forward" class="w-7 h-7"></i>
+                    </button>
+                </div>
+
+                <a id="download-link" href="#" download class="text-purple-300 hover:text-white transition-colors" title="Download Current Song">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Playlist Section -->
+        <div class="w-full max-w-2xl bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2 text-purple-200">
+                <i data-lucide="disc" class="w-5 h-5"></i>
+                Playlist
+            </h3>
+            <div id="playlist-container" class="space-y-3">
+                <!-- Playlist items injected via JS -->
+            </div>
+        </div>
+        
+        <footer class="mt-16 text-purple-300/60 text-sm mb-8">
+            Made with ❤️ for Mom's 64th
+        </footer>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Song Data ---
+        // NOTE: These paths assume you put the files in an 'audio' folder in your repo.
+        const songs = [
+            {
+                title: "One by One",
+                artist: "Randall Gene",
+                url: "audio/Randall Gene - One by One..mp3"
+            },
+            {
+                title: "Mama it's Your Day",
+                artist: "Randall Gene",
+                url: "audio/Randall Gene - Mama it's Your Day.mp3"
+            },
+            {
+                title: "Mom's Favorite Son",
+                artist: "Randall Gene",
+                url: "audio/Randall Gene - Mom's Favorite Son.mp3"
+            }
+        ];
+
+        // --- State ---
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let isMuted = false;
+
+        // --- Elements ---
+        const audio = document.getElementById('audio-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const titleEl = document.getElementById('current-title');
+        const downloadLink = document.getElementById('download-link');
+        const recordDisk = document.getElementById('record-disk');
+        const toneArm = document.getElementById('tone-arm');
+        const playlistContainer = document.getElementById('playlist-container');
+        const visualizer = document.getElementById('visualizer');
+        const rainContainer = document.getElementById('rain-container');
+
+        // --- Initialization ---
+        function init() {
+            lucide.createIcons();
+            createRain();
+            createVisualizer();
+            renderPlaylist();
+            loadSong(currentSongIndex);
+        }
+
+        // --- Audio Functions ---
+        function loadSong(index) {
+            currentSongIndex = index;
+            const song = songs[index];
+            audio.src = song.url;
+            titleEl.textContent = song.title;
+            downloadLink.href = song.url;
+            
+            updatePlaylistUI();
+            
+            // If it was playing, keep playing new song
+            if (isPlaying) {
+                audio.play().catch(e => console.error("Play error:", e));
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            isPlaying = !isPlaying;
+            updatePlayState();
+        }
+
+        function updatePlayState() {
+            if (isPlaying) {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                recordDisk.classList.remove('paused-spin');
+                toneArm.style.transform = 'rotate(-25deg)'; // Move arm to record
+                // Animate visualizer
+                document.querySelectorAll('.visualizer-bar').forEach(bar => {
+                    bar.classList.remove('paused-bar');
+                });
+            } else {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                recordDisk.classList.add('paused-spin');
+                toneArm.style.transform = 'rotate(0deg)'; // Move arm back
+                // Pause visualizer
+                document.querySelectorAll('.visualizer-bar').forEach(bar => {
+                    bar.classList.add('paused-bar');
+                });
+            }
+            updatePlaylistUI(); // Update "Now Playing" badge
+        }
+
+        function nextSong() {
+            let nextIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(nextIndex);
+            if (!isPlaying) togglePlay(); // Auto-play next if manually clicked
+        }
+
+        function prevSong() {
+            let prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(prevIndex);
+            if (!isPlaying) togglePlay();
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            muteBtn.innerHTML = isMuted 
+                ? '<i data-lucide="volume-x" class="w-5 h-5"></i>' 
+                : '<i data-lucide="volume-2" class="w-5 h-5"></i>';
+            lucide.createIcons();
+        }
+
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
+
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+
+        // --- UI Generators ---
+        function createRain() {
+            const heartSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" class="text-purple-300"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+            
+            for (let i = 0; i < 50; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = heartSVG;
+                heart.className = 'absolute animate-float opacity-30';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.animationDuration = (10 + Math.random() * 20) + 's';
+                
+                // Random Size
+                const scale = 0.5 + Math.random() * 1.5;
+                heart.style.transform = `scale(${scale})`;
+                
+                rainContainer.appendChild(heart);
+            }
+        }
+
+        function createVisualizer() {
+            for (let i = 0; i < 12; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'visualizer-bar w-3 rounded-t-lg bg-gradient-to-t from-purple-600 to-fuchsia-400 animate-music-bar paused-bar';
+                bar.style.height = '10%';
+                bar.style.animationDelay = (i * 0.1) + 's';
+                visualizer.appendChild(bar);
+            }
+        }
+
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item flex items-center justify-between p-4 rounded-xl transition-all duration-200 cursor-pointer border border-transparent hover:bg-white/10 hover:border-white/10`;
+                item.onclick = () => {
+                    loadSong(index);
+                    if (!isPlaying) togglePlay();
+                };
+                
+                item.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="index-badge w-8 h-8 rounded-full bg-white/10 text-purple-300 flex items-center justify-center text-sm font-bold">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <h4 class="title-text font-medium text-gray-200">${song.title}</h4>
+                            <p class="text-xs text-purple-300/80">${song.artist}</p>
+                        </div>
+                    </div>
+                    <div class="status-indicator flex items-center gap-3">
+                        <button class="p-2 text-white/40 hover:text-white rounded-full transition-colors" onclick="event.stopPropagation(); window.open('${song.url}')">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                playlistContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function updatePlaylistUI() {
+            const items = playlistContainer.children;
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const badge = item.querySelector('.index-badge');
+                const titleText = item.querySelector('.title-text');
+                const statusDiv = item.querySelector('.status-indicator');
+                
+                if (i === currentSongIndex) {
+                    item.className = 'playlist-item flex items-center justify-between p-4 rounded-xl transition-all duration-200 cursor-pointer border bg-purple-600/40 border-purple-400/30 shadow-lg scale-[1.02]';
+                    badge.className = 'index-badge w-8 h-8 rounded-full bg-fuchsia-500 text-white flex items-center justify-center';
+                    titleText.className = 'title-text font-medium text-white';
+                    
+                    // Add "Now Playing" or animated bars if playing
+                    if (isPlaying) {
+                        badge.innerHTML = `
+                            <div class="flex gap-[2px] h-3 items-end">
+                                <div class="w-[2px] bg-white animate-music-bar" style="animation-delay: 0s"></div>
+                                <div class="w-[2px] bg-white animate-music-bar" style="animation-delay: 0.2s"></div>
+                                <div class="w-[2px] bg-white animate-music-bar" style="animation-delay: 0.1s"></div>
+                            </div>`;
+                    } else {
+                        badge.innerHTML = `<i data-lucide="music" class="w-4 h-4"></i>`;
+                        lucide.createIcons();
+                    }
+                    
+                    // Ensure download button is preserved
+                    if (!statusDiv.querySelector('.now-playing-text')) {
+                        const span = document.createElement('span');
+                        span.className = 'now-playing-text text-xs font-bold text-fuchsia-300 px-2 py-1 bg-fuchsia-500/20 rounded-md mr-2';
+                        span.innerText = 'NOW PLAYING';
+                        statusDiv.prepend(span);
+                    }
+                } else {
+                    item.className = 'playlist-item flex items-center justify-between p-4 rounded-xl transition-all duration-200 cursor-pointer border border-transparent bg-white/5 hover:bg-white/10 hover:border-white/10';
+                    badge.className = 'index-badge w-8 h-8 rounded-full bg-white/10 text-purple-300 flex items-center justify-center text-sm font-bold';
+                    badge.innerText = i + 1;
+                    titleText.className = 'title-text font-medium text-gray-200';
+                    const playingText = statusDiv.querySelector('.now-playing-text');
+                    if (playingText) playingText.remove();
+                }
+            }
+        }
+
+        // --- Event Listeners ---
+        playPauseBtn.addEventListener('click', togglePlay);
+        prevBtn.addEventListener('click', prevSong);
+        nextBtn.addEventListener('click', nextSong);
+        muteBtn.addEventListener('click', toggleMute);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('ended', nextSong);
+        progressContainer.addEventListener('click', setProgress);
+
+        // Run
+        init();
+
+    </script>
+</body>
+</html>
