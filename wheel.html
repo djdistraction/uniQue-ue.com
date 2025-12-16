@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin the Wheel!</title>
+    <title>Spin the Wheel</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,22 +15,18 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .wheel-container {
             position: relative;
-            width: 90vw;
-            height: 90vw;
-            max-width: 400px;
-            max-height: 400px;
+            width: 90vw; height: 90vw;
+            max-width: 400px; max-height: 400px;
             margin: 20px;
         }
         canvas {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             border-radius: 50%;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            /* Note: Transition is handled in JS now for better control */
         }
         .center-circle {
             position: absolute;
@@ -41,11 +37,8 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; box-shadow: 0 0 5px rgba(0,0,0,0.5);
             z-index: 10; font-weight: bold; color: #333;
-            border: 2px solid #ccc;
-            font-size: 1.2rem;
-            user-select: none;
+            border: 2px solid #ccc; font-size: 1.2rem; user-select: none;
         }
-        .center-circle:active { background: #eee; }
         .pointer {
             position: absolute; top: -15px; left: 50%;
             transform: translateX(-50%);
@@ -58,7 +51,38 @@
         .result-box {
             margin-top: 20px; font-size: 2rem; font-weight: bold;
             min-height: 40px; color: #f1c40f; text-align: center;
-            padding: 0 10px;
+        }
+        
+        /* The "Finish" Section */
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .generate-btn {
+            padding: 15px 30px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none; /* Hidden until they spin at least once */
+        }
+        .link-output {
+            background: white;
+            color: #333;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none; /* Hidden until generated */
+            word-break: break-all;
+        }
+        .copy-instruction {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #666;
         }
     </style>
 </head>
@@ -67,10 +91,22 @@
     <div class="pointer"></div>
     <div class="wheel-container">
         <canvas id="wheelCanvas" width="500" height="500"></canvas>
-        <div class="center-circle" onclick="spinWheel()">SPIN</div>
+        <div id="spinBtn" class="center-circle" onclick="spinWheel()">SPIN</div>
     </div>
 
     <div class="result-box" id="resultDisplay"></div>
+
+    <div class="controls">
+        <button id="finishBtn" class="generate-btn" onclick="generateResultsLink()">
+            ✅ Finish & Create Results Link
+        </button>
+
+        <div id="outputArea" class="link-output">
+            <div class="copy-instruction">Copy the link below and send it back:</div>
+            <code id="resultUrlText" style="display:block; background:#eee; padding:10px; margin:5px 0;"></code>
+            <button onclick="copyToClipboard()" style="background:#3498db; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">Copy Link</button>
+        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('wheelCanvas');
@@ -79,12 +115,14 @@
         
         let segments = [];
         let isSpinning = false;
-        let currentRotation = 0; // Stores the total rotation to prevent "backwards" spin
+        let currentRotation = 0; 
+        
+        // --- HIDDEN LOGGING ARRAY ---
+        let spinHistory = []; 
 
         function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const options = urlParams.get('options');
-
             if (options) {
                 segments = options.split(',').map(s => s.trim());
             } else {
@@ -121,23 +159,21 @@
 
         function spinWheel() {
             if (isSpinning) return;
+            
+            // Hide the result link area if they decide to spin again
+            document.getElementById('outputArea').style.display = 'none';
+            
             isSpinning = true;
             document.getElementById('resultDisplay').innerText = "";
 
-            // 1. Calculate a NEW random amount to add to the CURRENT rotation
             const minSpins = 5;
             const maxSpins = 10;
             const spinDuration = 4000;
-            
-            // Random degrees between minSpins and maxSpins (e.g., 1800 to 3600 degrees)
             const additionalDegrees = (Math.random() * (maxSpins - minSpins) + minSpins) * 360 + Math.random() * 360;
-            
-            // Add to the existing rotation so it always spins forward
             currentRotation += additionalDegrees;
             
-            // Apply the spin
             canvas.style.transition = `transform ${spinDuration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
-            canvas.style.transform = `rotate(-${currentRotation}deg)`; // Negative for Counter-Clockwise spin
+            canvas.style.transform = `rotate(-${currentRotation}deg)`;
 
             setTimeout(() => {
                 isSpinning = false;
@@ -147,25 +183,43 @@
 
         function calculateWinner() {
             const sliceSize = 360 / segments.length;
-            
-            // Math explanation: 
-            // 1. We spun 'currentRotation' degrees.
-            // 2. We use modulo 360 to find the "effective" rotation within a single circle.
-            // 3. The pointer is at the TOP (270 degrees).
-            // 4. Because we spun Counter-Clockwise (negative), the formula to find the slice at the top is:
-            //    (270 + Rotation) % 360
-            
             const effectiveRotation = currentRotation % 360;
-            
-            // Calculate the angle on the wheel that is currently under the pointer
             const winningAngle = (270 + effectiveRotation) % 360;
-            
-            // Convert that angle to an index
             const winningIndex = Math.floor(winningAngle / sliceSize);
-            
-            // Get text
             const text = segments[winningIndex];
+            
+            // Show result visually on screen
             document.getElementById('resultDisplay').innerText = `${text}!`;
+            
+            // LOG IT SECRETLY
+            spinHistory.push(text);
+
+            // Show the finish button now that we have at least one data point
+            document.getElementById('finishBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').innerText = `✅ Finish & Create Results Link (${spinHistory.length} spins)`;
+        }
+
+        function generateResultsLink() {
+            // Encode the history array into a text string
+            const dataString = encodeURIComponent(JSON.stringify(spinHistory));
+            
+            // Build the URL to the 3rd page
+            // We assume results.html is in the same folder as wheel.html
+            const currentPath = window.location.pathname;
+            const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+            const baseURL = window.location.origin + directory + "/results.html";
+            
+            const fullURL = `${baseURL}?data=${dataString}`;
+
+            // Show it to the user
+            document.getElementById('resultUrlText').innerText = fullURL;
+            document.getElementById('outputArea').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const linkText = document.getElementById('resultUrlText').innerText;
+            navigator.clipboard.writeText(linkText);
+            alert("Link copied! Send this to the wheel creator.");
         }
 
         init();
