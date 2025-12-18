@@ -1,347 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources - uniQue-ue</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts (Inter & Orbitron) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Our New Global Stylesheet -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Firebase & Main App Logic -->
-    <!-- We use type="module" to enable import/export -->
-    <script src="firebase-config.js" type="module"></script>
-    <script src="app.js" type="module"></script>
-    
-    <!-- We'll keep the old logo files for now -->
-    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
-
+    <title>Resources - uniQue-ue.com</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-    <!-- Fixed background particle canvas -->
-    <canvas id="particle-canvas" class="particle-canvas"></canvas>
-    
-    <!-- Page Wrapper -->
-    <div class="page-wrapper">
-    
-        <!-- Global Header Component -->
-        <div id="header-placeholder">
-            <!-- Skeleton loader for the header -->
-            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">uniQue-ue.com</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="resources.html" class="nav-link active">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
         </div>
-        
-        <!-- Main Content -->
-        <main class="container mx-auto px-6 py-12">
-            <!-- Hero Section with Logo -->
-            <div class="text-center mb-12">
-                <div class="hero-logo-container animate-fade-in-up">
-                    <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo transition-transform duration-200 ease-out">
-                </div>
-                <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">Resources</h1>
-                <p class="text-lg md:text-xl text-brand-text-muted max-w-2xl mx-auto">Explore our suite of AI-powered creative tools organized by category.</p>
-            </div>
-            
-            <!-- Business Tools Category -->
-            <section id="business-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Business Tools</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Rate Calculator Card -->
-                    <div class="resource-card-3d flex flex-col">
-                        <h3 class="text-2xl font-display mb-4">Rate Advisor</h3>
-                        <div class="mt-auto space-y-3">
-                            <a href="rate_comparison.html" class="card-link block">
-                                Launch Tool 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </a>
-                            <button onclick="openToolModal('rate-calculator')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
-                                More Info
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Monetization Studio Card -->
-                    <div class="resource-card-3d flex flex-col border-2 border-brand-magenta/30">
-                        <div class="absolute top-2 right-2 bg-brand-magenta text-white text-xs px-2 py-1 rounded-full font-bold">NEW</div>
-                        <h3 class="text-2xl font-display mb-4 text-brand-magenta">Monetization Studio</h3>
-                        <p class="text-sm text-brand-text-muted mb-4">Transform your skills into passive income streams with AI-powered strategy advice</p>
-                        <div class="mt-auto space-y-3">
-                            <a href="monetization-studio.html" class="card-link block bg-gradient-to-r from-brand-accent to-brand-magenta">
-                                Launch Studio 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Creative Writing Tools Category -->
-            <section id="creative-writing-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Creative Writing Tools</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Ghost-Writer Card -->
-                    <div class="resource-card-3d flex flex-col">
-                        <h3 class="text-2xl font-display mb-4">Ghost-Writer</h3>
-                        <div class="mt-auto space-y-3">
-                            <a href="ghost-writer.html" class="card-link block">
-                                Launch Tool 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </a>
-                            <button onclick="openToolModal('ghost-writer')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
-                                More Info
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Graphic Tools Category -->
-            <section id="graphic-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Graphic Tools</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Graphics Studio Card -->
-                    <div class="resource-card-3d flex flex-col">
-                        <h3 class="text-2xl font-display mb-4">Graphics Studio</h3>
-                        <div class="mt-auto space-y-3">
-                            <a href="graphics-studio.html" class="card-link block">
-                                Launch Tool 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </a>
-                            <button onclick="openToolModal('graphics-studio')" class="w-full px-6 py-3 bg-brand-secondary text-brand-text rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
-                                More Info
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Audio Tools Category -->
-            <section id="audio-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Audio Tools</h2>
-                <div class="text-center py-12 panel-3d">
-                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
-                    <p class="text-brand-text-muted text-sm mt-2">Audio processing tools are in development!</p>
-                </div>
-            </section>
-            
-            <!-- Integration Tools Category -->
-            <section id="integration-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Integration Tools</h2>
-                <div class="text-center py-12 panel-3d">
-                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
-                    <p class="text-brand-text-muted text-sm mt-2">Integration solutions are being crafted!</p>
-                </div>
-            </section>
-            
-            <!-- Performance Tools Category -->
-            <section id="performance-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Performance Tools</h2>
-                <div class="text-center py-12 panel-3d">
-                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
-                    <p class="text-brand-text-muted text-sm mt-2">Performance-related tools are in development!</p>
-                </div>
-            </section>
-            
-            <!-- Misc. Tools Category -->
-            <section id="misc-tools" class="mb-16 scroll-mt-24">
-                <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent heading-glow">Misc. Tools</h2>
-                <div class="text-center py-12 panel-3d">
-                    <p class="text-brand-text-muted text-lg">Coming Soon</p>
-                    <p class="text-brand-text-muted text-sm mt-2">More innovative tools are on the horizon!</p>
-                </div>
-            </section>
-        </main>
-        
-        <!-- Tool Info Modal -->
-        <div id="tool-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] hidden items-center justify-center p-4">
-            <div class="panel-3d max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeToolModal()" class="absolute top-4 right-4 text-brand-text-muted hover:text-brand-accent transition-colors z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                <div id="modal-content" class="p-8">
-                    <!-- Content will be dynamically inserted -->
-                </div>
-            </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Developer Resources</h1>
+            <p class="hero-subtitle">Tools and utilities to enhance your workflow</p>
         </div>
-        
-        <!-- Global Footer Component -->
-        <div id="footer-placeholder">
-            <!-- Skeleton loader for the footer -->
-            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
-        </div>
-        
     </div>
 
-    <!-- Page-Specific JavaScript for Modal -->
+    <main class="container">
+        <section class="tools-section">
+            <h2 class="section-title">Code Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-code tool-icon"></i>
+                        <span class="tool-badge">Popular</span>
+                    </div>
+                    <h3 class="tool-title">JSON Formatter</h3>
+                    <p class="tool-description">Format, validate, and beautify your JSON data with syntax highlighting and error detection.</p>
+                    <div class="tool-actions">
+                        <a href="json-formatter.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('json-formatter')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-palette tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Color Picker</h3>
+                    <p class="tool-description">Advanced color selection with format conversion, palette generation, and accessibility checking.</p>
+                    <div class="tool-actions">
+                        <a href="color-picker.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('color-picker')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-terminal tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Base64 Encoder/Decoder</h3>
+                    <p class="tool-description">Encode and decode Base64 strings with support for text and file operations.</p>
+                    <div class="tool-actions">
+                        <a href="base64-tool.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('base64-tool')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-random tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">UUID Generator</h3>
+                    <p class="tool-description">Generate UUID/GUID values with various versions and bulk generation support.</p>
+                    <div class="tool-actions">
+                        <a href="uuid-generator.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('uuid-generator')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-key tool-icon"></i>
+                        <span class="tool-badge">New</span>
+                    </div>
+                    <h3 class="tool-title">Hash Generator</h3>
+                    <p class="tool-description">Generate cryptographic hashes using MD5, SHA-1, SHA-256, and more algorithms.</p>
+                    <div class="tool-actions">
+                        <a href="hash-generator.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('hash-generator')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-font tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Text Transformer</h3>
+                    <p class="tool-description">Transform text between cases, encode/decode, and perform various text operations.</p>
+                    <div class="tool-actions">
+                        <a href="text-transformer.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('text-transformer')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-file-code tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Markdown Preview</h3>
+                    <p class="tool-description">Write and preview Markdown with live rendering and syntax highlighting support.</p>
+                    <div class="tool-actions">
+                        <a href="markdown-preview.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('markdown-preview')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-compress tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">URL Encoder/Decoder</h3>
+                    <p class="tool-description">Encode and decode URL components with support for various encoding standards.</p>
+                    <div class="tool-actions">
+                        <a href="url-encoder.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('url-encoder')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <h2 class="section-title">AI & Productivity Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-calculator tool-icon"></i>
+                        <span class="tool-badge">Popular</span>
+                    </div>
+                    <h3 class="tool-title">Token Counter</h3>
+                    <p class="tool-description">Count tokens for various AI models including GPT-3.5, GPT-4, and Claude. Essential for API cost estimation.</p>
+                    <div class="tool-actions">
+                        <a href="token-counter.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('token-counter')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-brain tool-icon"></i>
+                        <span class="tool-badge">NEW</span>
+                    </div>
+                    <h3 class="tool-title">Prompt Architect</h3>
+                    <p class="tool-description">Master instruction engineering for advanced AI models. Create high-fidelity prompts optimized for Gemini, GPT, and Claude.</p>
+                    <div class="tool-actions">
+                        <a href="prompt-architect.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('prompt-architect')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <h2 class="section-title">Misc. Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-qrcode tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">QR Code Generator</h3>
+                    <p class="tool-description">Generate QR codes with customizable size, error correction, and color options.</p>
+                    <div class="tool-actions">
+                        <a href="qr-generator.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('qr-generator')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-clock tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Timestamp Converter</h3>
+                    <p class="tool-description">Convert between Unix timestamps and human-readable dates across different timezones.</p>
+                    <div class="tool-actions">
+                        <a href="timestamp-converter.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('timestamp-converter')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <i class="fas fa-images tool-icon"></i>
+                    </div>
+                    <h3 class="tool-title">Image Converter</h3>
+                    <p class="tool-description">Convert images between formats, resize, compress, and optimize for web use.</p>
+                    <div class="tool-actions">
+                        <a href="image-converter.html" class="btn btn-primary">Launch Tool</a>
+                        <button onclick="openToolModal('image-converter')" class="btn btn-secondary">More Info</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Tool Info Modal -->
+    <div id="toolModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeToolModal()">&times;</span>
+            <div id="modalBody">
+                <!-- Content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>uniQue-ue.com</h3>
+                    <p>Developer tools and resources for modern web development.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="resources.html">Resources</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 uniQue-ue.com. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // Tool information database
         const toolInfo = {
-            'ghost-writer': {
-                name: 'Ghost-Writer',
-                description: 'Ghost-Writer is an advanced AI-powered creative writing assistant designed to help you transform raw ideas into polished, monetizable works. Through interactive dialogue with Draven, your creative partner, you can develop stories, scripts, articles, and any form of written content with professional quality.',
-                examples: [
-                    'Novel writing and story development',
-                    'Screenplay and script creation',
-                    'Article and blog post composition',
-                    'Poetry and creative prose',
-                    'Content editing and refinement'
+            'json-formatter': {
+                name: 'JSON Formatter',
+                description: 'A powerful JSON formatting and validation tool that helps developers work with JSON data efficiently.',
+                features: [
+                    'Format and beautify JSON with customizable indentation',
+                    'Validate JSON syntax with detailed error messages',
+                    'Minify JSON for production use',
+                    'Syntax highlighting for better readability',
+                    'Tree view for complex JSON structures',
+                    'Copy formatted output with one click'
                 ],
-                manual: '/manuals/ghost-writer-manual.html',
-                launchUrl: '/ghost-writer.html'
+                examples: [
+                    'Format API responses for debugging',
+                    'Validate configuration files',
+                    'Minify JSON for reduced file size',
+                    'Convert between compact and readable formats'
+                ],
+                manual: 'Paste your JSON data into the input area. Use the format button to beautify, or minify to compress. Any syntax errors will be highlighted with helpful messages.',
+                launchUrl: 'json-formatter.html'
             },
-            'graphics-studio': {
-                name: 'Graphics Studio',
-                description: 'Graphics Studio harnesses the power of AI to transform your written documents into stunning visual narratives. Upload your content and work with Elena, your visual storytelling companion, to generate compelling images that bring your ideas to life.',
-                examples: [
-                    'Book cover and illustration creation',
-                    'Marketing visual content generation',
-                    'Social media graphics and posts',
-                    'Concept art and character design',
-                    'Infographics and visual storytelling'
+            'color-picker': {
+                name: 'Color Picker',
+                description: 'Advanced color selection tool with format conversion and palette generation capabilities.',
+                features: [
+                    'Visual color picker with multiple selection modes',
+                    'Convert between HEX, RGB, HSL, and HSV formats',
+                    'Generate complementary and analogous color schemes',
+                    'WCAG accessibility contrast checker',
+                    'Save and manage color palettes',
+                    'Export colors in various formats'
                 ],
-                manual: '/manuals/graphics-studio-manual.html',
-                launchUrl: '/graphics-studio.html'
+                examples: [
+                    'Design consistent color schemes',
+                    'Check color accessibility compliance',
+                    'Generate color variations',
+                    'Convert colors between different formats'
+                ],
+                manual: 'Click the color area to select a color visually, or enter values in any supported format. Use the palette tools to generate harmonious color schemes.',
+                launchUrl: 'color-picker.html'
             },
-            'rate-calculator': {
-                name: 'Performance Rate Advisor',
-                description: 'The Performance Rate Advisor helps performers and entertainers calculate fair compensation rates by comparing their current rates to venue price inflation, supply costs, and cost of living increases. Make data-driven decisions about your pricing strategy.',
-                examples: [
-                    'Calculate adjusted gig rates based on inflation',
-                    'Compare rates across different regions',
-                    'Generate professional rate negotiation emails',
-                    'Track economic indicators affecting your business',
-                    'Plan touring rates for different markets'
+            'base64-tool': {
+                name: 'Base64 Encoder/Decoder',
+                description: 'Encode and decode Base64 data with support for text and file operations.',
+                features: [
+                    'Encode text to Base64',
+                    'Decode Base64 to text',
+                    'Support for file encoding/decoding',
+                    'Automatic detection of input type',
+                    'UTF-8 character support',
+                    'Batch processing capabilities'
                 ],
-                manual: '/manuals/rate-calculator-manual.html',
-                launchUrl: '/rate_comparison.html'
+                examples: [
+                    'Encode credentials for API authentication',
+                    'Decode Base64 encoded messages',
+                    'Convert images to Base64 strings',
+                    'Process data URIs'
+                ],
+                manual: 'Enter your text or upload a file. Select encode or decode mode. The result will be displayed instantly with copy functionality.',
+                launchUrl: 'base64-tool.html'
+            },
+            'uuid-generator': {
+                name: 'UUID Generator',
+                description: 'Generate universally unique identifiers with support for multiple UUID versions.',
+                features: [
+                    'Generate UUID v1 (timestamp-based)',
+                    'Generate UUID v4 (random)',
+                    'Bulk generation support',
+                    'Format options (with/without hyphens)',
+                    'Copy individual or all UUIDs',
+                    'Validation for existing UUIDs'
+                ],
+                examples: [
+                    'Create unique database record IDs',
+                    'Generate API keys and tokens',
+                    'Create unique file names',
+                    'Generate test data identifiers'
+                ],
+                manual: 'Select the UUID version and quantity. Click generate to create new UUIDs. Use the copy button to copy to clipboard.',
+                launchUrl: 'uuid-generator.html'
+            },
+            'hash-generator': {
+                name: 'Hash Generator',
+                description: 'Generate cryptographic hashes using various algorithms for data verification and security.',
+                features: [
+                    'Support for MD5, SHA-1, SHA-256, SHA-512',
+                    'Text and file hashing',
+                    'HMAC generation',
+                    'Multiple hash comparison',
+                    'Copy individual or all hashes',
+                    'Real-time hash generation'
+                ],
+                examples: [
+                    'Verify file integrity',
+                    'Generate password hashes',
+                    'Create data checksums',
+                    'Compare hash values'
+                ],
+                manual: 'Enter your text or upload a file. Select the desired hash algorithms. Hashes will be generated automatically.',
+                launchUrl: 'hash-generator.html'
+            },
+            'text-transformer': {
+                name: 'Text Transformer',
+                description: 'Transform text between various formats and perform common text operations.',
+                features: [
+                    'Case conversion (upper, lower, title, sentence)',
+                    'URL encode/decode',
+                    'HTML encode/decode',
+                    'Remove whitespace and formatting',
+                    'Count characters, words, and lines',
+                    'Reverse and sort text'
+                ],
+                examples: [
+                    'Convert text to different cases',
+                    'Clean up pasted content',
+                    'Encode special characters',
+                    'Analyze text statistics'
+                ],
+                manual: 'Enter your text and select the desired transformation. Multiple operations can be applied sequentially.',
+                launchUrl: 'text-transformer.html'
+            },
+            'markdown-preview': {
+                name: 'Markdown Preview',
+                description: 'Write and preview Markdown with live rendering and syntax support.',
+                features: [
+                    'Live Markdown preview',
+                    'Syntax highlighting for code blocks',
+                    'Support for GitHub Flavored Markdown',
+                    'Tables, task lists, and emoji',
+                    'Export to HTML',
+                    'Split-screen editing'
+                ],
+                examples: [
+                    'Write documentation',
+                    'Create README files',
+                    'Draft blog posts',
+                    'Format technical notes'
+                ],
+                manual: 'Type Markdown in the editor pane. The preview will update in real-time. Use the toolbar for common formatting options.',
+                launchUrl: 'markdown-preview.html'
+            },
+            'url-encoder': {
+                name: 'URL Encoder/Decoder',
+                description: 'Encode and decode URL components with support for various encoding standards.',
+                features: [
+                    'URL encode/decode',
+                    'Query string parsing',
+                    'Component-level encoding',
+                    'RFC 3986 compliance',
+                    'Batch processing',
+                    'UTF-8 character support'
+                ],
+                examples: [
+                    'Encode URLs with special characters',
+                    'Decode encoded URLs',
+                    'Parse query parameters',
+                    'Format API endpoints'
+                ],
+                manual: 'Enter your URL or text. Select encode or decode mode. The result will be displayed with proper formatting.',
+                launchUrl: 'url-encoder.html'
+            },
+            'token-counter': {
+                name: 'Token Counter',
+                description: 'Count tokens for various AI language models to estimate costs and manage context limits.',
+                features: [
+                    'Support for GPT-3.5, GPT-4, Claude, and more',
+                    'Real-time token counting',
+                    'Cost estimation based on current API pricing',
+                    'Character and word count',
+                    'Model comparison',
+                    'Batch text analysis'
+                ],
+                examples: [
+                    'Estimate API costs before making calls',
+                    'Ensure prompts fit within context limits',
+                    'Compare token usage across models',
+                    'Optimize prompt efficiency'
+                ],
+                manual: 'Enter your text and select the target AI model. Token count and cost estimates will update in real-time.',
+                launchUrl: 'token-counter.html'
+            },
+            'prompt-architect': {
+                name: 'Prompt Architect',
+                description: 'Master instruction engineering for advanced AI models. Create high-fidelity prompts optimized for Gemini, GPT, and Claude with professional documentation export.',
+                features: [
+                    'Multi-model optimization (Gemini, GPT-4, Claude)',
+                    'Reasoning scaffold generation',
+                    'Persona-driven instruction sets',
+                    'Cross-platform compatibility testing',
+                    'PDF documentation export',
+                    'Prompt versioning and templates'
+                ],
+                examples: [
+                    'Engineer cross-platform AI prompts',
+                    'Create model-specific optimizations',
+                    'Generate prompts with reasoning scaffolds',
+                    'Export professional PDF documentation',
+                    'Build persona-driven instruction sets'
+                ],
+                manual: 'Select your target AI model and input your base prompt. Use the architect tools to enhance structure, add reasoning frameworks, and test across platforms. Export finalized prompts as formatted documentation.',
+                launchUrl: 'prompt-architect.html'
+            },
+            'qr-generator': {
+                name: 'QR Code Generator',
+                description: 'Generate QR codes with customizable options for various use cases.',
+                features: [
+                    'Generate QR codes from text, URLs, or data',
+                    'Customizable size and resolution',
+                    'Error correction levels',
+                    'Color customization',
+                    'Download as PNG or SVG',
+                    'Batch generation support'
+                ],
+                examples: [
+                    'Create QR codes for URLs',
+                    'Generate contact information codes',
+                    'Create WiFi connection codes',
+                    'Generate event tickets'
+                ],
+                manual: 'Enter your data and configure options. Click generate to create your QR code. Download in your preferred format.',
+                launchUrl: 'qr-generator.html'
+            },
+            'timestamp-converter': {
+                name: 'Timestamp Converter',
+                description: 'Convert between Unix timestamps and human-readable dates with timezone support.',
+                features: [
+                    'Unix timestamp to date conversion',
+                    'Date to Unix timestamp conversion',
+                    'Timezone conversion',
+                    'Multiple date format support',
+                    'Current timestamp display',
+                    'Batch conversion'
+                ],
+                examples: [
+                    'Convert API timestamps to readable dates',
+                    'Generate Unix timestamps for scheduling',
+                    'Compare times across timezones',
+                    'Debug timestamp-related issues'
+                ],
+                manual: 'Enter a Unix timestamp or select a date. Choose your timezone. The conversion will be displayed in multiple formats.',
+                launchUrl: 'timestamp-converter.html'
+            },
+            'image-converter': {
+                name: 'Image Converter',
+                description: 'Convert, resize, and optimize images for various use cases.',
+                features: [
+                    'Convert between formats (PNG, JPG, WebP, etc.)',
+                    'Resize and crop images',
+                    'Compression and optimization',
+                    'Batch processing',
+                    'Maintain aspect ratio options',
+                    'Preview before download'
+                ],
+                examples: [
+                    'Convert images for web use',
+                    'Resize images for social media',
+                    'Compress images to reduce file size',
+                    'Batch convert multiple images'
+                ],
+                manual: 'Upload your image(s) and select the target format. Adjust size and quality settings. Process and download your converted images.',
+                launchUrl: 'image-converter.html'
             }
         };
-        
-        // Get all available tools for suggestions
-        const allTools = ['ghost-writer', 'graphics-studio', 'rate-calculator'];
-        
-        // Modal functions
+
+        // All tools for search functionality
+        const allTools = [
+            'json-formatter',
+            'color-picker',
+            'base64-tool',
+            'uuid-generator',
+            'hash-generator',
+            'text-transformer',
+            'markdown-preview',
+            'url-encoder',
+            'token-counter',
+            'prompt-architect',
+            'qr-generator',
+            'timestamp-converter',
+            'image-converter'
+        ];
+
         function openToolModal(toolId) {
-            const modal = document.getElementById('tool-modal');
-            const modalContent = document.getElementById('modal-content');
             const tool = toolInfo[toolId];
-            
             if (!tool) return;
-            
-            // Get suggested tools (all other tools)
-            const suggestedTools = allTools.filter(t => t !== toolId);
-            
-            const content = `
-                <h2 class="text-3xl font-display font-bold mb-4 text-brand-accent heading-glow">${tool.name}</h2>
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>${tool.name}</h2>
+                <p class="modal-description">${tool.description}</p>
                 
-                <div class="mb-6">
-                    <h3 class="text-xl font-display font-bold mb-3 text-white">Description</h3>
-                    <p class="text-brand-text-muted leading-relaxed">${tool.description}</p>
-                </div>
-                
-                <div class="mb-6">
-                    <h3 class="text-xl font-display font-bold mb-3 text-white">Examples for Use</h3>
-                    <ul class="space-y-2">
-                        ${tool.examples.map(ex => `<li class="text-brand-text-muted flex items-start gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>${ex}</span>
-                        </li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="mb-6">
-                    <a href="${tool.manual}" class="inline-flex items-center gap-2 text-brand-accent hover:text-brand-accent-hover transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                        View User Manual
-                    </a>
-                </div>
-                
-                <div class="mb-8">
-                    <a href="${tool.launchUrl}" class="card-link inline-flex">
-                        Launch Tool 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
-                </div>
-                
-                <div class="border-t border-brand-accent/20 pt-6">
-                    <h3 class="text-lg font-display font-bold mb-4 text-white">Users who enjoyed this tool also found these tools useful:</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${suggestedTools.map(suggId => {
-                            const sugg = toolInfo[suggId];
-                            return `
-                                <button onclick="openToolModal('${suggId}')" class="text-left p-4 bg-brand-secondary rounded-lg border border-brand-accent/30 hover:bg-brand-accent/10 hover:border-brand-accent transition-all duration-300">
-                                    <h4 class="font-display font-bold text-brand-accent mb-1">${sugg.name}</h4>
-                                    <p class="text-sm text-brand-text-muted line-clamp-2">${sugg.description.substring(0, 100)}...</p>
-                                </button>
-                            `;
-                        }).join('')}
-                    </div>
+                <h3>Features</h3>
+                <ul class="modal-features">
+                    ${tool.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+
+                <h3>Use Cases</h3>
+                <ul class="modal-examples">
+                    ${tool.examples.map(example => `<li>${example}</li>`).join('')}
+                </ul>
+
+                <h3>How to Use</h3>
+                <p class="modal-manual">${tool.manual}</p>
+
+                <div class="modal-actions">
+                    <a href="${tool.launchUrl}" class="btn btn-primary">Launch Tool</a>
+                    <button onclick="closeToolModal()" class="btn btn-secondary">Close</button>
                 </div>
             `;
-            
-            modalContent.innerHTML = content;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
+
+            document.getElementById('toolModal').style.display = 'block';
         }
-        
+
         function closeToolModal() {
-            const modal = document.getElementById('tool-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
+            document.getElementById('toolModal').style.display = 'none';
         }
-        
-        // Make functions globally available
-        window.openToolModal = openToolModal;
-        window.closeToolModal = closeToolModal;
-        
-        // Close modal when clicking outside
-        document.getElementById('tool-modal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('toolModal');
+            if (event.target == modal) {
                 closeToolModal();
             }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeToolModal();
-            }
-        });
-    </script>
-    
-    <!-- Logo Mouse-Follow -->
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        
-        const heroLogo = document.getElementById('hero-logo');
-        
-        if (heroLogo) {
-            const container = heroLogo.parentElement;
-            container.addEventListener('mousemove', (e) => {
-                const { clientX, clientY } = e;
-                const rect = container.getBoundingClientRect();
-                const x = ((clientX - rect.left) / rect.width) - 0.5;
-                const y = ((clientY - rect.top) / rect.height) - 0.5;
-                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
-            });
-            container.addEventListener('mouseleave', () => {
-                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
-            });
         }
     </script>
 </body>
-
 </html>
-
