@@ -83,6 +83,22 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* --- Fade In Up Animation --- */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* --- Page Content Wrapper --- */
 /*
   This ensures our content sits on top of the fixed particle canvas
