@@ -355,9 +355,10 @@
                 <div class="tool-card">
                     <div class="tool-header">
                         <i class="fas fa-qrcode tool-icon"></i>
+                        <span class="tool-badge">Enhanced</span>
                     </div>
                     <h3 class="tool-title">QR Code Generator</h3>
-                    <p class="tool-description">Generate QR codes with customizable size, error correction, and color options.</p>
+                    <p class="tool-description">The most advanced QR generator with 8 data types, logo embedding, batch processing, and custom styling.</p>
                     <div class="tool-actions">
                         <a href="qr-generator.html" class="btn btn-primary">Launch Tool</a>
                         <button onclick="openToolModal('qr-generator')" class="btn btn-secondary">More Info</button>
@@ -616,22 +617,27 @@
             },
             'qr-generator': {
                 name: 'QR Code Generator',
-                description: 'Generate QR codes with customizable options for various use cases.',
+                description: 'The most advanced QR code generator with enterprise-grade features, multiple data types, and extensive customization options.',
                 features: [
-                    'Generate QR codes from text, URLs, or data',
-                    'Customizable size and resolution',
-                    'Error correction levels',
-                    'Color customization',
-                    'Download as PNG or SVG',
-                    'Batch generation support'
+                    'Support for 8 data types: URL, Text, vCard, WiFi, Email, SMS, Phone, Calendar Events',
+                    'Advanced customization: size (128-1024px), colors, error correction',
+                    'Logo/image embedding in center of QR code',
+                    'Download as PNG, SVG, or PDF',
+                    'Batch generation from CSV files',
+                    'Quick templates for common use cases',
+                    'History tracking with local storage',
+                    'Real-time preview with live updates',
+                    'Adjustable margins and error correction levels'
                 ],
                 examples:  [
-                    'Create QR codes for URLs',
-                    'Generate contact information codes',
-                    'Create WiFi connection codes',
-                    'Generate event tickets'
+                    'Create branded QR codes with company logos',
+                    'Generate WiFi connection codes for guests',
+                    'Create vCard QR codes for business cards',
+                    'Batch generate QR codes for event tickets',
+                    'Create calendar event QR codes',
+                    'Generate custom-colored QR codes matching your brand'
                 ],
-                manual: 'Enter your data and configure options. Click generate to create your QR code. Download in your preferred format.',
+                manual: 'Select your data type (URL, vCard, WiFi, etc.) and enter the required information. Customize the appearance with size, colors, and optional logo. The QR code updates in real-time. Download in PNG, SVG, or PDF format. Use batch generation for multiple QR codes from a CSV file.',
                 launchUrl: 'qr-generator.html'
             },
             'timestamp-converter': {
