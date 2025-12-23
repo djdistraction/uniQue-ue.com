@@ -24,6 +24,9 @@
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
+    <!-- JSZip for batch downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
     <!-- jsPDF for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
@@ -218,6 +221,24 @@
             border-radius: 0.5rem;
             padding: 1rem;
             margin-bottom: 0.75rem;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 4, 24, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            animation: fadeInUp 0.3s ease-out;
         }
     </style>
 </head>
@@ -590,11 +611,70 @@
         <div id="footer-placeholder"></div>
     </div>
 
+    <!-- Custom Notification Modal -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 20% auto;">
+            <div class="glass-panel rounded-lg p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i id="notification-icon" class="fas fa-info-circle text-cyan-400 text-2xl"></i>
+                    <h3 id="notification-title" class="text-xl font-display font-bold text-white">Notification</h3>
+                </div>
+                <p id="notification-message" class="text-brand-text-muted mb-6"></p>
+                <button onclick="closeNotification()" class="cyber-button-primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmation-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 20% auto;">
+            <div class="glass-panel rounded-lg p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i class="fas fa-question-circle text-yellow-400 text-2xl"></i>
+                    <h3 class="text-xl font-display font-bold text-white">Confirm Action</h3>
+                </div>
+                <p id="confirmation-message" class="text-brand-text-muted mb-6"></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="confirmAction(false)" class="cyber-button">Cancel</button>
+                    <button onclick="confirmAction(true)" class="cyber-button-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentDataType = 'url';
         let logoImage = null;
         let qrHistory = JSON.parse(localStorage.getItem('qrHistory') || '[]');
         let batchQRCodes = [];
+        let confirmCallback = null;
+        
+        // Custom notification function
+        function showNotification(message, title = 'Notification', icon = 'fa-info-circle') {
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            document.getElementById('notification-icon').className = `fas ${icon} text-cyan-400 text-2xl`;
+            document.getElementById('notification-modal').style.display = 'block';
+        }
+        
+        function closeNotification() {
+            document.getElementById('notification-modal').style.display = 'none';
+        }
+        
+        // Custom confirmation function
+        function showConfirmation(message, callback) {
+            document.getElementById('confirmation-message').textContent = message;
+            document.getElementById('confirmation-modal').style.display = 'block';
+            confirmCallback = callback;
+        }
+        
+        function confirmAction(result) {
+            document.getElementById('confirmation-modal').style.display = 'none';
+            if (confirmCallback) {
+                confirmCallback(result);
+                confirmCallback = null;
+            }
+        }
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -682,8 +762,11 @@
                     
                 case 'event':
                     const title = document.getElementById('event-title').value;
-                    const start = document.getElementById('event-start').value.replace(/[-:]/g, '');
-                    const end = document.getElementById('event-end').value.replace(/[-:]/g, '');
+                    const startRaw = document.getElementById('event-start').value;
+                    const endRaw = document.getElementById('event-end').value;
+                    // Convert from datetime-local format (YYYY-MM-DDTHH:MM) to iCal format (YYYYMMDDTHHMMSS)
+                    const start = startRaw ? startRaw.replace(/[-:]/g, '').replace('T', 'T') + '00' : '';
+                    const end = endRaw ? endRaw.replace(/[-:]/g, '').replace('T', 'T') + '00' : '';
                     const location = document.getElementById('event-location').value;
                     const description = document.getElementById('event-description').value;
                     return `BEGIN:VEVENT\nSUMMARY:${title}\nDTSTART:${start}\nDTEND:${end}\nLOCATION:${location}\nDESCRIPTION:${description}\nEND:VEVENT`;
@@ -897,18 +980,20 @@
         }
         
         function clearHistory() {
-            if (confirm('Are you sure you want to clear all history?')) {
-                qrHistory = [];
-                localStorage.setItem('qrHistory', JSON.stringify(qrHistory));
-                loadHistory();
-            }
+            showConfirmation('Are you sure you want to clear all history?', (confirmed) => {
+                if (confirmed) {
+                    qrHistory = [];
+                    localStorage.setItem('qrHistory', JSON.stringify(qrHistory));
+                    loadHistory();
+                }
+            });
         }
         
         // Batch Processing
         async function processBatch() {
             const fileInput = document.getElementById('batch-csv');
             if (!fileInput.files.length) {
-                alert('Please select a CSV file');
+                showNotification('Please select a CSV file', 'Missing File', 'fa-exclamation-triangle');
                 return;
             }
             
@@ -947,16 +1032,42 @@
         }
         
         async function downloadBatch() {
-            // Note: For actual ZIP functionality, you'd need a library like JSZip
-            // For now, we'll download them individually
+            if (!window.JSZip) {
+                showNotification('JSZip library not loaded. Downloading files individually...', 'Notice', 'fa-info-circle');
+                // Fallback to individual downloads
+                for (const item of batchQRCodes) {
+                    const url = URL.createObjectURL(item.blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = item.filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                return;
+            }
+            
+            // Use JSZip to create a proper ZIP archive
+            const zip = new JSZip();
+            
+            // Add all QR codes to the ZIP
             for (const item of batchQRCodes) {
-                const url = URL.createObjectURL(item.blob);
+                zip.file(item.filename, item.blob);
+            }
+            
+            // Generate and download the ZIP file
+            try {
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const url = URL.createObjectURL(zipBlob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = item.filename;
+                a.download = `qr-codes-batch-${Date.now()}.zip`;
                 a.click();
                 URL.revokeObjectURL(url);
-                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between downloads
+                showNotification(`Successfully downloaded ${batchQRCodes.length} QR codes as ZIP`, 'Success', 'fa-check-circle');
+            } catch (err) {
+                console.error('Error creating ZIP:', err);
+                showNotification('Error creating ZIP file. Please try again.', 'Error', 'fa-exclamation-circle');
             }
         }
     </script>
