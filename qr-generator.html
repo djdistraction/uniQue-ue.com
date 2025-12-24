@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- JSZip for batch downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+
+    <style>
+        .qr-container {
+            min-height: calc(100vh - 10rem);
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 246, 255, 0.3);
+        }
+        
+        .cyber-input, .cyber-select, .cyber-textarea {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(100, 116, 139, 0.5);
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .cyber-input:focus, .cyber-select:focus, .cyber-textarea:focus {
+            outline: none;
+            border-color: #00F6FF;
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+        }
+        
+        .cyber-button {
+            background: linear-gradient(145deg, rgba(0, 246, 255, 0.2), rgba(0, 246, 255, 0.1));
+            border: 2px solid #00F6FF;
+            color: #00F6FF;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .cyber-button:hover:not(:disabled) {
+            background: linear-gradient(145deg, rgba(0, 246, 255, 0.3), rgba(0, 246, 255, 0.2));
+            box-shadow: 0 0 20px rgba(0, 246, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .cyber-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .cyber-button-primary {
+            background: linear-gradient(145deg, #00F6FF, rgba(0, 246, 255, 0.8));
+            color: #020418;
+        }
+        
+        .cyber-button-primary:hover:not(:disabled) {
+            background: linear-gradient(145deg, #9EFFFD, #00F6FF);
+            box-shadow: 0 0 25px rgba(0, 246, 255, 0.6);
+        }
+        
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: rgba(16, 20, 44, 0.8);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            color: var(--brand-text-muted);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(145deg, rgba(0, 246, 255, 0.2), rgba(0, 246, 255, 0.1));
+            border-color: #00F6FF;
+            color: #00F6FF;
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+        }
+        
+        .tab-button:hover:not(.active) {
+            border-color: rgba(0, 246, 255, 0.4);
+            color: var(--brand-text);
+        }
+        
+        #qr-preview {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            display: inline-block;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .pattern-option {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(100, 116, 139, 0.5);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pattern-option:hover {
+            border-color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
+        
+        .pattern-option.active {
+            border-color: #00F6FF;
+            background: rgba(0, 246, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.4);
+        }
+        
+        .color-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(100, 116, 139, 0.5);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .color-preview:hover {
+            border-color: #00F6FF;
+            box-shadow: 0 0 10px rgba(0, 246, 255, 0.3);
+        }
+        
+        input[type="color"] {
+            opacity: 0;
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+        
+        .info-box {
+            background: rgba(0, 246, 255, 0.1);
+            border-left: 3px solid #00F6FF;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .template-card {
+            background: rgba(16, 20, 44, 0.8);
+            border: 2px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .template-card:hover {
+            border-color: #00F6FF;
+            box-shadow: 0 0 20px rgba(0, 246, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .history-item {
+            background: rgba(16, 20, 44, 0.6);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            border-color: rgba(0, 246, 255, 0.4);
+            background: rgba(16, 20, 44, 0.8);
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(0, 246, 255, 0.8);
+        }
+        
+        .batch-item {
+            background: rgba(16, 20, 44, 0.6);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 4, 24, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            animation: fadeInUp 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <!-- Global Header -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-24 qr-container">
+            
+            <!-- Header Section -->
+            <div class="text-center mb-12 animate-fade-in-up">
+                <div class="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/40 rounded-full text-xs font-bold text-cyan-400 tracking-wider mb-4">
+                    QUANTUM_QR_MATRIX // v2.0
+                </div>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 text-white neon-glow">
+                    QR CODE GENERATOR
+                </h1>
+                <p class="text-lg text-brand-text-muted max-w-3xl mx-auto">
+                    The most advanced QR code generator with customization, batch processing, and enterprise features.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                
+                <!-- Left Panel: Configuration -->
+                <div class="space-y-6">
+                    
+                    <!-- Data Type Selection -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">Data Type</h2>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+                            <button class="tab-button active rounded-lg" data-type="url" onclick="selectDataType('url')">
+                                <i class="fas fa-link"></i> URL
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="text" onclick="selectDataType('text')">
+                                <i class="fas fa-font"></i> Text
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="vcard" onclick="selectDataType('vcard')">
+                                <i class="fas fa-id-card"></i> vCard
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="wifi" onclick="selectDataType('wifi')">
+                                <i class="fas fa-wifi"></i> WiFi
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="email" onclick="selectDataType('email')">
+                                <i class="fas fa-envelope"></i> Email
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="sms" onclick="selectDataType('sms')">
+                                <i class="fas fa-sms"></i> SMS
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="phone" onclick="selectDataType('phone')">
+                                <i class="fas fa-phone"></i> Phone
+                            </button>
+                            <button class="tab-button rounded-lg" data-type="event" onclick="selectDataType('event')">
+                                <i class="fas fa-calendar"></i> Event
+                            </button>
+                        </div>
+                        
+                        <!-- URL Input -->
+                        <div id="url-input" class="data-input">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">URL</label>
+                            <input type="url" id="url-field" class="cyber-input w-full px-4 py-3 rounded" 
+                                placeholder="https://example.com" value="https://www.unique-ue.com">
+                        </div>
+                        
+                        <!-- Text Input -->
+                        <div id="text-input" class="data-input hidden">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Text Content</label>
+                            <textarea id="text-field" class="cyber-textarea w-full px-4 py-3 rounded" rows="4" 
+                                placeholder="Enter any text..."></textarea>
+                        </div>
+                        
+                        <!-- vCard Input -->
+                        <div id="vcard-input" class="data-input hidden">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm text-cyan-400 mb-1 block">First Name</label>
+                                    <input type="text" id="vcard-firstname" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="John">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-cyan-400 mb-1 block">Last Name</label>
+                                    <input type="text" id="vcard-lastname" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Email</label>
+                                <input type="email" id="vcard-email" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="john@example.com">
+                            </div>
+                            <div class="mt-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Phone</label>
+                                <input type="tel" id="vcard-phone" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="+1234567890">
+                            </div>
+                            <div class="mt-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Organization</label>
+                                <input type="text" id="vcard-org" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="Company Name">
+                            </div>
+                        </div>
+                        
+                        <!-- WiFi Input -->
+                        <div id="wifi-input" class="data-input hidden">
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Network Name (SSID)</label>
+                                <input type="text" id="wifi-ssid" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="MyWiFi">
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Password</label>
+                                <input type="text" id="wifi-password" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="password123">
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Security Type</label>
+                                <select id="wifi-security" class="cyber-select w-full px-3 py-2 rounded text-sm">
+                                    <option value="WPA">WPA/WPA2</option>
+                                    <option value="WEP">WEP</option>
+                                    <option value="">None</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="wifi-hidden" class="mr-2">
+                                <label for="wifi-hidden" class="text-sm text-brand-text-muted">Hidden Network</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Input -->
+                        <div id="email-input" class="data-input hidden">
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Email Address</label>
+                                <input type="email" id="email-address" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="contact@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Subject</label>
+                                <input type="text" id="email-subject" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="Email subject">
+                            </div>
+                            <div>
+                                <label class="text-sm text-cyan-400 mb-1 block">Message</label>
+                                <textarea id="email-body" class="cyber-textarea w-full px-3 py-2 rounded text-sm" rows="3" placeholder="Email message"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- SMS Input -->
+                        <div id="sms-input" class="data-input hidden">
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Phone Number</label>
+                                <input type="tel" id="sms-phone" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="+1234567890">
+                            </div>
+                            <div>
+                                <label class="text-sm text-cyan-400 mb-1 block">Message</label>
+                                <textarea id="sms-message" class="cyber-textarea w-full px-3 py-2 rounded text-sm" rows="3" placeholder="SMS message"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone Input -->
+                        <div id="phone-input" class="data-input hidden">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Phone Number</label>
+                            <input type="tel" id="phone-number" class="cyber-input w-full px-4 py-3 rounded" placeholder="+1234567890">
+                        </div>
+                        
+                        <!-- Event Input -->
+                        <div id="event-input" class="data-input hidden">
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Event Title</label>
+                                <input type="text" id="event-title" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="Meeting">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="text-sm text-cyan-400 mb-1 block">Start Date</label>
+                                    <input type="datetime-local" id="event-start" class="cyber-input w-full px-3 py-2 rounded text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-cyan-400 mb-1 block">End Date</label>
+                                    <input type="datetime-local" id="event-end" class="cyber-input w-full px-3 py-2 rounded text-sm">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-sm text-cyan-400 mb-1 block">Location</label>
+                                <input type="text" id="event-location" class="cyber-input w-full px-3 py-2 rounded text-sm" placeholder="Conference Room A">
+                            </div>
+                            <div>
+                                <label class="text-sm text-cyan-400 mb-1 block">Description</label>
+                                <textarea id="event-description" class="cyber-textarea w-full px-3 py-2 rounded text-sm" rows="2" placeholder="Event details"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customization Options -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">Customization</h2>
+                        
+                        <!-- Size -->
+                        <div class="mb-4">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">
+                                Size: <span id="size-value">256</span>px
+                            </label>
+                            <input type="range" id="qr-size" min="128" max="1024" value="256" step="64" 
+                                class="w-full" oninput="updateSizeLabel(this.value); generateQRCode()">
+                        </div>
+                        
+                        <!-- Error Correction -->
+                        <div class="mb-4">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Error Correction</label>
+                            <select id="error-correction" class="cyber-select w-full px-4 py-2 rounded" onchange="generateQRCode()">
+                                <option value="L">Low (7%)</option>
+                                <option value="M" selected>Medium (15%)</option>
+                                <option value="Q">Quartile (25%)</option>
+                                <option value="H">High (30%)</option>
+                            </select>
+                            <p class="text-xs text-brand-text-muted mt-1">Higher levels allow the QR code to be read even if partially damaged</p>
+                        </div>
+                        
+                        <!-- Colors -->
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Foreground</label>
+                                <div class="color-input-wrapper">
+                                    <div class="color-preview" id="fg-preview" style="background: #000000;"></div>
+                                    <input type="color" id="fg-color" value="#000000" onchange="updateColorPreview('fg', this.value); generateQRCode()">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Background</label>
+                                <div class="color-input-wrapper">
+                                    <div class="color-preview" id="bg-preview" style="background: #FFFFFF;"></div>
+                                    <input type="color" id="bg-color" value="#FFFFFF" onchange="updateColorPreview('bg', this.value); generateQRCode()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Logo Upload -->
+                        <div class="mb-4">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">
+                                <i class="fas fa-image"></i> Center Logo (Optional)
+                            </label>
+                            <input type="file" id="logo-upload" accept="image/*" class="cyber-input w-full px-4 py-2 rounded text-sm" 
+                                onchange="handleLogoUpload(event)">
+                            <p class="text-xs text-brand-text-muted mt-1">Upload a logo to embed in the center of your QR code</p>
+                            <div id="logo-preview-container" class="hidden mt-3">
+                                <img id="logo-preview" class="max-w-full h-20 rounded border border-cyan-500/30">
+                                <button onclick="removeLogo()" class="text-xs text-red-400 hover:text-red-300 mt-1">
+                                    <i class="fas fa-times"></i> Remove Logo
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Margin -->
+                        <div class="mb-4">
+                            <label class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2 block">
+                                Margin: <span id="margin-value">4</span>
+                            </label>
+                            <input type="range" id="qr-margin" min="0" max="10" value="4" step="1" 
+                                class="w-full" oninput="updateMarginLabel(this.value); generateQRCode()">
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Templates -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">
+                            <i class="fas fa-bolt"></i> Quick Templates
+                        </h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="template-card text-left" onclick="applyTemplate('website')">
+                                <i class="fas fa-globe text-cyan-400"></i>
+                                <div class="text-sm font-bold mt-1">Website</div>
+                                <div class="text-xs text-brand-text-muted">URL Link</div>
+                            </button>
+                            <button class="template-card text-left" onclick="applyTemplate('contact')">
+                                <i class="fas fa-address-card text-purple-400"></i>
+                                <div class="text-sm font-bold mt-1">Contact</div>
+                                <div class="text-xs text-brand-text-muted">vCard</div>
+                            </button>
+                            <button class="template-card text-left" onclick="applyTemplate('wifi')">
+                                <i class="fas fa-wifi text-green-400"></i>
+                                <div class="text-sm font-bold mt-1">WiFi</div>
+                                <div class="text-xs text-brand-text-muted">Network</div>
+                            </button>
+                            <button class="template-card text-left" onclick="applyTemplate('business')">
+                                <i class="fas fa-briefcase text-yellow-400"></i>
+                                <div class="text-sm font-bold mt-1">Business</div>
+                                <div class="text-xs text-brand-text-muted">Info</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Right Panel: Preview & Actions -->
+                <div class="space-y-6">
+                    
+                    <!-- Preview -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">Preview</h2>
+                        <div class="flex justify-center items-center min-h-[300px]">
+                            <div id="qr-preview">
+                                <canvas id="qr-canvas"></canvas>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button onclick="generateQRCode()" class="cyber-button-primary mb-3 w-full">
+                                <i class="fas fa-sync-alt"></i> Generate QR Code
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Download Options -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">Download</h2>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="downloadQR('png')" class="cyber-button">
+                                <i class="fas fa-file-image"></i> PNG
+                            </button>
+                            <button onclick="downloadQR('svg')" class="cyber-button">
+                                <i class="fas fa-file-code"></i> SVG
+                            </button>
+                            <button onclick="downloadQR('pdf')" class="cyber-button">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Batch Generation -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <h2 class="text-2xl font-display font-bold text-white mb-4">
+                            <i class="fas fa-layer-group"></i> Batch Generation
+                        </h2>
+                        <div class="info-box">
+                            <p class="text-sm text-cyan-100">Generate multiple QR codes at once from CSV data</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-cyan-400 mb-1 block">Upload CSV File</label>
+                            <input type="file" id="batch-csv" accept=".csv" class="cyber-input w-full px-3 py-2 rounded text-sm">
+                            <p class="text-xs text-brand-text-muted mt-1">Format: data,filename (one per line)</p>
+                        </div>
+                        <button onclick="processBatch()" class="cyber-button w-full">
+                            <i class="fas fa-cogs"></i> Process Batch
+                        </button>
+                        <div id="batch-results" class="mt-4 hidden">
+                            <div class="text-sm text-cyan-400 font-bold mb-2">Results:</div>
+                            <div id="batch-output" class="max-h-48 overflow-y-auto"></div>
+                            <button onclick="downloadBatch()" class="cyber-button-primary w-full mt-3">
+                                <i class="fas fa-download"></i> Download All as ZIP
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- History -->
+                    <div class="glass-panel rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-display font-bold text-white">History</h2>
+                            <button onclick="clearHistory()" class="text-sm text-red-400 hover:text-red-300">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+                        <div id="history-list" class="max-h-64 overflow-y-auto">
+                            <p class="text-sm text-brand-text-muted text-center py-4">No history yet</p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </main>
+        
+        <!-- Global Footer -->
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <!-- Custom Notification Modal -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 20% auto;">
+            <div class="glass-panel rounded-lg p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i id="notification-icon" class="fas fa-info-circle text-cyan-400 text-2xl"></i>
+                    <h3 id="notification-title" class="text-xl font-display font-bold text-white">Notification</h3>
+                </div>
+                <p id="notification-message" class="text-brand-text-muted mb-6"></p>
+                <button onclick="closeNotification()" class="cyber-button-primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmation-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 20% auto;">
+            <div class="glass-panel rounded-lg p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <i class="fas fa-question-circle text-yellow-400 text-2xl"></i>
+                    <h3 class="text-xl font-display font-bold text-white">Confirm Action</h3>
+                </div>
+                <p id="confirmation-message" class="text-brand-text-muted mb-6"></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="confirmAction(false)" class="cyber-button">Cancel</button>
+                    <button onclick="confirmAction(true)" class="cyber-button-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDataType = 'url';
+        let logoImage = null;
+        let qrHistory = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+        let batchQRCodes = [];
+        let confirmCallback = null;
+        
+        // Custom notification function
+        function showNotification(message, title = 'Notification', icon = 'fa-info-circle') {
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            document.getElementById('notification-icon').className = `fas ${icon} text-cyan-400 text-2xl`;
+            document.getElementById('notification-modal').style.display = 'block';
+        }
+        
+        function closeNotification() {
+            document.getElementById('notification-modal').style.display = 'none';
+        }
+        
+        // Custom confirmation function
+        function showConfirmation(message, callback) {
+            document.getElementById('confirmation-message').textContent = message;
+            document.getElementById('confirmation-modal').style.display = 'block';
+            confirmCallback = callback;
+        }
+        
+        function confirmAction(result) {
+            document.getElementById('confirmation-modal').style.display = 'none';
+            if (confirmCallback) {
+                confirmCallback(result);
+                confirmCallback = null;
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            generateQRCode();
+            loadHistory();
+            
+            // Add input listeners for auto-generation
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if (!input.id.includes('batch') && !input.id.includes('logo')) {
+                    input.addEventListener('input', debounce(generateQRCode, 500));
+                }
+            });
+        });
+        
+        // Debounce function to avoid excessive generation
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Select Data Type
+        function selectDataType(type) {
+            currentDataType = type;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Show/hide input sections
+            document.querySelectorAll('.data-input').forEach(input => {
+                input.classList.add('hidden');
+            });
+            document.getElementById(`${type}-input`).classList.remove('hidden');
+            
+            generateQRCode();
+        }
+        
+        // Get QR Data based on type
+        function getQRData() {
+            switch(currentDataType) {
+                case 'url':
+                    return document.getElementById('url-field').value || 'https://www.unique-ue.com';
+                    
+                case 'text':
+                    return document.getElementById('text-field').value || 'Sample Text';
+                    
+                case 'vcard':
+                    const firstName = document.getElementById('vcard-firstname').value;
+                    const lastName = document.getElementById('vcard-lastname').value;
+                    const email = document.getElementById('vcard-email').value;
+                    const phone = document.getElementById('vcard-phone').value;
+                    const org = document.getElementById('vcard-org').value;
+                    return `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName}\nFN:${firstName} ${lastName}\nEMAIL:${email}\nTEL:${phone}\nORG:${org}\nEND:VCARD`;
+                    
+                case 'wifi':
+                    const ssid = document.getElementById('wifi-ssid').value;
+                    const password = document.getElementById('wifi-password').value;
+                    const security = document.getElementById('wifi-security').value;
+                    const hidden = document.getElementById('wifi-hidden').checked ? 'true' : 'false';
+                    return `WIFI:T:${security};S:${ssid};P:${password};H:${hidden};;`;
+                    
+                case 'email':
+                    const emailAddr = document.getElementById('email-address').value;
+                    const subject = document.getElementById('email-subject').value;
+                    const body = document.getElementById('email-body').value;
+                    return `mailto:${emailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    
+                case 'sms':
+                    const smsPhone = document.getElementById('sms-phone').value;
+                    const smsMessage = document.getElementById('sms-message').value;
+                    return `sms:${smsPhone}?body=${encodeURIComponent(smsMessage)}`;
+                    
+                case 'phone':
+                    return `tel:${document.getElementById('phone-number').value}`;
+                    
+                case 'event':
+                    const title = document.getElementById('event-title').value;
+                    const startRaw = document.getElementById('event-start').value;
+                    const endRaw = document.getElementById('event-end').value;
+                    // Convert from datetime-local format (YYYY-MM-DDTHH:MM) to iCal format (YYYYMMDDTHHMMSS)
+                    const start = startRaw ? startRaw.replace(/[-:]/g, '').replace('T', 'T') + '00' : '';
+                    const end = endRaw ? endRaw.replace(/[-:]/g, '').replace('T', 'T') + '00' : '';
+                    const location = document.getElementById('event-location').value;
+                    const description = document.getElementById('event-description').value;
+                    return `BEGIN:VEVENT\nSUMMARY:${title}\nDTSTART:${start}\nDTEND:${end}\nLOCATION:${location}\nDESCRIPTION:${description}\nEND:VEVENT`;
+                    
+                default:
+                    return 'https://www.unique-ue.com';
+            }
+        }
+        
+        // Generate QR Code
+        async function generateQRCode() {
+            const data = getQRData();
+            const size = parseInt(document.getElementById('qr-size').value);
+            const errorCorrection = document.getElementById('error-correction').value;
+            const fgColor = document.getElementById('fg-color').value;
+            const bgColor = document.getElementById('bg-color').value;
+            const margin = parseInt(document.getElementById('qr-margin').value);
+            
+            const canvas = document.getElementById('qr-canvas');
+            
+            try {
+                await QRCode.toCanvas(canvas, data, {
+                    width: size,
+                    margin: margin,
+                    errorCorrectionLevel: errorCorrection,
+                    color: {
+                        dark: fgColor,
+                        light: bgColor
+                    }
+                });
+                
+                // If logo is present, draw it on top
+                if (logoImage) {
+                    const ctx = canvas.getContext('2d');
+                    const logoSize = size * 0.2; // Logo is 20% of QR code size
+                    const x = (size - logoSize) / 2;
+                    const y = (size - logoSize) / 2;
+                    
+                    // Draw white background for logo
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+                    
+                    // Draw logo
+                    ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+                }
+                
+            } catch (err) {
+                console.error('Error generating QR code:', err);
+            }
+        }
+        
+        // Update size label
+        function updateSizeLabel(value) {
+            document.getElementById('size-value').textContent = value;
+        }
+        
+        // Update margin label
+        function updateMarginLabel(value) {
+            document.getElementById('margin-value').textContent = value;
+        }
+        
+        // Update color preview
+        function updateColorPreview(type, color) {
+            document.getElementById(`${type}-preview`).style.background = color;
+        }
+        
+        // Handle logo upload
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    logoImage = new Image();
+                    logoImage.onload = () => {
+                        document.getElementById('logo-preview').src = e.target.result;
+                        document.getElementById('logo-preview-container').classList.remove('hidden');
+                        generateQRCode();
+                    };
+                    logoImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Remove logo
+        function removeLogo() {
+            logoImage = null;
+            document.getElementById('logo-upload').value = '';
+            document.getElementById('logo-preview-container').classList.add('hidden');
+            generateQRCode();
+        }
+        
+        // Download QR Code
+        function downloadQR(format) {
+            const canvas = document.getElementById('qr-canvas');
+            const data = getQRData();
+            const filename = `qr-code-${Date.now()}`;
+            
+            if (format === 'png') {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            } else if (format === 'svg') {
+                QRCode.toString(data, {
+                    type: 'svg',
+                    errorCorrectionLevel: document.getElementById('error-correction').value,
+                    margin: parseInt(document.getElementById('qr-margin').value),
+                    color: {
+                        dark: document.getElementById('fg-color').value,
+                        light: document.getElementById('bg-color').value
+                    }
+                }, (err, svg) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    const blob = new Blob([svg], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.svg`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            } else if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 50, 50, 100, 100);
+                pdf.save(`${filename}.pdf`);
+            }
+            
+            // Add to history
+            addToHistory({
+                type: currentDataType,
+                data: data.substring(0, 50) + (data.length > 50 ? '...' : ''),
+                timestamp: new Date().toISOString()
+            });
+        }
+        
+        // Apply Template
+        function applyTemplate(template) {
+            switch(template) {
+                case 'website':
+                    selectDataType('url');
+                    document.getElementById('url-field').value = 'https://www.unique-ue.com';
+                    break;
+                case 'contact':
+                    selectDataType('vcard');
+                    document.getElementById('vcard-firstname').value = 'John';
+                    document.getElementById('vcard-lastname').value = 'Doe';
+                    document.getElementById('vcard-email').value = 'john@example.com';
+                    document.getElementById('vcard-phone').value = '+1234567890';
+                    document.getElementById('vcard-org').value = 'uniQue-ue';
+                    break;
+                case 'wifi':
+                    selectDataType('wifi');
+                    document.getElementById('wifi-ssid').value = 'MyNetwork';
+                    document.getElementById('wifi-password').value = 'password123';
+                    break;
+                case 'business':
+                    selectDataType('vcard');
+                    document.getElementById('vcard-firstname').value = 'Business';
+                    document.getElementById('vcard-lastname').value = 'Contact';
+                    document.getElementById('vcard-email').value = 'info@business.com';
+                    document.getElementById('vcard-phone').value = '+1-800-BUSINESS';
+                    document.getElementById('vcard-org').value = 'Business Inc.';
+                    break;
+            }
+            generateQRCode();
+        }
+        
+        // History Management
+        function addToHistory(item) {
+            qrHistory.unshift(item);
+            if (qrHistory.length > 10) qrHistory.pop();
+            localStorage.setItem('qrHistory', JSON.stringify(qrHistory));
+            loadHistory();
+        }
+        
+        function loadHistory() {
+            const historyList = document.getElementById('history-list');
+            if (qrHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-sm text-brand-text-muted text-center py-4">No history yet</p>';
+                return;
+            }
+            
+            historyList.innerHTML = qrHistory.map((item, index) => `
+                <div class="history-item">
+                    <div>
+                        <div class="text-sm font-bold text-cyan-400">${item.type.toUpperCase()}</div>
+                        <div class="text-xs text-brand-text-muted">${item.data}</div>
+                        <div class="text-xs text-brand-text-muted">${new Date(item.timestamp).toLocaleString()}</div>
+                    </div>
+                    <button onclick="removeFromHistory(${index})" class="text-red-400 hover:text-red-300">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function removeFromHistory(index) {
+            qrHistory.splice(index, 1);
+            localStorage.setItem('qrHistory', JSON.stringify(qrHistory));
+            loadHistory();
+        }
+        
+        function clearHistory() {
+            showConfirmation('Are you sure you want to clear all history?', (confirmed) => {
+                if (confirmed) {
+                    qrHistory = [];
+                    localStorage.setItem('qrHistory', JSON.stringify(qrHistory));
+                    loadHistory();
+                }
+            });
+        }
+        
+        // Batch Processing
+        async function processBatch() {
+            const fileInput = document.getElementById('batch-csv');
+            if (!fileInput.files.length) {
+                showNotification('Please select a CSV file', 'Missing File', 'fa-exclamation-triangle');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const text = await file.text();
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            batchQRCodes = [];
+            const output = document.getElementById('batch-output');
+            output.innerHTML = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const [data, filename] = lines[i].split(',').map(s => s.trim());
+                if (!data) continue;
+                
+                try {
+                    const canvas = document.createElement('canvas');
+                    await QRCode.toCanvas(canvas, data, {
+                        width: 256,
+                        errorCorrectionLevel: 'M'
+                    });
+                    
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve));
+                    batchQRCodes.push({
+                        filename: filename || `qr-${i+1}.png`,
+                        blob: blob
+                    });
+                    
+                    output.innerHTML += `<div class="batch-item"><i class="fas fa-check text-green-400"></i> Generated: ${filename || `qr-${i+1}.png`}</div>`;
+                } catch (err) {
+                    output.innerHTML += `<div class="batch-item"><i class="fas fa-times text-red-400"></i> Error: ${data.substring(0, 30)}...</div>`;
+                }
+            }
+            
+            document.getElementById('batch-results').classList.remove('hidden');
+        }
+        
+        async function downloadBatch() {
+            if (!window.JSZip) {
+                showNotification('JSZip library not loaded. Downloading files individually...', 'Notice', 'fa-info-circle');
+                // Fallback to individual downloads
+                for (const item of batchQRCodes) {
+                    const url = URL.createObjectURL(item.blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = item.filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                return;
+            }
+            
+            // Use JSZip to create a proper ZIP archive
+            const zip = new JSZip();
+            
+            // Add all QR codes to the ZIP
+            for (const item of batchQRCodes) {
+                zip.file(item.filename, item.blob);
+            }
+            
+            // Generate and download the ZIP file
+            try {
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const url = URL.createObjectURL(zipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `qr-codes-batch-${Date.now()}.zip`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showNotification(`Successfully downloaded ${batchQRCodes.length} QR codes as ZIP`, 'Success', 'fa-check-circle');
+            } catch (err) {
+                console.error('Error creating ZIP:', err);
+                showNotification('Error creating ZIP file. Please try again.', 'Error', 'fa-exclamation-circle');
+            }
+        }
+    </script>
+</body>
+</html>
