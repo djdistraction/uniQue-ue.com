@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        . color-display {
+            width: 100%;
+            height: 200px;
+            border-radius: 0.5rem;
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .color-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .color-input {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .format-card {
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .format-card:hover {
+            border-color: rgba(0, 246, 255, 0.5);
+            background: rgba(16, 20, 44, 1);
+        }
+        
+        .format-label {
+            color: var(--brand-text-muted);
+            font-size:  0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .format-value {
+            color: var(--brand-text);
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-btn {
+            background: rgba(0, 246, 255, 0.1);
+            border: 1px solid rgba(0, 246, 255, 0.3);
+            color: var(--brand-accent);
+            padding: 0.25rem 0.75rem;
+            border-radius:  0.25rem;
+            cursor: pointer;
+            transition:  all 0.2s ease;
+            font-size: 0.75rem;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(0, 246, 255, 0.2);
+            border-color: var(--brand-accent);
+        }
+        
+        .palette-swatch {
+            width: 100%;
+            height: 60px;
+            border-radius:  0.375rem;
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .palette-swatch:hover {
+            transform: scale(1.05);
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+        }
+        
+        . palette-label {
+            position: absolute;
+            bottom: 0.25rem;
+            left: 0.5rem;
+            right: 0.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight:  600;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+            color: var(--brand-primary);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(145deg, var(--brand-accent-hover), var(--brand-accent));
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 246, 255, 0.1);
+            color: var(--brand-accent);
+            border: 1px solid var(--brand-accent);
+        }
+        
+        .btn-secondary:hover {
+            background:  rgba(0, 246, 255, 0.2);
+        }
+        
+        .slider-container {
+            margin-bottom: 1rem;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--brand-text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height:  8px;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #000, #fff);
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--brand-accent);
+            cursor: pointer;
+            border: 2px solid var(--brand-primary);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--brand-accent);
+            cursor: pointer;
+            border: 2px solid var(--brand-primary);
+        }
+        
+        .saved-color {
+            width: 50px;
+            height: 50px;
+            border-radius:  0.375rem;
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .saved-color:hover {
+            transform: scale(1.1);
+            border-color: var(--brand-accent);
+        }
+        
+        .delete-saved {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e06c75;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .saved-color: hover .delete-saved {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                
+                <!-- Hero Section -->
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">
+                        <i class="fas fa-palette text-brand-accent mr-3"></i>
+                        Color Picker
+                    </h1>
+                    <p class="text-xl text-brand-text-muted max-w-3xl mx-auto">
+                        Advanced color selection with format conversion and palette generation
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    
+                    <!-- Left Column:  Color Selector -->
+                    <div class="lg:col-span-1">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Color Display</h3>
+                            <div id="colorDisplay" class="color-display mb-4"></div>
+                            <div class="color-input-wrapper">
+                                <input type="color" id="colorInput" class="color-input" value="#00f6ff">
+                            </div>
+                        </div>
+                        
+                        <!-- RGB Sliders -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">RGB Adjustment</h3>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Red</span>
+                                    <span id="rValue">0</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="0" class="slider" id="rSlider" 
+                                    style="background: linear-gradient(to right, #000, #ff0000);">
+                            </div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Green</span>
+                                    <span id="gValue">246</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="246" class="slider" id="gSlider"
+                                    style="background:  linear-gradient(to right, #000, #00ff00);">
+                            </div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <span>Blue</span>
+                                    <span id="bValue">255</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="255" class="slider" id="bSlider"
+                                    style="background:  linear-gradient(to right, #000, #0000ff);">
+                            </div>
+                        </div>
+                        
+                        <!-- Saved Colors -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-display font-bold text-brand-accent">Saved Colors</h3>
+                                <button class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.75rem;" onclick="saveColor()">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                            <div id="savedColors" class="flex flex-wrap gap-2">
+                                <p class="text-brand-text-muted text-sm w-full">No saved colors yet</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle Column: Format Outputs -->
+                    <div class="lg:col-span-1">
+                        <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Color Formats</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="format-card">
+                                <div class="format-label">HEX</div>
+                                <div class="format-value">
+                                    <span id="hexValue">#00f6ff</span>
+                                    <button class="copy-btn" onclick="copyFormat('hex')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="format-card">
+                                <div class="format-label">RGB</div>
+                                <div class="format-value">
+                                    <span id="rgbValue">rgb(0, 246, 255)</span>
+                                    <button class="copy-btn" onclick="copyFormat('rgb')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="format-card">
+                                <div class="format-label">RGBA</div>
+                                <div class="format-value">
+                                    <span id="rgbaValue">rgba(0, 246, 255, 1)</span>
+                                    <button class="copy-btn" onclick="copyFormat('rgba')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="format-card">
+                                <div class="format-label">HSL</div>
+                                <div class="format-value">
+                                    <span id="hslValue">hsl(182, 100%, 50%)</span>
+                                    <button class="copy-btn" onclick="copyFormat('hsl')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="format-card">
+                                <div class="format-label">HSV</div>
+                                <div class="format-value">
+                                    <span id="hsvValue">hsv(182, 100%, 100%)</span>
+                                    <button class="copy-btn" onclick="copyFormat('hsv')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="format-card">
+                                <div class="format-label">CMYK</div>
+                                <div class="format-value">
+                                    <span id="cmykValue">cmyk(100%, 4%, 0%, 0%)</span>
+                                    <button class="copy-btn" onclick="copyFormat('cmyk')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Palettes -->
+                    <div class="lg:col-span-1">
+                        <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Color Palettes</h3>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold mb-2 text-brand-text-muted">Complementary</h4>
+                            <div class="grid grid-cols-2 gap-2" id="complementaryPalette"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold mb-2 text-brand-text-muted">Analogous</h4>
+                            <div class="grid grid-cols-3 gap-2" id="analogousPalette"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold mb-2 text-brand-text-muted">Triadic</h4>
+                            <div class="grid grid-cols-3 gap-2" id="triadicPalette"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold mb-2 text-brand-text-muted">Shades</h4>
+                            <div class="grid grid-cols-5 gap-2" id="shadesPalette"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Page JavaScript -->
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { collection, addDoc, query, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        let currentUser = null;
+        let currentColor = { r: 0, g: 246, b: 255 };
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                loadSavedColors();
+            }
+        });
+
+        // Initialize
+        document.getElementById('colorInput').addEventListener('input', (e) => {
+            const hex = e.target.value;
+            const rgb = hexToRgb(hex);
+            updateColor(rgb. r, rgb.g, rgb. b);
+        });
+
+        document.getElementById('rSlider').addEventListener('input', updateFromSliders);
+        document.getElementById('gSlider').addEventListener('input', updateFromSliders);
+        document.getElementById('bSlider').addEventListener('input', updateFromSliders);
+
+        function updateFromSliders() {
+            const r = parseInt(document.getElementById('rSlider').value);
+            const g = parseInt(document.getElementById('gSlider').value);
+            const b = parseInt(document.getElementById('bSlider').value);
+            updateColor(r, g, b);
+        }
+
+        function updateColor(r, g, b) {
+            currentColor = { r, g, b };
+            
+            // Update display
+            const hex = rgbToHex(r, g, b);
+            document.getElementById('colorDisplay').style.backgroundColor = hex;
+            document.getElementById('colorInput').value = hex;
+            
+            // Update sliders
+            document.getElementById('rSlider').value = r;
+            document.getElementById('gSlider').value = g;
+            document. getElementById('bSlider').value = b;
+            
+            document.getElementById('rValue').textContent = r;
+            document.getElementById('gValue').textContent = g;
+            document.getElementById('bValue').textContent = b;
+            
+            // Update format displays
+            updateFormats(r, g, b);
+            
+            // Update palettes
+            updatePalettes(r, g, b);
+        }
+
+        function updateFormats(r, g, b) {
+            const hex = rgbToHex(r, g, b);
+            const hsl = rgbToHsl(r, g, b);
+            const hsv = rgbToHsv(r, g, b);
+            const cmyk = rgbToCmyk(r, g, b);
+            
+            document.getElementById('hexValue').textContent = hex;
+            document. getElementById('rgbValue').textContent = `rgb(${r}, ${g}, ${b})`;
+            document.getElementById('rgbaValue').textContent = `rgba(${r}, ${g}, ${b}, 1)`;
+            document.getElementById('hslValue').textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            document.getElementById('hsvValue').textContent = `hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
+            document.getElementById('cmykValue').textContent = `cmyk(${cmyk.c}%, ${cmyk.m}%, ${cmyk.y}%, ${cmyk.k}%)`;
+        }
+
+        function updatePalettes(r, g, b) {
+            const hsl = rgbToHsl(r, g, b);
+            
+            // Complementary
+            const comp = [(hsl.h + 180) % 360];
+            const compPalette = document.getElementById('complementaryPalette');
+            compPalette. innerHTML = `
+                <div class="palette-swatch" style="background:  ${rgbToHex(r, g, b)}" onclick="selectPaletteColor(${r}, ${g}, ${b})">
+                    <div class="palette-label">Base</div>
+                </div>
+                <div class="palette-swatch" style="background: ${hslToHex(comp[0], hsl.s, hsl.l)}" 
+                    onclick="selectPaletteColorHsl(${comp[0]}, ${hsl.s}, ${hsl.l})">
+                    <div class="palette-label">Complement</div>
+                </div>
+            `;
+            
+            // Analogous
+            const analog = [(hsl.h - 30 + 360) % 360, hsl.h, (hsl.h + 30) % 360];
+            const analogPalette = document.getElementById('analogousPalette');
+            analogPalette.innerHTML = analog.map((h, i) => `
+                <div class="palette-swatch" style="background: ${hslToHex(h, hsl.s, hsl.l)}" 
+                    onclick="selectPaletteColorHsl(${h}, ${hsl.s}, ${hsl.l})">
+                    <div class="palette-label">${i === 1 ? 'Base' : 'Analog'}</div>
+                </div>
+            `).join('');
+            
+            // Triadic
+            const triadic = [hsl.h, (hsl.h + 120) % 360, (hsl. h + 240) % 360];
+            const triadicPalette = document.getElementById('triadicPalette');
+            triadicPalette.innerHTML = triadic.map((h, i) => `
+                <div class="palette-swatch" style="background: ${hslToHex(h, hsl.s, hsl.l)}" 
+                    onclick="selectPaletteColorHsl(${h}, ${hsl.s}, ${hsl.l})">
+                    <div class="palette-label">${i === 0 ?  'Base' : 'Triadic'}</div>
+                </div>
+            `).join('');
+            
+            // Shades
+            const shades = [10, 30, 50, 70, 90];
+            const shadesPalette = document.getElementById('shadesPalette');
+            shadesPalette.innerHTML = shades. map(l => `
+                <div class="palette-swatch" style="background: ${hslToHex(hsl.h, hsl. s, l)}" 
+                    onclick="selectPaletteColorHsl(${hsl. h}, ${hsl.s}, ${l})">
+                    <div class="palette-label">${l}%</div>
+                </div>
+            `).join('');
+        }
+
+        window.selectPaletteColor = function(r, g, b) {
+            updateColor(r, g, b);
+        };
+
+        window.selectPaletteColorHsl = function(h, s, l) {
+            const rgb = hslToRgb(h, s, l);
+            updateColor(rgb.r, rgb.g, rgb.b);
+        };
+
+        window.copyFormat = function(format) {
+            const textMap = {
+                'hex': document.getElementById('hexValue').textContent,
+                'rgb': document. getElementById('rgbValue').textContent,
+                'rgba': document. getElementById('rgbaValue').textContent,
+                'hsl': document.getElementById('hslValue').textContent,
+                'hsv':  document.getElementById('hsvValue').textContent,
+                'cmyk': document.getElementById('cmykValue').textContent
+            };
+            
+            navigator.clipboard.writeText(textMap[format]).then(() => {
+                // Visual feedback
+                const btn = event.target. closest('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                setTimeout(() => btn.innerHTML = originalText, 1500);
+            });
+        };
+
+        window.saveColor = async function() {
+            if (!currentUser) {
+                alert('Please sign in to save colors');
+                return;
+            }
+
+            const hex = rgbToHex(currentColor.r, currentColor.g, currentColor.b);
+            
+            try {
+                const colorsRef = collection(db, 'users', currentUser.uid, 'savedColors');
+                await addDoc(colorsRef, {
+                    hex: hex,
+                    r: currentColor.r,
+                    g: currentColor.g,
+                    b: currentColor. b,
+                    timestamp: new Date()
+                });
+                
+                loadSavedColors();
+            } catch (error) {
+                console.error('Error saving color:', error);
+            }
+        };
+
+        async function loadSavedColors() {
+            if (!currentUser) return;
+
+            const savedColorsDiv = document.getElementById('savedColors');
+            const colorsRef = collection(db, 'users', currentUser.uid, 'savedColors');
+
+            try {
+                const querySnapshot = await getDocs(colorsRef);
+                
+                if (querySnapshot.empty) {
+                    savedColorsDiv.innerHTML = '<p class="text-brand-text-muted text-sm w-full">No saved colors yet</p>';
+                    return;
+                }
+
+                savedColorsDiv.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'saved-color';
+                    colorDiv.style. backgroundColor = data.hex;
+                    colorDiv.onclick = () => updateColor(data.r, data. g, data.b);
+                    
+                    const deleteBtn = document.createElement('div');
+                    deleteBtn.className = 'delete-saved';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn. onclick = (e) => {
+                        e.stopPropagation();
+                        deleteSavedColor(docSnap.id);
+                    };
+                    
+                    colorDiv.appendChild(deleteBtn);
+                    savedColorsDiv.appendChild(colorDiv);
+                });
+            } catch (error) {
+                console.error('Error loading saved colors:', error);
+            }
+        }
+
+        async function deleteSavedColor(docId) {
+            if (!currentUser) return;
+            
+            try {
+                await deleteDoc(doc(db, 'users', currentUser.uid, 'savedColors', docId));
+                loadSavedColors();
+            } catch (error) {
+                console.error('Error deleting color:', error);
+            }
+        }
+
+        // Color conversion functions
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ?  {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 :  0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b:  h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s:  Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+        function hslToHex(h, s, l) {
+            const rgb = hslToRgb(h, s, l);
+            return rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math. max(r, g, b), min = Math.min(r, g, b);
+            const d = max - min;
+            let h, s, v = max;
+
+            s = max === 0 ? 0 : d / max;
+
+            if (max === min) {
+                h = 0;
+            } else {
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 :  0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b:  h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math. round(s * 100),
+                v: Math.round(v * 100)
+            };
+        }
+
+        function rgbToCmyk(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const k = 1 - Math.max(r, g, b);
+            const c = (1 - r - k) / (1 - k) || 0;
+            const m = (1 - g - k) / (1 - k) || 0;
+            const y = (1 - b - k) / (1 - k) || 0;
+
+            return {
+                c: Math.round(c * 100),
+                m: Math. round(m * 100),
+                y: Math.round(y * 100),
+                k:  Math.round(k * 100)
+            };
+        }
+
+        // Initialize with default color
+        updateColor(0, 246, 255);
+    </script>
+</body>
+</html>
