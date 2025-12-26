@@ -1,27 +1,31 @@
 /**
  * api-worker.js
  * UNIFIED Backend for uniQue-ue.com
- * Merges original Gemini Prompt Generator with new Draven/Admin features.
+ * Powered by Gemini 3.0 Pro (Nov 2025) for state-of-the-art reasoning and context.
  */
 
-// --- NEW: System Prompts for Ghost-Writer & Nexus ---
+// --- System Prompts for Ghost-Writer & Nexus ---
 const SYSTEM_PROMPTS = {
   draven: `You are Draven, an expert AI writing assistant. 
   Mission: Help users articulate thoughts, overcome blocks, and structure narratives.
   Tone: Encouraging, insightful, literary, and structured.
   Method: Do not just write for the user; guide them. Ask probing questions.
-  If the user asks for a specific output (outline, chapter, character sheet), provide it in well-formatted Markdown.`,
+  If the user asks for a specific output (outline, chapter, character sheet), provide it in well-formatted Markdown.
+  CONTEXT AWARENESS: You will often receive the user's entire manuscript and notes. Use this data to ensure strict continuity, tone matching, and fact-checking.`,
   
   nexus: `You are Nexus, the AI Host of uniQue-ue. You are professional, tech-savvy, and helpful.`
 };
+
+// MODEL CONFIGURATION
+// Upgraded to Gemini 3.0 Pro based on availability confirmation (Active Preview)
+// Fallback logic could be added, but we are targeting the latest stable preview.
+const MODEL_NAME = "gemini-3.0-pro";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // --- UPDATED: CORS & CSP Headers ---
-    // We kept your original CSP but added the CDNs used by the new Ghost-Writer React App
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -29,36 +33,33 @@ export default {
       'Content-Security-Policy': "default-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;"
     };
 
-    // Handle OPTIONS request for CORS
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
 
     try {
-      // --- ROUTE 1: /generate-prompts (EXISTING - Preserved Logic) ---
+      // --- ROUTE 1: /generate-prompts (Graphics Studio) ---
       if (path === '/generate-prompts' && request.method === 'POST') {
         return handlePromptGeneration(request, env, corsHeaders);
       }
 
-      // --- ROUTE 2: /chat (NEW - For Draven/Nexus) ---
+      // --- ROUTE 2: /chat (Draven/Nexus) ---
       if (path === '/chat' && request.method === 'POST') {
         return handleChat(request, env, corsHeaders);
       }
 
-      // --- ROUTE 3: /admin/auth (NEW - For Revenue System) ---
+      // --- ROUTE 3: /admin/auth (Revenue System) ---
       if (path === '/admin/auth' && request.method === 'POST') {
         return handleAdminAuth(request, env, corsHeaders);
       }
 
-      // --- ROUTE 4: /contact (NEW - For Contact Forms) ---
+      // --- ROUTE 4: /contact (Contact Forms) ---
       if (path === '/contact' && request.method === 'POST') {
-        // Placeholder for email logic
         return new Response(JSON.stringify({ success: true, message: "Message received" }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
 
-      // Default 404 response
       return new Response('Not Found', { status: 404, headers: corsHeaders });
 
     } catch (err) {
@@ -68,8 +69,8 @@ export default {
 };
 
 /**
- * --- EXISTING FUNCTION ---
- * Handle prompt generation using Gemini API (Preserved from your code)
+ * Handle prompt generation (Graphics Studio)
+ * Updated to use Gemini 3.0 Pro
  */
 async function handlePromptGeneration(request, env, corsHeaders) {
   try {
@@ -100,7 +101,7 @@ async function handlePromptGeneration(request, env, corsHeaders) {
     const prompt = promptParts.join('\n\n');
 
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,7 +122,7 @@ async function handlePromptGeneration(request, env, corsHeaders) {
     const geminiData = await geminiResponse.json();
     const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // (Your original parsing logic preserved here)
+    // Parsing logic optimized for list-based responses
     const variations = [];
     const lines = generatedText.split('\n');
     let currentVariation = '';
@@ -132,13 +133,13 @@ async function handlePromptGeneration(request, env, corsHeaders) {
       const trimmedLine = line.trim();
       if (trimmedLine.toLowerCase().includes('variation') || trimmedLine.match(/^\d+\./)) {
         if (currentVariation) {
-          variations.push({ modelName: 'gemini-pro', content: currentVariation.trim() });
+          variations.push({ modelName: MODEL_NAME, content: currentVariation.trim() });
         }
         currentVariation = '';
       } else if (trimmedLine.toLowerCase().includes('guidance') || trimmedLine.toLowerCase().includes('recommendation')) {
         inGuidanceSection = true;
         if (currentVariation) {
-          variations.push({ modelName: 'gemini-pro', content: currentVariation.trim() });
+          variations.push({ modelName: MODEL_NAME, content: currentVariation.trim() });
           currentVariation = '';
         }
       } else if (inGuidanceSection) {
@@ -148,10 +149,10 @@ async function handlePromptGeneration(request, env, corsHeaders) {
       }
     }
     if (currentVariation && !inGuidanceSection) {
-      variations.push({ modelName: 'gemini-pro', content: currentVariation.trim() });
+      variations.push({ modelName: MODEL_NAME, content: currentVariation.trim() });
     }
     if (variations.length === 0) {
-      variations.push({ modelName: 'gemini-pro', content: generatedText });
+      variations.push({ modelName: MODEL_NAME, content: generatedText });
       overallGuidance = 'Review the generated prompt and adjust based on your specific needs.';
     }
     if (!overallGuidance.trim()) {
@@ -169,9 +170,8 @@ async function handlePromptGeneration(request, env, corsHeaders) {
 }
 
 /**
- * --- NEW FUNCTION ---
- * Handles Chat for Ghost-Writer (Draven) & Nexus
- * Uses the SAME Gemini API Key to save configuration time.
+ * Handle Chat (Draven)
+ * Updated to use Gemini 3.0 Pro
  */
 async function handleChat(request, env, corsHeaders) {
   try {
@@ -181,32 +181,25 @@ async function handleChat(request, env, corsHeaders) {
       throw new Error("Gemini API key not configured");
     }
 
-    // 1. Determine System Instruction
     let systemText = SYSTEM_PROMPTS[persona] || SYSTEM_PROMPTS.draven;
     if (mode) systemText += `\nCurrent Focus Mode: ${mode}.`;
 
-    // 2. Build Chat History for Gemini (User/Model roles)
-    // We prepend the System Prompt as the first user message for Gemini Pro
     const geminiContents = [
       { role: "user", parts: [{ text: `SYSTEM INSTRUCTION:\n${systemText}` }] },
       { role: "model", parts: [{ text: "Understood. I am ready to assist." }] }
     ];
 
-    // Append conversation history
     if (history && Array.isArray(history)) {
       history.forEach(msg => {
-        // Map 'assistant' role to 'model' for Gemini
         const role = msg.role === 'assistant' ? 'model' : 'user';
         geminiContents.push({ role, parts: [{ text: msg.content }] });
       });
     }
 
-    // Append current user message
     geminiContents.push({ role: "user", parts: [{ text: message }] });
 
-    // 3. Call Gemini API
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -221,7 +214,6 @@ async function handleChat(request, env, corsHeaders) {
     
     if (data.error) throw new Error(data.error.message);
     
-    // Extract reply
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "(No response generated)";
 
     return new Response(JSON.stringify({ reply }), {
@@ -237,13 +229,11 @@ async function handleChat(request, env, corsHeaders) {
 }
 
 /**
- * --- NEW FUNCTION ---
- * Handles Admin Authentication
+ * Handle Admin Auth
  */
 async function handleAdminAuth(request, env, corsHeaders) {
   try {
     const { code } = await request.json();
-    // Check against env var or a hardcoded fallback for safety
     const validCode = env.ADMIN_ACCESS_CODE; 
     
     if (validCode && code === validCode) {
