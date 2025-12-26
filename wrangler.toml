@@ -16,9 +16,17 @@ enabled = true
 [vars]
 TO_EMAIL = "your-email@example.com"
 
-# The following are Secrets (managed via 'wrangler secret put'):
-# - GEMINI_API_KEY (Required for Draven)
-# - ADMIN_ACCESS_CODE (Required for Admin Panel)
-# - GITHUB_PAT (Legacy/Future Use)
-# - HUGGINGFACE_TOKEN (Legacy/Future Use)
-# - SENDGRID_API_KEY (Legacy/Future Use)
+# --- SECRETS CONFIGURATION ---
+# The following variables are SECRETS.
+# They are NOT set in this file for security reasons.
+# The Worker AUTOMATICALLY reads them from:
+# Cloudflare Dashboard > Workers > Settings > Variables and Secrets
+#
+# Required Secrets:
+# - GEMINI_API_KEY
+# - ADMIN_ACCESS_CODE
+#
+# Legacy Secrets (Optional):
+# - GITHUB_PAT
+# - HUGGINGFACE_TOKEN
+# - SENDGRID_API_KEY
