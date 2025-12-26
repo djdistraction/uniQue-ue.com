@@ -1,17 +1,27 @@
 name = "unique-ue-api"
 main = "api-worker.js"
-compatibility_date = "2024-01-01"
+compatibility_date = "2024-12-20"
+
+# CRITICAL FIX: This enables the public URL so the website can talk to the AI
+workers_dev = true
+
+# Enable logging to debug errors
+[observability]
+enabled = true
+
+# --- Original Configuration Preserved ---
+# We keep these here so you don't lose your settings for Email/GitHub/HuggingFace.
+# Note: The current api-worker.js focuses on Gemini, but we can re-add email logic later.
+
+[vars]
+TO_EMAIL = "your-email@example.com"
+
+# The following are Secrets (managed via 'wrangler secret put'):
+# - GEMINI_API_KEY (Required for Draven)
+# - ADMIN_ACCESS_CODE (Required for Admin Panel)
+# - GITHUB_PAT (Legacy/Future Use)
+# - HUGGINGFACE_TOKEN (Legacy/Future Use)
+# - SENDGRID_API_KEY (Legacy/Future Use)
 
 [env.production]
 name = "unique-ue-api"
-
-# We will set these secrets using the 'wrangler secret put' command
-# This just tells the worker what to expect
-[vars]
-TO_EMAIL = "your-email@example.com" # This is just a default, the secret will override it
-
-# Secrets:
-# GITHUB_PAT
-# HUGGINGFACE_TOKEN
-# SENDGRID_API_KEY
-# TO_EMAIL
