@@ -1,0 +1,706 @@
+<! DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder/Decoder - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        . text-container {
+            position: relative;
+            background: rgba(16, 20, 44, 0.95);
+            border:  1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .text-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            background: transparent;
+            color: var(--brand-text);
+            border: none;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: rgba(2, 4, 24, 0.5);
+            border-bottom: 1px solid rgba(0, 246, 255, 0.2);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+            color: var(--brand-primary);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(145deg, var(--brand-accent-hover), var(--brand-accent));
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 246, 255, 0.1);
+            color: var(--brand-accent);
+            border: 1px solid var(--brand-accent);
+        }
+        
+        .btn-secondary:hover {
+            background:  rgba(0, 246, 255, 0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--brand-text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .mode-btn. active {
+            background: var(--brand-accent);
+            color: var(--brand-primary);
+        }
+        
+        .file-upload-area {
+            border: 2px dashed rgba(0, 246, 255, 0.3);
+            border-radius:  0.5rem;
+            padding: 2rem;
+            text-align:  center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(16, 20, 44, 0.5);
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--brand-accent);
+            background: rgba(16, 20, 44, 0.8);
+        }
+        
+        .file-upload-area. drag-over {
+            border-color: var(--brand-accent);
+            background: rgba(0, 246, 255, 0.1);
+        }
+        
+        .info-card {
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 246, 255, 0.1);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: var(--brand-text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .info-value {
+            color: var(--brand-text);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius:  0.375rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .message.success {
+            background: rgba(152, 195, 121, 0.1);
+            border: 1px solid rgba(152, 195, 121, 0.3);
+            color: #98c379;
+            display: block;
+        }
+        
+        .message.error {
+            background: rgba(224, 108, 117, 0.1);
+            border: 1px solid rgba(224, 108, 117, 0.3);
+            color: #e06c75;
+            display: block;
+        }
+        
+        .history-item {
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .history-item:hover {
+            border-color: rgba(0, 246, 255, 0.5);
+            background: rgba(16, 20, 44, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                
+                <!-- Hero Section -->
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">
+                        <i class="fas fa-terminal text-brand-accent mr-3"></i>
+                        Base64 Encoder/Decoder
+                    </h1>
+                    <p class="text-xl text-brand-text-muted max-w-3xl mx-auto">
+                        Encode and decode Base64 strings with support for text and file operations
+                    </p>
+                </div>
+
+                <!-- Mode Toggle -->
+                <div class="flex justify-center mb-8">
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="setMode('encode')" id="encodeBtn">
+                            <i class="fas fa-lock mr-2"></i> Encode
+                        </button>
+                        <button class="mode-btn" onclick="setMode('decode')" id="decodeBtn">
+                            <i class="fas fa-unlock mr-2"></i> Decode
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    
+                    <!-- Input Section -->
+                    <div class="lg:col-span-2">
+                        <!-- Text Input -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Text Input</h3>
+                            <div class="text-container">
+                                <div class="toolbar">
+                                    <button class="btn btn-primary" onclick="processText()" id="processBtn">
+                                        <i class="fas fa-play"></i> <span id="processBtnText">Encode</span>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="swapInputOutput()">
+                                        <i class="fas fa-exchange-alt"></i> Swap
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="clearAll()">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="copyOutput()">
+                                        <i class="fas fa-copy"></i> Copy Output
+                                    </button>
+                                </div>
+                                <textarea 
+                                    class="text-area" 
+                                    id="inputText" 
+                                    placeholder="Enter text to encode/decode..."
+                                    spellcheck="false"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">File Input</h3>
+                            <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-brand-accent mb-3"></i>
+                                <p class="text-brand-text mb-2">Click to upload or drag and drop</p>
+                                <p class="text-brand-text-muted text-sm">Any file type supported</p>
+                                <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                            </div>
+                            <div id="fileInfo" class="mt-3" style="display: none;">
+                                <div class="info-card">
+                                    <div class="info-row">
+                                        <span class="info-label">File Name:</span>
+                                        <span class="info-value" id="fileName"></span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">File Size:</span>
+                                        <span class="info-value" id="fileSize"></span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">File Type:</span>
+                                        <span class="info-value" id="fileType"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-display font-bold text-brand-accent">Output</h3>
+                                <button class="btn btn-secondary" onclick="downloadOutput()" id="downloadBtn" style="display: none;">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="text-container">
+                                <div id="outputText" class="text-area" style="min-height: 200px; overflow-wrap: break-word;">
+                                    Output will appear here...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div id="messageArea"></div>
+                    </div>
+                    
+                    <!-- Info & History Sidebar -->
+                    <div class="lg:col-span-1">
+                        <!-- Stats -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Statistics</h3>
+                            <div class="info-card">
+                                <div class="info-row">
+                                    <span class="info-label">Input Length:</span>
+                                    <span class="info-value" id="inputLength">0</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Output Length:</span>
+                                    <span class="info-value" id="outputLength">0</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Mode:</span>
+                                    <span class="info-value" id="currentMode">Encode</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Quick Examples</h3>
+                            <div class="space-y-2">
+                                <button class="btn btn-secondary w-full" onclick="loadExample('hello')">
+                                    <i class="fas fa-bolt"></i> Encode "Hello World"
+                                </button>
+                                <button class="btn btn-secondary w-full" onclick="loadExample('json')">
+                                    <i class="fas fa-code"></i> Encode JSON
+                                </button>
+                                <button class="btn btn-secondary w-full" onclick="loadExample('url')">
+                                    <i class="fas fa-link"></i> Encode URL
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- History -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-display font-bold text-brand-accent">History</h3>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.75rem;" onclick="saveToHistory()">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                            <div id="historyList" class="max-h-96 overflow-y-auto">
+                                <p class="text-brand-text-muted text-sm">No history yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="mt-16">
+                    <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent text-center">Features</h2>
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-text-height text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Text Processing</h3>
+                            <p class="text-brand-text-muted text-sm">Encode/decode any text with UTF-8 support</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-file text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">File Support</h3>
+                            <p class="text-brand-text-muted text-sm">Process any file type to Base64</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-exchange-alt text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Bidirectional</h3>
+                            <p class="text-brand-text-muted text-sm">Easy switching between encode and decode</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-download text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Download Results</h3>
+                            <p class="text-brand-text-muted text-sm">Save encoded/decoded output as file</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Page JavaScript -->
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { collection, addDoc, query, orderBy, limit, getDocs, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        let currentUser = null;
+        let currentMode = 'encode';
+        let currentFile = null;
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                loadHistory();
+            }
+        });
+
+        // Set mode
+        window.setMode = function(mode) {
+            currentMode = mode;
+            document.getElementById('encodeBtn').classList.toggle('active', mode === 'encode');
+            document.getElementById('decodeBtn').classList.toggle('active', mode === 'decode');
+            document.getElementById('processBtnText').textContent = mode === 'encode' ? 'Encode' : 'Decode';
+            document.getElementById('currentMode').textContent = mode === 'encode' ? 'Encode' : 'Decode';
+        };
+
+        // Process text
+        window.processText = function() {
+            const input = document.getElementById('inputText').value;
+            const output = document.getElementById('outputText');
+            
+            if (!input && !currentFile) {
+                showMessage('Please enter text or upload a file', 'error');
+                return;
+            }
+
+            try {
+                let result;
+                if (currentMode === 'encode') {
+                    result = btoa(unescape(encodeURIComponent(input)));
+                } else {
+                    result = decodeURIComponent(escape(atob(input)));
+                }
+                
+                output.textContent = result;
+                updateStats();
+                showMessage(`Successfully ${currentMode}d! `, 'success');
+                document.getElementById('downloadBtn').style.display = 'inline-flex';
+            } catch (e) {
+                showMessage(`Error:  ${e.message}`, 'error');
+                output.textContent = 'Error processing input';
+            }
+        };
+
+        // Handle file selection
+        window.handleFileSelect = function(event) {
+            const file = event.target.files[0];
+            if (! file) return;
+
+            currentFile = file;
+            
+            // Show file info
+            document.getElementById('fileName').textContent = file.name;
+            document. getElementById('fileSize').textContent = formatBytes(file.size);
+            document.getElementById('fileType').textContent = file.type || 'Unknown';
+            document.getElementById('fileInfo').style.display = 'block';
+
+            // Read file
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (currentMode === 'encode') {
+                    const base64 = e.target.result. split(',')[1];
+                    document.getElementById('outputText').textContent = base64;
+                    updateStats();
+                    showMessage('File encoded successfully! ', 'success');
+                    document.getElementById('downloadBtn').style.display = 'inline-flex';
+                } else {
+                    document.getElementById('inputText').value = e.target.result;
+                    showMessage('File loaded.  Click "Decode" to process.', 'success');
+                }
+            };
+
+            if (currentMode === 'encode') {
+                reader.readAsDataURL(file);
+            } else {
+                reader.readAsText(file);
+            }
+        };
+
+        // Drag and drop
+        const uploadArea = document.getElementById('fileUploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e. preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const file = e.dataTransfer. files[0];
+            if (file) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                handleFileSelect({ target: { files: [file] } });
+            }
+        });
+
+        // Swap input/output
+        window.swapInputOutput = function() {
+            const input = document. getElementById('inputText');
+            const output = document.getElementById('outputText');
+            const temp = input. value;
+            input.value = output.textContent === 'Output will appear here...' ? '' : output.textContent;
+            output.textContent = temp || 'Output will appear here...';
+            updateStats();
+        };
+
+        // Clear all
+        window.clearAll = function() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').textContent = 'Output will appear here...';
+            document.getElementById('fileInput').value = '';
+            document. getElementById('fileInfo').style.display = 'none';
+            currentFile = null;
+            updateStats();
+            document.getElementById('messageArea').innerHTML = '';
+            document.getElementById('downloadBtn').style.display = 'none';
+        };
+
+        // Copy output
+        window.copyOutput = function() {
+            const output = document.getElementById('outputText').textContent;
+            if (output === 'Output will appear here...' || output === 'Error processing input') {
+                showMessage('Nothing to copy', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(output).then(() => {
+                showMessage('Copied to clipboard!', 'success');
+            }).catch(() => {
+                showMessage('Failed to copy', 'error');
+            });
+        };
+
+        // Download output
+        window.downloadOutput = function() {
+            const output = document.getElementById('outputText').textContent;
+            if (output === 'Output will appear here...' || output === 'Error processing input') {
+                showMessage('Nothing to download', 'error');
+                return;
+            }
+
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document. createElement('a');
+            a.href = url;
+            a. download = `base64_${currentMode}_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Downloaded successfully!', 'success');
+        };
+
+        // Update statistics
+        function updateStats() {
+            const input = document.getElementById('inputText').value;
+            const output = document.getElementById('outputText').textContent;
+            document.getElementById('inputLength').textContent = input.length;
+            document.getElementById('outputLength').textContent = 
+                output === 'Output will appear here...' ? 0 : output.length;
+        }
+
+        // Monitor input changes
+        document.getElementById('inputText').addEventListener('input', updateStats);
+
+        // Load examples
+        window.loadExample = function(type) {
+            const examples = {
+                'hello': 'Hello, World!',
+                'json':  '{"name": "uniQue-ue", "type": "cybernetics", "active": true}',
+                'url': 'https://unique-ue. com/resources. html? tool=base64&mode=encode'
+            };
+            
+            document.getElementById('inputText').value = examples[type];
+            setMode('encode');
+            updateStats();
+            showMessage('Example loaded.  Click "Encode" to process.', 'success');
+        };
+
+        // Save to history
+        window.saveToHistory = async function() {
+            if (!currentUser) {
+                showMessage('Please sign in to save history', 'error');
+                return;
+            }
+
+            const input = document.getElementById('inputText').value;
+            const output = document.getElementById('outputText').textContent;
+
+            if (!input && output === 'Output will appear here... ') {
+                showMessage('Nothing to save', 'error');
+                return;
+            }
+
+            try {
+                const historyRef = collection(db, 'users', currentUser.uid, 'base64History');
+                await addDoc(historyRef, {
+                    mode: currentMode,
+                    input: input. substring(0, 200),
+                    output: output. substring(0, 200),
+                    timestamp: Timestamp.now()
+                });
+                
+                showMessage('Saved to history!', 'success');
+                loadHistory();
+            } catch (e) {
+                showMessage(`Error saving:  ${e.message}`, 'error');
+            }
+        };
+
+        // Load history
+        async function loadHistory() {
+            if (!currentUser) return;
+
+            const historyList = document.getElementById('historyList');
+            const historyRef = collection(db, 'users', currentUser.uid, 'base64History');
+            const q = query(historyRef, orderBy('timestamp', 'desc'), limit(10));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    historyList.innerHTML = '<p class="text-brand-text-muted text-sm">No history yet</p>';
+                    return;
+                }
+
+                historyList.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.timestamp.toDate().toLocaleString();
+                    
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-brand-accent uppercase">${data.mode}</span>
+                            <span class="text-xs text-brand-text-muted">${date}</span>
+                        </div>
+                        <div class="text-xs text-brand-text-muted truncate">
+                            Input: ${data.input.substring(0, 50)}...
+                        </div>
+                    `;
+                    item.onclick = () => {
+                        document.getElementById('inputText').value = data.input;
+                        setMode(data.mode);
+                        updateStats();
+                    };
+                    
+                    historyList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageArea. innerHTML = '';
+            }, 5000);
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
