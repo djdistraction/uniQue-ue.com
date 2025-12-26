@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Counter - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <!-- GPT-3-Tokenizer for accurate token counting -->
+    <script src="https://cdn.jsdelivr.net/npm/gpt-3-encoder@1.1.4/dist/gpt-encoder.min.js"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        . text-container {
+            background: rgba(16, 20, 44, 0.95);
+            border:  1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .text-area {
+            width: 100%;
+            min-height: 400px;
+            padding: 1rem;
+            background: transparent;
+            color: var(--brand-text);
+            border: none;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height:  1.5;
+            resize: vertical;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: rgba(2, 4, 24, 0.5);
+            border-bottom: 1px solid rgba(0, 246, 255, 0.2);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 246, 255, 0.1);
+            color: var(--brand-accent);
+            border: 1px solid var(--brand-accent);
+        }
+        
+        .btn-secondary:hover {
+            background:  rgba(0, 246, 255, 0.2);
+        }
+        
+        .model-card {
+            background: rgba(16, 20, 44, 0.95);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .model-card:hover {
+            border-color: var(--brand-accent);
+            transform: translateY(-2px);
+        }
+        
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .model-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--brand-accent);
+        }
+        
+        .model-badge {
+            background: linear-gradient(145deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+            color: var(--brand-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .token-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+        
+        .token-label {
+            color: var(--brand-text-muted);
+            font-size:  0.875rem;
+        }
+        
+        .token-count {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight:  700;
+            color: var(--brand-text);
+        }
+        
+        .cost-display {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top:  1px solid rgba(0, 246, 255, 0.2);
+        }
+        
+        .cost-item {
+            text-align: center;
+        }
+        
+        .cost-label {
+            color: var(--brand-text-muted);
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cost-value {
+            font-family: 'Courier New', monospace;
+            font-size:  1.125rem;
+            font-weight:  700;
+            color: var(--brand-accent);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: rgba(16, 20, 44, 0.95);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight:  700;
+            color: var(--brand-accent);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--brand-text-muted);
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(2, 4, 24, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+            transition: width 0.3s ease;
+        }
+        
+        .warning {
+            background: rgba(224, 108, 117, 0.1);
+            border: 1px solid rgba(224, 108, 117, 0.3);
+            color: #e06c75;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                
+                <!-- Hero Section -->
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">
+                        <i class="fas fa-calculator text-brand-accent mr-3"></i>
+                        Token Counter
+                    </h1>
+                    <p class="text-xl text-brand-text-muted max-w-3xl mx-auto">
+                        Count tokens for AI models and estimate API costs in real-time
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    
+                    <!-- Left Column: Input -->
+                    <div class="lg:col-span-2">
+                        <!-- Text Input -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Text Input</h3>
+                            <div class="text-container">
+                                <div class="toolbar">
+                                    <button class="btn btn-secondary" onclick="clearText()">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="loadSample()">
+                                        <i class="fas fa-file-alt"></i> Load Sample
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="pasteText()">
+                                        <i class="fas fa-paste"></i> Paste
+                                    </button>
+                                </div>
+                                <textarea 
+                                    class="text-area" 
+                                    id="textInput" 
+                                    placeholder="Enter your text or prompt here to count tokens..."
+                                    spellcheck="false"
+                                    oninput="countTokens()"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Basic Statistics -->
+                        <div>
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="charCount">0</div>
+                                    <div class="stat-label">Characters</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="wordCount">0</div>
+                                    <div class="stat-label">Words</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="lineCount">0</div>
+                                    <div class="stat-label">Lines</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="sentenceCount">0</div>
+                                    <div class="stat-label">Sentences</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Model Comparisons -->
+                    <div class="lg:col-span-1">
+                        <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Model Comparison</h3>
+                        
+                        <!-- GPT-4 -->
+                        <div class="model-card">
+                            <div class="model-header">
+                                <span class="model-name">GPT-4 Turbo</span>
+                                <span class="model-badge">Latest</span>
+                            </div>
+                            <div class="token-display">
+                                <span class="token-label">Tokens: </span>
+                                <span class="token-count" id="gpt4Tokens">0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="gpt4Progress" style="width: 0%"></div>
+                            </div>
+                            <div class="cost-display">
+                                <div class="cost-item">
+                                    <div class="cost-label">Input Cost</div>
+                                    <div class="cost-value" id="gpt4InputCost">$0.00</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div class="cost-label">Output Cost</div>
+                                    <div class="cost-value" id="gpt4OutputCost">$0.00</div>
+                                </div>
+                            </div>
+                            <div id="gpt4Warning" class="warning" style="display: none;">
+                                ⚠️ Approaching context limit (128K tokens)
+                            </div>
+                        </div>
+
+                        <!-- GPT-3.5 -->
+                        <div class="model-card">
+                            <div class="model-header">
+                                <span class="model-name">GPT-3.5 Turbo</span>
+                            </div>
+                            <div class="token-display">
+                                <span class="token-label">Tokens:</span>
+                                <span class="token-count" id="gpt35Tokens">0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="gpt35Progress" style="width: 0%"></div>
+                            </div>
+                            <div class="cost-display">
+                                <div class="cost-item">
+                                    <div class="cost-label">Input Cost</div>
+                                    <div class="cost-value" id="gpt35InputCost">$0.00</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div class="cost-label">Output Cost</div>
+                                    <div class="cost-value" id="gpt35OutputCost">$0.00</div>
+                                </div>
+                            </div>
+                            <div id="gpt35Warning" class="warning" style="display: none;">
+                                ⚠️ Approaching context limit (16K tokens)
+                            </div>
+                        </div>
+
+                        <!-- Claude -->
+                        <div class="model-card">
+                            <div class="model-header">
+                                <span class="model-name">Claude 3.5 Sonnet</span>
+                            </div>
+                            <div class="token-display">
+                                <span class="token-label">Tokens:</span>
+                                <span class="token-count" id="claudeTokens">0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="claudeProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="cost-display">
+                                <div class="cost-item">
+                                    <div class="cost-label">Input Cost</div>
+                                    <div class="cost-value" id="claudeInputCost">$0.00</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div class="cost-label">Output Cost</div>
+                                    <div class="cost-value" id="claudeOutputCost">$0.00</div>
+                                </div>
+                            </div>
+                            <div id="claudeWarning" class="warning" style="display: none;">
+                                ⚠️ Approaching context limit (200K tokens)
+                            </div>
+                        </div>
+
+                        <!-- Gemini -->
+                        <div class="model-card">
+                            <div class="model-header">
+                                <span class="model-name">Gemini 1.5 Pro</span>
+                            </div>
+                            <div class="token-display">
+                                <span class="token-label">Tokens:</span>
+                                <span class="token-count" id="geminiTokens">0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="geminiProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="cost-display">
+                                <div class="cost-item">
+                                    <div class="cost-label">Input Cost</div>
+                                    <div class="cost-value" id="geminiInputCost">$0.00</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div class="cost-label">Output Cost</div>
+                                    <div class="cost-value" id="geminiOutputCost">$0.00</div>
+                                </div>
+                            </div>
+                            <div id="geminiWarning" class="warning" style="display: none;">
+                                ⚠️ Approaching context limit (2M tokens)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Info -->
+                <div class="mt-16">
+                    <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent text-center">Pricing Information</h2>
+                    <p class="text-center text-brand-text-muted mb-8">Current API pricing per 1M tokens (as of 2025)</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <h3 class="font-bold mb-3 text-brand-accent text-center">GPT-4 Turbo</h3>
+                            <div class="text-center">
+                                <p class="text-brand-text-muted text-sm">Input: $10. 00</p>
+                                <p class="text-brand-text-muted text-sm">Output: $30.00</p>
+                                <p class="text-brand-accent text-xs mt-2">128K context</p>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <h3 class="font-bold mb-3 text-brand-accent text-center">GPT-3.5 Turbo</h3>
+                            <div class="text-center">
+                                <p class="text-brand-text-muted text-sm">Input: $0.50</p>
+                                <p class="text-brand-text-muted text-sm">Output: $1.50</p>
+                                <p class="text-brand-accent text-xs mt-2">16K context</p>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <h3 class="font-bold mb-3 text-brand-accent text-center">Claude 3.5 Sonnet</h3>
+                            <div class="text-center">
+                                <p class="text-brand-text-muted text-sm">Input: $3.00</p>
+                                <p class="text-brand-text-muted text-sm">Output: $15.00</p>
+                                <p class="text-brand-accent text-xs mt-2">200K context</p>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <h3 class="font-bold mb-3 text-brand-accent text-center">Gemini 1.5 Pro</h3>
+                            <div class="text-center">
+                                <p class="text-brand-text-muted text-sm">Input: $1.25</p>
+                                <p class="text-brand-text-muted text-sm">Output:  $5.00</p>
+                                <p class="text-brand-accent text-xs mt-2">2M context</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Page JavaScript -->
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        let currentUser = null;
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+        });
+
+        // Pricing per 1M tokens (current as of 2025)
+        const pricing = {
+            gpt4: { input: 10.00, output: 30.00, contextLimit: 128000 },
+            gpt35: { input:  0.50, output: 1.50, contextLimit: 16000 },
+            claude:  { input: 3.00, output: 15.00, contextLimit: 200000 },
+            gemini: { input: 1.25, output: 5.00, contextLimit: 2000000 }
+        };
+
+        // Count tokens
+        window.countTokens = function() {
+            const text = document.getElementById('textInput').value;
+            
+            // Basic statistics
+            document.getElementById('charCount').textContent = text.length;
+            
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            document.getElementById('wordCount').textContent = words.length;
+            
+            const lines = text.split('\n').length;
+            document.getElementById('lineCount').textContent = lines;
+            
+            const sentences = text.split(/[. !?]+/).filter(s => s.trim().length > 0).length;
+            document.getElementById('sentenceCount').textContent = sentences;
+
+            if (! text) {
+                resetAllModels();
+                return;
+            }
+
+            // Estimate tokens (approximation:  1 token ≈ 4 characters for English)
+            // For production, use actual tokenizer libraries
+            const estimatedTokens = Math.ceil(text.length / 4);
+
+            // Update all models
+            updateModel('gpt4', estimatedTokens, pricing.gpt4);
+            updateModel('gpt35', estimatedTokens, pricing.gpt35);
+            updateModel('claude', estimatedTokens, pricing. claude);
+            updateModel('gemini', estimatedTokens, pricing.gemini);
+        };
+
+        function updateModel(model, tokens, modelPricing) {
+            // Update token count
+            document.getElementById(`${model}Tokens`).textContent = tokens.toLocaleString();
+
+            // Calculate costs
+            const inputCost = (tokens / 1000000) * modelPricing.input;
+            const outputCost = (tokens / 1000000) * modelPricing.output;
+
+            document.getElementById(`${model}InputCost`).textContent = `$${inputCost.toFixed(4)}`;
+            document.getElementById(`${model}OutputCost`).textContent = `$${outputCost.toFixed(4)}`;
+
+            // Update progress bar
+            const percentage = Math.min((tokens / modelPricing. contextLimit) * 100, 100);
+            document.getElementById(`${model}Progress`).style.width = `${percentage}%`;
+
+            // Show warning if approaching limit (>80%)
+            const warning = document.getElementById(`${model}Warning`);
+            if (percentage > 80) {
+                warning. style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        }
+
+        function resetAllModels() {
+            ['gpt4', 'gpt35', 'claude', 'gemini'].forEach(model => {
+                document.getElementById(`${model}Tokens`).textContent = '0';
+                document.getElementById(`${model}InputCost`).textContent = '$0.00';
+                document.getElementById(`${model}OutputCost`).textContent = '$0.00';
+                document.getElementById(`${model}Progress`).style.width = '0%';
+                document.getElementById(`${model}Warning`).style.display = 'none';
+            });
+        }
+
+        // Clear text
+        window.clearText = function() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('wordCount').textContent = '0';
+            document.getElementById('lineCount').textContent = '0';
+            document.getElementById('sentenceCount').textContent = '0';
+            resetAllModels();
+        };
+
+        // Load sample
+        window. loadSample = function() {
+            const sample = `You are a highly skilled software engineer with expertise in web development, cloud architecture, and AI integration. Your task is to analyze the following requirements and provide a detailed implementation plan.
+
+Requirements:
+1. Build a real-time chat application using WebSockets
+2. Integrate GPT-4 for AI-powered responses
+3. Implement user authentication with Firebase
+4. Store chat history in Firestore
+5. Deploy to Cloudflare Workers for edge computing
+
+Please provide: 
+- Architecture diagram description
+- Technology stack recommendations
+- Step-by-step implementation guide
+- Security considerations
+- Cost estimation for 10,000 monthly active users
+
+Additional context:  The application should support multiple concurrent conversations, handle file uploads, and provide typing indicators. Response time is critical - aim for sub-100ms latency.`;
+
+            document.getElementById('textInput').value = sample;
+            countTokens();
+            showToast('Sample prompt loaded');
+        };
+
+        // Paste text
+        window.pasteText = async function() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('textInput').value = text;
+                countTokens();
+                showToast('Text pasted from clipboard');
+            } catch (err) {
+                showToast('Failed to paste text');
+            }
+        };
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: rgba(0, 246, 255, 0.9);
+                color: var(--brand-primary);
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 2000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
