@@ -22,6 +22,3 @@ TO_EMAIL = "your-email@example.com"
 # - GITHUB_PAT (Legacy/Future Use)
 # - HUGGINGFACE_TOKEN (Legacy/Future Use)
 # - SENDGRID_API_KEY (Legacy/Future Use)
-
-[env.production]
-name = "unique-ue-api"
