@@ -1,7 +1,7 @@
 /**
  * api-worker.js
  * UNIFIED Backend for uniQue-ue.com
- * Powered by Gemini 3.0 Pro (Nov 2025) for state-of-the-art reasoning and context.
+ * Powered by Gemini 2.5 Flash (Confirmed Active)
  */
 
 // --- System Prompts for Ghost-Writer & Nexus ---
@@ -17,9 +17,8 @@ const SYSTEM_PROMPTS = {
 };
 
 // MODEL CONFIGURATION
-// Upgraded to Gemini 3.0 Pro based on availability confirmation (Active Preview)
-// Fallback logic could be added, but we are targeting the latest stable preview.
-const MODEL_NAME = "gemini-3.0-pro";
+// Validated via Key-Tester: gemini-2.5-flash is the active endpoint.
+const MODEL_NAME = "gemini-2.5-flash";
 
 export default {
   async fetch(request, env) {
@@ -70,7 +69,7 @@ export default {
 
 /**
  * Handle prompt generation (Graphics Studio)
- * Updated to use Gemini 3.0 Pro
+ * Updated to use Gemini 2.5 Flash
  */
 async function handlePromptGeneration(request, env, corsHeaders) {
   try {
@@ -171,7 +170,7 @@ async function handlePromptGeneration(request, env, corsHeaders) {
 
 /**
  * Handle Chat (Draven)
- * Updated to use Gemini 3.0 Pro
+ * Updated to use Gemini 2.5 Flash
  */
 async function handleChat(request, env, corsHeaders) {
   try {
