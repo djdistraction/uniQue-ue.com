@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Transformer - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        . text-container {
+            background: rgba(16, 20, 44, 0.95);
+            border:  1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .text-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            background: transparent;
+            color: var(--brand-text);
+            border: none;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: rgba(2, 4, 24, 0.5);
+            border-bottom: 1px solid rgba(0, 246, 255, 0.2);
+        }
+        
+        .transform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .transform-btn {
+            padding: 0.75rem 1rem;
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius:  0.375rem;
+            color: var(--brand-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .transform-btn:hover {
+            border-color: var(--brand-accent);
+            background: rgba(16, 20, 44, 1);
+            transform: translateY(-2px);
+        }
+        
+        . transform-btn i {
+            color: var(--brand-accent);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, var(--brand-accent), rgba(0, 246, 255, 0.8));
+            color: var(--brand-primary);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(145deg, var(--brand-accent-hover), var(--brand-accent));
+            box-shadow: 0 0 15px rgba(0, 246, 255, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 246, 255, 0.1);
+            color: var(--brand-accent);
+            border: 1px solid var(--brand-accent);
+        }
+        
+        .btn-secondary:hover {
+            background:  rgba(0, 246, 255, 0.2);
+        }
+        
+        .stat-card {
+            background: rgba(16, 20, 44, 0.9);
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 246, 255, 0.1);
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            color: var(--brand-text-muted);
+            font-size:  0.875rem;
+        }
+        
+        .stat-value {
+            color: var(--brand-accent);
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .category-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand-accent);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom:  2px solid rgba(0, 246, 255, 0.2);
+        }
+        
+        .category-header: first-child {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed background particle canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+    
+        <!-- Global Header Component -->
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12 md:py-20">
+                
+                <!-- Hero Section -->
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-display font-bold mb-4 heading-glow">
+                        <i class="fas fa-font text-brand-accent mr-3"></i>
+                        Text Transformer
+                    </h1>
+                    <p class="text-xl text-brand-text-muted max-w-3xl mx-auto">
+                        Transform text between cases, encode/decode, and perform various text operations
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    
+                    <!-- Left & Center Columns:  Input/Output -->
+                    <div class="lg:col-span-2">
+                        <!-- Input -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Input Text</h3>
+                            <div class="text-container">
+                                <div class="toolbar">
+                                    <button class="btn btn-secondary" onclick="pasteText()">
+                                        <i class="fas fa-paste"></i> Paste
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="clearInput()">
+                                        <i class="fas fa-trash"></i> Clear Input
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="loadSample()">
+                                        <i class="fas fa-file-alt"></i> Load Sample
+                                    </button>
+                                </div>
+                                <textarea 
+                                    class="text-area" 
+                                    id="inputText" 
+                                    placeholder="Enter or paste text here..."
+                                    spellcheck="false"
+                                    oninput="updateStats()"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Output -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-display font-bold text-brand-accent">Output</h3>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-secondary" onclick="copyOutput()">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="clearOutput()">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-container">
+                                <textarea 
+                                    class="text-area" 
+                                    id="outputText" 
+                                    placeholder="Transformed text will appear here..."
+                                    spellcheck="false"
+                                    readonly
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Transformations & Stats -->
+                    <div class="lg:col-span-1">
+                        <!-- Statistics -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Statistics</h3>
+                            <div class="stat-card">
+                                <div class="stat-row">
+                                    <span class="stat-label">Characters: </span>
+                                    <span class="stat-value" id="charCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Characters (no spaces):</span>
+                                    <span class="stat-value" id="charNoSpaceCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Words:</span>
+                                    <span class="stat-value" id="wordCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Lines:</span>
+                                    <span class="stat-value" id="lineCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Sentences:</span>
+                                    <span class="stat-value" id="sentenceCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Paragraphs:</span>
+                                    <span class="stat-value" id="paragraphCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transformations -->
+                        <div>
+                            <h3 class="text-xl font-display font-bold mb-4 text-brand-accent">Transformations</h3>
+                            
+                            <!-- Case Transformations -->
+                            <div class="category-header">
+                                <i class="fas fa-text-height mr-2"></i>Case
+                            </div>
+                            <div class="transform-grid">
+                                <button class="transform-btn" onclick="applyTransform('uppercase')">
+                                    <i class="fas fa-arrow-up"></i> UPPERCASE
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('lowercase')">
+                                    <i class="fas fa-arrow-down"></i> lowercase
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('titlecase')">
+                                    <i class="fas fa-heading"></i> Title Case
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('sentencecase')">
+                                    <i class="fas fa-paragraph"></i> Sentence case
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('togglecase')">
+                                    <i class="fas fa-random"></i> tOGGLE cASE
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('camelcase')">
+                                    <i class="fas fa-code"></i> camelCase
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('snakecase')">
+                                    <i class="fas fa-minus"></i> snake_case
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('kebabcase')">
+                                    <i class="fas fa-grip-lines"></i> kebab-case
+                                </button>
+                            </div>
+
+                            <!-- Encoding -->
+                            <div class="category-header">
+                                <i class="fas fa-code mr-2"></i>Encoding
+                            </div>
+                            <div class="transform-grid">
+                                <button class="transform-btn" onclick="applyTransform('urlencode')">
+                                    <i class="fas fa-link"></i> URL Encode
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('urldecode')">
+                                    <i class="fas fa-unlink"></i> URL Decode
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('htmlencode')">
+                                    <i class="fas fa-code"></i> HTML Encode
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('htmldecode')">
+                                    <i class="fas fa-file-code"></i> HTML Decode
+                                </button>
+                            </div>
+
+                            <!-- Text Operations -->
+                            <div class="category-header">
+                                <i class="fas fa-tools mr-2"></i>Operations
+                            </div>
+                            <div class="transform-grid">
+                                <button class="transform-btn" onclick="applyTransform('reverse')">
+                                    <i class="fas fa-undo"></i> Reverse
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('sort')">
+                                    <i class="fas fa-sort-alpha-down"></i> Sort Lines
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('removeduplicates')">
+                                    <i class="fas fa-copy"></i> Remove Duplicates
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('removespaces')">
+                                    <i class="fas fa-compress"></i> Remove Spaces
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('removelinebreaks')">
+                                    <i class="fas fa-stream"></i> Remove Line Breaks
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('trim')">
+                                    <i class="fas fa-cut"></i> Trim
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('extractnumbers')">
+                                    <i class="fas fa-hashtag"></i> Extract Numbers
+                                </button>
+                                <button class="transform-btn" onclick="applyTransform('extractemails')">
+                                    <i class="fas fa-at"></i> Extract Emails
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="mt-16">
+                    <h2 class="text-3xl font-display font-bold mb-6 text-brand-accent text-center">Features</h2>
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-text-height text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Case Conversion</h3>
+                            <p class="text-brand-text-muted text-sm">8 different case transformation options</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-code text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Encoding/Decoding</h3>
+                            <p class="text-brand-text-muted text-sm">URL and HTML encoding support</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-tools text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Text Operations</h3>
+                            <p class="text-brand-text-muted text-sm">Reverse, sort, extract, and more</p>
+                        </div>
+                        <div class="text-center p-6 bg-brand-secondary/30 rounded-lg border border-brand-accent/20">
+                            <i class="fas fa-chart-bar text-4xl text-brand-accent mb-4"></i>
+                            <h3 class="font-bold mb-2">Live Statistics</h3>
+                            <p class="text-brand-text-muted text-sm">Real-time character and word counts</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Global Footer Component -->
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+        
+    </div>
+
+    <!-- Page JavaScript -->
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        let currentUser = null;
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+        });
+
+        // Text transformation functions
+        const transforms = {
+            uppercase: (text) => text.toUpperCase(),
+            lowercase: (text) => text.toLowerCase(),
+            titlecase: (text) => text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
+            sentencecase: (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(),
+            togglecase: (text) => text.split('').map(char => char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()).join(''),
+            camelcase: (text) => text.replace(/(? :^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase()).replace(/\s+/g, ''),
+            snakecase: (text) => text.toLowerCase().replace(/\s+/g, '_'),
+            kebabcase: (text) => text.toLowerCase().replace(/\s+/g, '-'),
+            urlencode: (text) => encodeURIComponent(text),
+            urldecode: (text) => {
+                try {
+                    return decodeURIComponent(text);
+                } catch (e) {
+                    return 'Error: Invalid URL encoding';
+                }
+            },
+            htmlencode: (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'),
+            htmldecode:  (text) => {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = text;
+                return textarea. value;
+            },
+            reverse: (text) => text.split('').reverse().join(''),
+            sort: (text) => text.split('\n').sort().join('\n'),
+            removeduplicates: (text) => [...new Set(text.split('\n'))].join('\n'),
+            removespaces: (text) => text.replace(/\s+/g, ''),
+            removelinebreaks: (text) => text.replace(/\n/g, ' '),
+            trim: (text) => text.split('\n').map(line => line.trim()).join('\n'),
+            extractnumbers: (text) => (text.match(/\d+/g) || []).join('\n'),
+            extractemails:  (text) => (text.match(/[\w.-]+@[\w.-]+\.\w+/g) || []).join('\n')
+        };
+
+        // Apply transformation
+        window.applyTransform = function(type) {
+            const input = document.getElementById('inputText').value;
+            
+            if (!input) {
+                showToast('Please enter some text first');
+                return;
+            }
+
+            const output = transforms[type](input);
+            document.getElementById('outputText').value = output;
+            showToast(`Applied:  ${type}`);
+        };
+
+        // Update statistics
+        window.updateStats = function() {
+            const text = document.getElementById('inputText').value;
+            
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('charNoSpaceCount').textContent = text.replace(/\s/g, '').length;
+            
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            document.getElementById('wordCount').textContent = words.length;
+            
+            const lines = text.split('\n').length;
+            document.getElementById('lineCount').textContent = lines;
+            
+            const sentences = text. split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            document.getElementById('sentenceCount').textContent = sentences;
+            
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
+            document.getElementById('paragraphCount').textContent = paragraphs;
+        };
+
+        // Paste text
+        window.pasteText = async function() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('inputText').value = text;
+                updateStats();
+                showToast('Text pasted from clipboard');
+            } catch (err) {
+                showToast('Failed to paste text');
+            }
+        };
+
+        // Copy output
+        window.copyOutput = function() {
+            const output = document.getElementById('outputText').value;
+            
+            if (! output) {
+                showToast('Nothing to copy');
+                return;
+            }
+
+            navigator.clipboard.writeText(output).then(() => {
+                showToast('Copied to clipboard! ');
+            });
+        };
+
+        // Clear functions
+        window.clearInput = function() {
+            document.getElementById('inputText').value = '';
+            updateStats();
+        };
+
+        window.clearOutput = function() {
+            document.getElementById('outputText').value = '';
+        };
+
+        // Load sample text
+        window.loadSample = function() {
+            const sample = `The quick brown fox jumps over the lazy dog. 
+This is a sample text for demonstration purposes.
+It includes multiple lines, sentences, and paragraphs. 
+
+You can transform this text using the various options available.
+Try different transformations to see how they work! 
+
+Contact us at info@unique-ue.com or visit https://unique-ue.com`;
+            
+            document.getElementById('inputText').value = sample;
+            updateStats();
+            showToast('Sample text loaded');
+        };
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: rgba(0, 246, 255, 0.9);
+                color: var(--brand-primary);
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 2000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize stats
+        updateStats();
+    </script>
+</body>
+</html>
