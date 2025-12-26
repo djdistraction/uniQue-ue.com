@@ -57,8 +57,8 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Configuration
-        const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev"; 
+        // Configuration - UPDATED WITH YOUR CLOUDFLARE WORKER ADDRESS
+        const WORKER_URL = "https://unique-ue-api.unique-ue-ai-proxy.workers.dev/chat"; 
         
         const CAPABILITIES = [
             "General Assistance", "Brainstorming Ideas", "Character Development", "World-Building", 
@@ -77,6 +77,7 @@
             const [appId, setAppId] = useState(null);
 
             useEffect(() => {
+                // Wait for modules to be ready or config to exist
                 if (!window.firebaseModules || !window.__firebase_config) return;
 
                 const { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore } = window.firebaseModules;
@@ -262,7 +263,8 @@
                     // Prepare Context
                     let contextInjection = "";
                     if (useContext) {
-                        // SEND EVERYTHING - Gemini 2.5 Flash can handle it!
+                        // SEND EVERYTHING - Gemini 3.0 Pro / 2.5 Flash can handle it!
+                        // No slicing required for total recall
                         contextInjection = `\n[CONTEXT DATA]\nManuscript:\n${manuscript}\n\nGrimoire/Notes:\n${grimoire}\n[END CONTEXT]\n`;
                     }
 
@@ -284,12 +286,12 @@
                             })
                         });
 
-                        if (!response.ok) throw new Error("Backend connection failed");
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         const data = await response.json();
                         reply = data.reply;
                     } catch (err) {
                         console.warn("API Error:", err);
-                        reply = `**[Offline Mode]**\n\nI cannot reach the cloud. Please check your connection.`;
+                        reply = `**[Connection Error]**\n\nI cannot reach the cloud brain. \n\nCheck:\n1. Is 'api-worker.js' deployed?\n2. Is the URL correct? (${WORKER_URL})`;
                     }
 
                     setMessages(prev => [...prev, { role: "assistant", content: reply }]);
@@ -323,7 +325,7 @@
                             <h1 className="text-xl font-bold text-cyan-400 tracking-wider flex items-center gap-2">
                                 <i className="fa-solid fa-ghost"></i> DRAVEN
                             </h1>
-                            <p className="text-xs text-slate-500 mt-1">Ghost-Writer Engine v2.5</p>
+                            <p className="text-xs text-slate-500 mt-1">Ghost-Writer Engine v3.0</p>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-3 space-y-1">
