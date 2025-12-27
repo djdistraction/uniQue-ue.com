@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Minute Timer</title>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Dark Background */
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace; /* Digital Clock look */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        #timer {
+            font-size: 25vw; /* Responsive size: 25% of viewport width */
+            font-weight: bold;
+        }
+
+        #message {
+            font-size: 5vw;
+            margin-top: 20px;
+            color: #aaaaaa;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Style for when time is up */
+        body.expired {
+            background-color: #cc0000; /* Red Background */
+            color: white;
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer">05:00</div>
+    <div id="message">Countdown Initiated</div>
+
+    <script>
+        // Set the duration (5 minutes * 60 seconds)
+        let timeLeft = 5 * 60; 
+
+        const timerElement = document.getElementById('timer');
+        const messageElement = document.getElementById('message');
+        const bodyElement = document.body;
+
+        const countdown = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            // Add leading zero if seconds is less than 10
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            // Display the result
+            timerElement.textContent = `0${minutes}:${seconds}`;
+
+            // Check if timer is finished
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = "00:00";
+                messageElement.textContent = "TIME IS UP";
+                bodyElement.classList.add('expired'); // Triggers red background
+            } else {
+                timeLeft--;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
