@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYE Countdown</title>
+    <style>
+        :root {
+            /* Default Theme: Eyes Wide Shut (Black Tie & Gold) */
+            --bg-color: #050505;
+            --text-primary: #d4af37; /* Metallic Gold */
+            --text-secondary: #fefefe;
+            --accent-color: #8a6e2f;
+            --font-main: 'Cinzel', serif; /* Elegant serif */
+            --glow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Minimalist Theme */
+        [data-theme="minimal"] {
+            --bg-color: #ffffff;
+            --text-primary: #000000;
+            --text-secondary: #333333;
+            --accent-color: #666666;
+            --font-main: 'Helvetica Neue', sans-serif;
+            --glow: none;
+        }
+
+        /* Neon Theme */
+        [data-theme="neon"] {
+            --bg-color: #090014;
+            --text-primary: #ff00ff;
+            --text-secondary: #00ffff;
+            --accent-color: #9d00ff;
+            --font-main: 'Courier New', monospace;
+            --glow: 0 0 15px #ff00ff;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* Background Particle/Glitter Effect */
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: rise 10s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Main Container */
+        .container {
+            z-index: 2;
+            text-align: center;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 3vw;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: var(--glow);
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* The Timer Grid */
+        #timer {
+            display: flex;
+            justify-content: center;
+            gap: 2vw;
+            font-weight: 700;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .number {
+            font-size: 15vw;
+            line-height: 1;
+            background: linear-gradient(180deg, var(--text-primary), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 0px 10px rgba(0,0,0,0.5));
+        }
+
+        .label {
+            font-size: 1.5vw;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-top: 10px;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        /* Controls Panel (Hidden in Fullscreen) */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: opacity 0.3s;
+        }
+
+        .controls:hover {
+            opacity: 1;
+        }
+        
+        /* Auto-hide controls after inaction could be added, but hover is safer for interaction */
+
+        select, button {
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 5vw; }
+            .number { font-size: 18vw; }
+            .label { font-size: 3vw; }
+            .controls { flex-direction: column; bottom: 10px; }
+        }
+
+        /* Fullscreen Utility */
+        .fullscreen-hide { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <div id="particles"></div>
+
+    <div class="container">
+        <h1 id="headerText">The Final Countdown</h1>
+        <div id="timer">
+            <div class="time-unit">
+                <span class="number" id="days">00</span>
+                <span class="label">Days</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="hours">00</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="minutes">00</span>
+                <span class="label">Mins</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="seconds">00</span>
+                <span class="label">Secs</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls" id="controlsPanel">
+        <select id="timezoneSelector" onchange="updateTimezone()">
+            <option value="-6">Central Time (Default)</option>
+            <option value="-5">Eastern Time</option>
+            <option value="-8">Pacific Time</option>
+            <option value="-7">Mountain Time</option>
+            <option value="0">GMT/UTC</option>
+        </select>
+
+        <select id="themeSelector" onchange="changeTheme()">
+            <option value="gold">Theme: Eyes Wide Shut</option>
+            <option value="neon">Theme: Cyberpunk Neon</option>
+            <option value="minimal">Theme: Studio Minimal</option>
+        </select>
+
+        <button onclick="toggleFullscreen()">⛶ Fullscreen (Stream Mode)</button>
+    </div>
+
+    <script>
+        // Configuration
+        let timezoneOffset = -6; // Default to Central Standard Time
+        
+        // Glitter Effect Logic
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for(let i=0; i<particleCount; i++){
+                let p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // Timer Logic
+        function updateTimer() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            // Determine target: Midnight (00:00:00) on Jan 1st of next year
+            // We use UTC methods to manually construct the target based on the selected offset
+            // Target is Jan 1st Next Year, 00:00:00 in the target timezone
+            
+            // Calculate current UTC time in ms
+            const utcNow = now.getTime() + (now.getTimezoneOffset() * 60000);
+            
+            // Target Time construction
+            let targetYear = currentYear + 1;
+            // If we are currently in Jan 1st but before the offset midnight, we might need logic here,
+            // but for a generic countdown, aiming for next Jan 1 is standard.
+            
+            // Create a date object for Jan 1st of next year at 00:00:00 UTC
+            // Then subtract the offset to get the specific timezone's midnight in UTC
+            // Example: Central (-6) midnight is 06:00 UTC.
+            const targetDate = new Date(Date.UTC(targetYear, 0, 1, 0, 0, 0));
+            // Adjust target by removing the offset (e.g. if offset is -6h, we add 6h to UTC time to find that specific midnight)
+            const targetTime = targetDate.getTime() - (timezoneOffset * 3600000);
+
+            const diff = targetTime - utcNow;
+
+            if (diff <= 0) {
+                // New Year has arrived!
+                document.getElementById("headerText").innerText = "HAPPY NEW YEAR";
+                document.getElementById("days").innerText = "20";
+                document.getElementById("hours").innerText = "2" + (String(targetYear).slice(-1)); // e.g. 2026
+                document.getElementById("minutes").innerText = "!!";
+                document.getElementById("seconds").innerText = "!!";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            document.getElementById("days").innerText = d < 10 ? "0" + d : d;
+            document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
+            document.getElementById("minutes").innerText = m < 10 ? "0" + m : m;
+            document.getElementById("seconds").innerText = s < 10 ? "0" + s : s;
+        }
+
+        // Controls Logic
+        function updateTimezone() {
+            const selector = document.getElementById('timezoneSelector');
+            timezoneOffset = parseFloat(selector.value);
+        }
+
+        function changeTheme() {
+            const selector = document.getElementById('themeSelector');
+            document.body.setAttribute('data-theme', selector.value);
+            
+            // Adjust particles based on theme
+            const particles = document.getElementById('particles');
+            if(selector.value === 'minimal') {
+                particles.style.display = 'none';
+            } else {
+                particles.style.display = 'block';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                // Optional: Fade out controls in fullscreen
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Initialize
+        createParticles();
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Run once immediately
+
+    </script>
+</body>
+</html>
