@@ -227,6 +227,27 @@
 </head>
 
 <body>
+    <!-- Tier Check Modal -->
+    <div id="tier-check-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+        <div class="bg-brand-secondary border-2 border-brand-magenta/50 rounded-lg p-8 max-w-md w-full text-center">
+            <h2 class="text-3xl font-bold mb-4 text-brand-magenta">Pro Subscription Required</h2>
+            <p class="text-xl mb-6 text-brand-text-muted">
+                The Qore with persistent memory is available for Pro, Creator, Lifetime, and Developer tiers.
+            </p>
+            <p class="text-brand-text-muted mb-6">
+                Upgrade now to unlock this powerful neural interface.
+            </p>
+            <div class="space-y-3">
+                <a href="/pricing.html" class="block w-full bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                    View Pricing Plans
+                </a>
+                <a href="/index.html" class="block w-full bg-brand-secondary border border-brand-accent/30 text-brand-text font-bold py-3 px-8 rounded-lg hover:bg-brand-accent/10">
+                    Return Home
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Fixed background particle canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
     
@@ -469,6 +490,30 @@
     <!-- The Qore Core -->
     <script type="module">
         import { initialize } from './qore-core.js';
+        import { auth } from './firebase-config.js';
+        import { initSubscriptionManager } from './subscription-manager.js';
+        
+        let subscriptionManager = null;
+        
+        // Check tier access on load
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                // Not logged in - show modal
+                document.getElementById('tier-check-modal').classList.remove('hidden');
+                return;
+            }
+            
+            subscriptionManager = await initSubscriptionManager();
+            
+            if (!subscriptionManager.canAccessQore()) {
+                // Insufficient tier - show modal
+                document.getElementById('tier-check-modal').classList.remove('hidden');
+                return;
+            }
+            
+            // User has access - hide modal and initialize
+            document.getElementById('tier-check-modal').classList.add('hidden');
+        });
         
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', async () => {
