@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        .pricing-card {
+            background: linear-gradient(145deg, rgba(16, 20, 44, 0.95), rgba(2, 4, 24, 0.9));
+            border: 2px solid rgba(0, 246, 255, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 246, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+        
+        .pricing-card:hover::before {
+            left: 100%;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--brand-accent);
+            box-shadow: 0 20px 40px rgba(0, 246, 255, 0.3);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--brand-magenta);
+            background: linear-gradient(145deg, rgba(240, 0, 184, 0.1), rgba(16, 20, 44, 0.95));
+        }
+        
+        .pricing-card.featured:hover {
+            border-color: var(--brand-magenta);
+            box-shadow: 0 20px 40px rgba(240, 0, 184, 0.4);
+        }
+        
+        .price-tag {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--brand-accent), var(--brand-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .feature-check {
+            color: var(--brand-accent);
+            font-weight: bold;
+        }
+        
+        .feature-cross {
+            color: var(--brand-text-muted);
+        }
+        
+        .tool-card {
+            background: linear-gradient(145deg, rgba(16, 20, 44, 0.9), rgba(2, 4, 24, 0.9));
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand-accent);
+            box-shadow: 0 10px 20px rgba(0, 246, 255, 0.2);
+        }
+        
+        .price-toggle {
+            background: rgba(16, 20, 44, 0.8);
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            border-radius: 2rem;
+            padding: 0.5rem;
+            display: inline-flex;
+            gap: 0.5rem;
+        }
+        
+        .toggle-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .toggle-btn.active {
+            background: linear-gradient(135deg, var(--brand-accent), var(--brand-magenta));
+            color: var(--brand-primary);
+        }
+        
+        .save-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <main class="pt-24 pb-16">
+            <div class="container mx-auto px-6">
+                
+                <!-- Hero Section -->
+                <div class="text-center mb-12">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-4 heading-glow">
+                        Choose Your Plan
+                    </h1>
+                    <p class="text-xl text-brand-text-muted mb-8">
+                        Unlock powerful AI tools and features tailored to your needs
+                    </p>
+                    
+                    <!-- Billing Toggle -->
+                    <div class="flex justify-center items-center gap-4 mb-8">
+                        <div class="price-toggle">
+                            <button id="toggle-monthly" class="toggle-btn active">Monthly</button>
+                            <button id="toggle-yearly" class="toggle-btn">
+                                Yearly
+                                <span class="save-badge">Save 20%</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Tiers -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    
+                    <!-- FREE TIER -->
+                    <div class="pricing-card">
+                        <h3 class="text-2xl font-bold mb-2">Free</h3>
+                        <div class="price-tag mb-4">$0</div>
+                        <p class="text-brand-text-muted mb-6">Forever free</p>
+                        
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✅</span> Full Writer's Room access</li>
+                            <li><span class="feature-check">✅</span> Full Graphics Studio access</li>
+                            <li><span class="feature-check">✅</span> All utility tools</li>
+                            <li><span class="feature-cross">❌</span> No project saving</li>
+                            <li><span class="feature-cross">❌</span> No Qore memory</li>
+                        </ul>
+                        
+                        <button class="w-full bg-brand-accent/20 text-brand-accent font-bold py-3 px-6 rounded-lg border-2 border-brand-accent/50 hover:bg-brand-accent/30 transition-all">
+                            Current Plan
+                        </button>
+                    </div>
+                    
+                    <!-- PRO TIER -->
+                    <div class="pricing-card">
+                        <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                        <div class="price-tag mb-4">
+                            <span class="monthly-price">$14.99</span>
+                            <span class="yearly-price hidden">$143.90</span>
+                        </div>
+                        <p class="text-brand-text-muted mb-6">
+                            <span class="monthly-price">per month</span>
+                            <span class="yearly-price hidden">per year</span>
+                        </p>
+                        
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✅</span> Everything in Free</li>
+                            <li><span class="feature-check">✅</span> The Qore with memory</li>
+                            <li><span class="feature-check">✅</span> Unlimited project saves</li>
+                            <li><span class="feature-check">✅</span> Auto context passing</li>
+                            <li><span class="feature-check">✅</span> Cloud sync</li>
+                            <li><span class="feature-check">✅</span> Purchase tools à la carte</li>
+                        </ul>
+                        
+                        <button class="w-full bg-gradient-to-r from-brand-accent to-blue-500 text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-all" onclick="subscribeToPlan('pro')">
+                            Upgrade to Pro
+                        </button>
+                    </div>
+                    
+                    <!-- CREATOR TIER (Featured) -->
+                    <div class="pricing-card featured">
+                        <div class="absolute top-0 right-0 bg-brand-magenta text-white px-4 py-1 text-sm font-bold rounded-bl-lg">
+                            POPULAR
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Creator</h3>
+                        <div class="price-tag mb-4">
+                            <span class="monthly-price">$49.99</span>
+                            <span class="yearly-price hidden">$479.90</span>
+                        </div>
+                        <p class="text-brand-text-muted mb-6">
+                            <span class="monthly-price">per month</span>
+                            <span class="yearly-price hidden">per year</span>
+                        </p>
+                        
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✅</span> Everything in Pro</li>
+                            <li><span class="feature-check">✅</span> ALL tools unlocked</li>
+                            <li><span class="feature-check">✅</span> Commercial usage rights</li>
+                            <li><span class="feature-check">✅</span> 500 images/month</li>
+                            <li><span class="feature-check">✅</span> 100 animations/month</li>
+                            <li><span class="feature-check">✅</span> 10,000 API calls/month</li>
+                            <li><span class="feature-check">✅</span> Extend limits (+$4.99/mo)</li>
+                        </ul>
+                        
+                        <button class="w-full bg-gradient-to-r from-brand-magenta to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-all" onclick="subscribeToPlan('creator')">
+                            Upgrade to Creator
+                        </button>
+                    </div>
+                    
+                    <!-- LIFETIME TIER -->
+                    <div class="pricing-card">
+                        <h3 class="text-2xl font-bold mb-2">Lifetime</h3>
+                        <div class="price-tag mb-4">$499</div>
+                        <p class="text-brand-text-muted mb-6">One-time payment</p>
+                        
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✅</span> Everything unlocked</li>
+                            <li><span class="feature-check">✅</span> NO LIMITS ever</li>
+                            <li><span class="feature-check">✅</span> Early access (30 days)</li>
+                            <li><span class="feature-check">✅</span> Lifetime updates</li>
+                            <li><span class="feature-check">✅</span> API access</li>
+                            <li><span class="feature-check">✅</span> Never pay again</li>
+                        </ul>
+                        
+                        <button class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-all" onclick="subscribeToPlan('lifetime')">
+                            Get Lifetime Access
+                        </button>
+                    </div>
+                    
+                </div>
+                
+                <!-- Creator Limit Extensions -->
+                <div class="max-w-4xl mx-auto mb-16">
+                    <div class="pricing-card">
+                        <h2 class="text-3xl font-bold mb-4 text-center">Creator Limit Extensions</h2>
+                        <p class="text-center text-brand-text-muted mb-6">
+                            Need more? Extend your monthly limits for just $4.99/mo per increment
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-brand-accent mb-2">+500 Images</div>
+                                <p class="text-brand-text-muted">per extension</p>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-brand-accent mb-2">+100 Animations</div>
+                                <p class="text-brand-text-muted">per extension</p>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-brand-accent mb-2">+10,000 API Calls</div>
+                                <p class="text-brand-text-muted">per extension</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- À La Carte Tools -->
+                <div class="mb-16">
+                    <h2 class="text-4xl font-bold text-center mb-4 heading-glow">À La Carte Tools</h2>
+                    <p class="text-center text-brand-text-muted mb-8">
+                        Pro tier required. Purchase individual tools at your own pace.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- MIDI Controller -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🎵</div>
+                            <h3 class="text-xl font-bold mb-2">MIDI Controller</h3>
+                            <p class="text-brand-text-muted mb-4">Advanced MIDI control interface</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('midi_controller', 'onetime', 49)">
+                                    One-time: $49
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('midi_controller', 'monthly', 4.99)">
+                                    Monthly: $4.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('midi_controller', 'yearly', 47.90)">
+                                    Yearly: $47.90/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Animation Studio -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🎬</div>
+                            <h3 class="text-xl font-bold mb-2">Animation Studio</h3>
+                            <p class="text-brand-text-muted mb-4">Professional animation tools</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('animation_studio', 'onetime', 39)">
+                                    One-time: $39
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('animation_studio', 'monthly', 3.99)">
+                                    Monthly: $3.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('animation_studio', 'yearly', 38.30)">
+                                    Yearly: $38.30/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Graphics -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🎨</div>
+                            <h3 class="text-xl font-bold mb-2">Advanced Graphics</h3>
+                            <p class="text-brand-text-muted mb-4">Pro graphics capabilities</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('advanced_graphics', 'onetime', 29)">
+                                    One-time: $29
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('advanced_graphics', 'monthly', 2.99)">
+                                    Monthly: $2.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('advanced_graphics', 'yearly', 28.70)">
+                                    Yearly: $28.70/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Python Runtime -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🐍</div>
+                            <h3 class="text-xl font-bold mb-2">Python Runtime</h3>
+                            <p class="text-brand-text-muted mb-4">Execute Python code</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('python_runtime', 'onetime', 29)">
+                                    One-time: $29
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('python_runtime', 'monthly', 2.99)">
+                                    Monthly: $2.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('python_runtime', 'yearly', 28.70)">
+                                    Yearly: $28.70/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Analyzer -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">📊</div>
+                            <h3 class="text-xl font-bold mb-2">Data Analyzer</h3>
+                            <p class="text-brand-text-muted mb-4">Advanced data analysis</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('data_analyzer', 'onetime', 19)">
+                                    One-time: $19
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('data_analyzer', 'monthly', 1.99)">
+                                    Monthly: $1.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('data_analyzer', 'yearly', 19.10)">
+                                    Yearly: $19.10/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Voice Synthesis -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🎙️</div>
+                            <h3 class="text-xl font-bold mb-2">Voice Synthesis</h3>
+                            <p class="text-brand-text-muted mb-4">AI voice generation</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('voice_synthesis', 'onetime', 39)">
+                                    One-time: $39
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('voice_synthesis', 'monthly', 3.99)">
+                                    Monthly: $3.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('voice_synthesis', 'yearly', 38.30)">
+                                    Yearly: $38.30/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Web Scraper -->
+                        <div class="tool-card">
+                            <div class="text-4xl mb-4">🌐</div>
+                            <h3 class="text-xl font-bold mb-2">Web Scraper</h3>
+                            <p class="text-brand-text-muted mb-4">Extract web data easily</p>
+                            <div class="space-y-2">
+                                <button class="w-full bg-brand-accent text-brand-primary py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('web_scraper', 'onetime', 29)">
+                                    One-time: $29
+                                </button>
+                                <button class="w-full bg-blue-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('web_scraper', 'monthly', 2.99)">
+                                    Monthly: $2.99/mo
+                                </button>
+                                <button class="w-full bg-purple-500 text-white py-2 px-4 rounded font-semibold hover:opacity-90" onclick="purchaseTool('web_scraper', 'yearly', 28.70)">
+                                    Yearly: $28.70/yr
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { auth, WORKER_URL } from './firebase-config.js';
+        import { initSubscriptionManager } from './subscription-manager.js';
+        
+        let subscriptionManager = null;
+        let billingCycle = 'monthly';
+        
+        // Initialize subscription manager
+        auth.onAuthStateChanged(async (user) => {
+            subscriptionManager = await initSubscriptionManager();
+        });
+        
+        // Billing toggle
+        document.getElementById('toggle-monthly').addEventListener('click', () => {
+            billingCycle = 'monthly';
+            updateBillingToggle();
+            updatePrices();
+        });
+        
+        document.getElementById('toggle-yearly').addEventListener('click', () => {
+            billingCycle = 'yearly';
+            updateBillingToggle();
+            updatePrices();
+        });
+        
+        function updateBillingToggle() {
+            const monthlyBtn = document.getElementById('toggle-monthly');
+            const yearlyBtn = document.getElementById('toggle-yearly');
+            
+            if (billingCycle === 'monthly') {
+                monthlyBtn.classList.add('active');
+                yearlyBtn.classList.remove('active');
+            } else {
+                monthlyBtn.classList.remove('active');
+                yearlyBtn.classList.add('active');
+            }
+        }
+        
+        function updatePrices() {
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const yearlyPrices = document.querySelectorAll('.yearly-price');
+            
+            if (billingCycle === 'monthly') {
+                monthlyPrices.forEach(el => el.classList.remove('hidden'));
+                yearlyPrices.forEach(el => el.classList.add('hidden'));
+            } else {
+                monthlyPrices.forEach(el => el.classList.add('hidden'));
+                yearlyPrices.forEach(el => el.classList.remove('hidden'));
+            }
+        }
+        
+        // Subscribe to plan
+        window.subscribeToPlan = async function(tier) {
+            if (!auth.currentUser) {
+                window.location.href = '/profile.html';
+                return;
+            }
+            
+            // TODO: Implement Stripe checkout
+            alert(`Subscribing to ${tier} plan (${billingCycle}). Stripe integration coming soon!`);
+        };
+        
+        // Purchase tool
+        window.purchaseTool = async function(toolId, billingType, price) {
+            if (!auth.currentUser) {
+                window.location.href = '/profile.html';
+                return;
+            }
+            
+            if (!subscriptionManager || subscriptionManager.tier === 'free') {
+                alert('You need at least a Pro subscription to purchase tools à la carte. Please upgrade first!');
+                return;
+            }
+            
+            // TODO: Implement Stripe checkout for tools
+            alert(`Purchasing ${toolId} (${billingType}) for $${price}. Stripe integration coming soon!`);
+        };
+    </script>
+</body>
+</html>

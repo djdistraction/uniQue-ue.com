@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <main class="pt-24 pb-16">
+            <div class="container mx-auto px-6 max-w-6xl">
+                
+                <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow">
+                    Billing & Subscriptions
+                </h1>
+                
+                <!-- Not Logged In Message -->
+                <div id="not-logged-in" class="hidden">
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-8 text-center">
+                        <p class="text-xl mb-4">Please sign in to view your billing information.</p>
+                        <a href="/profile.html" class="inline-block bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Billing Content (shown when logged in) -->
+                <div id="billing-content" class="hidden space-y-8">
+                    
+                    <!-- Current Tier -->
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Current Plan</h2>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-3xl font-bold text-brand-accent" id="current-tier">Free</p>
+                                <p class="text-brand-text-muted" id="subscription-status">Active</p>
+                            </div>
+                            <a href="/pricing.html" class="bg-brand-accent text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90">
+                                Upgrade Plan
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Usage Stats (Creator tier only) -->
+                    <div id="usage-section" class="hidden bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Usage This Month</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-brand-text-muted mb-2">Images</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 bg-brand-primary rounded-full h-3">
+                                        <div id="images-progress" class="h-3 rounded-full bg-gradient-to-r from-brand-accent to-blue-500" style="width: 0%"></div>
+                                    </div>
+                                    <span id="images-usage" class="text-sm">0 / 500</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-brand-text-muted mb-2">Animations</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 bg-brand-primary rounded-full h-3">
+                                        <div id="animations-progress" class="h-3 rounded-full bg-gradient-to-r from-brand-accent to-purple-500" style="width: 0%"></div>
+                                    </div>
+                                    <span id="animations-usage" class="text-sm">0 / 100</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-brand-text-muted mb-2">API Calls</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 bg-brand-primary rounded-full h-3">
+                                        <div id="api-progress" class="h-3 rounded-full bg-gradient-to-r from-brand-accent to-brand-magenta" style="width: 0%"></div>
+                                    </div>
+                                    <span id="api-usage" class="text-sm">0 / 10,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Limit Extensions (Creator tier only) -->
+                    <div id="limit-extensions-section" class="hidden bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Limit Extensions</h2>
+                        <p class="text-brand-text-muted mb-4">Extend your monthly limits for $4.99/mo per increment</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border border-brand-accent/20 rounded-lg p-4">
+                                <p class="font-bold mb-2">Images (+500 each)</p>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="updateExtension('images', -1)" class="bg-brand-accent/20 text-brand-accent px-3 py-1 rounded">-</button>
+                                    <span id="images-extensions" class="flex-1 text-center text-2xl font-bold">0</span>
+                                    <button onclick="updateExtension('images', 1)" class="bg-brand-accent text-brand-primary px-3 py-1 rounded">+</button>
+                                </div>
+                                <p class="text-sm text-brand-text-muted mt-2">Cost: $<span id="images-cost">0</span>/mo</p>
+                            </div>
+                            <div class="border border-brand-accent/20 rounded-lg p-4">
+                                <p class="font-bold mb-2">Animations (+100 each)</p>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="updateExtension('animations', -1)" class="bg-brand-accent/20 text-brand-accent px-3 py-1 rounded">-</button>
+                                    <span id="animations-extensions" class="flex-1 text-center text-2xl font-bold">0</span>
+                                    <button onclick="updateExtension('animations', 1)" class="bg-brand-accent text-brand-primary px-3 py-1 rounded">+</button>
+                                </div>
+                                <p class="text-sm text-brand-text-muted mt-2">Cost: $<span id="animations-cost">0</span>/mo</p>
+                            </div>
+                            <div class="border border-brand-accent/20 rounded-lg p-4">
+                                <p class="font-bold mb-2">API Calls (+10k each)</p>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="updateExtension('apiCalls', -1)" class="bg-brand-accent/20 text-brand-accent px-3 py-1 rounded">-</button>
+                                    <span id="api-extensions" class="flex-1 text-center text-2xl font-bold">0</span>
+                                    <button onclick="updateExtension('apiCalls', 1)" class="bg-brand-accent text-brand-primary px-3 py-1 rounded">+</button>
+                                </div>
+                                <p class="text-sm text-brand-text-muted mt-2">Cost: $<span id="api-cost">0</span>/mo</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-xl font-bold mb-2">Total Additional Cost: $<span id="total-extensions-cost">0</span>/mo</p>
+                            <button id="save-extensions" class="bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Unlocked Tools -->
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Unlocked Tools</h2>
+                        <div id="unlocked-tools-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <p class="text-brand-text-muted col-span-full">No tools unlocked yet.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Payment Method</h2>
+                        <p class="text-brand-text-muted mb-4">Manage your payment methods through Stripe.</p>
+                        <button class="bg-brand-accent text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90">
+                            Manage Payment Methods
+                        </button>
+                    </div>
+                    
+                    <!-- Invoices -->
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Invoices & Receipts</h2>
+                        <div id="invoices-list">
+                            <p class="text-brand-text-muted">No invoices available.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Manage Subscription -->
+                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Manage Subscription</h2>
+                        <div class="space-y-4">
+                            <button class="w-full md:w-auto bg-brand-accent text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90">
+                                Change Plan
+                            </button>
+                            <button class="w-full md:w-auto bg-red-500 text-white font-bold py-3 px-6 rounded-lg hover:opacity-90">
+                                Cancel Subscription
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { initSubscriptionManager, TIERS } from './subscription-manager.js';
+        
+        let subscriptionManager = null;
+        const EXTENSION_COST = 4.99;
+        
+        // Tool names mapping
+        const toolNames = {
+            'midi_controller': '🎵 MIDI Controller',
+            'animation_studio': '🎬 Animation Studio',
+            'advanced_graphics': '🎨 Advanced Graphics',
+            'python_runtime': '🐍 Python Runtime',
+            'data_analyzer': '📊 Data Analyzer',
+            'voice_synthesis': '🎙️ Voice Synthesis',
+            'web_scraper': '🌐 Web Scraper'
+        };
+        
+        // Initialize
+        auth.onAuthStateChanged(async (user) => {
+            const notLoggedIn = document.getElementById('not-logged-in');
+            const billingContent = document.getElementById('billing-content');
+            
+            if (!user) {
+                notLoggedIn.classList.remove('hidden');
+                billingContent.classList.add('hidden');
+                return;
+            }
+            
+            notLoggedIn.classList.add('hidden');
+            billingContent.classList.remove('hidden');
+            
+            subscriptionManager = await initSubscriptionManager();
+            loadBillingData();
+        });
+        
+        function loadBillingData() {
+            if (!subscriptionManager) return;
+            
+            // Current tier
+            document.getElementById('current-tier').textContent = subscriptionManager.getTierDisplayName();
+            document.getElementById('subscription-status').textContent = 
+                subscriptionManager.subscriptionStatus.charAt(0).toUpperCase() + 
+                subscriptionManager.subscriptionStatus.slice(1);
+            
+            // Usage stats (Creator only)
+            if (subscriptionManager.tier === TIERS.CREATOR) {
+                const usageSection = document.getElementById('usage-section');
+                usageSection.classList.remove('hidden');
+                
+                const limits = subscriptionManager.getMonthlyLimits();
+                updateUsageDisplay('images', subscriptionManager.usage.images, limits.images);
+                updateUsageDisplay('animations', subscriptionManager.usage.animations, limits.animations);
+                updateUsageDisplay('apiCalls', subscriptionManager.usage.apiCalls, limits.apiCalls);
+                
+                // Limit extensions
+                const extensionsSection = document.getElementById('limit-extensions-section');
+                extensionsSection.classList.remove('hidden');
+                
+                updateExtensionDisplay('images', subscriptionManager.limitExtensions.images);
+                updateExtensionDisplay('animations', subscriptionManager.limitExtensions.animations);
+                updateExtensionDisplay('apiCalls', subscriptionManager.limitExtensions.apiCalls);
+            }
+            
+            // Unlocked tools
+            const toolsList = document.getElementById('unlocked-tools-list');
+            if (subscriptionManager.tier === TIERS.CREATOR || 
+                subscriptionManager.tier === TIERS.LIFETIME || 
+                subscriptionManager.tier === TIERS.DEVELOPER) {
+                toolsList.innerHTML = '<p class="text-brand-accent col-span-full">✓ All tools unlocked</p>';
+            } else if (subscriptionManager.unlockedTools.length > 0) {
+                toolsList.innerHTML = subscriptionManager.unlockedTools.map(toolId => `
+                    <div class="border border-brand-accent/20 rounded-lg p-4">
+                        <p class="font-bold">${toolNames[toolId] || toolId}</p>
+                    </div>
+                `).join('');
+            } else {
+                toolsList.innerHTML = '<p class="text-brand-text-muted col-span-full">No tools unlocked yet. <a href="/pricing.html" class="text-brand-accent hover:underline">View available tools</a></p>';
+            }
+        }
+        
+        function updateUsageDisplay(type, current, limit) {
+            const usageSpan = document.getElementById(`${type}-usage`);
+            const progressBar = document.getElementById(`${type}-progress`);
+            
+            const displayLimit = limit === Infinity ? '∞' : limit.toLocaleString();
+            usageSpan.textContent = `${current.toLocaleString()} / ${displayLimit}`;
+            
+            const percentage = limit === Infinity ? 0 : (current / limit) * 100;
+            progressBar.style.width = `${Math.min(percentage, 100)}%`;
+        }
+        
+        function updateExtensionDisplay(type, count) {
+            const extensionSpan = document.getElementById(`${type}-extensions`);
+            const costSpan = document.getElementById(`${type}-cost`);
+            
+            extensionSpan.textContent = count;
+            costSpan.textContent = (count * EXTENSION_COST).toFixed(2);
+            
+            updateTotalExtensionsCost();
+        }
+        
+        function updateTotalExtensionsCost() {
+            const images = parseInt(document.getElementById('images-extensions').textContent);
+            const animations = parseInt(document.getElementById('animations-extensions').textContent);
+            const apiCalls = parseInt(document.getElementById('api-extensions').textContent);
+            
+            const total = (images + animations + apiCalls) * EXTENSION_COST;
+            document.getElementById('total-extensions-cost').textContent = total.toFixed(2);
+        }
+        
+        window.updateExtension = function(type, delta) {
+            if (!subscriptionManager) return;
+            
+            const currentCount = subscriptionManager.limitExtensions[type];
+            const newCount = Math.max(0, currentCount + delta);
+            
+            subscriptionManager.limitExtensions[type] = newCount;
+            updateExtensionDisplay(type, newCount);
+        };
+        
+        document.getElementById('save-extensions')?.addEventListener('click', async () => {
+            if (!subscriptionManager) return;
+            
+            const btn = document.getElementById('save-extensions');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            try {
+                // Update Firestore
+                await subscriptionManager.updateLimitExtensions('images', subscriptionManager.limitExtensions.images);
+                await subscriptionManager.updateLimitExtensions('animations', subscriptionManager.limitExtensions.animations);
+                await subscriptionManager.updateLimitExtensions('apiCalls', subscriptionManager.limitExtensions.apiCalls);
+                
+                alert('Limit extensions updated successfully!');
+                loadBillingData();
+            } catch (error) {
+                console.error('Error updating extensions:', error);
+                alert('Failed to update limit extensions. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
+        });
+    </script>
+</body>
+</html>
