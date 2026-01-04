@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
   --brand-magenta: #F000B8;
   --brand-text: #E5E7EB;
   --brand-text-muted: #9CA3AF;
-  --logo-rotation-correction: -20deg;
+  --logo-rotation-correction: -90deg;
 }
 
 /* --- Particle Canvas (Site-wide Background) --- */
