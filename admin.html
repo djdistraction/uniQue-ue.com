@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        .stat-card {
+            background: linear-gradient(145deg, rgba(16, 20, 44, 0.95), rgba(2, 4, 24, 0.9));
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--brand-accent);
+            box-shadow: 0 10px 30px rgba(0, 246, 255, 0.2);
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th {
+            background: rgba(0, 246, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid rgba(0, 246, 255, 0.3);
+        }
+        
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 246, 255, 0.1);
+        }
+        
+        .admin-table tr:hover {
+            background: rgba(0, 246, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <main class="pt-24 pb-16">
+            <div class="container mx-auto px-6 max-w-7xl">
+                
+                <!-- Access Denied -->
+                <div id="access-denied" class="hidden">
+                    <div class="bg-brand-secondary/90 border border-red-500/50 rounded-lg p-8 text-center">
+                        <h2 class="text-2xl font-bold mb-4 text-red-500">Access Denied</h2>
+                        <p class="text-xl mb-6 text-brand-text-muted">
+                            This page is restricted to Developer tier users only.
+                        </p>
+                        <a href="/index.html" class="inline-block bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                            Return Home
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Admin Panel -->
+                <div id="admin-panel" class="hidden">
+                    
+                    <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow">
+                        Developer Admin Panel
+                    </h1>
+                    
+                    <!-- Revenue Dashboard -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">Revenue Dashboard</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="stat-card">
+                                <div class="text-sm text-brand-text-muted mb-2">Monthly Recurring Revenue</div>
+                                <div class="text-3xl font-bold text-brand-accent" id="mrr-value">$0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-sm text-brand-text-muted mb-2">Active Subscriptions</div>
+                                <div class="text-3xl font-bold text-brand-accent" id="active-subs-value">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-sm text-brand-text-muted mb-2">Lifetime Revenue</div>
+                                <div class="text-3xl font-bold text-brand-accent" id="lifetime-revenue-value">$0</div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- User Management -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">User Management</h2>
+                        <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                            
+                            <!-- Search -->
+                            <div class="mb-6">
+                                <input type="text" id="user-search" placeholder="Search users by email..."
+                                    class="w-full bg-brand-primary border border-brand-accent/20 rounded-lg px-4 py-3 focus:border-brand-accent focus:outline-none">
+                            </div>
+                            
+                            <!-- Users Table -->
+                            <div class="overflow-x-auto">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Tier</th>
+                                            <th>Status</th>
+                                            <th>Joined</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-table-body">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-brand-text-muted">
+                                                Loading users...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </section>
+                    
+                    <!-- System Status -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">System Status</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="stat-card">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="text-lg font-bold">API Status</div>
+                                    <div class="px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white">Online</div>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-brand-text-muted">Worker URL:</span>
+                                        <span id="worker-url">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-brand-text-muted">Last Check:</span>
+                                        <span id="last-check">Just now</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="text-lg font-bold">Database Status</div>
+                                    <div class="px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white">Connected</div>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-brand-text-muted">Firestore:</span>
+                                        <span>Online</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-brand-text-muted">Auth:</span>
+                                        <span>Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Feature Toggles -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">Feature Flags</h2>
+                        <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-4 bg-brand-primary/50 rounded-lg">
+                                    <div>
+                                        <div class="font-bold">Stripe Payments</div>
+                                        <div class="text-sm text-brand-text-muted">Enable/disable payment processing</div>
+                                    </div>
+                                    <label class="relative inline-block w-14 h-8">
+                                        <input type="checkbox" id="toggle-stripe" class="sr-only" disabled>
+                                        <span class="absolute inset-0 bg-gray-600 rounded-full cursor-not-allowed"></span>
+                                        <span class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></span>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center p-4 bg-brand-primary/50 rounded-lg">
+                                    <div>
+                                        <div class="font-bold">New User Signups</div>
+                                        <div class="text-sm text-brand-text-muted">Allow new user registrations</div>
+                                    </div>
+                                    <label class="relative inline-block w-14 h-8">
+                                        <input type="checkbox" id="toggle-signups" class="sr-only" checked disabled>
+                                        <span class="absolute inset-0 bg-brand-accent rounded-full cursor-not-allowed"></span>
+                                        <span class="absolute right-1 top-1 bg-white w-6 h-6 rounded-full transition"></span>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center p-4 bg-brand-primary/50 rounded-lg">
+                                    <div>
+                                        <div class="font-bold">Debug Mode</div>
+                                        <div class="text-sm text-brand-text-muted">Show detailed error messages</div>
+                                    </div>
+                                    <label class="relative inline-block w-14 h-8">
+                                        <input type="checkbox" id="toggle-debug" class="sr-only">
+                                        <span class="absolute inset-0 bg-gray-600 rounded-full cursor-pointer toggle-bg"></span>
+                                        <span class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition toggle-dot"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Activity Log -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">Recent Activity</h2>
+                        <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6">
+                            <div id="activity-log" class="space-y-3 max-h-96 overflow-y-auto">
+                                <div class="flex justify-between items-center p-3 bg-brand-primary/50 rounded">
+                                    <div>
+                                        <div class="font-bold">Admin panel accessed</div>
+                                        <div class="text-sm text-brand-text-muted">System event</div>
+                                    </div>
+                                    <div class="text-sm text-brand-text-muted">Just now</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Database Tools -->
+                    <section class="mb-12">
+                        <h2 class="text-3xl font-bold mb-6">Database Tools</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <button class="bg-brand-accent text-brand-primary font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all">
+                                Export Data
+                            </button>
+                            <button class="bg-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all">
+                                View Logs
+                            </button>
+                            <button class="bg-purple-500 text-white font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all">
+                                Clear Cache
+                            </button>
+                            <button class="bg-yellow-500 text-brand-primary font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all">
+                                Run Migration
+                            </button>
+                        </div>
+                    </section>
+                    
+                </div>
+                
+            </div>
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { auth, db, WORKER_URL } from './firebase-config.js';
+        import { initSubscriptionManager } from './subscription-manager.js';
+        import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        let subscriptionManager = null;
+        
+        // Initialize
+        auth.onAuthStateChanged(async (user) => {
+            const accessDenied = document.getElementById('access-denied');
+            const adminPanel = document.getElementById('admin-panel');
+            
+            if (!user) {
+                accessDenied.classList.remove('hidden');
+                return;
+            }
+            
+            subscriptionManager = await initSubscriptionManager();
+            
+            if (!subscriptionManager.isAdmin()) {
+                accessDenied.classList.remove('hidden');
+                return;
+            }
+            
+            accessDenied.classList.add('hidden');
+            adminPanel.classList.remove('hidden');
+            
+            await loadAdminData();
+        });
+        
+        async function loadAdminData() {
+            // Load revenue data
+            await loadRevenueData();
+            
+            // Load users
+            await loadUsers();
+            
+            // Set worker URL
+            document.getElementById('worker-url').textContent = WORKER_URL || 'Not configured';
+            
+            // Add activity log entry
+            addActivityLog('Admin panel accessed', 'System event');
+        }
+        
+        async function loadRevenueData() {
+            try {
+                // In a real implementation, this would call the backend API
+                // For now, we'll use placeholder data
+                document.getElementById('mrr-value').textContent = '$0';
+                document.getElementById('active-subs-value').textContent = '0';
+                document.getElementById('lifetime-revenue-value').textContent = '$0';
+            } catch (error) {
+                console.error('Error loading revenue data:', error);
+            }
+        }
+        
+        async function loadUsers() {
+            try {
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, orderBy('createdAt', 'desc'), limit(20));
+                const querySnapshot = await getDocs(q);
+                
+                const tbody = document.getElementById('users-table-body');
+                
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-brand-text-muted">
+                                No users found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                const rows = [];
+                querySnapshot.forEach((doc) => {
+                    const user = doc.data();
+                    const tierColors = {
+                        'free': 'bg-gray-500',
+                        'pro': 'bg-blue-500',
+                        'creator': 'bg-purple-500',
+                        'lifetime': 'bg-yellow-500',
+                        'developer': 'bg-red-500'
+                    };
+                    
+                    const tierColor = tierColors[user.subscriptionTier] || 'bg-gray-500';
+                    const tierName = user.subscriptionTier?.charAt(0).toUpperCase() + user.subscriptionTier?.slice(1) || 'Free';
+                    
+                    rows.push(`
+                        <tr>
+                            <td>${user.email || 'N/A'}</td>
+                            <td>
+                                <span class="${tierColor} text-white px-2 py-1 rounded text-xs font-bold">
+                                    ${tierName}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-green-500">●</span> ${user.subscriptionStatus || 'active'}
+                            </td>
+                            <td>${formatDate(user.createdAt)}</td>
+                            <td>
+                                <button onclick="viewUser('${doc.id}')" 
+                                    class="text-brand-accent hover:underline text-sm">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                });
+                
+                tbody.innerHTML = rows.join('');
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('users-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-red-500">
+                            Error loading users
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString();
+        }
+        
+        function addActivityLog(title, description) {
+            const log = document.getElementById('activity-log');
+            const entry = document.createElement('div');
+            entry.className = 'flex justify-between items-center p-3 bg-brand-primary/50 rounded';
+            entry.innerHTML = `
+                <div>
+                    <div class="font-bold">${title}</div>
+                    <div class="text-sm text-brand-text-muted">${description}</div>
+                </div>
+                <div class="text-sm text-brand-text-muted">Just now</div>
+            `;
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep only last 20 entries
+            while (log.children.length > 20) {
+                log.removeChild(log.lastChild);
+            }
+        }
+        
+        window.viewUser = function(userId) {
+            alert(`Viewing user: ${userId}\nFull user management coming soon!`);
+        };
+        
+        // Debug mode toggle
+        document.getElementById('toggle-debug')?.addEventListener('change', (e) => {
+            const isEnabled = e.target.checked;
+            if (isEnabled) {
+                e.target.parentElement.querySelector('.toggle-bg').classList.remove('bg-gray-600');
+                e.target.parentElement.querySelector('.toggle-bg').classList.add('bg-brand-accent');
+                e.target.parentElement.querySelector('.toggle-dot').classList.remove('left-1');
+                e.target.parentElement.querySelector('.toggle-dot').classList.add('right-1');
+                addActivityLog('Debug mode enabled', 'Feature flag changed');
+            } else {
+                e.target.parentElement.querySelector('.toggle-bg').classList.add('bg-gray-600');
+                e.target.parentElement.querySelector('.toggle-bg').classList.remove('bg-brand-accent');
+                e.target.parentElement.querySelector('.toggle-dot').classList.add('left-1');
+                e.target.parentElement.querySelector('.toggle-dot').classList.remove('right-1');
+                addActivityLog('Debug mode disabled', 'Feature flag changed');
+            }
+        });
+        
+        // User search
+        document.getElementById('user-search')?.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#users-table-body tr');
+            
+            rows.forEach(row => {
+                const email = row.querySelector('td:first-child')?.textContent.toLowerCase();
+                if (email && (email.includes(searchTerm) || searchTerm === '')) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
