@@ -92,6 +92,41 @@ export default {
         return handleAdminAuth(request, env, corsHeaders);
       }
 
+      // --- ROUTE: /api/subscribe ---
+      if (path === '/api/subscribe' && request.method === 'POST') {
+        return handleSubscribe(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/purchase-tool ---
+      if (path === '/api/purchase-tool' && request.method === 'POST') {
+        return handlePurchaseTool(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/update-limits ---
+      if (path === '/api/update-limits' && request.method === 'POST') {
+        return handleUpdateLimits(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/webhook ---
+      if (path === '/api/webhook' && request.method === 'POST') {
+        return handleWebhook(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/admin/verify ---
+      if (path === '/api/admin/verify' && request.method === 'POST') {
+        return handleAdminVerify(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/admin/revenue ---
+      if (path === '/api/admin/revenue' && request.method === 'GET') {
+        return handleAdminRevenue(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /api/admin/users ---
+      if (path === '/api/admin/users' && request.method === 'GET') {
+        return handleAdminUsers(request, env, corsHeaders);
+      }
+
       return new Response('Not Found', { status: 404, headers: corsHeaders });
 
     } catch (err) {
@@ -167,4 +202,188 @@ async function handlePromptGeneration(request, env, corsHeaders) {
 async function handleAdminAuth(request, env, corsHeaders) {
     const { code } = await request.json();
     return new Response(JSON.stringify({ success: code === env.ADMIN_ACCESS_CODE }), { headers: corsHeaders });
+}
+
+// --- Subscription Handler ---
+async function handleSubscribe(request, env, corsHeaders) {
+    try {
+        const { tier, billingCycle, userId } = await request.json();
+        
+        if (!env.STRIPE_SECRET_KEY) {
+            throw new Error('Stripe is not configured');
+        }
+        
+        // TODO: Create Stripe checkout session
+        // This is a placeholder - full Stripe integration required
+        
+        return new Response(JSON.stringify({
+            success: false,
+            message: 'Stripe integration coming soon',
+            checkoutUrl: null
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Purchase Tool Handler ---
+async function handlePurchaseTool(request, env, corsHeaders) {
+    try {
+        const { toolId, billingType, userId } = await request.json();
+        
+        if (!env.STRIPE_SECRET_KEY) {
+            throw new Error('Stripe is not configured');
+        }
+        
+        // TODO: Create Stripe checkout session for tool purchase
+        // This is a placeholder - full Stripe integration required
+        
+        return new Response(JSON.stringify({
+            success: false,
+            message: 'Stripe integration coming soon',
+            checkoutUrl: null
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Update Limits Handler ---
+async function handleUpdateLimits(request, env, corsHeaders) {
+    try {
+        const { userId, limitType, increment } = await request.json();
+        
+        // TODO: Update user's limit extensions in Firestore
+        // This would typically be done via Firebase Admin SDK
+        
+        return new Response(JSON.stringify({
+            success: false,
+            message: 'This operation should be done client-side via Firebase SDK'
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Webhook Handler ---
+async function handleWebhook(request, env, corsHeaders) {
+    try {
+        const signature = request.headers.get('stripe-signature');
+        
+        if (!signature) {
+            throw new Error('No signature provided');
+        }
+        
+        // TODO: Verify Stripe webhook signature
+        // TODO: Process webhook events (subscription created, updated, cancelled, etc.)
+        // This is a placeholder - full Stripe webhook integration required
+        
+        return new Response(JSON.stringify({ received: true }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Admin Verify Handler ---
+async function handleAdminVerify(request, env, corsHeaders) {
+    try {
+        const { code, email } = await request.json();
+        
+        // Check hardcoded developer email or admin access code
+        const DEVELOPER_EMAIL = 'djdistraction@unique-ue.com';
+        const isValidCode = code === env.ADMIN_ACCESS_CODE;
+        const isDeveloper = email === DEVELOPER_EMAIL;
+        
+        return new Response(JSON.stringify({ 
+            success: isValidCode || isDeveloper,
+            isDeveloper: isDeveloper
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Admin Revenue Handler ---
+async function handleAdminRevenue(request, env, corsHeaders) {
+    try {
+        const token = request.headers.get('X-Admin-Token');
+        
+        if (token !== env.ADMIN_ACCESS_CODE) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+                status: 401, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            });
+        }
+        
+        // TODO: Fetch revenue data from Stripe
+        // This is a placeholder - full Stripe integration required
+        
+        return new Response(JSON.stringify({
+            mrr: 0,
+            activeSubscriptions: 0,
+            lifetimeRevenue: 0,
+            recentTransactions: []
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
+}
+
+// --- Admin Users Handler ---
+async function handleAdminUsers(request, env, corsHeaders) {
+    try {
+        const token = request.headers.get('X-Admin-Token');
+        
+        if (token !== env.ADMIN_ACCESS_CODE) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+                status: 401, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            });
+        }
+        
+        // TODO: Fetch users from Firestore
+        // This would require Firebase Admin SDK or direct Firestore REST API
+        
+        return new Response(JSON.stringify({
+            users: [],
+            total: 0
+        }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+    }
 }
