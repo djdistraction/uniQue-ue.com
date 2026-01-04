@@ -45,38 +45,145 @@
         
         <!-- 
           Main Content
-          This is the new "Welcome Splash Page" content.
+          Enhanced Landing Experience
         -->
-        <main class="container mx-auto px-6 py-12 flex-grow flex flex-col items-center justify-center text-center min-h-[calc(100vh-10rem)]">
-            
-            <div class="animate-fade-in-up">
-                <!-- Larger logo with more intense mouse-follow -->
-                <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="mx-auto w-48 h-48 md:w-64 md:h-64 mb-8 transition-transform duration-200 ease-out">
-                
-                <!-- New Headline -->
-                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-tight mb-4 text-white heading-glow">
-                    Welcome to uniQue-ue
-                </h1>
-                
-                <!-- Sub-headline (from original plan) -->
-                <p class="text-lg md:text-xl text-brand-text-muted max-w-3xl mx-auto font-sans mb-8">
-                   a cybernetics consortium, forging tomorrow's digital realities.
-                </p>
-                
-                <!-- NEW: Monetization Studio CTA -->
-                <div class="mt-8 p-6 max-w-2xl mx-auto bg-gradient-to-r from-brand-accent/10 via-brand-magenta/10 to-brand-accent/10 rounded-xl border-2 border-brand-magenta/30 animate-glow">
-                    <div class="flex items-center justify-center gap-3 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-magenta"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
-                        <h2 class="text-2xl font-display font-bold text-white">New: Monetization Studio</h2>
-                        <span class="text-xs bg-brand-magenta text-white px-2 py-1 rounded-full font-bold">BETA</span>
+        <main>
+            <!-- SECTION 1: Hero (Enhanced) -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <div class="animate-fade-in-up">
+                        <!-- Logo with mouse-follow effect -->
+                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo">
+                        
+                        <!-- Main Title with typing effect -->
+                        <h1 id="hero-title" class="hero-title">
+                            Welcome to uniQue-ue
+                        </h1>
+                        
+                        <!-- Rotating taglines -->
+                        <p id="hero-tagline" class="hero-tagline"></p>
+                        
+                        <!-- Dual CTAs -->
+                        <div class="cta-group">
+                            <a href="/the-qore.html" class="cta-primary">
+                                <span class="cta-text">Explore The Qore</span>
+                                <span class="cta-ripple"></span>
+                            </a>
+                            <a href="/resources.html" class="cta-secondary">
+                                <span class="cta-text">Browse Tools</span>
+                                <span class="cta-ripple"></span>
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-sm text-brand-text-muted mb-4">Turn your creative skills into $500-5000/month passive income with AI-powered strategy</p>
-                    <a href="/monetization-studio.html" class="inline-block bg-gradient-to-r from-brand-accent to-brand-magenta text-white font-bold px-8 py-3 rounded-lg hover:scale-105 transition-all shadow-lg">
-                        Launch Monetization Studio →
+                </div>
+                
+                <!-- Floating shapes for visual interest -->
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Featured Tools -->
+            <section class="features-section">
+                <h2 class="section-title">Flagship Applications</h2>
+                <div class="features-grid">
+                    <div class="feature-card" data-tool="qore">
+                        <div class="feature-icon">🧠</div>
+                        <h3>The Qore</h3>
+                        <p>Neural interface with Hebbian learning and multi-modal AI</p>
+                        <a href="/the-qore.html" class="feature-link">Launch →</a>
+                    </div>
+                    <div class="feature-card" data-tool="draven">
+                        <div class="feature-icon">✍️</div>
+                        <h3>Draven</h3>
+                        <p>Ghost-writer AI for creative content and storytelling</p>
+                        <a href="/ghost-writer.html" class="feature-link">Launch →</a>
+                    </div>
+                    <div class="feature-card" data-tool="devtools">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Developer Tools</h3>
+                        <p>Code utilities, formatters, and conversion tools</p>
+                        <a href="/resources.html" class="feature-link">Explore →</a>
+                    </div>
+                    <div class="feature-card" data-tool="graphics">
+                        <div class="feature-icon">🎨</div>
+                        <h3>Graphics Studio</h3>
+                        <p>Visual creation and image manipulation tools</p>
+                        <a href="/graphics-studio.html" class="feature-link">Launch →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Divider -->
+            <div class="section-divider"></div>
+
+            <!-- SECTION 3: Stats Counter -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="25">0</div>
+                        <div class="stat-label">AI-Powered Tools</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="4">0</div>
+                        <div class="stat-label">Specialized AI Personas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="0">0</div>
+                        <div class="stat-label">Client-Side API Keys</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">% GitHub Pages Compatible</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Divider -->
+            <div class="section-divider"></div>
+
+            <!-- SECTION 4: Interactive Demo -->
+            <section class="demo-section">
+                <h2 class="section-title">See It In Action</h2>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                        </div>
+                        <span class="terminal-title">Live Demo</span>
+                        <div class="terminal-spacer"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <div id="demo-content"></div>
+                        <span class="terminal-cursor">_</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Divider -->
+            <div class="section-divider"></div>
+
+            <!-- SECTION 5: Monetization Studio CTA (moved to bottom) -->
+            <section class="monetization-cta-section">
+                <div class="monetization-cta-card">
+                    <div class="flex items-center justify-center gap-3 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-magenta"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+                        <h2 class="text-2xl md:text-3xl font-display font-bold text-white">New: Monetization Studio</h2>
+                        <span class="text-xs bg-brand-magenta text-white px-3 py-1 rounded-full font-bold">BETA</span>
+                    </div>
+                    <p class="text-base md:text-lg text-brand-text-muted mb-6 max-w-2xl mx-auto">
+                        Turn your creative skills into $500-5000/month passive income with AI-powered strategy
+                    </p>
+                    <a href="/monetization-studio.html" class="cta-primary cta-large">
+                        <span class="cta-text">Launch Monetization Studio →</span>
+                        <span class="cta-ripple"></span>
                     </a>
                 </div>
-            </div>
-
+            </section>
         </main>
         
         <!-- Global Footer Component -->
@@ -95,30 +202,215 @@
 
     <!-- 
       Page-Specific JavaScript Module
-      This handles the logic for *this page only* (Logo follow).
-      The AI Host logic has been moved to app.js.
+      Enhanced homepage interactions
     -->
     <script type="module">
         // --- DOM Elements ---
         const heroLogo = document.getElementById('hero-logo');
+        const heroTitle = document.getElementById('hero-title');
+        const heroTagline = document.getElementById('hero-tagline');
+        const demoContent = document.getElementById('demo-content');
+        const statNumbers = document.querySelectorAll('.stat-number');
+        
+        // Rotating taglines
+        const taglines = [
+            'a cybernetics consortium, forging tomorrow\'s digital realities.',
+            'AI-powered tools for developers, creators, and innovators.',
+            'Where neural interfaces meet creative possibilities.',
+            'Build, create, and automate with cutting-edge AI.'
+        ];
+        let currentTaglineIndex = 0;
+        
+        // Demo scenarios
+        const demoScenarios = [
+            {
+                prompt: '> Hello Qore',
+                response: 'Greetings! I am The Qore, your neural interface. How may I assist you today?'
+            },
+            {
+                prompt: '> Analyze potential of a pencil',
+                response: 'Analyzing... A pencil represents the fundamental intersection of thought and permanence. Its graphite core enables infinite creative expression while remaining erasable - a perfect metaphor for iterative refinement.'
+            },
+            {
+                prompt: '> /py print("Hello World")',
+                response: 'Hello World\n>>> Python execution complete.'
+            }
+        ];
+        let currentDemoIndex = 0;
         
         // --- 1. Enhanced Hero Logo Mouse-Follow ---
         if (heroLogo) {
+            let isMouseOver = false;
             heroLogo.parentElement.addEventListener('mousemove', (e) => {
+                isMouseOver = true;
                 const { clientX, clientY } = e;
                 const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = heroLogo.parentElement;
                 const x = ((clientX - offsetLeft) / offsetWidth) - 0.5;
                 const y = ((clientY - offsetTop) / offsetHeight) - 0.5;
-                // Increased intensity from 20 to 30
                 heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
             });
             heroLogo.parentElement.addEventListener('mouseleave', () => {
+                isMouseOver = false;
                 heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
             });
+            
+            // Pulse animation when idle
+            setInterval(() => {
+                if (!isMouseOver) {
+                    heroLogo.classList.add('logo-pulse');
+                    setTimeout(() => heroLogo.classList.remove('logo-pulse'), 1000);
+                }
+            }, 5000);
         }
 
-        // --- 2. AI Host Logic ---
-        // ALL LOGIC has been MOVED to app.js.
+        // --- 2. Typing Effect for Title ---
+        function typeText(element, text, speed = 100) {
+            let i = 0;
+            element.textContent = '';
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, speed);
+        }
+        
+        // --- 3. Rotating Taglines ---
+        function rotateTaglines() {
+            if (!heroTagline) return;
+            
+            heroTagline.style.opacity = '0';
+            setTimeout(() => {
+                heroTagline.textContent = taglines[currentTaglineIndex];
+                heroTagline.style.opacity = '1';
+                currentTaglineIndex = (currentTaglineIndex + 1) % taglines.length;
+            }, 500);
+        }
+        
+        // --- 4. Interactive Demo Terminal ---
+        async function typeInTerminal(text, element, speed = 50) {
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text.charAt(i);
+                await new Promise(resolve => setTimeout(resolve, speed));
+            }
+        }
+        
+        async function runDemo() {
+            if (!demoContent) return;
+            
+            const scenario = demoScenarios[currentDemoIndex];
+            demoContent.innerHTML = '';
+            
+            // Type prompt
+            const promptLine = document.createElement('div');
+            promptLine.className = 'terminal-line prompt-line';
+            demoContent.appendChild(promptLine);
+            await typeInTerminal(scenario.prompt, promptLine, 50);
+            
+            // Wait a bit
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Type response
+            const responseLine = document.createElement('div');
+            responseLine.className = 'terminal-line response-line';
+            demoContent.appendChild(responseLine);
+            await typeInTerminal(scenario.response, responseLine, 30);
+            
+            // Wait before next demo
+            await new Promise(resolve => setTimeout(resolve, 4000));
+            
+            currentDemoIndex = (currentDemoIndex + 1) % demoScenarios.length;
+            runDemo();
+        }
+        
+        // --- 5. Animated Stats Counter ---
+        function formatStatValue(target, current) {
+            if (target === 0) {
+                return '0';
+            } else if (target === 100) {
+                return current + '%';
+            } else {
+                return current + '+';
+            }
+        }
+        
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (ease-out)
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (target - start) * easeOut);
+                
+                element.textContent = formatStatValue(target, current);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // Intersection Observer for stats
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    const target = parseInt(entry.target.dataset.target);
+                    animateCounter(entry.target, target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        statNumbers.forEach(stat => statsObserver.observe(stat));
+        
+        // --- 6. CTA Ripple Effect ---
+        document.querySelectorAll('.cta-primary, .cta-secondary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = this.querySelector('.cta-ripple');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.remove('ripple-active');
+                
+                // Trigger reflow
+                void ripple.offsetWidth;
+                ripple.classList.add('ripple-active');
+            });
+        });
+        
+        // --- Initialize on Load ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Start typing effect
+            if (heroTitle) {
+                typeText(heroTitle, 'Welcome to uniQue-ue', 80);
+            }
+            
+            // Initialize first tagline
+            if (heroTagline) {
+                heroTagline.textContent = taglines[0];
+                heroTagline.style.transition = 'opacity 0.5s ease';
+                // Rotate taglines every 5 seconds
+                setInterval(rotateTaglines, 5000);
+            }
+            
+            // Start demo after a delay
+            setTimeout(() => {
+                runDemo();
+            }, 2000);
+        });
 
     </script>
 </body>
