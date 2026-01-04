@@ -349,6 +349,7 @@ body.is-navigating {
     filter: drop-shadow(0 0 40px rgba(0, 246, 255, 0.6));
     animation: float 6s ease-in-out infinite;
     transition: transform 0.3s ease;
+    transform: rotate(-38deg);
 }
 
 /* Holographic scan line effect */
@@ -376,8 +377,8 @@ body.is-navigating {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { transform: translateY(0) rotate(-38deg); }
+    50% { transform: translateY(-20px) rotate(-38deg); }
 }
 
 /* Circular glow ring */
