@@ -53,30 +53,64 @@ export async function initialize() {
   // Check authentication
   return new Promise((resolve) => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        // Redirect to profile if not logged in
-        window.location.href = '/profile.html';
-        return;
-      }
-      
       state.currentUser = user;
-      console.log('User authenticated:', user.email);
       
-      // Load brain state from Firestore
-      await loadBrainState();
-      
-      // Initialize UI
-      initializeUI();
-      
-      // Initialize services
-      initializeServices();
-      
-      // Start auto-save
-      startAutoSave();
-      
-      resolve();
+      if (user) {
+        console.log('User authenticated:', user.uid);
+        hideChatStatus();
+        
+        // Load brain state from Firestore
+        await loadBrainState();
+        
+        // Initialize UI
+        initializeUI();
+        
+        // Initialize services
+        initializeServices();
+        
+        // Start auto-save
+        startAutoSave();
+        
+        resolve();
+      } else {
+        console.log('User not authenticated');
+        showChatStatus('You must be logged in to use The Qore. Redirecting...', 'error');
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/profile.html';
+        }, 2000);
+      }
     });
   });
+}
+
+// Show chat status banner
+function showChatStatus(message, type = 'error') {
+  const banner = document.getElementById('chat-status-banner');
+  const messageEl = document.getElementById('chat-status-message');
+  
+  if (!banner || !messageEl) return;
+  
+  messageEl.textContent = message;
+  banner.className = `px-4 py-2 border-b text-xs ${
+    type === 'error' ? 'bg-red-900/50 border-red-500/50 text-red-200' :
+    type === 'success' ? 'bg-green-900/50 border-green-500/50 text-green-200' :
+    'bg-yellow-900/50 border-yellow-500/50 text-yellow-200'
+  }`;
+  banner.classList.remove('hidden');
+  
+  if (type === 'success') {
+    setTimeout(() => {
+      banner.classList.add('hidden');
+    }, 3000);
+  }
+}
+
+// Hide chat status banner
+function hideChatStatus() {
+  const banner = document.getElementById('chat-status-banner');
+  if (banner) banner.classList.add('hidden');
 }
 
 // Load brain state from Firestore
@@ -196,30 +230,76 @@ function startAutoSave() {
 
 // Initialize UI
 function initializeUI() {
-  // View switching
-  document.querySelectorAll('[data-view]').forEach(btn => {
+  console.log('Initializing UI...');
+  
+  // Fix view switching with proper event listeners
+  const viewButtons = document.querySelectorAll('[data-view]');
+  
+  if (viewButtons.length === 0) {
+    console.error('No view mode buttons found!');
+  }
+  
+  viewButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       const view = e.currentTarget.dataset.view;
-      switchView(view);
+      console.log('View button clicked:', view);
+      
+      if (view) {
+        switchView(view);
+      } else {
+        console.error('Button missing data-view attribute');
+      }
     });
   });
   
-  // Chat input
+  // Chat input with improved handling
   const chatInput = document.getElementById('chat-input');
   const sendBtn = document.getElementById('send-message');
   
-  if (sendBtn) {
-    sendBtn.addEventListener('click', sendMessage);
+  if (!sendBtn || !chatInput) {
+    console.error('Send button or input not found!');
+    return;
   }
   
-  if (chatInput) {
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-  }
+  // Visual feedback for button state
+  const setButtonState = (loading) => {
+    if (loading) {
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<svg class="w-4 h-4 animate-spin inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...';
+    } else {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = 'Send <i class="fas fa-paper-plane ml-2"></i>';
+    }
+  };
+  
+  const handleSend = async () => {
+    const text = chatInput.value.trim();
+    if (!text) {
+      console.log('Empty message, ignoring');
+      return;
+    }
+    
+    console.log('Sending message:', text);
+    setButtonState(true);
+    
+    try {
+      await sendMessage();
+    } catch (error) {
+      console.error('Send error:', error);
+      showChatStatus('Failed to send message: ' + error.message, 'error');
+    } finally {
+      setButtonState(false);
+    }
+  };
+  
+  sendBtn.addEventListener('click', handleSend);
+  
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  });
   
   // Initialize graph view
   initializeGraph();
@@ -254,8 +334,15 @@ function initializeGraph() {
     .force('center', d3.forceCenter(width / 2, height / 2))
     .force('collision', d3.forceCollide().radius(30));
   
-  // Render graph
-  renderGraph();
+  // Wait for Firebase auth and graph data to load, then render
+  setTimeout(() => {
+    if (state.graph.nodes.length > 0) {
+      console.log('Rendering initial graph with', state.graph.nodes.length, 'nodes');
+      renderGraph();
+    } else {
+      console.error('No graph nodes to render!');
+    }
+  }, 1000);
 }
 
 // Render graph
@@ -363,10 +450,12 @@ function dragEnded(event, d) {
 
 // Switch view
 export function switchView(viewName) {
+  console.log('Switching to view:', viewName);
   state.activeView = viewName;
   
-  // Update buttons
-  document.querySelectorAll('[data-view]').forEach(btn => {
+  // Update buttons - remove active from all, add to clicked
+  const viewButtons = document.querySelectorAll('[data-view]');
+  viewButtons.forEach(btn => {
     if (btn.dataset.view === viewName) {
       btn.classList.add('bg-brand-accent', 'text-brand-primary');
       btn.classList.remove('bg-brand-secondary', 'text-brand-text-muted');
@@ -376,14 +465,28 @@ export function switchView(viewName) {
     }
   });
   
-  // Show/hide views
-  document.querySelectorAll('.view-container').forEach(view => {
-    view.classList.add('hidden');
+  // Hide all views
+  const allViews = document.querySelectorAll('.view-container');
+  allViews.forEach(panel => {
+    panel.classList.add('hidden');
   });
   
-  const activeView = document.getElementById(`${viewName.toLowerCase()}-view`);
-  if (activeView) {
-    activeView.classList.remove('hidden');
+  // Show selected view
+  const viewMap = {
+    'GRAPH': 'graph-view',
+    'STORYBOARD': 'storyboard-view',
+    'IDEAROOM': 'idearoom-view',
+    'JOURNAL': 'journal-view'
+  };
+  
+  const targetId = viewMap[viewName];
+  const targetView = document.getElementById(targetId);
+  
+  if (targetView) {
+    targetView.classList.remove('hidden');
+    console.log('View switched to:', targetId);
+  } else {
+    console.error('Target view not found:', targetId);
   }
   
   // Initialize view-specific content
@@ -398,11 +501,23 @@ export function switchView(viewName) {
 
 // Send message
 export async function sendMessage() {
+  console.log('=== SEND MESSAGE START ===');
+  
   const input = document.getElementById('chat-input');
-  if (!input) return;
+  if (!input) {
+    console.error('Chat input not found!');
+    return;
+  }
   
   const message = input.value.trim();
-  if (!message) return;
+  if (!message) {
+    console.log('Empty message, aborting');
+    return;
+  }
+  
+  console.log('Text:', message);
+  console.log('Current user:', state.currentUser?.uid);
+  console.log('Worker URL:', WORKER_URL);
   
   input.value = '';
   input.disabled = true;
@@ -415,6 +530,7 @@ export async function sendMessage() {
     const code = message.replace(/^\/(py|python)\s+/, '');
     await handlePythonCommand(code);
     input.disabled = false;
+    console.log('=== SEND MESSAGE END (Python) ===');
     return;
   }
   
@@ -423,6 +539,7 @@ export async function sendMessage() {
     const cmd = message.replace(/^\/midi\s+/, '');
     await handleMidiCommand(cmd);
     input.disabled = false;
+    console.log('=== SEND MESSAGE END (MIDI) ===');
     return;
   }
   
@@ -432,6 +549,7 @@ export async function sendMessage() {
     if (lowerMsg.includes(trigger)) {
       addMessage('assistant', response);
       input.disabled = false;
+      console.log('=== SEND MESSAGE END (Reflex) ===');
       return;
     }
   }
@@ -445,10 +563,14 @@ export async function sendMessage() {
   addMessage('assistant', '...', true);
   
   try {
+    console.log('Sending to worker...');
     // Send to AI
     const response = await fetch(`${WORKER_URL}/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({
         message,
         mode: state.activeView,
@@ -463,7 +585,13 @@ export async function sendMessage() {
       })
     });
     
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+    
     const data = await response.json();
+    console.log('Worker response:', data);
     
     // Remove thinking indicator
     const chatContainer = document.getElementById('chat-messages');
@@ -480,16 +608,18 @@ export async function sendMessage() {
     updateNeurochemistry('chat');
     
   } catch (error) {
-    console.error('Chat error:', error);
+    console.error('Fetch error:', error);
     const chatContainer = document.getElementById('chat-messages');
     const thinkingMsg = chatContainer.querySelector('.thinking');
     if (thinkingMsg) thinkingMsg.remove();
     
     addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+    showChatStatus(`Connection failed: ${error.message}`, 'error');
   }
   
   input.disabled = false;
   input.focus();
+  console.log('=== SEND MESSAGE END ===');
 }
 
 // Add message to chat
@@ -501,10 +631,10 @@ function addMessage(role, content, isThinking = false) {
   msgDiv.className = `mb-4 ${role === 'user' ? 'text-right' : 'text-left'} ${isThinking ? 'thinking' : ''}`;
   
   const bubble = document.createElement('div');
-  bubble.className = `inline-block px-4 py-2 rounded-lg max-w-[80%] ${
+  bubble.className = `message-bubble inline-block rounded-lg max-w-[80%] ${
     role === 'user' 
-      ? 'bg-brand-accent text-brand-primary' 
-      : 'bg-brand-secondary text-brand-text'
+      ? 'message-bubble user' 
+      : 'message-bubble model'
   }`;
   
   if (isThinking) {
@@ -752,7 +882,6 @@ export function deleteNode() {
     const targetId = typeof l.target === 'string' ? l.target : l.target.id;
     return sourceId !== nodeId && targetId !== nodeId;
   });
-  );
   
   closeNodeInspector();
   renderGraph();

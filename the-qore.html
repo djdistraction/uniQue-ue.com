@@ -173,6 +173,45 @@
             white-space: pre-wrap;
         }
         
+        /* Chat Input Styling */
+        #chat-input {
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 14px;
+            border: 2px solid rgba(0, 246, 255, 0.3);
+            padding: 12px 16px;
+        }
+
+        #chat-input:focus {
+            border-color: #00f6ff;
+            box-shadow: 0 0 0 3px rgba(0, 246, 255, 0.1);
+            outline: none;
+        }
+
+        #chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Message Bubble Styling */
+        .message-bubble.user {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: #ffffff;
+            font-weight: 500;
+            border: none;
+        }
+
+        .message-bubble.model {
+            background: rgba(15, 23, 42, 0.95);
+            color: #e2e8f0;
+            border: 1px solid rgba(0, 246, 255, 0.3);
+        }
+
+        .message-bubble {
+            padding: 14px 18px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
         @media (max-width: 1024px) {
             .qore-layout {
                 grid-template-columns: 1fr;
@@ -332,6 +371,11 @@
                         <h3 class="font-display font-bold text-brand-accent">
                             <i class="fas fa-comments mr-2"></i> Cognitive Interface
                         </h3>
+                    </div>
+                    
+                    <!-- Error/Status Banner -->
+                    <div id="chat-status-banner" class="hidden px-4 py-2 bg-red-900/50 border-b border-red-500/50 text-red-200 text-xs">
+                        <span id="chat-status-message"></span>
                     </div>
                     
                     <div id="chat-messages" class="flex-1 overflow-y-auto p-4"></div>
