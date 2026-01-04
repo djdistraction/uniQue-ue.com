@@ -926,14 +926,19 @@ body::before {
     border: 2px solid;
     border-image: linear-gradient(135deg, var(--brand-magenta), var(--brand-accent)) 1;
     border-radius: 1.5rem;
-    animation: glow 3s ease-in-out infinite alternate;
+    animation: card-glow 3s ease-in-out infinite alternate;
 }
 
-/* --- Smooth Scroll --- */
-html {
-    scroll-behavior: smooth;
+@keyframes card-glow {
+    from {
+        box-shadow: 0 0 10px -5px rgba(0, 246, 255, 0.3);
+    }
+    to {
+        box-shadow: 0 0 25px -5px rgba(240, 0, 184, 0.6);
+    }
 }
 
+/* --- Section Scroll Behavior --- */
 section {
     scroll-margin-top: 5rem;
 }
