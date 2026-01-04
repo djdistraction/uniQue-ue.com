@@ -36,7 +36,6 @@ h1, h2, h3, h4, h5, h6 {
   --brand-magenta: #F000B8;
   --brand-text: #E5E7EB;
   --brand-text-muted: #9CA3AF;
-  --logo-rotation-correction: -90deg;
 }
 
 /* --- Particle Canvas (Site-wide Background) --- */
@@ -350,7 +349,6 @@ body.is-navigating {
     filter: drop-shadow(0 0 40px rgba(0, 246, 255, 0.6));
     animation: float 6s ease-in-out infinite;
     transition: transform 0.3s ease;
-    transform: rotate(var(--logo-rotation-correction));
 }
 
 /* Holographic scan line effect */
@@ -378,8 +376,8 @@ body.is-navigating {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(var(--logo-rotation-correction)); }
-    50% { transform: translateY(-20px) rotate(var(--logo-rotation-correction)); }
+    0%, 100% { transform: translateY(0) rotateX(0deg); }
+    50% { transform: translateY(-20px) rotateX(5deg); }
 }
 
 /* Circular glow ring */
@@ -614,7 +612,6 @@ body::before {
     letter-spacing: 0.1em;
     backdrop-filter: blur(10px);
     isolation: isolate;
-    min-width: 220px;
 }
 
 .cta-text {
