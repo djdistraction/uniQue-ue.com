@@ -376,8 +376,8 @@ body.is-navigating {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0) rotateX(0deg); }
-    50% { transform: translateY(-20px) rotateX(5deg); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
 /* Circular glow ring */
@@ -612,6 +612,7 @@ body::before {
     letter-spacing: 0.1em;
     backdrop-filter: blur(10px);
     isolation: isolate;
+    min-width: 220px;
 }
 
 .cta-text {
