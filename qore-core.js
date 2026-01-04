@@ -583,10 +583,12 @@ function parseMemoryUpdates(text) {
   while ((match = linkRegex.exec(xmlText)) !== null) {
     const [, source, target, rel, strength] = match;
     
-    // Check if link exists
-    const existingLink = state.graph.links.find(l => 
-      l.source.id === source && l.target.id === target
-    );
+    // Check if link exists (handle both string IDs and D3 node objects)
+    const existingLink = state.graph.links.find(l => {
+      const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
+      const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+      return sourceId === source && targetId === target;
+    });
     
     if (existingLink) {
       existingLink.strength = parseFloat(strength);
@@ -702,11 +704,19 @@ export function dreamProtocol() {
   
   if (!node) return;
   
-  // Find random unconnected nodes
+  // Find random unconnected nodes (handle both string IDs and D3 node objects)
   const connectedIds = new Set(
     state.graph.links
-      .filter(l => l.source.id === nodeId || l.target.id === nodeId)
-      .map(l => l.source.id === nodeId ? l.target.id : l.source.id)
+      .filter(l => {
+        const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
+        const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+        return sourceId === nodeId || targetId === nodeId;
+      })
+      .map(l => {
+        const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
+        const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+        return sourceId === nodeId ? targetId : sourceId;
+      })
   );
   
   const unconnected = state.graph.nodes.filter(n => 
@@ -736,8 +746,12 @@ export function deleteNode() {
   if (!confirm('Delete this node and all its connections?')) return;
   
   state.graph.nodes = state.graph.nodes.filter(n => n.id !== nodeId);
-  state.graph.links = state.graph.links.filter(l => 
-    l.source.id !== nodeId && l.target.id !== nodeId
+  // Handle both string IDs and D3 node objects
+  state.graph.links = state.graph.links.filter(l => {
+    const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
+    const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+    return sourceId !== nodeId && targetId !== nodeId;
+  });
   );
   
   closeNodeInspector();
