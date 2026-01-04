@@ -380,7 +380,7 @@ body.is-navigating {
     50% { transform: translateY(-20px) rotateX(5deg); }
 }
 
-/* Hexagonal glow ring */
+/* Circular glow ring */
 .hero-logo-container::after {
     content: '';
     position: absolute;
@@ -1136,11 +1136,6 @@ section {
     
     .stat-number {
         font-size: 3rem;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
     }
     
     .terminal-body {
