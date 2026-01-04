@@ -52,36 +52,40 @@
             <section class="hero-section">
                 <div class="hero-content">
                     <div class="animate-fade-in-up">
-                        <!-- Logo with mouse-follow effect -->
-                        <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" id="hero-logo" class="hero-logo">
+                        <!-- Logo with holographic effect -->
+                        <div class="hero-logo-container">
+                            <img src="/uniQ_logo_sm2T.png" alt="uniQue-ue Logo" class="hero-logo">
+                        </div>
                         
-                        <!-- Main Title with typing effect -->
-                        <h1 id="hero-title" class="hero-title">
-                            Welcome to uniQue-ue
+                        <!-- Main Title with gradient and shimmer effect -->
+                        <h1 class="hero-title">
+                            <span class="gradient-text">WELCOME TO</span>
+                            <span class="gradient-text brand-name">uniQue-ue</span>
                         </h1>
                         
-                        <!-- Rotating taglines -->
-                        <p id="hero-tagline" class="hero-tagline"></p>
+                        <!-- Typing tagline with cursor -->
+                        <p class="hero-tagline">
+                            <span id="typed-text"></span>
+                            <span class="cursor">|</span>
+                        </p>
                         
                         <!-- Dual CTAs -->
                         <div class="cta-group">
                             <a href="/the-qore.html" class="cta-primary">
                                 <span class="cta-text">Explore The Qore</span>
-                                <span class="cta-ripple"></span>
+                                <span class="cta-glow"></span>
                             </a>
                             <a href="/resources.html" class="cta-secondary">
                                 <span class="cta-text">Browse Tools</span>
-                                <span class="cta-ripple"></span>
+                                <span class="cta-glow"></span>
                             </a>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Floating shapes for visual interest -->
-                <div class="floating-shapes">
-                    <div class="shape shape-1"></div>
-                    <div class="shape shape-2"></div>
-                    <div class="shape shape-3"></div>
+                <!-- Scroll Indicator -->
+                <div class="scroll-indicator">
+                    <div class="scroll-arrow"></div>
                 </div>
             </section>
 
@@ -89,30 +93,24 @@
             <section class="features-section">
                 <h2 class="section-title">Flagship Applications</h2>
                 <div class="features-grid">
-                    <div class="feature-card" data-tool="qore">
+                    <a href="/the-qore.html" class="feature-card">
                         <div class="feature-icon">🧠</div>
-                        <h3>The Qore</h3>
-                        <p>Neural interface with Hebbian learning and multi-modal AI</p>
-                        <a href="/the-qore.html" class="feature-link">Launch →</a>
-                    </div>
-                    <div class="feature-card" data-tool="draven">
+                        <h3 class="feature-title">The Qore</h3>
+                        <p class="feature-desc">Neural interface with Hebbian learning</p>
+                        <div class="feature-badge">NEW</div>
+                    </a>
+                    
+                    <a href="/ghost-writer.html" class="feature-card">
                         <div class="feature-icon">✍️</div>
-                        <h3>Draven</h3>
-                        <p>Ghost-writer AI for creative content and storytelling</p>
-                        <a href="/ghost-writer.html" class="feature-link">Launch →</a>
-                    </div>
-                    <div class="feature-card" data-tool="devtools">
-                        <div class="feature-icon">⚡</div>
-                        <h3>Developer Tools</h3>
-                        <p>Code utilities, formatters, and conversion tools</p>
-                        <a href="/resources.html" class="feature-link">Explore →</a>
-                    </div>
-                    <div class="feature-card" data-tool="graphics">
-                        <div class="feature-icon">🎨</div>
-                        <h3>Graphics Studio</h3>
-                        <p>Visual creation and image manipulation tools</p>
-                        <a href="/graphics-studio.html" class="feature-link">Launch →</a>
-                    </div>
+                        <h3 class="feature-title">Draven</h3>
+                        <p class="feature-desc">AI-powered ghost writing engine</p>
+                    </a>
+                    
+                    <a href="/resources.html" class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h3 class="feature-title">Dev Tools</h3>
+                        <p class="feature-desc">15+ code utilities & analyzers</p>
+                    </a>
                 </div>
             </section>
 
@@ -121,22 +119,18 @@
 
             <!-- SECTION 3: Stats Counter -->
             <section class="stats-section">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="25">0</div>
-                        <div class="stat-label">AI-Powered Tools</div>
+                <div class="stats-container">
+                    <div class="stat-pill">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">AI Tools</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="4">0</div>
-                        <div class="stat-label">Specialized AI Personas</div>
+                    <div class="stat-pill">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">AI Personas</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="0">0</div>
-                        <div class="stat-label">Client-Side API Keys</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-target="100">0</div>
-                        <div class="stat-label">% GitHub Pages Compatible</div>
+                    <div class="stat-pill">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Secure</div>
                     </div>
                 </div>
             </section>
@@ -206,20 +200,48 @@
     -->
     <script type="module">
         // --- DOM Elements ---
-        const heroLogo = document.getElementById('hero-logo');
-        const heroTitle = document.getElementById('hero-title');
-        const heroTagline = document.getElementById('hero-tagline');
+        const typedTextElement = document.getElementById('typed-text');
         const demoContent = document.getElementById('demo-content');
-        const statNumbers = document.querySelectorAll('.stat-number');
         
-        // Rotating taglines
+        // Rotating taglines with typing effect
         const taglines = [
-            'a cybernetics consortium, forging tomorrow\'s digital realities.',
-            'AI-powered tools for developers, creators, and innovators.',
-            'Where neural interfaces meet creative possibilities.',
-            'Build, create, and automate with cutting-edge AI.'
+            "Forging tomorrow's digital realities",
+            "Where AI meets human creativity",
+            "Neural interfaces that think like you",
+            "Redefining what it is to be alive"
         ];
-        let currentTaglineIndex = 0;
+        
+        let taglineIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        
+        // --- 1. Typing Effect for Tagline ---
+        function typeTagline() {
+            if (!typedTextElement) return;
+            
+            const currentTagline = taglines[taglineIndex];
+            
+            if (!isDeleting) {
+                typedTextElement.textContent = currentTagline.substring(0, charIndex);
+                charIndex++;
+                
+                if (charIndex > currentTagline.length) {
+                    isDeleting = true;
+                    setTimeout(typeTagline, 2000); // Pause before deleting
+                    return;
+                }
+            } else {
+                typedTextElement.textContent = currentTagline.substring(0, charIndex);
+                charIndex--;
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    taglineIndex = (taglineIndex + 1) % taglines.length;
+                }
+            }
+            
+            setTimeout(typeTagline, isDeleting ? 30 : 80);
+        }
         
         // Demo scenarios
         const demoScenarios = [
@@ -238,58 +260,7 @@
         ];
         let currentDemoIndex = 0;
         
-        // --- 1. Enhanced Hero Logo Mouse-Follow ---
-        if (heroLogo) {
-            let isMouseOver = false;
-            heroLogo.parentElement.addEventListener('mousemove', (e) => {
-                isMouseOver = true;
-                const { clientX, clientY } = e;
-                const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = heroLogo.parentElement;
-                const x = ((clientX - offsetLeft) / offsetWidth) - 0.5;
-                const y = ((clientY - offsetTop) / offsetHeight) - 0.5;
-                heroLogo.style.transform = `perspective(1000px) rotateY(${x * 30}deg) rotateX(${-y * 30}deg) scale(1.1)`;
-            });
-            heroLogo.parentElement.addEventListener('mouseleave', () => {
-                isMouseOver = false;
-                heroLogo.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
-            });
-            
-            // Pulse animation when idle
-            setInterval(() => {
-                if (!isMouseOver) {
-                    heroLogo.classList.add('logo-pulse');
-                    setTimeout(() => heroLogo.classList.remove('logo-pulse'), 1000);
-                }
-            }, 5000);
-        }
-
-        // --- 2. Typing Effect for Title ---
-        function typeText(element, text, speed = 100) {
-            let i = 0;
-            element.textContent = '';
-            const interval = setInterval(() => {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, speed);
-        }
-        
-        // --- 3. Rotating Taglines ---
-        function rotateTaglines() {
-            if (!heroTagline) return;
-            
-            heroTagline.style.opacity = '0';
-            setTimeout(() => {
-                heroTagline.textContent = taglines[currentTaglineIndex];
-                heroTagline.style.opacity = '1';
-                currentTaglineIndex = (currentTaglineIndex + 1) % taglines.length;
-            }, 500);
-        }
-        
-        // --- 4. Interactive Demo Terminal ---
+        // --- 2. Interactive Demo Terminal ---
         async function typeInTerminal(text, element, speed = 50) {
             for (let i = 0; i < text.length; i++) {
                 element.textContent += text.charAt(i);
@@ -325,85 +296,19 @@
             runDemo();
         }
         
-        // --- 5. Animated Stats Counter ---
-        function formatStatValue(target, current) {
-            if (target === 0) {
-                return '0';
-            } else if (target === 100) {
-                return current + '%';
-            } else {
-                return current + '+';
-            }
-        }
-        
-        function animateCounter(element, target, duration = 2000) {
-            const start = 0;
-            const startTime = performance.now();
-            
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing function (ease-out)
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                const current = Math.floor(start + (target - start) * easeOut);
-                
-                element.textContent = formatStatValue(target, current);
-                
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
-            }
-            
-            requestAnimationFrame(update);
-        }
-        
-        // Intersection Observer for stats
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-                    entry.target.classList.add('counted');
-                    const target = parseInt(entry.target.dataset.target);
-                    animateCounter(entry.target, target);
-                }
+        // --- 3. Scroll Indicator Click Handler ---
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        if (scrollIndicator) {
+            scrollIndicator.addEventListener('click', () => {
+                document.querySelector('.features-section')?.scrollIntoView({ behavior: 'smooth' });
             });
-        }, { threshold: 0.5 });
-        
-        statNumbers.forEach(stat => statsObserver.observe(stat));
-        
-        // --- 6. CTA Ripple Effect ---
-        document.querySelectorAll('.cta-primary, .cta-secondary').forEach(button => {
-            button.addEventListener('click', function(e) {
-                const ripple = this.querySelector('.cta-ripple');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.classList.remove('ripple-active');
-                
-                // Trigger reflow
-                void ripple.offsetWidth;
-                ripple.classList.add('ripple-active');
-            });
-        });
+        }
         
         // --- Initialize on Load ---
         window.addEventListener('DOMContentLoaded', () => {
             // Start typing effect
-            if (heroTitle) {
-                typeText(heroTitle, 'Welcome to uniQue-ue', 80);
-            }
-            
-            // Initialize first tagline
-            if (heroTagline) {
-                heroTagline.textContent = taglines[0];
-                heroTagline.style.transition = 'opacity 0.5s ease';
-                // Rotate taglines every 5 seconds
-                setInterval(rotateTaglines, 5000);
+            if (typedTextElement) {
+                setTimeout(typeTagline, 500);
             }
             
             // Start demo after a delay
