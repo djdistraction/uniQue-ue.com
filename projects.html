@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <main class="pt-24 pb-16">
+            <div class="container mx-auto px-6 max-w-7xl">
+                
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-4xl md:text-5xl font-bold heading-glow">
+                        My Projects
+                    </h1>
+                    <button id="new-project-btn" class="bg-brand-accent text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-all">
+                        + New Project
+                    </button>
+                </div>
+                
+                <!-- Upgrade Required Message -->
+                <div id="upgrade-required" class="hidden">
+                    <div class="bg-brand-secondary/90 border border-brand-magenta/50 rounded-lg p-8 text-center">
+                        <h2 class="text-2xl font-bold mb-4">Pro Subscription Required</h2>
+                        <p class="text-xl mb-6 text-brand-text-muted">
+                            Project saving is available for Pro, Creator, Lifetime, and Developer tiers.
+                        </p>
+                        <a href="/pricing.html" class="inline-block bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                            View Pricing Plans
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Projects Grid -->
+                <div id="projects-container" class="hidden">
+                    
+                    <!-- Search and Filter -->
+                    <div class="mb-6 flex gap-4 flex-wrap">
+                        <input type="text" id="search-projects" placeholder="Search projects..." 
+                            class="flex-1 min-w-[200px] bg-brand-secondary border border-brand-accent/20 rounded-lg px-4 py-2 text-brand-text focus:border-brand-accent focus:outline-none">
+                        <select id="filter-tool" 
+                            class="bg-brand-secondary border border-brand-accent/20 rounded-lg px-4 py-2 text-brand-text focus:border-brand-accent focus:outline-none">
+                            <option value="">All Tools</option>
+                            <option value="writer-room">Writer's Room</option>
+                            <option value="graphics-studio">Graphics Studio</option>
+                            <option value="qore">The Qore</option>
+                        </select>
+                        <select id="sort-projects" 
+                            class="bg-brand-secondary border border-brand-accent/20 rounded-lg px-4 py-2 text-brand-text focus:border-brand-accent focus:outline-none">
+                            <option value="updated">Recently Updated</option>
+                            <option value="created">Recently Created</option>
+                            <option value="name">Name (A-Z)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Projects Grid -->
+                    <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="empty-state" class="hidden text-center py-16">
+                        <div class="text-6xl mb-4">📁</div>
+                        <h3 class="text-2xl font-bold mb-2">No Projects Yet</h3>
+                        <p class="text-brand-text-muted mb-6">Create your first project to get started!</p>
+                        <button onclick="document.getElementById('new-project-btn').click()" 
+                            class="bg-brand-accent text-brand-primary font-bold py-3 px-6 rounded-lg hover:opacity-90">
+                            Create Project
+                        </button>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+    </div>
+    
+    <!-- New Project Modal -->
+    <div id="new-project-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-secondary border-2 border-brand-accent/50 rounded-lg p-6 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Create New Project</h2>
+            <form id="new-project-form" class="space-y-4">
+                <div>
+                    <label for="project-name" class="block text-sm font-medium mb-2">Project Name</label>
+                    <input type="text" id="project-name" required 
+                        class="w-full bg-brand-primary border border-brand-accent/20 rounded-lg px-4 py-2 focus:border-brand-accent focus:outline-none">
+                </div>
+                <div>
+                    <label for="project-tool" class="block text-sm font-medium mb-2">Tool</label>
+                    <select id="project-tool" required 
+                        class="w-full bg-brand-primary border border-brand-accent/20 rounded-lg px-4 py-2 focus:border-brand-accent focus:outline-none">
+                        <option value="">Select a tool...</option>
+                        <option value="writer-room">Writer's Room</option>
+                        <option value="graphics-studio">Graphics Studio</option>
+                        <option value="qore">The Qore</option>
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90">
+                        Create
+                    </button>
+                    <button type="button" id="cancel-new-project" class="flex-1 bg-brand-secondary border border-brand-accent/30 text-brand-text font-bold py-3 rounded-lg hover:bg-brand-accent/10">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Project Modal -->
+    <div id="edit-project-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-secondary border-2 border-brand-accent/50 rounded-lg p-6 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Edit Project</h2>
+            <form id="edit-project-form" class="space-y-4">
+                <input type="hidden" id="edit-project-id">
+                <div>
+                    <label for="edit-project-name" class="block text-sm font-medium mb-2">Project Name</label>
+                    <input type="text" id="edit-project-name" required 
+                        class="w-full bg-brand-primary border border-brand-accent/20 rounded-lg px-4 py-2 focus:border-brand-accent focus:outline-none">
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90">
+                        Save
+                    </button>
+                    <button type="button" id="cancel-edit-project" class="flex-1 bg-brand-secondary border border-brand-accent/30 text-brand-text font-bold py-3 rounded-lg hover:bg-brand-accent/10">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { initSubscriptionManager, TIERS } from './subscription-manager.js';
+        import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        let subscriptionManager = null;
+        let projects = [];
+        
+        const toolIcons = {
+            'writer-room': '✍️',
+            'graphics-studio': '🎨',
+            'qore': '🧠'
+        };
+        
+        const toolUrls = {
+            'writer-room': '/ghost-writer.html',
+            'graphics-studio': '/graphics-studio.html',
+            'qore': '/the-qore.html'
+        };
+        
+        // Initialize
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                document.getElementById('upgrade-required').classList.remove('hidden');
+                return;
+            }
+            
+            subscriptionManager = await initSubscriptionManager();
+            
+            if (!subscriptionManager.canSaveProjects()) {
+                document.getElementById('upgrade-required').classList.remove('hidden');
+                return;
+            }
+            
+            document.getElementById('projects-container').classList.remove('hidden');
+            await loadProjects();
+        });
+        
+        async function loadProjects() {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            try {
+                const projectsRef = collection(db, 'projects', user.uid, 'userProjects');
+                const q = query(projectsRef, orderBy('updatedAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                projects = [];
+                querySnapshot.forEach((doc) => {
+                    projects.push({ id: doc.id, ...doc.data() });
+                });
+                
+                renderProjects();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+            }
+        }
+        
+        function renderProjects() {
+            const grid = document.getElementById('projects-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            const searchTerm = document.getElementById('search-projects').value.toLowerCase();
+            const filterTool = document.getElementById('filter-tool').value;
+            const sortBy = document.getElementById('sort-projects').value;
+            
+            let filtered = projects.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesTool = !filterTool || p.tool === filterTool;
+                return matchesSearch && matchesTool;
+            });
+            
+            // Sort
+            filtered.sort((a, b) => {
+                if (sortBy === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else if (sortBy === 'created') {
+                    return b.createdAt?.seconds - a.createdAt?.seconds;
+                } else {
+                    return b.updatedAt?.seconds - a.updatedAt?.seconds;
+                }
+            });
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(project => `
+                <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-6 hover:border-brand-accent transition-all group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="text-4xl">${toolIcons[project.tool] || '📄'}</div>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editProject('${project.id}')" class="p-2 text-brand-accent hover:bg-brand-accent/10 rounded" title="Rename">
+                                ✏️
+                            </button>
+                            <button onclick="deleteProject('${project.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded" title="Delete">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">${escapeHtml(project.name)}</h3>
+                    <p class="text-sm text-brand-text-muted mb-4">
+                        ${project.tool.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                    </p>
+                    <p class="text-xs text-brand-text-muted mb-4">
+                        Updated ${formatDate(project.updatedAt)}
+                    </p>
+                    <a href="${toolUrls[project.tool]}?project=${project.id}" 
+                        class="block w-full text-center bg-brand-accent text-brand-primary font-bold py-2 rounded-lg hover:opacity-90">
+                        Open Project
+                    </a>
+                </div>
+            `).join('');
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days} days ago`;
+            if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+            return date.toLocaleDateString();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // New project
+        document.getElementById('new-project-btn').addEventListener('click', () => {
+            document.getElementById('new-project-modal').classList.remove('hidden');
+            document.getElementById('project-name').focus();
+        });
+        
+        document.getElementById('cancel-new-project').addEventListener('click', () => {
+            document.getElementById('new-project-modal').classList.add('hidden');
+            document.getElementById('new-project-form').reset();
+        });
+        
+        document.getElementById('new-project-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('project-name').value;
+            const tool = document.getElementById('project-tool').value;
+            const user = auth.currentUser;
+            
+            if (!user) return;
+            
+            try {
+                const projectsRef = collection(db, 'projects', user.uid, 'userProjects');
+                await addDoc(projectsRef, {
+                    name,
+                    tool,
+                    content: {},
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                });
+                
+                document.getElementById('new-project-modal').classList.add('hidden');
+                document.getElementById('new-project-form').reset();
+                await loadProjects();
+            } catch (error) {
+                console.error('Error creating project:', error);
+                alert('Failed to create project. Please try again.');
+            }
+        });
+        
+        // Edit project
+        window.editProject = function(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            document.getElementById('edit-project-id').value = projectId;
+            document.getElementById('edit-project-name').value = project.name;
+            document.getElementById('edit-project-modal').classList.remove('hidden');
+        };
+        
+        document.getElementById('cancel-edit-project').addEventListener('click', () => {
+            document.getElementById('edit-project-modal').classList.add('hidden');
+            document.getElementById('edit-project-form').reset();
+        });
+        
+        document.getElementById('edit-project-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const projectId = document.getElementById('edit-project-id').value;
+            const name = document.getElementById('edit-project-name').value;
+            const user = auth.currentUser;
+            
+            if (!user) return;
+            
+            try {
+                const projectRef = doc(db, 'projects', user.uid, 'userProjects', projectId);
+                await updateDoc(projectRef, {
+                    name,
+                    updatedAt: new Date()
+                });
+                
+                document.getElementById('edit-project-modal').classList.add('hidden');
+                document.getElementById('edit-project-form').reset();
+                await loadProjects();
+            } catch (error) {
+                console.error('Error updating project:', error);
+                alert('Failed to update project. Please try again.');
+            }
+        });
+        
+        // Delete project
+        window.deleteProject = async function(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            if (!confirm(`Are you sure you want to delete "${project.name}"? This cannot be undone.`)) {
+                return;
+            }
+            
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            try {
+                const projectRef = doc(db, 'projects', user.uid, 'userProjects', projectId);
+                await deleteDoc(projectRef);
+                await loadProjects();
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                alert('Failed to delete project. Please try again.');
+            }
+        };
+        
+        // Search and filter
+        document.getElementById('search-projects').addEventListener('input', renderProjects);
+        document.getElementById('filter-tool').addEventListener('change', renderProjects);
+        document.getElementById('sort-projects').addEventListener('change', renderProjects);
+    </script>
+</body>
+</html>

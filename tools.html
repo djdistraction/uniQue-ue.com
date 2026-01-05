@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools - uniQue-ue</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase & Main App Logic -->
+    <script src="firebase-config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        .tool-card {
+            background: linear-gradient(145deg, rgba(16, 20, 44, 0.9), rgba(2, 4, 24, 0.9));
+            border: 2px solid rgba(0, 246, 255, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand-accent);
+            box-shadow: 0 10px 30px rgba(0, 246, 255, 0.3);
+        }
+        
+        .tool-card.locked {
+            opacity: 0.7;
+        }
+        
+        .tool-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+        }
+        
+        .tool-card.unlocked::after {
+            content: '✓';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: var(--brand-accent);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    
+    <div class="page-wrapper">
+        <div id="header-placeholder">
+            <div class="fixed top-0 left-0 right-0 z-50 h-20 bg-brand-secondary/50 backdrop-blur-md animate-pulse"></div>
+        </div>
+        
+        <main class="pt-24 pb-16">
+            <div class="container mx-auto px-6">
+                
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 heading-glow text-center">
+                    Tool Marketplace
+                </h1>
+                <p class="text-xl text-brand-text-muted mb-8 text-center">
+                    Unlock powerful tools to enhance your creative workflow
+                </p>
+                
+                <!-- Filter -->
+                <div class="max-w-md mx-auto mb-8">
+                    <select id="filter-status" 
+                        class="w-full bg-brand-secondary border border-brand-accent/20 rounded-lg px-4 py-3 text-brand-text focus:border-brand-accent focus:outline-none">
+                        <option value="all">All Tools</option>
+                        <option value="unlocked">Unlocked</option>
+                        <option value="locked">Locked</option>
+                    </select>
+                </div>
+                
+                <!-- Tools Grid -->
+                <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- MIDI Controller -->
+                    <div class="tool-card" data-tool="midi_controller">
+                        <div class="text-5xl mb-4 text-center">🎵</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">MIDI Controller</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Advanced MIDI control interface for music production</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Real-time MIDI playback</li>
+                                <li>• Virtual keyboard interface</li>
+                                <li>• Custom instrument mapping</li>
+                                <li>• Export MIDI files</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/the-qore.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Animation Studio -->
+                    <div class="tool-card" data-tool="animation_studio">
+                        <div class="text-5xl mb-4 text-center">🎬</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Animation Studio</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Professional animation and motion graphics tools</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Timeline-based animation</li>
+                                <li>• Keyframe editing</li>
+                                <li>• Export to video/GIF</li>
+                                <li>• Pre-built templates</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/graphics-studio.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Graphics -->
+                    <div class="tool-card" data-tool="advanced_graphics">
+                        <div class="text-5xl mb-4 text-center">🎨</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Advanced Graphics</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Pro-level graphics editing and design capabilities</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Layer-based editing</li>
+                                <li>• Advanced filters</li>
+                                <li>• Vector support</li>
+                                <li>• High-res export</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/graphics-studio.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Python Runtime -->
+                    <div class="tool-card" data-tool="python_runtime">
+                        <div class="text-5xl mb-4 text-center">🐍</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Python Runtime</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Execute Python code directly in your browser</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Full Python 3 support</li>
+                                <li>• Popular libraries included</li>
+                                <li>• Code editor with syntax highlighting</li>
+                                <li>• Save and share scripts</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/the-qore.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Analyzer -->
+                    <div class="tool-card" data-tool="data_analyzer">
+                        <div class="text-5xl mb-4 text-center">📊</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Data Analyzer</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Advanced data analysis and visualization</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• CSV/JSON import</li>
+                                <li>• Statistical analysis</li>
+                                <li>• Interactive charts</li>
+                                <li>• Export reports</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/the-qore.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Voice Synthesis -->
+                    <div class="tool-card" data-tool="voice_synthesis">
+                        <div class="text-5xl mb-4 text-center">🎙️</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Voice Synthesis</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">AI-powered voice generation and text-to-speech</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Multiple voice options</li>
+                                <li>• Emotion and tone control</li>
+                                <li>• High-quality audio export</li>
+                                <li>• Custom voice training</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/ghost-writer.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Web Scraper -->
+                    <div class="tool-card" data-tool="web_scraper">
+                        <div class="text-5xl mb-4 text-center">🌐</div>
+                        <h3 class="text-2xl font-bold mb-2 text-center">Web Scraper</h3>
+                        <p class="text-brand-text-muted mb-4 text-center">Extract and analyze web data with ease</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm"><strong>Features:</strong></p>
+                            <ul class="text-sm text-brand-text-muted space-y-1 ml-4">
+                                <li>• Visual selector builder</li>
+                                <li>• Scheduled scraping</li>
+                                <li>• Data cleaning tools</li>
+                                <li>• Export to CSV/JSON</li>
+                            </ul>
+                        </div>
+                        <div class="text-center space-y-2">
+                            <button class="unlock-btn w-full bg-brand-accent text-brand-primary font-bold py-3 rounded-lg hover:opacity-90" 
+                                onclick="window.location.href='/pricing.html'">
+                                View Pricing
+                            </button>
+                            <a href="/the-qore.html" class="demo-link block text-brand-accent hover:underline text-sm">
+                                Try Demo
+                            </a>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </main>
+        
+        <div id="footer-placeholder">
+            <div class="h-32 w-full bg-brand-primary border-t border-brand-accent/10 animate-pulse"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { initSubscriptionManager, TIERS, TOOLS } from './subscription-manager.js';
+        
+        let subscriptionManager = null;
+        
+        const toolsList = [
+            { id: TOOLS.MIDI_CONTROLLER },
+            { id: TOOLS.ANIMATION_STUDIO },
+            { id: TOOLS.ADVANCED_GRAPHICS },
+            { id: TOOLS.PYTHON_RUNTIME },
+            { id: TOOLS.DATA_ANALYZER },
+            { id: TOOLS.VOICE_SYNTHESIS },
+            { id: TOOLS.WEB_SCRAPER }
+        ];
+        
+        // Initialize
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                subscriptionManager = await initSubscriptionManager();
+            }
+            
+            updateToolCards();
+        });
+        
+        function updateToolCards() {
+            toolsList.forEach(tool => {
+                const card = document.querySelector(`[data-tool="${tool.id}"]`);
+                if (!card) return;
+                
+                const unlockBtn = card.querySelector('.unlock-btn');
+                const demoLink = card.querySelector('.demo-link');
+                
+                if (!subscriptionManager) {
+                    // Not logged in
+                    card.classList.add('locked');
+                    card.classList.remove('unlocked');
+                    unlockBtn.textContent = 'Sign In to Unlock';
+                    unlockBtn.onclick = () => window.location.href = '/profile.html';
+                    return;
+                }
+                
+                const canAccess = subscriptionManager.canAccessTool(tool.id);
+                
+                if (canAccess) {
+                    card.classList.remove('locked');
+                    card.classList.add('unlocked');
+                    unlockBtn.textContent = 'Unlocked ✓';
+                    unlockBtn.classList.remove('bg-brand-accent');
+                    unlockBtn.classList.add('bg-green-500');
+                    unlockBtn.onclick = null;
+                    unlockBtn.style.cursor = 'default';
+                } else {
+                    card.classList.add('locked');
+                    card.classList.remove('unlocked');
+                    
+                    if (subscriptionManager.tier === TIERS.FREE) {
+                        unlockBtn.textContent = 'Upgrade to Pro';
+                    } else {
+                        unlockBtn.textContent = 'View Pricing';
+                    }
+                    unlockBtn.onclick = () => window.location.href = '/pricing.html';
+                }
+            });
+        }
+        
+        // Filter
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            const cards = document.querySelectorAll('.tool-card');
+            
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else if (filter === 'locked') {
+                    card.style.display = card.classList.contains('locked') ? '' : 'none';
+                } else if (filter === 'unlocked') {
+                    card.style.display = card.classList.contains('unlocked') ? '' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

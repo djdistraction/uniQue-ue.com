@@ -1,6 +1,10 @@
 // Import Firebase services
 import { auth, WORKER_URL } from './firebase-config.js'; 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { initSubscriptionManager } from './subscription-manager.js';
+
+// Global subscription manager
+let globalSubscriptionManager = null;
 
 // --- Main App Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -183,13 +187,18 @@ function initWarpDrive() {
 function initAuthStateListener() {
   const authContainer = document.getElementById('auth-nav-container');
   const mobileAuthContainer = document.getElementById('mobile-auth-nav-container');
+  const tierBadgeContainer = document.getElementById('tier-badge-container');
+  const mobileTierBadgeContainer = document.getElementById('mobile-tier-badge-container');
   
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (!authContainer || !mobileAuthContainer) {
       return;
     }
 
     if (user) {
+      // Initialize subscription manager
+      globalSubscriptionManager = await initSubscriptionManager();
+      
       // User is SIGNED IN
       const displayName = user.email ? user.email.split('@')[0] : 'User';
       const profileButtonHTML = `
@@ -201,6 +210,15 @@ function initAuthStateListener() {
       authContainer.innerHTML = profileButtonHTML;
       mobileAuthContainer.innerHTML = profileButtonHTML;
       
+      // Show tier badge
+      if (tierBadgeContainer && mobileTierBadgeContainer) {
+        const badgeHTML = globalSubscriptionManager.getTierBadgeHTML();
+        tierBadgeContainer.innerHTML = badgeHTML;
+        mobileTierBadgeContainer.innerHTML = badgeHTML;
+        tierBadgeContainer.classList.remove('hidden');
+        mobileTierBadgeContainer.classList.remove('hidden');
+      }
+      
     } else {
       // User is SIGNED OUT
       const signInButtonHTML = `
@@ -210,6 +228,12 @@ function initAuthStateListener() {
       `;
       authContainer.innerHTML = signInButtonHTML;
       mobileAuthContainer.innerHTML = signInButtonHTML;
+      
+      // Hide tier badge
+      if (tierBadgeContainer && mobileTierBadgeContainer) {
+        tierBadgeContainer.classList.add('hidden');
+        mobileTierBadgeContainer.classList.add('hidden');
+      }
     }
     
     setActiveNavLink();

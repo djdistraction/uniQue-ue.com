@@ -71,23 +71,65 @@
             <div class="container mx-auto px-6 py-12 md:py-20">
                 
                 <!-- This container is hidden when the user is logged OUT -->
-                <div id="profile-view" class="hidden max-w-xl mx-auto">
+                <div id="profile-view" class="hidden max-w-2xl mx-auto">
                     <h1 class="text-4xl md:text-5xl font-bold mb-8 heading-glow">
                         Your Profile
                     </h1>
-                    <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-8 space-y-4">
-                        <p class="text-lg">Welcome, <strong id="profile-email" class="text-brand-accent">...</strong></p>
-                        <p class="text-sm text-brand-text-muted">User ID: <span id="profile-uid" class="text-xs">...</span></p>
+                    <div class="space-y-6">
                         
-                        <!-- TODO: Add profile picture upload, user ID change, etc. -->
+                        <!-- User Info -->
+                        <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-8">
+                            <p class="text-lg mb-2">Welcome, <strong id="profile-email" class="text-brand-accent">...</strong></p>
+                            <p class="text-sm text-brand-text-muted">User ID: <span id="profile-uid" class="text-xs">...</span></p>
+                        </div>
                         
-                        <h2 class="text-2xl font-display pt-8">Subscriptions</h2>
-                        <p class="text-brand-text-muted">You are currently on the 'Free' plan.</p>
-                        <!-- TODO: Add 'Upgrade' button -->
-
-                        <button id="logout-button" class="auth-button w-auto bg-brand-magenta/80 border-brand-magenta hover:bg-brand-magenta mt-8">
-                            Log Out
-                        </button>
+                        <!-- Subscription Info -->
+                        <div class="bg-brand-secondary/90 border border-brand-accent/20 rounded-lg p-8">
+                            <h2 class="text-2xl font-display mb-4">Subscription</h2>
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <div class="text-3xl font-bold text-brand-accent mb-2" id="current-tier-name">Free</div>
+                                    <p class="text-brand-text-muted" id="subscription-description">Basic features with no project saving</p>
+                                </div>
+                                <div id="tier-badge-display"></div>
+                            </div>
+                            
+                            <!-- Upgrade CTA -->
+                            <div id="upgrade-cta" class="bg-gradient-to-r from-brand-accent/20 to-brand-magenta/20 border border-brand-accent/30 rounded-lg p-6 mb-6">
+                                <h3 class="text-xl font-bold mb-2">Unlock More Features</h3>
+                                <p class="text-brand-text-muted mb-4">Upgrade to save projects, access The Qore, and unlock powerful tools.</p>
+                                <a href="/pricing.html" class="inline-block bg-brand-accent text-brand-primary font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                                    View Pricing Plans
+                                </a>
+                            </div>
+                            
+                            <!-- Quick Links -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <a href="/billing.html" class="block text-center bg-brand-primary border border-brand-accent/20 py-3 px-4 rounded-lg hover:border-brand-accent transition-all">
+                                    💳 Billing
+                                </a>
+                                <a href="/projects.html" class="block text-center bg-brand-primary border border-brand-accent/20 py-3 px-4 rounded-lg hover:border-brand-accent transition-all">
+                                    📁 Projects
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Admin Link (Developer only) -->
+                        <div id="admin-link" class="hidden bg-brand-secondary/90 border border-red-500/50 rounded-lg p-8">
+                            <h2 class="text-2xl font-display mb-4 text-red-500">Developer Access</h2>
+                            <p class="text-brand-text-muted mb-4">You have administrator privileges.</p>
+                            <a href="/admin.html" class="inline-block bg-red-500 text-white font-bold py-3 px-8 rounded-lg hover:opacity-90">
+                                Admin Panel
+                            </a>
+                        </div>
+                        
+                        <!-- Logout -->
+                        <div class="text-center">
+                            <button id="logout-button" class="auth-button w-auto bg-brand-magenta/80 border-brand-magenta hover:bg-brand-magenta">
+                                Log Out
+                            </button>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -161,6 +203,7 @@
             signInWithEmailAndPassword,
             signOut
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { initSubscriptionManager, TIERS } from './subscription-manager.js';
         
         // --- DOM Elements ---
         const profileView = document.getElementById('profile-view');
@@ -181,7 +224,7 @@
 
         // --- Auth State Listener ---
         // This is the main controller for the page. It shows/hides content based on auth state.
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // --- USER IS LOGGED IN ---
                 profileView.classList.remove('hidden');
@@ -190,8 +233,9 @@
                 profileEmail.textContent = user.email;
                 profileUid.textContent = user.uid;
                 
-                // TODO: Here we would fetch user data (like subscription) from Firestore
-                // e.g., loadUserProfile(user.uid);
+                // Load subscription data
+                const subscriptionManager = await initSubscriptionManager();
+                loadSubscriptionInfo(subscriptionManager);
 
             } else {
                 // --- USER IS LOGGED OUT ---
@@ -199,6 +243,39 @@
                 authView.classList.remove('hidden');
             }
         });
+        
+        function loadSubscriptionInfo(manager) {
+            const tierName = document.getElementById('current-tier-name');
+            const tierBadge = document.getElementById('tier-badge-display');
+            const description = document.getElementById('subscription-description');
+            const upgradeCta = document.getElementById('upgrade-cta');
+            const adminLink = document.getElementById('admin-link');
+            
+            tierName.textContent = manager.getTierDisplayName();
+            tierBadge.innerHTML = manager.getTierBadgeHTML();
+            
+            const descriptions = {
+                [TIERS.FREE]: 'Basic features with no project saving',
+                [TIERS.PRO]: 'Save projects, access The Qore, and purchase tools à la carte',
+                [TIERS.CREATOR]: 'All tools unlocked with monthly usage limits',
+                [TIERS.LIFETIME]: 'Everything unlocked forever with no limits',
+                [TIERS.DEVELOPER]: 'Administrator access with full system control'
+            };
+            
+            description.textContent = descriptions[manager.tier] || 'Basic features';
+            
+            // Hide upgrade CTA for high tiers
+            if (manager.tier === TIERS.LIFETIME || manager.tier === TIERS.DEVELOPER) {
+                upgradeCta.classList.add('hidden');
+            } else {
+                upgradeCta.classList.remove('hidden');
+            }
+            
+            // Show admin link for developers
+            if (manager.isAdmin()) {
+                adminLink.classList.remove('hidden');
+            }
+        }
 
         // --- Tab Switching ---
         tabLogin.addEventListener('click', () => {
