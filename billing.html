@@ -318,13 +318,19 @@
             btn.textContent = 'Saving...';
             
             try {
-                // Update Firestore
-                await subscriptionManager.updateLimitExtensions('images', subscriptionManager.limitExtensions.images);
-                await subscriptionManager.updateLimitExtensions('animations', subscriptionManager.limitExtensions.animations);
-                await subscriptionManager.updateLimitExtensions('apiCalls', subscriptionManager.limitExtensions.apiCalls);
+                // Batch update all extensions in a single operation
+                const success = await subscriptionManager.updateAllLimitExtensions({
+                    images: subscriptionManager.limitExtensions.images,
+                    animations: subscriptionManager.limitExtensions.animations,
+                    apiCalls: subscriptionManager.limitExtensions.apiCalls
+                });
                 
-                alert('Limit extensions updated successfully!');
-                loadBillingData();
+                if (success) {
+                    alert('Limit extensions updated successfully!');
+                    loadBillingData();
+                } else {
+                    throw new Error('Update failed');
+                }
             } catch (error) {
                 console.error('Error updating extensions:', error);
                 alert('Failed to update limit extensions. Please try again.');

@@ -309,8 +309,12 @@
             // Load users
             await loadUsers();
             
-            // Set worker URL
-            document.getElementById('worker-url').textContent = WORKER_URL || 'Not configured';
+            // Set worker URL (masked for security)
+            const workerUrl = WORKER_URL || 'Not configured';
+            const maskedUrl = workerUrl.length > 30 
+                ? workerUrl.substring(0, 20) + '...' + workerUrl.substring(workerUrl.length - 10)
+                : workerUrl;
+            document.getElementById('worker-url').textContent = maskedUrl;
             
             // Add activity log entry
             addActivityLog('Admin panel accessed', 'System event');

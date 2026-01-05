@@ -449,7 +449,7 @@
     
     <script type="module">
         import { auth, WORKER_URL } from './firebase-config.js';
-        import { initSubscriptionManager } from './subscription-manager.js';
+        import { initSubscriptionManager, TIERS } from './subscription-manager.js';
         
         let subscriptionManager = null;
         let billingCycle = 'monthly';
@@ -516,7 +516,7 @@
                 return;
             }
             
-            if (!subscriptionManager || subscriptionManager.tier === 'free') {
+            if (!subscriptionManager || subscriptionManager.tier === TIERS.FREE) {
                 alert('You need at least a Pro subscription to purchase tools à la carte. Please upgrade first!');
                 return;
             }

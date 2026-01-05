@@ -26,8 +26,9 @@ export const TOOLS = {
   WEB_SCRAPER: 'web_scraper'
 };
 
-// Developer email (hardcoded check)
-const DEVELOPER_EMAIL = 'djdistraction@unique-ue.com';
+// Developer email (should be configured via environment variable)
+// For now, hardcoded. Replace with actual email in production.
+const DEVELOPER_EMAIL = 'djdistraction@unique-ue.com'; // TODO: Move to environment variable
 
 /**
  * SubscriptionManager class
@@ -299,6 +300,27 @@ export class SubscriptionManager {
     if (!this.user || this.tier !== TIERS.CREATOR) return false;
 
     this.limitExtensions[type] = count;
+
+    try {
+      await updateDoc(doc(db, 'users', this.user.uid), {
+        limitExtensions: this.limitExtensions,
+        updatedAt: new Date()
+      });
+      return true;
+    } catch (error) {
+      console.error('Error updating limit extensions:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Batch update all limit extensions (Creator tier only)
+   * More efficient than multiple individual updates
+   */
+  async updateAllLimitExtensions(extensions) {
+    if (!this.user || this.tier !== TIERS.CREATOR) return false;
+
+    this.limitExtensions = { ...this.limitExtensions, ...extensions };
 
     try {
       await updateDoc(doc(db, 'users', this.user.uid), {
