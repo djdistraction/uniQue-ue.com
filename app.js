@@ -165,11 +165,19 @@ function initWarpDrive() {
         e.preventDefault();
         isNavigating = true;
         
-        document.body.classList.add('is-navigating');
-        
-        setTimeout(() => {
+        // Trigger warp effect
+        const warpOverlay = document.getElementById('warp-overlay');
+        if (warpOverlay) {
+          warpOverlay.classList.add('active');
+          
+          // Navigate after animation starts
+          setTimeout(() => {
+            window.location.href = url.href;
+          }, 300);
+        } else {
+          // Fallback if overlay doesn't exist
           window.location.href = url.href;
-        }, 300);
+        }
       }
     }
   };
@@ -178,7 +186,10 @@ function initWarpDrive() {
   document.addEventListener('click', navigate);
 
   window.addEventListener('load', () => {
-    document.body.classList.remove('is-navigating');
+    const warpOverlay = document.getElementById('warp-overlay');
+    if (warpOverlay) {
+      warpOverlay.classList.remove('active');
+    }
   });
 }
 
