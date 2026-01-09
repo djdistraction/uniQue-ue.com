@@ -136,6 +136,8 @@ function initParticleEffect() {
 
 // --- 3. "Warp Drive" Page Transitions ---
 function initWarpDrive() {
+  console.log('🚀 Warp Drive initializing...');
+  
   const prefetchCache = new Map();
   let isNavigating = false;
 
@@ -150,45 +152,85 @@ function initWarpDrive() {
   };
 
   const navigate = (e) => {
+    // Use event delegation - works with dynamically loaded content
     const link = e.target.closest('a');
     
-    if (link) {
-      const url = new URL(link.href, window.location.origin);
+    if (!link) {
+      return; // Not a link click
+    }
+    
+    const href = link.getAttribute('href');
+    
+    // Debug logging
+    console.log('🔗 Link clicked:', href);
+    
+    // Skip if:
+    // - No href
+    // - External link (starts with http/https but different origin)
+    // - Hash link (same page anchor)
+    // - mailto or tel
+    // - Already navigating
+    if (!href || 
+        href === '#' || 
+        href.startsWith('mailto:') || 
+        href.startsWith('tel:') ||
+        isNavigating) {
+      console.log('⏭️ Skipping warp effect for this link');
+      return;
+    }
+    
+    // Handle both relative and absolute URLs
+    let targetUrl;
+    try {
+      targetUrl = new URL(href, window.location.origin);
+    } catch (err) {
+      console.log('⚠️ Invalid URL:', href);
+      return;
+    }
+    
+    // Only intercept same-origin navigation to different pages
+    if (targetUrl.origin === window.location.origin && 
+        targetUrl.pathname !== window.location.pathname &&
+        !targetUrl.hash) {
       
-      if (url.origin === window.location.origin && 
-          url.href !== window.location.href && 
-          !url.hash &&
-          !link.href.startsWith('mailto:') && 
-          !link.href.startsWith('tel:') && 
-          !isNavigating) {
-            
-        e.preventDefault();
-        isNavigating = true;
+      console.log('🌌 Triggering warp speed to:', targetUrl.href);
+      
+      e.preventDefault();
+      isNavigating = true;
+      
+      // Trigger warp effect
+      const warpOverlay = document.getElementById('warp-overlay');
+      if (warpOverlay) {
+        console.log('✨ Warp overlay found, activating...');
+        warpOverlay.classList.add('active');
         
-        // Trigger warp effect
-        const warpOverlay = document.getElementById('warp-overlay');
-        if (warpOverlay) {
-          warpOverlay.classList.add('active');
-          
-          // Navigate after animation starts
-          setTimeout(() => {
-            window.location.href = url.href;
-          }, 300);
-        } else {
-          // Fallback if overlay doesn't exist
-          window.location.href = url.href;
-        }
+        // Navigate after animation has time to show (increased from 300ms to 500ms)
+        setTimeout(() => {
+          console.log('🚀 Jumping to hyperspace!');
+          window.location.href = targetUrl.href;
+        }, 500);
+      } else {
+        console.error('❌ Warp overlay element not found!');
+        // Fallback - navigate without effect
+        window.location.href = targetUrl.href;
       }
+    } else {
+      console.log('⏭️ Same page or external link, no warp needed');
     }
   };
 
+  // Event delegation on document - works for dynamic content
   document.addEventListener('mouseover', prefetchLink, { passive: true });
   document.addEventListener('click', navigate);
+  
+  console.log('✅ Warp Drive initialized - listening for clicks');
 
+  // Remove active class on page load (in case browser back button was used)
   window.addEventListener('load', () => {
     const warpOverlay = document.getElementById('warp-overlay');
     if (warpOverlay) {
       warpOverlay.classList.remove('active');
+      console.log('🔄 Page loaded, warp overlay reset');
     }
   });
 }
