@@ -138,6 +138,7 @@ function initParticleEffect() {
 function initWarpDrive() {
   console.log('🚀 Warp Drive initializing...');
   
+  const WARP_ANIMATION_DURATION = 500; // milliseconds
   const prefetchCache = new Map();
   let isNavigating = false;
 
@@ -171,7 +172,7 @@ function initWarpDrive() {
     // - mailto or tel
     // - Already navigating
     if (!href || 
-        href === '#' || 
+        href.startsWith('#') || 
         href.startsWith('mailto:') || 
         href.startsWith('tel:') ||
         isNavigating) {
@@ -190,7 +191,7 @@ function initWarpDrive() {
     
     // Only intercept same-origin navigation to different pages
     if (targetUrl.origin === window.location.origin && 
-        targetUrl.pathname !== window.location.pathname &&
+        targetUrl.href !== window.location.href &&
         !targetUrl.hash) {
       
       console.log('🌌 Triggering warp speed to:', targetUrl.href);
@@ -208,7 +209,7 @@ function initWarpDrive() {
         setTimeout(() => {
           console.log('🚀 Jumping to hyperspace!');
           window.location.href = targetUrl.href;
-        }, 500);
+        }, WARP_ANIMATION_DURATION);
       } else {
         console.error('❌ Warp overlay element not found!');
         // Fallback - navigate without effect
