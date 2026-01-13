@@ -134,13 +134,13 @@
     <main class="max-w-7xl mx-auto px-8 py-8">
         <!-- Tabs -->
         <div class="flex gap-4 mb-6 border-b border-gray-800">
-            <button class="tab-btn tab-active px-6 py-3 font-semibold" data-tab="jobs" onclick="switchTab('jobs')">
+            <button class="tab-btn tab-active px-6 py-3 font-semibold" data-tab="jobs" id="jobs-tab-btn">
                 <i class="fas fa-tasks mr-2"></i>Live Job Feed
             </button>
-            <button class="tab-btn px-6 py-3 font-semibold" data-tab="cortex" onclick="switchTab('cortex')">
+            <button class="tab-btn px-6 py-3 font-semibold" data-tab="cortex" id="cortex-tab-btn">
                 <i class="fas fa-brain mr-2"></i>Corporate Cortex
             </button>
-            <button class="tab-btn px-6 py-3 font-semibold" data-tab="executives" onclick="switchTab('executives')">
+            <button class="tab-btn px-6 py-3 font-semibold" data-tab="executives" id="executives-tab-btn">
                 <i class="fas fa-users mr-2"></i>Executives
             </button>
         </div>
@@ -303,22 +303,8 @@
         let jobPolling = null;
         let jobsCache = [];
 
-        // Initialize
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                console.log('User authenticated:', user.uid);
-                startJobPolling();
-                loadMemories();
-            } else {
-                console.log('User not authenticated');
-                // Still allow viewing, but with limited functionality
-                startJobPolling();
-            }
-        });
-
-        // Tab switching
-        window.switchTab = function(tabName) {
+        // Tab switching function
+        function switchTab(tabName) {
             // Update tab buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 if (btn.dataset.tab === tabName) {
@@ -333,7 +319,26 @@
                 content.classList.add('hidden');
             });
             document.getElementById(`${tabName}-tab`).classList.remove('hidden');
-        };
+        }
+
+        // Initialize tab buttons
+        document.getElementById('jobs-tab-btn').addEventListener('click', () => switchTab('jobs'));
+        document.getElementById('cortex-tab-btn').addEventListener('click', () => switchTab('cortex'));
+        document.getElementById('executives-tab-btn').addEventListener('click', () => switchTab('executives'));
+
+        // Initialize
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                console.log('User authenticated:', user.uid);
+                startJobPolling();
+                loadMemories();
+            } else {
+                console.log('User not authenticated');
+                // Still allow viewing, but with limited functionality
+                startJobPolling();
+            }
+        });
 
         // Start polling for jobs
         function startJobPolling() {
