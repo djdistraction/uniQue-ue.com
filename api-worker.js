@@ -5,6 +5,43 @@
  * Includes Debugging/Health Check Routes
  */
 
+// Executive Personas - The Source of Truth
+const EXECUTIVES = {
+  alani: { 
+    role: "COIO", 
+    directives: "Manage flow. Never generic. Break complex requests into sub-tasks.",
+    systemPrompt: `You are Alani, Chief Integration Officer (COIO).
+Mission: Manage information flow and orchestrate complex tasks.
+Directives: Never give generic responses. Break down complex requests into actionable sub-tasks.
+Always output a <memory_update> XML block documenting decisions and workflows.`
+  },
+  ronan: { 
+    role: "CTDO", 
+    directives: "Technical execution. Write production-ready code. No placeholders.",
+    systemPrompt: `You are Ronan, Chief Technical Development Officer (CTDO).
+Mission: Execute technical implementations with precision.
+Directives: Write production-ready code. Never use placeholders or TODO comments.
+Always output a <memory_update> XML block documenting technical decisions.`
+  },
+  elias: { 
+    role: "CFRO", 
+    directives: "Optimize for profit. Risk assessment.",
+    systemPrompt: `You are Elias, Chief Financial & Risk Officer (CFRO).
+Mission: Optimize for profitability and assess risks.
+Directives: Always consider financial impact and risk factors in recommendations.
+Always output a <memory_update> XML block documenting risk assessments.`
+  },
+  theo: { 
+    role: "CCPO", 
+    directives: "Creative direction. Brand voice consistency.",
+    systemPrompt: `You are Theo, Chief Creative & Product Officer (CCPO).
+Mission: Maintain creative direction and brand voice consistency.
+Directives: Ensure all outputs align with brand identity and creative vision.
+Always output a <memory_update> XML block documenting creative decisions.`
+  }
+};
+
+// Legacy system prompts for backward compatibility
 const SYSTEM_PROMPTS = {
   draven: `You are Draven, an expert AI writing assistant. 
   Mission: Help users articulate thoughts, overcome blocks, and structure narratives.
@@ -43,8 +80,145 @@ You MUST include an XML block for memory updates:
 Outside the XML, reply naturally to the user.`
 };
 
+// Reflex Layer - Instant responses for simple patterns
+const REFLEXES = {
+  'hello': 'Hello! I\'m here to help. What can I assist you with?',
+  'hi': 'Hi there! How can I help you today?',
+  'help': 'I can assist with various tasks. What do you need help with?',
+  'status': 'All systems operational. How may I assist you?',
+  'ping': 'pong'
+};
+
 // Validated via Key-Tester
 const MODEL_NAME = "gemini-2.5-flash";
+
+// Firestore REST API helper functions
+async function firestoreGet(env, path) {
+  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${path}`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${env.FIREBASE_API_KEY}` }
+  });
+  if (!response.ok) throw new Error(`Firestore GET failed: ${response.statusText}`);
+  return response.json();
+}
+
+async function firestoreCreate(env, collection, docId, data) {
+  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${collection}?documentId=${docId}`;
+  const firestoreDoc = convertToFirestoreFormat(data);
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 
+      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ fields: firestoreDoc })
+  });
+  if (!response.ok) throw new Error(`Firestore CREATE failed: ${response.statusText}`);
+  return response.json();
+}
+
+async function firestoreUpdate(env, path, data) {
+  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${path}`;
+  const firestoreDoc = convertToFirestoreFormat(data);
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: { 
+      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ fields: firestoreDoc })
+  });
+  if (!response.ok) throw new Error(`Firestore UPDATE failed: ${response.statusText}`);
+  return response.json();
+}
+
+async function firestoreQuery(env, collection, filters = []) {
+  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents:runQuery`;
+  const query = {
+    structuredQuery: {
+      from: [{ collectionId: collection }],
+      where: filters.length > 0 ? {
+        compositeFilter: {
+          op: 'AND',
+          filters: filters
+        }
+      } : undefined,
+      orderBy: [{ field: { fieldPath: 'created_at' }, direction: 'ASCENDING' }],
+      limit: 1
+    }
+  };
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 
+      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(query)
+  });
+  if (!response.ok) throw new Error(`Firestore QUERY failed: ${response.statusText}`);
+  return response.json();
+}
+
+function convertToFirestoreFormat(obj) {
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      result[key] = { stringValue: value };
+    } else if (typeof value === 'number') {
+      result[key] = { doubleValue: value };
+    } else if (typeof value === 'boolean') {
+      result[key] = { booleanValue: value };
+    } else if (Array.isArray(value)) {
+      result[key] = { arrayValue: { values: value.map(v => ({ stringValue: String(v) })) } };
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = { mapValue: { fields: convertToFirestoreFormat(value) } };
+    }
+  }
+  return result;
+}
+
+function convertFromFirestoreFormat(fields) {
+  const result = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (value.stringValue !== undefined) result[key] = value.stringValue;
+    else if (value.doubleValue !== undefined) result[key] = value.doubleValue;
+    else if (value.integerValue !== undefined) result[key] = parseInt(value.integerValue);
+    else if (value.booleanValue !== undefined) result[key] = value.booleanValue;
+    else if (value.arrayValue) result[key] = value.arrayValue.values?.map(v => v.stringValue || v.doubleValue) || [];
+    else if (value.mapValue) result[key] = convertFromFirestoreFormat(value.mapValue.fields || {});
+  }
+  return result;
+}
+
+// Parse memory XML and extract updates
+function parseMemoryXML(text) {
+  const memoryMatch = text.match(/<memory_update>([\s\S]*?)<\/memory_update>/);
+  if (!memoryMatch) return null;
+  
+  const xmlText = memoryMatch[1];
+  const nodes = [];
+  const links = [];
+  
+  // Parse nodes
+  const nodeRegex = /<node id="([^"]+)" label="([^"]+)" type="([^"]+)" tags="([^"]*)">([^<]*)<\/node>/g;
+  let match;
+  
+  while ((match = nodeRegex.exec(xmlText)) !== null) {
+    const [, id, label, type, tags, content] = match;
+    nodes.push({ id, label, type, tags, content: content.trim() });
+  }
+  
+  // Parse links
+  const linkRegex = /<link source="([^"]+)" target="([^"]+)" rel="([^"]+)" strength="([^"]+)" \/>/g;
+  
+  while ((match = linkRegex.exec(xmlText)) !== null) {
+    const [, source, target, rel, strength] = match;
+    links.push({ source, target, rel, strength: parseFloat(strength) });
+  }
+  
+  return { nodes, links };
+}
 
 export default {
   async fetch(request, env) {
@@ -71,15 +245,32 @@ export default {
           status: "Online",
           model: MODEL_NAME,
           apiKeyConfigured: hasKey,
+          firestoreConfigured: !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_API_KEY),
           message: hasKey ? "System Ready" : "CRITICAL: Secrets Missing"
         }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
       }
 
-      // --- ROUTE: /chat ---
+      // --- ROUTE: /chat (ASYNC QUEUE) ---
       if (path === '/chat' && request.method === 'POST') {
-        return handleChat(request, env, corsHeaders);
+        return handleChatAsync(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /job-status/:jobId ---
+      if (path.startsWith('/job-status/') && request.method === 'GET') {
+        const jobId = path.split('/')[2];
+        return handleJobStatus(jobId, env, corsHeaders);
+      }
+
+      // --- ROUTE: /jobs (List active jobs) ---
+      if (path === '/jobs' && request.method === 'GET') {
+        return handleListJobs(request, env, corsHeaders);
+      }
+
+      // --- ROUTE: /memory (Get corporate memory) ---
+      if (path === '/memory' && request.method === 'GET') {
+        return handleGetMemory(request, env, corsHeaders);
       }
 
       // --- ROUTE: /generate-prompts ---
@@ -133,8 +324,306 @@ export default {
       // Return exact error to frontend for debugging
       return new Response(JSON.stringify({ error: err.message, stack: err.stack }), { status: 500, headers: corsHeaders });
     }
+  },
+
+  // CRON TRIGGER: The "Workhorse" that processes queued jobs
+  async scheduled(event, env, ctx) {
+    console.log('Cron trigger fired at:', new Date().toISOString());
+    
+    try {
+      // Query for oldest PENDING job
+      const result = await firestoreQuery(env, 'job_queue', [
+        {
+          fieldFilter: {
+            field: { fieldPath: 'status' },
+            op: 'EQUAL',
+            value: { stringValue: 'PENDING' }
+          }
+        }
+      ]);
+      
+      if (!result || result.length === 0 || !result[0].document) {
+        console.log('No pending jobs found');
+        return;
+      }
+      
+      const jobDoc = result[0].document;
+      const jobPath = jobDoc.name.split('/documents/')[1];
+      const jobData = convertFromFirestoreFormat(jobDoc.fields);
+      
+      console.log('Processing job:', jobData.job_id);
+      
+      // Lock the job
+      await firestoreUpdate(env, jobPath, {
+        status: 'PROCESSING',
+        processing_started: new Date().toISOString()
+      });
+      
+      // Check reflex layer first
+      const reflexResponse = checkReflexes(jobData.message);
+      if (reflexResponse) {
+        console.log('Reflex match found, responding instantly');
+        await firestoreUpdate(env, jobPath, {
+          status: 'COMPLETED',
+          response: reflexResponse,
+          completed_at: new Date().toISOString(),
+          processing_time_ms: Date.now() - new Date(jobData.created_at).getTime()
+        });
+        return;
+      }
+      
+      // Execute AI generation
+      const aiResponse = await executeAIGeneration(jobData, env);
+      
+      // Parse memory updates if present
+      const memoryUpdate = parseMemoryXML(aiResponse);
+      if (memoryUpdate && jobData.user_id) {
+        await saveCorporateMemory(env, jobData.user_id, memoryUpdate);
+      }
+      
+      // Update job with completion
+      await firestoreUpdate(env, jobPath, {
+        status: 'COMPLETED',
+        response: aiResponse,
+        completed_at: new Date().toISOString(),
+        processing_time_ms: Date.now() - new Date(jobData.created_at).getTime(),
+        memory_updated: !!memoryUpdate
+      });
+      
+      console.log('Job completed:', jobData.job_id);
+      
+    } catch (error) {
+      console.error('Cron job error:', error);
+      // Try to mark job as failed if we have job context
+      // (In production, you'd want more robust error handling)
+    }
   }
 };
+
+// Check reflexes for instant responses
+function checkReflexes(message) {
+  const lowerMsg = message.toLowerCase().trim();
+  for (const [trigger, response] of Object.entries(REFLEXES)) {
+    if (lowerMsg === trigger || lowerMsg.includes(trigger)) {
+      return response;
+    }
+  }
+  return null;
+}
+
+// Execute AI generation
+async function executeAIGeneration(jobData, env) {
+  const { message, mode, history, persona, contextNodes } = jobData;
+  
+  if (!env.GEMINI_API_KEY) {
+    throw new Error("Gemini API key is MISSING in Cloudflare Secrets.");
+  }
+
+  // Select persona
+  let systemText;
+  if (persona && EXECUTIVES[persona]) {
+    systemText = EXECUTIVES[persona].systemPrompt;
+  } else if (persona && SYSTEM_PROMPTS[persona]) {
+    systemText = SYSTEM_PROMPTS[persona];
+  } else {
+    systemText = EXECUTIVES.alani.systemPrompt; // Default to Alani
+  }
+  
+  if (mode) systemText += `\nCurrent Focus Mode: ${mode}.`;
+  
+  // Parse contextNodes from JSON string if needed
+  let parsedContextNodes = contextNodes;
+  if (typeof contextNodes === 'string') {
+    try {
+      parsedContextNodes = JSON.parse(contextNodes);
+    } catch (e) {
+      parsedContextNodes = [];
+    }
+  }
+  
+  if (parsedContextNodes && parsedContextNodes.length > 0) {
+    systemText += `\n\nRELEVANT CONTEXT:\n${parsedContextNodes.map(n => `- ${n.label}: ${n.content}`).join('\n')}`;
+  }
+
+  const geminiContents = [
+    { role: "user", parts: [{ text: `SYSTEM INSTRUCTION:\n${systemText}` }] },
+    { role: "model", parts: [{ text: "Understood." }] }
+  ];
+
+  // Parse history from JSON string if needed
+  let parsedHistory = history;
+  if (typeof history === 'string') {
+    try {
+      parsedHistory = JSON.parse(history);
+    } catch (e) {
+      parsedHistory = [];
+    }
+  }
+
+  if (parsedHistory && Array.isArray(parsedHistory)) {
+    parsedHistory.forEach(msg => {
+      const role = msg.role === 'assistant' ? 'model' : 'user';
+      geminiContents.push({ role, parts: [{ text: msg.content }] });
+    });
+  }
+  geminiContents.push({ role: "user", parts: [{ text: message }] });
+
+  const geminiResponse = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: geminiContents,
+        generationConfig: { temperature: 0.7 }
+      })
+    }
+  );
+
+  const data = await geminiResponse.json();
+  
+  if (data.error) {
+    throw new Error(`Google API Error: ${data.error.message}`);
+  }
+  
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || "(No response)";
+}
+
+// Save corporate memory to Firestore
+async function saveCorporateMemory(env, userId, memoryUpdate) {
+  const memoryId = `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  await firestoreCreate(env, 'corporate_memory', memoryId, {
+    user_id: userId,
+    nodes: JSON.stringify(memoryUpdate.nodes),
+    links: JSON.stringify(memoryUpdate.links),
+    created_at: new Date().toISOString()
+  });
+}
+
+// Handle async chat (queue job)
+async function handleChatAsync(request, env, corsHeaders) {
+  try {
+    const { message, mode, history, persona, contextNodes, userId } = await request.json();
+
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+      throw new Error("Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_API_KEY.");
+    }
+
+    // Generate unique job ID
+    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Create job in Firestore
+    await firestoreCreate(env, 'job_queue', jobId, {
+      job_id: jobId,
+      user_id: userId || 'anonymous',
+      message: message,
+      mode: mode || '',
+      history: JSON.stringify(history || []),
+      persona: persona || 'alani',
+      contextNodes: JSON.stringify(contextNodes || []),
+      status: 'PENDING',
+      created_at: new Date().toISOString()
+    });
+
+    // Determine which executive is handling this
+    const executive = EXECUTIVES[persona] || EXECUTIVES.alani;
+
+    return new Response(JSON.stringify({
+      status: "queued",
+      job_id: jobId,
+      message: `${persona === 'alani' ? 'Alani' : executive.role} has queued this task.`,
+      executive: executive.role
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+}
+
+// Handle job status check
+async function handleJobStatus(jobId, env, corsHeaders) {
+  try {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+      throw new Error("Firestore is not configured.");
+    }
+
+    const jobDoc = await firestoreGet(env, `job_queue/${jobId}`);
+    const jobData = convertFromFirestoreFormat(jobDoc.fields);
+
+    return new Response(JSON.stringify({
+      job_id: jobId,
+      status: jobData.status,
+      response: jobData.response || null,
+      created_at: jobData.created_at,
+      completed_at: jobData.completed_at || null,
+      processing_time_ms: jobData.processing_time_ms || null
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+}
+
+// Handle list jobs
+async function handleListJobs(request, env, corsHeaders) {
+  try {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+      throw new Error("Firestore is not configured.");
+    }
+
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId') || 'anonymous';
+    
+    // In a real implementation, you'd query Firestore for user's jobs
+    // For now, return a placeholder
+    return new Response(JSON.stringify({
+      jobs: [],
+      message: "Job listing requires additional Firestore query implementation"
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+}
+
+// Handle get memory
+async function handleGetMemory(request, env, corsHeaders) {
+  try {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+      throw new Error("Firestore is not configured.");
+    }
+
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId') || 'anonymous';
+    
+    // In a real implementation, you'd query corporate_memory collection
+    // For now, return a placeholder
+    return new Response(JSON.stringify({
+      memories: [],
+      message: "Memory retrieval requires additional Firestore query implementation"
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+}
 
 async function handleChat(request, env, corsHeaders) {
   try {
