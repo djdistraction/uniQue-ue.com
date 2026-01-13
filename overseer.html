@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overseer - Corporate System Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="icon" href="uniQ_logo_sm2T.png" type="image/png">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #020418 0%, #10142C 100%);
+            color: #E5E7EB;
+            min-height: 100vh;
+        }
+        
+        .header-text {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #00F6FF, #F000B8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card {
+            background: linear-gradient(145deg, rgba(16, 20, 44, 0.95), rgba(2, 4, 24, 0.9));
+            border: 1px solid rgba(0, 246, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(0, 246, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 246, 255, 0.1);
+        }
+        
+        .job-pending {
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1));
+            border-left: 4px solid #FBB024;
+        }
+        
+        .job-processing {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .job-completed {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            border-left: 4px solid #10B981;
+        }
+        
+        .pulse-amber {
+            animation: pulse-amber 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse-amber {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .tab-active {
+            background: rgba(0, 246, 255, 0.2);
+            border-bottom: 2px solid #00F6FF;
+        }
+        
+        .memory-node {
+            background: rgba(0, 246, 255, 0.1);
+            border: 1px solid rgba(0, 246, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .memory-node:hover {
+            background: rgba(0, 246, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .executive-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .executive-alani { background: rgba(59, 130, 246, 0.2); color: #60A5FA; }
+        .executive-ronan { background: rgba(139, 92, 246, 0.2); color: #A78BFA; }
+        .executive-elias { background: rgba(16, 185, 129, 0.2); color: #34D399; }
+        .executive-theo { background: rgba(244, 63, 94, 0.2); color: #FB7185; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="border-b border-gray-800 py-6 px-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold header-text">Overseer Dashboard</h1>
+                <p class="text-gray-400 mt-1">Corporate System Monitoring</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">System Status</p>
+                    <p class="text-green-400 font-semibold" id="system-status">● Online</p>
+                </div>
+                <a href="index.html" class="px-4 py-2 bg-gradient-to-r from-brand-accent to-brand-magenta rounded-lg hover:opacity-90 transition">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-8 py-8">
+        <!-- Tabs -->
+        <div class="flex gap-4 mb-6 border-b border-gray-800">
+            <button class="tab-btn tab-active px-6 py-3 font-semibold" data-tab="jobs" id="jobs-tab-btn">
+                <i class="fas fa-tasks mr-2"></i>Live Job Feed
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold" data-tab="cortex" id="cortex-tab-btn">
+                <i class="fas fa-brain mr-2"></i>Corporate Cortex
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold" data-tab="executives" id="executives-tab-btn">
+                <i class="fas fa-users mr-2"></i>Executives
+            </button>
+        </div>
+
+        <!-- Jobs Tab -->
+        <div id="jobs-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Stats Cards -->
+                <div class="card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-sm">Pending</p>
+                            <p class="text-3xl font-bold text-yellow-400 mt-1" id="stat-pending">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-yellow-400/20 flex items-center justify-center">
+                            <i class="fas fa-clock text-yellow-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-sm">Processing</p>
+                            <p class="text-3xl font-bold text-blue-400 mt-1" id="stat-processing">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-blue-400/20 flex items-center justify-center">
+                            <i class="fas fa-cog fa-spin text-blue-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-sm">Completed</p>
+                            <p class="text-3xl font-bold text-green-400 mt-1" id="stat-completed">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-green-400/20 flex items-center justify-center">
+                            <i class="fas fa-check text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Queue -->
+            <div class="card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Active Jobs</h2>
+                    <span class="text-sm text-gray-400">Auto-refresh: 3s</span>
+                </div>
+                
+                <div id="job-list" class="space-y-3">
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-inbox text-4xl mb-2"></i>
+                        <p>No active jobs. The system is idle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Corporate Cortex Tab -->
+        <div id="cortex-tab" class="tab-content hidden">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4">
+                    <i class="fas fa-brain mr-2 text-brand-accent"></i>
+                    Project Capacitive Brain
+                </h2>
+                <p class="text-gray-400 mb-6">Recent facts and decisions learned by the corporate AI</p>
+                
+                <div id="memory-list" class="space-y-3">
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-lightbulb text-4xl mb-2"></i>
+                        <p>No memories stored yet. Start a conversation to build the knowledge graph.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executives Tab -->
+        <div id="executives-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Alani -->
+                <div class="card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center text-2xl">
+                            🧠
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h3 class="text-xl font-bold">Alani</h3>
+                                <span class="executive-badge executive-alani">COIO</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">Chief Integration Officer</p>
+                            <p class="text-sm">Manages flow. Never generic. Breaks complex requests into sub-tasks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ronan -->
+                <div class="card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-2xl">
+                            💻
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h3 class="text-xl font-bold">Ronan</h3>
+                                <span class="executive-badge executive-ronan">CTDO</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">Chief Technical Development Officer</p>
+                            <p class="text-sm">Technical execution. Writes production-ready code. No placeholders.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elias -->
+                <div class="card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center text-2xl">
+                            💰
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h3 class="text-xl font-bold">Elias</h3>
+                                <span class="executive-badge executive-elias">CFRO</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">Chief Financial & Risk Officer</p>
+                            <p class="text-sm">Optimizes for profit. Provides risk assessment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theo -->
+                <div class="card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center text-2xl">
+                            🎨
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h3 class="text-xl font-bold">Theo</h3>
+                                <span class="executive-badge executive-theo">CCPO</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">Chief Creative & Product Officer</p>
+                            <p class="text-sm">Creative direction. Ensures brand voice consistency.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth, db, WORKER_URL } from './firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { collection, query, where, orderBy, limit, onSnapshot, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        let currentUser = null;
+        let jobPolling = null;
+        let jobsCache = [];
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                }
+            });
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        }
+
+        // Initialize tab buttons
+        document.getElementById('jobs-tab-btn').addEventListener('click', () => switchTab('jobs'));
+        document.getElementById('cortex-tab-btn').addEventListener('click', () => switchTab('cortex'));
+        document.getElementById('executives-tab-btn').addEventListener('click', () => switchTab('executives'));
+
+        // Initialize
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                console.log('User authenticated:', user.uid);
+                startJobPolling();
+                loadMemories();
+            } else {
+                console.log('User not authenticated');
+                // Still allow viewing, but with limited functionality
+                startJobPolling();
+            }
+        });
+
+        // Start polling for jobs
+        function startJobPolling() {
+            // Real-time listener for job_queue collection
+            const q = query(collection(db, 'job_queue'), orderBy('created_at', 'desc'), limit(20));
+            
+            onSnapshot(q, (snapshot) => {
+                jobsCache = [];
+                snapshot.forEach((doc) => {
+                    jobsCache.push({ id: doc.id, ...doc.data() });
+                });
+                updateJobDisplay();
+            }, (error) => {
+                console.error('Error listening to jobs:', error);
+                // Fallback to polling if real-time fails
+                if (!jobPolling) {
+                    jobPolling = setInterval(pollJobs, 3000);
+                }
+            });
+        }
+
+        // Fallback polling method
+        async function pollJobs() {
+            try {
+                const q = query(collection(db, 'job_queue'), orderBy('created_at', 'desc'), limit(20));
+                const snapshot = await getDocs(q);
+                
+                jobsCache = [];
+                snapshot.forEach((doc) => {
+                    jobsCache.push({ id: doc.id, ...doc.data() });
+                });
+                updateJobDisplay();
+            } catch (error) {
+                console.error('Error polling jobs:', error);
+            }
+        }
+
+        // Update job display
+        function updateJobDisplay() {
+            const jobList = document.getElementById('job-list');
+            
+            // Update stats
+            const pending = jobsCache.filter(j => j.status === 'PENDING').length;
+            const processing = jobsCache.filter(j => j.status === 'PROCESSING').length;
+            const completed = jobsCache.filter(j => j.status === 'COMPLETED').length;
+            
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-processing').textContent = processing;
+            document.getElementById('stat-completed').textContent = completed;
+            
+            // Update job list
+            if (jobsCache.length === 0) {
+                jobList.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-inbox text-4xl mb-2"></i>
+                        <p>No active jobs. The system is idle.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            jobList.innerHTML = jobsCache.map(job => {
+                const statusClass = job.status === 'PENDING' ? 'job-pending' : 
+                                   job.status === 'PROCESSING' ? 'job-processing' : 
+                                   'job-completed';
+                const statusIcon = job.status === 'PENDING' ? 'clock' : 
+                                  job.status === 'PROCESSING' ? 'cog fa-spin' : 
+                                  'check';
+                const statusText = job.status === 'PENDING' ? 'Alani is thinking...' : 
+                                  job.status === 'PROCESSING' ? 'Processing...' : 
+                                  'Complete';
+                
+                const executiveClass = `executive-${job.persona || 'alani'}`;
+                
+                return `
+                    <div class="card ${statusClass} p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-${statusIcon} ${job.status === 'PENDING' ? 'pulse-amber text-yellow-400' : job.status === 'PROCESSING' ? 'text-blue-400' : 'text-green-400'}"></i>
+                                <span class="font-semibold">${job.job_id}</span>
+                                <span class="executive-badge ${executiveClass}">${job.persona || 'alani'}</span>
+                            </div>
+                            <span class="text-xs text-gray-400">${formatTime(job.created_at)}</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">${escapeHtml(job.message)}</p>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-400">${statusText}</span>
+                            ${job.status === 'COMPLETED' ? `
+                                <button onclick="viewJobOutput('${job.job_id}')" class="px-3 py-1 bg-brand-accent/20 text-brand-accent rounded hover:bg-brand-accent/30 transition">
+                                    View Output
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // View job output
+        window.viewJobOutput = function(jobId) {
+            const job = jobsCache.find(j => j.job_id === jobId);
+            if (!job || !job.response) return;
+            
+            // Show modal with response
+            alert(`Job Output:\n\n${job.response}`);
+            // In production, you'd use a proper modal
+        };
+
+        // Load memories from corporate_memory collection
+        async function loadMemories() {
+            try {
+                const q = query(collection(db, 'corporate_memory'), orderBy('created_at', 'desc'), limit(20));
+                const snapshot = await getDocs(q);
+                
+                const memoryList = document.getElementById('memory-list');
+                
+                if (snapshot.empty) {
+                    memoryList.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-lightbulb text-4xl mb-2"></i>
+                            <p>No memories stored yet. Start a conversation to build the knowledge graph.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const memories = [];
+                snapshot.forEach((doc) => {
+                    memories.push({ id: doc.id, ...doc.data() });
+                });
+                
+                memoryList.innerHTML = memories.map(mem => {
+                    let nodes = [];
+                    try {
+                        nodes = JSON.parse(mem.nodes || '[]');
+                    } catch (e) {
+                        console.error('Failed to parse nodes:', e);
+                    }
+                    
+                    return `
+                        <div class="memory-node">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-gray-400">${formatTime(mem.created_at)}</span>
+                                <span class="text-xs text-brand-accent">${nodes.length} nodes</span>
+                            </div>
+                            <div class="space-y-1">
+                                ${nodes.slice(0, 3).map(node => `
+                                    <div class="text-sm">
+                                        <span class="text-brand-accent font-semibold">${escapeHtml(node.label)}</span>
+                                        <span class="text-gray-400 text-xs ml-2">${node.type}</span>
+                                    </div>
+                                `).join('')}
+                                ${nodes.length > 3 ? `<p class="text-xs text-gray-400 mt-1">+${nodes.length - 3} more</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error loading memories:', error);
+            }
+        }
+
+        // Utility functions
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -9,6 +9,10 @@ workers_dev = true
 [observability]
 enabled = true
 
+# Cron trigger - runs every minute to process queued jobs
+[triggers]
+crons = ["* * * * *"]
+
 # --- Original Configuration Preserved ---
 # We keep these here so you don't lose your settings for Email/GitHub/HuggingFace.
 # Note: The current api-worker.js focuses on Gemini, but we can re-add email logic later.
