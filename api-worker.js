@@ -93,9 +93,18 @@ const REFLEXES = {
 const MODEL_NAME = "gemini-2.5-flash";
 
 // Generate OAuth2 access token from service account
+let cachedToken = null;
+let tokenExpiry = 0;
+
 async function getAccessToken(env) {
   if (!env.FIREBASE_SERVICE_ACCOUNT) {
     throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
+  }
+  
+  // Return cached token if still valid (with 5 minute buffer)
+  const now = Math.floor(Date.now() / 1000);
+  if (cachedToken && tokenExpiry > now + 300) {
+    return cachedToken;
   }
   
   const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
@@ -105,7 +114,6 @@ async function getAccessToken(env) {
     typ: 'JWT'
   };
   
-  const now = Math.floor(Date.now() / 1000);
   const payload = {
     iss: serviceAccount.client_email,
     scope: 'https://www.googleapis.com/auth/datastore',
@@ -136,7 +144,11 @@ async function getAccessToken(env) {
     throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
   }
   
-  return tokenData.access_token;
+  // Cache the token
+  cachedToken = tokenData.access_token;
+  tokenExpiry = now + (tokenData.expires_in || 3600);
+  
+  return cachedToken;
 }
 
 // Helper functions for JWT signing
@@ -149,10 +161,19 @@ async function signJWT(data, privateKeyPem) {
   // Import the private key
   const pemHeader = '-----BEGIN PRIVATE KEY-----';
   const pemFooter = '-----END PRIVATE KEY-----';
+  
+  if (!privateKeyPem.includes(pemHeader) || !privateKeyPem.includes(pemFooter)) {
+    throw new Error('Invalid private key format: missing PEM headers');
+  }
+  
   const pemContents = privateKeyPem.substring(
-    pemHeader.length,
-    privateKeyPem.length - pemFooter.length
+    privateKeyPem.indexOf(pemHeader) + pemHeader.length,
+    privateKeyPem.indexOf(pemFooter)
   ).replace(/\s/g, '');
+  
+  if (!pemContents) {
+    throw new Error('Invalid private key format: empty key content');
+  }
   
   const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
   

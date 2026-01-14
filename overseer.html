@@ -157,6 +157,7 @@
     <script>
         // CONFIGURATION
         const WORKER_URL = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/chat'; // Assuming your worker is routed here
+        const WORKER_BASE_URL = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev';
         const POLLING_INTERVAL = 5000; // Check for async results every 5 seconds
 
         // STATE
@@ -208,7 +209,7 @@
             
             for (const jobId of activeJobs) {
                 try {
-                    const response = await fetch(`https://unique-ue-api.unique-ue-ai-proxy.workers.dev/job-status/${jobId}`);
+                    const response = await fetch(`${WORKER_BASE_URL}/job-status/${jobId}`);
                     const data = await response.json();
                     
                     if (data.status === 'COMPLETED') {
