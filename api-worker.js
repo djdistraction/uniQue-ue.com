@@ -421,7 +421,18 @@ export default {
       // --- DEBUG ROUTE: /health ---
       // Visit this URL in your browser to check status
       if (path === '/health') {
-        const hasKey = !!env.GEMINI_API_KEY;
+        const hasGemini = !!env.GEMINI_API_KEY;
+        const hasFirestore = !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_SERVICE_ACCOUNT);
+        
+        let message = "System Ready";
+        if (!hasGemini && !hasFirestore) {
+          message = "CRITICAL: GEMINI_API_KEY and FIREBASE_SERVICE_ACCOUNT missing";
+        } else if (!hasGemini) {
+          message = "CRITICAL: GEMINI_API_KEY missing";
+        } else if (!hasFirestore) {
+          message = "CRITICAL: FIREBASE_PROJECT_ID or FIREBASE_SERVICE_ACCOUNT missing";
+        }
+        
         return new Response(JSON.stringify({
           status: "Online",
           model: MODEL_NAME,
