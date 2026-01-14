@@ -95,6 +95,7 @@ const MODEL_NAME = "gemini-2.5-flash";
 // Generate OAuth2 access token from service account
 let cachedToken = null;
 let tokenExpiry = 0;
+let tokenGenerationPromise = null;
 
 async function getAccessToken(env) {
   if (!env.FIREBASE_SERVICE_ACCOUNT) {
@@ -107,48 +108,63 @@ async function getAccessToken(env) {
     return cachedToken;
   }
   
-  const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
-  
-  const header = {
-    alg: 'RS256',
-    typ: 'JWT'
-  };
-  
-  const payload = {
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/datastore',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  };
-  
-  // Create JWT
-  const encodedHeader = base64UrlEncode(JSON.stringify(header));
-  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
-  const unsignedToken = `${encodedHeader}.${encodedPayload}`;
-  
-  // Sign with private key
-  const signature = await signJWT(unsignedToken, serviceAccount.private_key);
-  const jwt = `${unsignedToken}.${signature}`;
-  
-  // Exchange JWT for access token
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
-  });
-  
-  const tokenData = await tokenResponse.json();
-  
-  if (!tokenResponse.ok) {
-    throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
+  // If token generation is already in progress, wait for it
+  if (tokenGenerationPromise) {
+    return tokenGenerationPromise;
   }
   
-  // Cache the token
-  cachedToken = tokenData.access_token;
-  tokenExpiry = now + (tokenData.expires_in || 3600);
+  // Start token generation and cache the promise
+  tokenGenerationPromise = (async () => {
+    try {
+      const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+      
+      const header = {
+        alg: 'RS256',
+        typ: 'JWT'
+      };
+      
+      const payload = {
+        iss: serviceAccount.client_email,
+        scope: 'https://www.googleapis.com/auth/datastore',
+        aud: 'https://oauth2.googleapis.com/token',
+        exp: now + 3600,
+        iat: now
+      };
+      
+      // Create JWT
+      const encodedHeader = base64UrlEncode(JSON.stringify(header));
+      const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+      const unsignedToken = `${encodedHeader}.${encodedPayload}`;
+      
+      // Sign with private key
+      const signature = await signJWT(unsignedToken, serviceAccount.private_key);
+      const jwt = `${unsignedToken}.${signature}`;
+      
+      // Exchange JWT for access token
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+      });
+      
+      const tokenData = await tokenResponse.json();
+      
+      if (!tokenResponse.ok) {
+        throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
+      }
+      
+      // Cache the token
+      cachedToken = tokenData.access_token;
+      tokenExpiry = now + (tokenData.expires_in || 3600);
+      
+      return cachedToken;
+    } finally {
+      // Clear the promise so new requests can be made
+      tokenGenerationPromise = null;
+    }
+  })();
   
-  return cachedToken;
+  return tokenGenerationPromise;
 }
 
 // Helper functions for JWT signing
@@ -175,7 +191,12 @@ async function signJWT(data, privateKeyPem) {
     throw new Error('Invalid private key format: empty key content');
   }
   
-  const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+  let binaryDer;
+  try {
+    binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+  } catch (e) {
+    throw new Error(`Invalid private key format: failed to decode base64 - ${e.message}`);
+  }
   
   const key = await crypto.subtle.importKey(
     'pkcs8',
