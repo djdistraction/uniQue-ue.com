@@ -157,11 +157,11 @@
     <script>
         // CONFIGURATION
         const WORKER_URL = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/chat'; // Assuming your worker is routed here
-        const WORKER_BASE_URL = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev';
+        const WORKER_BASE_URL = new URL(WORKER_URL).origin;
         const POLLING_INTERVAL = 5000; // Check for async results every 5 seconds
 
         // STATE
-        let activeJobs = new Set(); 
+        let activeJobs = new Map(); // Map of jobId -> {persona: string, timestamp: number} 
 
         // 1. SEND COMMAND FUNCTION
         async function sendCommand() {
@@ -191,7 +191,7 @@
                 if (data.status === 'queued') {
                     // ASYNC PATH: Worker accepted the job
                     appendLog('SYSTEM', `Task Queued (ID: ${data.job_id}). Agents are processing...`, 'log-async');
-                    activeJobs.add(data.job_id);
+                    activeJobs.set(data.job_id, { persona: agent, timestamp: Date.now() });
                     updateJobCount();
                 } else {
                     // SYNC PATH: Immediate response (if worker logic allows)
@@ -207,13 +207,15 @@
         setInterval(async () => {
             if (activeJobs.size === 0) return;
             
-            for (const jobId of activeJobs) {
+            for (const [jobId, jobInfo] of activeJobs) {
                 try {
                     const response = await fetch(`${WORKER_BASE_URL}/job-status/${jobId}`);
                     const data = await response.json();
                     
                     if (data.status === 'COMPLETED') {
-                        const agentName = document.getElementById('agent-select').value.toUpperCase();
+                        // Use persona from job data if available, otherwise use stored persona
+                        const agentNameSource = data.persona || jobInfo.persona;
+                        const agentName = String(agentNameSource).toUpperCase();
                         appendLog(agentName, data.response, 'log-system');
                         activeJobs.delete(jobId);
                         updateJobCount();
@@ -224,6 +226,13 @@
                     }
                 } catch (err) {
                     console.error(`Error checking job ${jobId}:`, err);
+                    // Remove jobs that fail to fetch after 5 minutes
+                    const jobAge = Date.now() - jobInfo.timestamp;
+                    if (jobAge > 300000) { // 5 minutes
+                        appendLog('ERROR', `Job ${jobId} timed out after repeated failures`, 'log-error');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    }
                 }
             }
         }, POLLING_INTERVAL);

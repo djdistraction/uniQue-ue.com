@@ -92,11 +92,12 @@ const REFLEXES = {
 // Validated via Key-Tester
 const MODEL_NAME = "gemini-2.5-flash";
 
-// Generate OAuth2 access token from service account
+// Token caching variables for OAuth2 access tokens
 let cachedToken = null;
 let tokenExpiry = 0;
 let tokenGenerationPromise = null;
 
+// Generate OAuth2 access token from service account
 async function getAccessToken(env) {
   if (!env.FIREBASE_SERVICE_ACCOUNT) {
     throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
@@ -116,7 +117,31 @@ async function getAccessToken(env) {
   // Start token generation and cache the promise
   tokenGenerationPromise = (async () => {
     try {
-      const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+      // Parse and validate service account credentials
+      let serviceAccount;
+      try {
+        serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+      } catch (parseError) {
+        throw new Error(`FIREBASE_SERVICE_ACCOUNT is not valid JSON: ${parseError.message}`);
+      }
+
+      if (!serviceAccount || typeof serviceAccount !== 'object') {
+        throw new Error('FIREBASE_SERVICE_ACCOUNT did not parse to a valid object');
+      }
+
+      const missingFields = [];
+      if (typeof serviceAccount.client_email !== 'string' || !serviceAccount.client_email) {
+        missingFields.push('client_email');
+      }
+      if (typeof serviceAccount.private_key !== 'string' || !serviceAccount.private_key) {
+        missingFields.push('private_key');
+      }
+      if (missingFields.length > 0) {
+        throw new Error(`FIREBASE_SERVICE_ACCOUNT is missing required field(s): ${missingFields.join(', ')}`);
+      }
+      
+      // Capture fresh timestamp for JWT
+      const tokenNow = Math.floor(Date.now() / 1000);
       
       const header = {
         alg: 'RS256',
@@ -127,8 +152,8 @@ async function getAccessToken(env) {
         iss: serviceAccount.client_email,
         scope: 'https://www.googleapis.com/auth/datastore',
         aud: 'https://oauth2.googleapis.com/token',
-        exp: now + 3600,
-        iat: now
+        exp: tokenNow + 3600,
+        iat: tokenNow
       };
       
       // Create JWT
@@ -153,9 +178,9 @@ async function getAccessToken(env) {
         throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
       }
       
-      // Cache the token
+      // Cache the token with fresh expiry timestamp
       cachedToken = tokenData.access_token;
-      tokenExpiry = now + (tokenData.expires_in || 3600);
+      tokenExpiry = Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600);
       
       return cachedToken;
     } finally {
@@ -215,7 +240,16 @@ async function signJWT(data, privateKeyPem) {
     new TextEncoder().encode(data)
   );
   
-  return base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+  // Convert signature to base64url - use chunked approach for large data
+  const signatureBytes = new Uint8Array(signature);
+  let binaryString = '';
+  const chunkSize = 0x8000; // 32KB chunks to avoid exceeding argument limits
+  for (let i = 0; i < signatureBytes.length; i += chunkSize) {
+    const chunk = signatureBytes.subarray(i, i + chunkSize);
+    binaryString += String.fromCharCode.apply(null, chunk);
+  }
+  
+  return base64UrlEncode(binaryString);
 }
 
 // Firestore REST API helper functions
@@ -227,7 +261,9 @@ async function firestoreGet(env, path) {
   });
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Firestore GET failed: ${response.statusText} - ${error}`);
+    // Truncate error to prevent extremely verbose logs
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore GET failed: ${response.statusText} - ${truncatedError}`);
   }
   return response.json();
 }
@@ -246,7 +282,8 @@ async function firestoreCreate(env, collection, docId, data) {
   });
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Firestore CREATE failed: ${response.statusText} - ${error}`);
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore CREATE failed: ${response.statusText} - ${truncatedError}`);
   }
   return response.json();
 }
@@ -265,7 +302,8 @@ async function firestoreUpdate(env, path, data) {
   });
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Firestore UPDATE failed: ${response.statusText} - ${error}`);
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore UPDATE failed: ${response.statusText} - ${truncatedError}`);
   }
   return response.json();
 }
@@ -297,7 +335,8 @@ async function firestoreQuery(env, collection, filters = []) {
   });
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Firestore QUERY failed: ${response.statusText} - ${error}`);
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore QUERY failed: ${response.statusText} - ${truncatedError}`);
   }
   return response.json();
 }
