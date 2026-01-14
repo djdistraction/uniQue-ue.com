@@ -18,17 +18,23 @@ crons = ["* * * * *"]
 # Note: The current api-worker.js focuses on Gemini, but we can re-add email logic later.
 
 [vars]
-TO_EMAIL = "your-email@example.com"
+FIREBASE_PROJECT_ID = "unique-ue-website"
 
 # --- SECRETS CONFIGURATION ---
-# The following variables are SECRETS.
-# They are NOT set in this file for security reasons.
-# The Worker AUTOMATICALLY reads them from:
-# Cloudflare Dashboard > Workers > Settings > Variables and Secrets
+# The following variables are SECRETS and must be set via: wrangler secret put <NAME>
 #
 # Required Secrets:
-# - GEMINI_API_KEY
-# - ADMIN_ACCESS_CODE
+# - GEMINI_API_KEY: Google Gemini API key for AI generation
+# - FIREBASE_SERVICE_ACCOUNT: Complete JSON service account file (as string)
+# - ADMIN_ACCESS_CODE: Admin authentication code
+#
+# Note: FIREBASE_API_KEY is NOT needed for server-side access.
+# The worker now uses OAuth2 tokens generated from FIREBASE_SERVICE_ACCOUNT for Firestore authentication.
+# 
+# Migration note for existing deployments:
+# - If you previously configured FIREBASE_API_KEY as a secret, it is no longer used by this worker.
+# - Ensure you set FIREBASE_SERVICE_ACCOUNT (full JSON service account as a string) via `wrangler secret put FIREBASE_SERVICE_ACCOUNT`.
+# - You can safely remove the old FIREBASE_API_KEY secret to avoid confusion.
 #
 # Legacy Secrets (Optional):
 # - GITHUB_PAT

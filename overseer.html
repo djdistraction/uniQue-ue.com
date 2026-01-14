@@ -157,10 +157,11 @@
     <script>
         // CONFIGURATION
         const WORKER_URL = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/chat'; // Assuming your worker is routed here
+        const WORKER_BASE_URL = new URL(WORKER_URL).origin;
         const POLLING_INTERVAL = 5000; // Check for async results every 5 seconds
 
         // STATE
-        let activeJobs = new Set(); 
+        let activeJobs = new Map(); // Map of jobId -> {persona: string, timestamp: number} 
 
         // 1. SEND COMMAND FUNCTION
         async function sendCommand() {
@@ -182,7 +183,14 @@
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: cmd, target_executive: agent })
+                    body: JSON.stringify({
+                        message: cmd,
+                        persona: agent,
+                        mode: null,
+                        history: [],
+                        contextNodes: [],
+                        userId: 'overseer'
+                    })
                 });
 
                 const data = await response.json();
@@ -190,7 +198,7 @@
                 if (data.status === 'queued') {
                     // ASYNC PATH: Worker accepted the job
                     appendLog('SYSTEM', `Task Queued (ID: ${data.job_id}). Agents are processing...`, 'log-async');
-                    activeJobs.add(data.job_id);
+                    activeJobs.set(data.job_id, { persona: agent, timestamp: Date.now() });
                     updateJobCount();
                 } else {
                     // SYNC PATH: Immediate response (if worker logic allows)
@@ -205,15 +213,35 @@
         // 2. POLLING FUNCTION (Checks if jobs are done)
         setInterval(async () => {
             if (activeJobs.size === 0) return;
-
-            // In a real app, you'd fetch specific job IDs. 
-            // For now, we'll hit a 'status' endpoint if you have one, 
-            // OR just simulate the check if your worker supports it.
-            // *This part depends on if Copilot implemented the GET /job-status endpoint.*
             
-            // NOTE: If you don't have a status endpoint yet, this is where we'd add it.
-            // For this smoke test, we'll watch the logs.
-
+            for (const [jobId, jobInfo] of activeJobs) {
+                try {
+                    const response = await fetch(`${WORKER_BASE_URL}/job-status/${jobId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'COMPLETED') {
+                        // Use persona from job data if available, otherwise use stored persona
+                        const agentNameSource = data.persona || jobInfo.persona;
+                        const agentName = String(agentNameSource).toUpperCase();
+                        appendLog(agentName, data.response, 'log-system');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    } else if (data.status === 'FAILED') {
+                        appendLog('ERROR', `Job ${jobId} failed: ${data.error || 'Unknown error'}`, 'log-error');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    }
+                } catch (err) {
+                    console.error(`Error checking job ${jobId}:`, err);
+                    // Remove jobs that fail to fetch after 5 minutes
+                    const jobAge = Date.now() - jobInfo.timestamp;
+                    if (jobAge > 300000) { // 5 minutes
+                        appendLog('ERROR', `Job ${jobId} timed out after repeated failures`, 'log-error');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    }
+                }
+            }
         }, POLLING_INTERVAL);
 
 

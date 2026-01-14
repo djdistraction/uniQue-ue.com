@@ -92,128 +92,164 @@ const REFLEXES = {
 // Validated via Key-Tester
 const MODEL_NAME = "gemini-2.5-flash";
 
-// Token cache for OAuth2 access token
-let tokenCache = {
-  token: null,
-  expiresAt: 0
-};
+// Token caching variables for OAuth2 access tokens
+let cachedToken = null;
+let tokenExpiry = 0;
+let tokenGenerationPromise = null;
 
-// OAuth2 Token Generation for Service Account
+// Generate OAuth2 access token from service account
 async function getAccessToken(env) {
-  // Check if we have a valid cached token
+  if (!env.FIREBASE_SERVICE_ACCOUNT) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
+  }
+  
+  // Return cached token if still valid (with 5 minute buffer)
   const now = Math.floor(Date.now() / 1000);
-  if (tokenCache.token && tokenCache.expiresAt > now + 60) {
-    return tokenCache.token;
+  if (cachedToken && tokenExpiry > now + 300) {
+    return cachedToken;
   }
-
-  // Parse service account JSON
-  let serviceAccount;
-  try {
-    serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
-  } catch (error) {
-    throw new Error('Failed to parse FIREBASE_SERVICE_ACCOUNT: ' + error.message);
+  
+  // If token generation is already in progress, wait for it
+  if (tokenGenerationPromise) {
+    return tokenGenerationPromise;
   }
-
-  // Create JWT
-  const jwt = await createJWT(serviceAccount);
   
-  // Exchange JWT for access token
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
-  });
+  // Start token generation and cache the promise
+  tokenGenerationPromise = (async () => {
+    try {
+      // Parse and validate service account credentials
+      let serviceAccount;
+      try {
+        serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+      } catch (parseError) {
+        throw new Error(`FIREBASE_SERVICE_ACCOUNT is not valid JSON: ${parseError.message}`);
+      }
 
-  if (!tokenResponse.ok) {
-    const errorText = await tokenResponse.text();
-    throw new Error(`OAuth2 token exchange failed: ${errorText}`);
-  }
+      if (!serviceAccount || typeof serviceAccount !== 'object') {
+        throw new Error('FIREBASE_SERVICE_ACCOUNT did not parse to a valid object');
+      }
 
-  const tokenData = await tokenResponse.json();
+      const missingFields = [];
+      if (typeof serviceAccount.client_email !== 'string' || !serviceAccount.client_email) {
+        missingFields.push('client_email');
+      }
+      if (typeof serviceAccount.private_key !== 'string' || !serviceAccount.private_key) {
+        missingFields.push('private_key');
+      }
+      if (missingFields.length > 0) {
+        throw new Error(`FIREBASE_SERVICE_ACCOUNT is missing required field(s): ${missingFields.join(', ')}`);
+      }
+      
+      // Capture fresh timestamp for JWT
+      const tokenNow = Math.floor(Date.now() / 1000);
+      
+      const header = {
+        alg: 'RS256',
+        typ: 'JWT'
+      };
+      
+      const payload = {
+        iss: serviceAccount.client_email,
+        scope: 'https://www.googleapis.com/auth/datastore',
+        aud: 'https://oauth2.googleapis.com/token',
+        exp: tokenNow + 3600,
+        iat: tokenNow
+      };
+      
+      // Create JWT
+      const encodedHeader = base64UrlEncode(JSON.stringify(header));
+      const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+      const unsignedToken = `${encodedHeader}.${encodedPayload}`;
+      
+      // Sign with private key
+      const signature = await signJWT(unsignedToken, serviceAccount.private_key);
+      const jwt = `${unsignedToken}.${signature}`;
+      
+      // Exchange JWT for access token
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+      });
+      
+      const tokenData = await tokenResponse.json();
+      
+      if (!tokenResponse.ok) {
+        throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
+      }
+      
+      // Cache the token with fresh expiry timestamp
+      cachedToken = tokenData.access_token;
+      tokenExpiry = Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600);
+      
+      return cachedToken;
+    } finally {
+      // Clear the promise so new requests can be made
+      tokenGenerationPromise = null;
+    }
+  })();
   
-  // Cache the token
-  tokenCache.token = tokenData.access_token;
-  tokenCache.expiresAt = now + (tokenData.expires_in || 3600);
-  
-  return tokenData.access_token;
+  return tokenGenerationPromise;
 }
 
-// Create and sign JWT for service account
-async function createJWT(serviceAccount) {
-  const now = Math.floor(Date.now() / 1000);
-  
-  // JWT header
-  const header = {
-    alg: 'RS256',
-    typ: 'JWT'
-  };
-  
-  // JWT claims
-  const claims = {
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/cloud-platform',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  };
-  
-  // Encode header and claims
-  const encodedHeader = base64UrlEncode(JSON.stringify(header));
-  const encodedClaims = base64UrlEncode(JSON.stringify(claims));
-  const signatureInput = `${encodedHeader}.${encodedClaims}`;
-  
-  // Sign with private key
-  const signature = await signRS256(signatureInput, serviceAccount.private_key);
-  
-  return `${signatureInput}.${signature}`;
-}
-
-// Base64 URL encode
+// Helper functions for JWT signing
 function base64UrlEncode(str) {
-  const encoder = new TextEncoder();
-  const uint8Array = encoder.encode(str);
-  const base64 = btoa(String.fromCharCode(...uint8Array));
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const base64 = btoa(str);
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
-// Sign data with RS256 algorithm using Web Crypto API
-async function signRS256(data, privateKeyPem) {
-  try {
-    // Remove PEM header/footer and decode
-    const pemContents = privateKeyPem
-      .replace(/-----BEGIN PRIVATE KEY-----/, '')
-      .replace(/-----END PRIVATE KEY-----/, '')
-      .replace(/\s/g, '');
-    
-    const binaryKey = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
-    
-    // Import the private key
-    const cryptoKey = await crypto.subtle.importKey(
-      'pkcs8',
-      binaryKey,
-      {
-        name: 'RSASSA-PKCS1-v1_5',
-        hash: 'SHA-256'
-      },
-      false,
-      ['sign']
-    );
-    
-    // Sign the data
-    const encoder = new TextEncoder();
-    const signatureBuffer = await crypto.subtle.sign(
-      'RSASSA-PKCS1-v1_5',
-      cryptoKey,
-      encoder.encode(data)
-    );
-    
-    // Convert to base64url
-    const signatureArray = Array.from(new Uint8Array(signatureBuffer));
-    const signatureBase64 = btoa(String.fromCharCode(...signatureArray));
-    return signatureBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  } catch (error) {
-    throw new Error('Failed to sign JWT with private key: ' + error.message);
+async function signJWT(data, privateKeyPem) {
+  // Import the private key
+  const pemHeader = '-----BEGIN PRIVATE KEY-----';
+  const pemFooter = '-----END PRIVATE KEY-----';
+  
+  if (!privateKeyPem.includes(pemHeader) || !privateKeyPem.includes(pemFooter)) {
+    throw new Error('Invalid private key format: missing PEM headers');
   }
+  
+  const pemContents = privateKeyPem.substring(
+    privateKeyPem.indexOf(pemHeader) + pemHeader.length,
+    privateKeyPem.indexOf(pemFooter)
+  ).replace(/\s/g, '');
+  
+  if (!pemContents) {
+    throw new Error('Invalid private key format: empty key content');
+  }
+  
+  let binaryDer;
+  try {
+    binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+  } catch (e) {
+    throw new Error(`Invalid private key format: failed to decode base64 - ${e.message}`);
+  }
+  
+  const key = await crypto.subtle.importKey(
+    'pkcs8',
+    binaryDer,
+    {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256'
+    },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    key,
+    new TextEncoder().encode(data)
+  );
+  
+  // Convert signature to base64url - use chunked approach for large data
+  const signatureBytes = new Uint8Array(signature);
+  let binaryString = '';
+  const chunkSize = 0x8000; // 32KB chunks to avoid exceeding argument limits
+  for (let i = 0; i < signatureBytes.length; i += chunkSize) {
+    const chunk = signatureBytes.subarray(i, i + chunkSize);
+    binaryString += String.fromCharCode.apply(null, chunk);
+  }
+  
+  return base64UrlEncode(binaryString);
 }
 
 // Firestore REST API helper functions
@@ -223,7 +259,12 @@ async function firestoreGet(env, path) {
   const response = await fetch(url, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!response.ok) throw new Error(`Firestore GET failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    // Truncate error to prevent extremely verbose logs
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore GET failed: ${response.statusText} - ${truncatedError}`);
+  }
   return response.json();
 }
 
@@ -239,7 +280,11 @@ async function firestoreCreate(env, collection, docId, data) {
     },
     body: JSON.stringify({ fields: firestoreDoc })
   });
-  if (!response.ok) throw new Error(`Firestore CREATE failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore CREATE failed: ${response.statusText} - ${truncatedError}`);
+  }
   return response.json();
 }
 
@@ -255,7 +300,11 @@ async function firestoreUpdate(env, path, data) {
     },
     body: JSON.stringify({ fields: firestoreDoc })
   });
-  if (!response.ok) throw new Error(`Firestore UPDATE failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore UPDATE failed: ${response.statusText} - ${truncatedError}`);
+  }
   return response.json();
 }
 
@@ -284,7 +333,11 @@ async function firestoreQuery(env, collection, filters = []) {
     },
     body: JSON.stringify(query)
   });
-  if (!response.ok) throw new Error(`Firestore QUERY failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    const truncatedError = error.length > 500 ? error.substring(0, 500) + '...' : error;
+    throw new Error(`Firestore QUERY failed: ${response.statusText} - ${truncatedError}`);
+  }
   return response.json();
 }
 
@@ -643,17 +696,7 @@ async function saveCorporateMemory(env, userId, memoryUpdate) {
 // Handle async chat (queue job)
 async function handleChatAsync(request, env, corsHeaders) {
   try {
-    const body = await request.json();
-    
-    // Support both parameter formats:
-    // overseer.html sends: { prompt, target_executive }
-    // other clients may send: { message, persona }
-    const message = body.message || body.prompt;
-    const persona = body.persona || body.target_executive;
-    const mode = body.mode;
-    const history = body.history;
-    const contextNodes = body.contextNodes;
-    const userId = body.userId;
+    const { message, mode, history, persona, contextNodes, userId } = await request.json();
 
     if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
       throw new Error("Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_SERVICE_ACCOUNT.");
