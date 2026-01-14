@@ -182,7 +182,7 @@
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: cmd, target_executive: agent })
+                    body: JSON.stringify({ message: cmd, persona: agent })
                 });
 
                 const data = await response.json();
@@ -205,15 +205,26 @@
         // 2. POLLING FUNCTION (Checks if jobs are done)
         setInterval(async () => {
             if (activeJobs.size === 0) return;
-
-            // In a real app, you'd fetch specific job IDs. 
-            // For now, we'll hit a 'status' endpoint if you have one, 
-            // OR just simulate the check if your worker supports it.
-            // *This part depends on if Copilot implemented the GET /job-status endpoint.*
             
-            // NOTE: If you don't have a status endpoint yet, this is where we'd add it.
-            // For this smoke test, we'll watch the logs.
-
+            for (const jobId of activeJobs) {
+                try {
+                    const response = await fetch(`https://unique-ue-api.unique-ue-ai-proxy.workers.dev/job-status/${jobId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'COMPLETED') {
+                        const agentName = document.getElementById('agent-select').value.toUpperCase();
+                        appendLog(agentName, data.response, 'log-system');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    } else if (data.status === 'FAILED') {
+                        appendLog('ERROR', `Job ${jobId} failed: ${data.error || 'Unknown error'}`, 'log-error');
+                        activeJobs.delete(jobId);
+                        updateJobCount();
+                    }
+                } catch (err) {
+                    console.error(`Error checking job ${jobId}:`, err);
+                }
+            }
         }, POLLING_INTERVAL);
 
 

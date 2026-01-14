@@ -92,47 +92,144 @@ const REFLEXES = {
 // Validated via Key-Tester
 const MODEL_NAME = "gemini-2.5-flash";
 
+// Generate OAuth2 access token from service account
+async function getAccessToken(env) {
+  if (!env.FIREBASE_SERVICE_ACCOUNT) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
+  }
+  
+  const serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+  
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  };
+  
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: serviceAccount.client_email,
+    scope: 'https://www.googleapis.com/auth/datastore',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now
+  };
+  
+  // Create JWT
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+  const unsignedToken = `${encodedHeader}.${encodedPayload}`;
+  
+  // Sign with private key
+  const signature = await signJWT(unsignedToken, serviceAccount.private_key);
+  const jwt = `${unsignedToken}.${signature}`;
+  
+  // Exchange JWT for access token
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+  });
+  
+  const tokenData = await tokenResponse.json();
+  
+  if (!tokenResponse.ok) {
+    throw new Error(`Token generation failed: ${tokenData.error_description || tokenData.error}`);
+  }
+  
+  return tokenData.access_token;
+}
+
+// Helper functions for JWT signing
+function base64UrlEncode(str) {
+  const base64 = btoa(str);
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function signJWT(data, privateKeyPem) {
+  // Import the private key
+  const pemHeader = '-----BEGIN PRIVATE KEY-----';
+  const pemFooter = '-----END PRIVATE KEY-----';
+  const pemContents = privateKeyPem.substring(
+    pemHeader.length,
+    privateKeyPem.length - pemFooter.length
+  ).replace(/\s/g, '');
+  
+  const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+  
+  const key = await crypto.subtle.importKey(
+    'pkcs8',
+    binaryDer,
+    {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256'
+    },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    key,
+    new TextEncoder().encode(data)
+  );
+  
+  return base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+}
+
 // Firestore REST API helper functions
 async function firestoreGet(env, path) {
+  const token = await getAccessToken(env);
   const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${path}`;
   const response = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${env.FIREBASE_API_KEY}` }
+    headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!response.ok) throw new Error(`Firestore GET failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Firestore GET failed: ${response.statusText} - ${error}`);
+  }
   return response.json();
 }
 
 async function firestoreCreate(env, collection, docId, data) {
+  const token = await getAccessToken(env);
   const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${collection}?documentId=${docId}`;
   const firestoreDoc = convertToFirestoreFormat(data);
   const response = await fetch(url, {
     method: 'POST',
     headers: { 
-      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ fields: firestoreDoc })
   });
-  if (!response.ok) throw new Error(`Firestore CREATE failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Firestore CREATE failed: ${response.statusText} - ${error}`);
+  }
   return response.json();
 }
 
 async function firestoreUpdate(env, path, data) {
+  const token = await getAccessToken(env);
   const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents/${path}`;
   const firestoreDoc = convertToFirestoreFormat(data);
   const response = await fetch(url, {
     method: 'PATCH',
     headers: { 
-      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ fields: firestoreDoc })
   });
-  if (!response.ok) throw new Error(`Firestore UPDATE failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Firestore UPDATE failed: ${response.statusText} - ${error}`);
+  }
   return response.json();
 }
 
 async function firestoreQuery(env, collection, filters = []) {
+  const token = await getAccessToken(env);
   const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents:runQuery`;
   const query = {
     structuredQuery: {
@@ -151,12 +248,15 @@ async function firestoreQuery(env, collection, filters = []) {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 
-      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(query)
   });
-  if (!response.ok) throw new Error(`Firestore QUERY failed: ${response.statusText}`);
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Firestore QUERY failed: ${response.statusText} - ${error}`);
+  }
   return response.json();
 }
 
@@ -245,7 +345,7 @@ export default {
           status: "Online",
           model: MODEL_NAME,
           apiKeyConfigured: hasKey,
-          firestoreConfigured: !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_API_KEY),
+          firestoreConfigured: !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_SERVICE_ACCOUNT),
           message: hasKey ? "System Ready" : "CRITICAL: Secrets Missing"
         }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -506,8 +606,8 @@ async function handleChatAsync(request, env, corsHeaders) {
   try {
     const { message, mode, history, persona, contextNodes, userId } = await request.json();
 
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
-      throw new Error("Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_API_KEY.");
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
+      throw new Error("Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_SERVICE_ACCOUNT.");
     }
 
     // Generate unique job ID
@@ -548,7 +648,7 @@ async function handleChatAsync(request, env, corsHeaders) {
 // Handle job status check
 async function handleJobStatus(jobId, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
       throw new Error("Firestore is not configured.");
     }
 
@@ -576,7 +676,7 @@ async function handleJobStatus(jobId, env, corsHeaders) {
 // Handle list jobs
 async function handleListJobs(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
       throw new Error("Firestore is not configured.");
     }
 
@@ -602,7 +702,7 @@ async function handleListJobs(request, env, corsHeaders) {
 // Handle get memory
 async function handleGetMemory(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_API_KEY) {
+    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
       throw new Error("Firestore is not configured.");
     }
 
