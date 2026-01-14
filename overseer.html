@@ -183,7 +183,14 @@
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: cmd, persona: agent })
+                    body: JSON.stringify({
+                        message: cmd,
+                        persona: agent,
+                        mode: null,
+                        history: [],
+                        contextNodes: [],
+                        userId: 'overseer'
+                    })
                 });
 
                 const data = await response.json();

@@ -436,9 +436,9 @@ export default {
         return new Response(JSON.stringify({
           status: "Online",
           model: MODEL_NAME,
-          apiKeyConfigured: hasKey,
-          firestoreConfigured: !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_SERVICE_ACCOUNT),
-          message: hasKey ? "System Ready" : "CRITICAL: Secrets Missing"
+          apiKeyConfigured: hasGemini,
+          firestoreConfigured: hasFirestore,
+          message: message
         }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
