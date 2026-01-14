@@ -151,7 +151,7 @@ async function createJWT(serviceAccount) {
   // JWT claims
   const claims = {
     iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/datastore',
+    scope: 'https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/cloud-platform',
     aud: 'https://oauth2.googleapis.com/token',
     exp: now + 3600,
     iat: now
@@ -170,44 +170,50 @@ async function createJWT(serviceAccount) {
 
 // Base64 URL encode
 function base64UrlEncode(str) {
-  const base64 = btoa(unescape(encodeURIComponent(str)));
+  const encoder = new TextEncoder();
+  const uint8Array = encoder.encode(str);
+  const base64 = btoa(String.fromCharCode(...uint8Array));
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 // Sign data with RS256 algorithm using Web Crypto API
 async function signRS256(data, privateKeyPem) {
-  // Remove PEM header/footer and decode
-  const pemContents = privateKeyPem
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\s/g, '');
-  
-  const binaryKey = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
-  
-  // Import the private key
-  const cryptoKey = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryKey,
-    {
-      name: 'RSASSA-PKCS1-v1_5',
-      hash: 'SHA-256'
-    },
-    false,
-    ['sign']
-  );
-  
-  // Sign the data
-  const encoder = new TextEncoder();
-  const signatureBuffer = await crypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    cryptoKey,
-    encoder.encode(data)
-  );
-  
-  // Convert to base64url
-  const signatureArray = Array.from(new Uint8Array(signatureBuffer));
-  const signatureBase64 = btoa(String.fromCharCode(...signatureArray));
-  return signatureBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  try {
+    // Remove PEM header/footer and decode
+    const pemContents = privateKeyPem
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\s/g, '');
+    
+    const binaryKey = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+    
+    // Import the private key
+    const cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryKey,
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        hash: 'SHA-256'
+      },
+      false,
+      ['sign']
+    );
+    
+    // Sign the data
+    const encoder = new TextEncoder();
+    const signatureBuffer = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      cryptoKey,
+      encoder.encode(data)
+    );
+    
+    // Convert to base64url
+    const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+    const signatureBase64 = btoa(String.fromCharCode(...signatureArray));
+    return signatureBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  } catch (error) {
+    throw new Error('Failed to sign JWT with private key: ' + error.message);
+  }
 }
 
 // Firestore REST API helper functions
