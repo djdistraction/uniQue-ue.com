@@ -128,7 +128,7 @@ function parseServiceAccountEnv(rawValue) {
     }
   }
 
-  if (/^[A-Za-z0-9+/=]+$/.test(candidate) && candidate.length % 4 === 0) {
+  if (/^[A-Za-z0-9+/]*={0,2}$/.test(candidate) && candidate.length % 4 === 0) {
     try {
       const decoded = atob(candidate).trim();
       if (decoded.startsWith('{')) {
@@ -196,10 +196,6 @@ async function getAccessToken(env) {
     try {
       // Parse and validate service account credentials
       const serviceAccount = getServiceAccount(env);
-
-      if (!serviceAccount || typeof serviceAccount !== 'object') {
-        throw new Error('FIREBASE_SERVICE_ACCOUNT did not parse to a valid object');
-      }
 
       const missingFields = [];
       if (typeof serviceAccount.client_email !== 'string' || !serviceAccount.client_email) {
