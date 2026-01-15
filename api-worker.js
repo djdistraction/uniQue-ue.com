@@ -128,11 +128,14 @@ function parseServiceAccountEnv(rawValue) {
     }
   }
 
-  if (candidate.startsWith('eyJ') && /^[A-Za-z0-9+/=]+$/.test(candidate)) {
+  if (/^[A-Za-z0-9+/=]+$/.test(candidate) && candidate.length % 4 === 0) {
     try {
-      candidate = atob(candidate).trim();
+      const decoded = atob(candidate).trim();
+      if (decoded.startsWith('{')) {
+        candidate = decoded;
+      }
     } catch (error) {
-      throw new Error(`FIREBASE_SERVICE_ACCOUNT base64 decode failed: ${error.message}`);
+      // Ignore decode failures; candidate will be validated as JSON below.
     }
   }
 
@@ -804,8 +807,7 @@ async function handleChatAsync(request, env, corsHeaders) {
         mode,
         history,
         persona,
-        contextNodes,
-        userId
+        contextNodes
       }, env, corsHeaders);
     }
 
@@ -847,8 +849,9 @@ async function handleChatAsync(request, env, corsHeaders) {
 // Handle job status check
 async function handleJobStatus(jobId, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const jobDoc = await firestoreGet(env, `job_queue/${jobId}`);
@@ -875,8 +878,9 @@ async function handleJobStatus(jobId, env, corsHeaders) {
 // Handle list jobs
 async function handleListJobs(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const url = new URL(request.url);
@@ -901,8 +905,9 @@ async function handleListJobs(request, env, corsHeaders) {
 // Handle get memory
 async function handleGetMemory(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const url = new URL(request.url);
