@@ -96,13 +96,86 @@ const MODEL_NAME = "gemini-2.5-flash";
 let cachedToken = null;
 let tokenExpiry = 0;
 let tokenGenerationPromise = null;
+const SERVICE_ACCOUNT_MISSING_ERROR = 'FIREBASE_SERVICE_ACCOUNT secret is not configured';
+const BASE64_PATTERN = /^[A-Za-z0-9+/]*={0,2}$/;
+
+function parseServiceAccountEnv(rawValue) {
+  if (!rawValue) {
+    throw new Error(SERVICE_ACCOUNT_MISSING_ERROR);
+  }
+
+  if (typeof rawValue === 'object') {
+    return rawValue;
+  }
+
+  if (typeof rawValue !== 'string') {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT must be a JSON string');
+  }
+
+  let candidate = rawValue.trim();
+  if (!candidate) {
+    throw new Error(SERVICE_ACCOUNT_MISSING_ERROR);
+  }
+
+  if (candidate.startsWith('"')) {
+    try {
+      const decoded = JSON.parse(candidate);
+      if (typeof decoded !== 'string') {
+        return decoded;
+      }
+      candidate = decoded.trim();
+    } catch (error) {
+      throw new Error(`FIREBASE_SERVICE_ACCOUNT is not valid JSON: ${error.message}`);
+    }
+  }
+
+  if (BASE64_PATTERN.test(candidate) && candidate.length % 4 === 0) {
+    try {
+      const decoded = atob(candidate).trim();
+      if (decoded.startsWith('{')) {
+        candidate = decoded;
+      }
+    } catch (error) {
+      // Ignore decode failures; candidate will be validated as JSON below.
+    }
+  }
+
+  if (!candidate.startsWith('{')) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT must be JSON content, not a filename or token');
+  }
+
+  try {
+    return JSON.parse(candidate);
+  } catch (error) {
+    throw new Error(`FIREBASE_SERVICE_ACCOUNT is not valid JSON: ${error.message}`);
+  }
+}
+
+function getServiceAccount(env) {
+  return parseServiceAccountEnv(env.FIREBASE_SERVICE_ACCOUNT);
+}
+
+function getFirestoreStatus(env) {
+  if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
+    return {
+      ready: false,
+      reason: 'Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_SERVICE_ACCOUNT.'
+    };
+  }
+
+  try {
+    getServiceAccount(env);
+    return { ready: true };
+  } catch (error) {
+    return {
+      ready: false,
+      reason: error.message
+    };
+  }
+}
 
 // Generate OAuth2 access token from service account
 async function getAccessToken(env) {
-  if (!env.FIREBASE_SERVICE_ACCOUNT) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
-  }
-  
   // Return cached token if still valid (with 5 minute buffer)
   const now = Math.floor(Date.now() / 1000);
   if (cachedToken && tokenExpiry > now + 300) {
@@ -118,16 +191,7 @@ async function getAccessToken(env) {
   tokenGenerationPromise = (async () => {
     try {
       // Parse and validate service account credentials
-      let serviceAccount;
-      try {
-        serviceAccount = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
-      } catch (parseError) {
-        throw new Error(`FIREBASE_SERVICE_ACCOUNT is not valid JSON: ${parseError.message}`);
-      }
-
-      if (!serviceAccount || typeof serviceAccount !== 'object') {
-        throw new Error('FIREBASE_SERVICE_ACCOUNT did not parse to a valid object');
-      }
+      const serviceAccount = getServiceAccount(env);
 
       const missingFields = [];
       if (typeof serviceAccount.client_email !== 'string' || !serviceAccount.client_email) {
@@ -422,15 +486,16 @@ export default {
       // Visit this URL in your browser to check status
       if (path === '/health') {
         const hasGemini = !!env.GEMINI_API_KEY;
-        const hasFirestore = !!(env.FIREBASE_PROJECT_ID && env.FIREBASE_SERVICE_ACCOUNT);
+        const firestoreStatus = getFirestoreStatus(env);
+        const hasFirestore = firestoreStatus.ready;
         
         let message = "System Ready";
         if (!hasGemini && !hasFirestore) {
-          message = "CRITICAL: GEMINI_API_KEY and FIREBASE_SERVICE_ACCOUNT missing";
+          message = "CRITICAL: GEMINI_API_KEY and Firestore credentials missing";
         } else if (!hasGemini) {
           message = "CRITICAL: GEMINI_API_KEY missing";
         } else if (!hasFirestore) {
-          message = "CRITICAL: FIREBASE_PROJECT_ID or FIREBASE_SERVICE_ACCOUNT missing";
+          message = firestoreStatus.reason || "CRITICAL: FIREBASE_PROJECT_ID or FIREBASE_SERVICE_ACCOUNT missing";
         }
         
         return new Response(JSON.stringify({
@@ -693,13 +758,43 @@ async function saveCorporateMemory(env, userId, memoryUpdate) {
   });
 }
 
+async function handleChatFallback(payload, env, corsHeaders) {
+  const {
+    message,
+    mode,
+    history,
+    persona,
+    contextNodes
+  } = payload;
+
+  const reflexResponse = message ? checkReflexes(message) : null;
+  const responseText = reflexResponse || await executeAIGeneration({
+    message,
+    mode,
+    history: history || [],
+    persona,
+    contextNodes: contextNodes || []
+  }, env);
+
+  return new Response(JSON.stringify({
+    status: "completed",
+    response: responseText,
+    reply: responseText,
+    fallback: true
+  }), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" }
+  });
+}
+
 // Handle async chat (queue job)
 async function handleChatAsync(request, env, corsHeaders) {
   try {
-    const { message, mode, history, persona, contextNodes, userId } = await request.json();
+    const payload = await request.json();
+    const { message, mode, history, persona, contextNodes, userId } = payload;
+    const firestoreStatus = getFirestoreStatus(env);
 
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured. Please set FIREBASE_PROJECT_ID and FIREBASE_SERVICE_ACCOUNT.");
+    if (!firestoreStatus.ready) {
+      return handleChatFallback(payload, env, corsHeaders);
     }
 
     // Generate unique job ID
@@ -740,8 +835,9 @@ async function handleChatAsync(request, env, corsHeaders) {
 // Handle job status check
 async function handleJobStatus(jobId, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const jobDoc = await firestoreGet(env, `job_queue/${jobId}`);
@@ -768,8 +864,9 @@ async function handleJobStatus(jobId, env, corsHeaders) {
 // Handle list jobs
 async function handleListJobs(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const url = new URL(request.url);
@@ -794,8 +891,9 @@ async function handleListJobs(request, env, corsHeaders) {
 // Handle get memory
 async function handleGetMemory(request, env, corsHeaders) {
   try {
-    if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_SERVICE_ACCOUNT) {
-      throw new Error("Firestore is not configured.");
+    const firestoreStatus = getFirestoreStatus(env);
+    if (!firestoreStatus.ready) {
+      throw new Error(firestoreStatus.reason);
     }
 
     const url = new URL(request.url);

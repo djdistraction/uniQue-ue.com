@@ -120,11 +120,11 @@ service cloud.firestore {
 }
 ```
 
-### Step 2: Get Firebase API Credentials
+### Step 2: Get Firebase Service Account Credentials
 
-1. In Firebase Console → Project Settings
-2. Under "General" tab, find "Web API Key"
-3. Copy this key - this is your `FIREBASE_API_KEY`
+1. In Firebase Console → Project Settings → **Service accounts**
+2. Click **Generate new private key** and download the JSON file
+3. Keep the JSON secure; you will paste its full contents into the worker secret
 4. Your `FIREBASE_PROJECT_ID` is `unique-ue-website`
 
 ### Step 3: Configure Cloudflare Worker Secrets
@@ -137,8 +137,9 @@ cd /path/to/uniQue-ue.com
 wrangler secret put FIREBASE_PROJECT_ID
 # Enter: unique-ue-website
 
-wrangler secret put FIREBASE_API_KEY
-# Enter: your-firebase-web-api-key
+wrangler secret put FIREBASE_SERVICE_ACCOUNT
+# Paste the full JSON file contents (not the filename).
+# Tip: you can also run `wrangler secret put FIREBASE_SERVICE_ACCOUNT < service-account.json`
 
 # Verify existing secrets
 wrangler secret list
@@ -148,7 +149,7 @@ Expected secrets:
 - ✅ GEMINI_API_KEY
 - ✅ ADMIN_ACCESS_CODE
 - ✅ FIREBASE_PROJECT_ID (new)
-- ✅ FIREBASE_API_KEY (new)
+- ✅ FIREBASE_SERVICE_ACCOUNT (new)
 
 ### Step 4: Deploy the Worker
 
