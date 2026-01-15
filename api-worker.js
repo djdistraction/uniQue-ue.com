@@ -96,11 +96,12 @@ const MODEL_NAME = "gemini-2.5-flash";
 let cachedToken = null;
 let tokenExpiry = 0;
 let tokenGenerationPromise = null;
-let cachedServiceAccount = null;
+const SERVICE_ACCOUNT_MISSING_ERROR = 'FIREBASE_SERVICE_ACCOUNT secret is not configured';
+const BASE64_PATTERN = /^[A-Za-z0-9+/]*={0,2}$/;
 
 function parseServiceAccountEnv(rawValue) {
   if (!rawValue) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
+    throw new Error(SERVICE_ACCOUNT_MISSING_ERROR);
   }
 
   if (typeof rawValue === 'object') {
@@ -113,7 +114,7 @@ function parseServiceAccountEnv(rawValue) {
 
   let candidate = rawValue.trim();
   if (!candidate) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT secret is not configured');
+    throw new Error(SERVICE_ACCOUNT_MISSING_ERROR);
   }
 
   if (candidate.startsWith('"')) {
@@ -128,7 +129,7 @@ function parseServiceAccountEnv(rawValue) {
     }
   }
 
-  if (/^[A-Za-z0-9+/]*={0,2}$/.test(candidate) && candidate.length % 4 === 0) {
+  if (BASE64_PATTERN.test(candidate) && candidate.length % 4 === 0) {
     try {
       const decoded = atob(candidate).trim();
       if (decoded.startsWith('{')) {
@@ -151,12 +152,7 @@ function parseServiceAccountEnv(rawValue) {
 }
 
 function getServiceAccount(env) {
-  if (cachedServiceAccount) {
-    return cachedServiceAccount;
-  }
-
-  cachedServiceAccount = parseServiceAccountEnv(env.FIREBASE_SERVICE_ACCOUNT);
-  return cachedServiceAccount;
+  return parseServiceAccountEnv(env.FIREBASE_SERVICE_ACCOUNT);
 }
 
 function getFirestoreStatus(env) {
@@ -798,13 +794,7 @@ async function handleChatAsync(request, env, corsHeaders) {
     const firestoreStatus = getFirestoreStatus(env);
 
     if (!firestoreStatus.ready) {
-      return handleChatFallback({
-        message,
-        mode,
-        history,
-        persona,
-        contextNodes
-      }, env, corsHeaders);
+      return handleChatFallback(payload, env, corsHeaders);
     }
 
     // Generate unique job ID
