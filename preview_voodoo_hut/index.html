@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preview — The Voodoo Hut Website (Development Preview)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --black: #060608; --dark: #0f0f12; --card: #16161b;
+      --border: rgba(255,255,255,0.07); --red: #e01020;
+      --red-glow: rgba(224,16,32,0.35); --cyan: #00c8c8;
+      --gold: #c8a020; --white: #f0eeec; --muted: #777;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 24px 40px; position: relative; overflow-x: hidden;
+    }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .dev-tape {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: repeating-linear-gradient(-55deg,rgba(200,160,32,0.18) 0,rgba(200,160,32,0.18) 20px,rgba(200,160,32,0.06) 20px,rgba(200,160,32,0.06) 40px);
+      border-bottom: 1px solid rgba(200,160,32,0.3); padding: 8px 0;
+      text-align: center; font-family: 'Courier New', monospace;
+      font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); z-index: 100;
+    }
+    .card {
+      position: relative; z-index: 1; background: var(--card);
+      border: 1px solid var(--border); border-top: 3px solid var(--red);
+      border-radius: 10px; padding: 52px 48px 44px; max-width: 640px;
+      width: 100%; text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    .skull { font-size: 52px; display: block; margin-bottom: 20px; }
+    .tag {
+      display: inline-block; padding: 4px 14px; border-radius: 20px;
+      background: rgba(200,160,32,0.1); border: 1px solid rgba(200,160,32,0.35);
+      font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px; font-family: 'Courier New', monospace;
+    }
+    h1 {
+      font-size: clamp(28px,5vw,44px); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      line-height: 1.05; color: var(--white); margin-bottom: 6px;
+    }
+    h1 span { color: var(--red); text-shadow: 0 0 30px var(--red-glow); }
+    .subtitle {
+      font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 32px; font-family: 'Courier New', monospace;
+    }
+    .disclaimer-box {
+      background: rgba(224,16,32,0.04); border: 1px solid rgba(224,16,32,0.18);
+      border-left: 3px solid var(--red); border-radius: 6px;
+      padding: 20px 24px; text-align: left; margin-bottom: 32px;
+    }
+    .disclaimer-box .lbl {
+      font-family: 'Courier New', monospace; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 10px; display: block;
+    }
+    .disclaimer-box p { font-size: 14px; line-height: 1.7; color: rgba(240,238,236,0.8); }
+    .disclaimer-box p + p { margin-top: 10px; }
+    .disclaimer-box strong { color: var(--white); }
+    .btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 6px; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none;
+      transition: all 0.2s ease; cursor: pointer; border: none;
+      font-family: inherit; white-space: nowrap;
+    }
+    .btn-red { background: var(--red); color: var(--white); box-shadow: 0 0 20px var(--red-glow); }
+    .btn-red:hover { background: #ff1a28; transform: translateY(-1px); }
+    .btn-out { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.18); }
+    .btn-out:hover { border-color: var(--cyan); color: var(--cyan); }
+    .fnote {
+      position: relative; z-index: 1; margin-top: 24px;
+      font-family: 'Courier New', monospace; font-size: 11px;
+      color: var(--muted); letter-spacing: 0.1em; text-align: center;
+    }
+    .fnote a { color: var(--cyan); text-decoration: none; }
+    @media (max-width:480px) {
+      .card { padding: 40px 24px 32px; }
+      .btns { flex-direction: column; align-items: center; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="dev-tape">&#9888; Development Preview &#8212; Not the official Voodoo Hut website &#9888;</div>
+<div class="card">
+  <span class="skull">&#128128;</span>
+  <div class="tag">&#9888; Development Preview</div>
+  <h1>THE <span>VOODOO</span> HUT</h1>
+  <p class="subtitle">Website Preview &#183; Kemah, TX</p>
+  <div class="disclaimer-box">
+    <span class="lbl">&#9888; Important Notice</span>
+    <p>This is an <strong>unofficial development preview</strong> of the Voodoo Hut website, hosted on a third-party domain for design and build review purposes only.</p>
+    <p>The content you are about to view &#8212; including event listings, menu items, pricing, hours, contact information, and media &#8212; is <strong>placeholder or in-progress content and does not represent The Voodoo Hut</strong>, its owners, staff, products, or services. Nothing on this preview site should be taken as factual, current, or official.</p>
+    <p>For accurate information about The Voodoo Hut, please visit the official website below.</p>
+  </div>
+  <div class="btns">
+    <a href="home.html" class="btn btn-red">&#9654; Enter Preview Site</a>
+    <a href="http://thevoodoohut.com" class="btn btn-out" target="_blank" rel="noopener">&#8599; Official Voodoo Hut Website</a>
+  </div>
+</div>
+<p class="fnote">
+  Preview hosted by <a href="https://www.unique-ue.com" target="_blank" rel="noopener">uniQue-ue.com</a>
+  &#183; AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a>
+  &#183; Not affiliated with The Voodoo Hut
+</p>
+<script>
+(function(){var c=document.getElementById('bg-canvas');if(!c)return;var x=c.getContext('2d'),W,H,P=[];function sz(){W=c.width=innerWidth;H=c.height=innerHeight;}sz();addEventListener('resize',sz);function rp(){var r=Math.random()>.5;return{x:Math.random()*W,y:H+10,r:1+Math.random()*2,s:.3+Math.random()*.7,d:(Math.random()-.5)*.5,a:.5+Math.random()*.4,col:r?'rgba(224,16,32,':'rgba(0,200,200,',l:0,m:100+Math.random()*160};}for(var i=0;i<50;i++){var p=rp();p.y=Math.random()*H;P.push(p);}function tick(){x.clearRect(0,0,W,H);if(P.length<65)P.push(rp());P=P.filter(function(p){return p.l<p.m;});P.forEach(function(p){p.y-=p.s;p.x+=p.d;p.l++;var f=1-p.l/p.m;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle=p.col+(p.a*f)+')';x.fill();});requestAnimationFrame(tick);}tick();})();
+</script>
+</body>
+</html>
