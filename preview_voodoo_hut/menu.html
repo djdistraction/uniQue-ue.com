@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu — The Voodoo Hut | Food, Cocktails &amp; Beer | Kemah, TX</title>
+  <meta name="description" content="Voodoo Hut menu: shareable appetizers, killer mains, craft cocktails, local drafts, and a full bar. Open late, served fresh." />
+  <meta property="og:title" content="Menu — The Voodoo Hut" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+<div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">&#9888; Development Preview &mdash; <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a> &nbsp;&middot;&nbsp; <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a></div>
+
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home"><img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" /></a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"    class="nav-link">Home</a></li>
+        <li><a href="events.html"   class="nav-link">Events</a></li>
+        <li><a href="menu.html"     class="nav-link">Menu</a></li>
+        <li><a href="live.html"     class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"    class="nav-link">Radio</a></li>
+        <li><a href="gallery.html"  class="nav-link">Gallery</a></li>
+        <li><a href="about.html"    class="nav-link">About</a></li>
+        <li><a href="contact.html"  class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu">
+    <ul role="list">
+      <li><a href="home.html"   class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <header class="page-header">
+    <div class="container">
+      <p class="section-eyebrow">Food &amp; Drinks</p>
+      <h1 class="page-header-title">The Menu</h1>
+      <p class="page-header-sub">Served from open until the kitchen closes. Ask your server about daily specials.</p>
+    </div>
+  </header>
+
+  <section class="section" aria-label="Menu">
+    <div class="container">
+
+      <!-- TAB NAV -->
+      <div class="menu-tabs" role="tablist" aria-label="Menu categories">
+        <button class="menu-tab active" data-tab="food"      role="tab" aria-selected="true"  aria-controls="food">Food</button>
+        <button class="menu-tab"        data-tab="cocktails" role="tab" aria-selected="false" aria-controls="cocktails">Cocktails</button>
+        <button class="menu-tab"        data-tab="beer-wine" role="tab" aria-selected="false" aria-controls="beer-wine">Beer &amp; Wine</button>
+        <button class="menu-tab"        data-tab="late-night" role="tab" aria-selected="false" aria-controls="late-night">Late Night</button>
+      </div>
+
+      <!-- ===================== FOOD ===================== -->
+      <div id="food" class="menu-panel active" role="tabpanel" aria-label="Food menu">
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Starters &amp; Shareables</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Voodoo Queso</h3>
+              <p class="menu-item-desc">Creamy queso blanco, roasted hatch chiles, andouille crumbles, served with house-made chips</p>
+            </div>
+            <span class="menu-item-price">$12</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Bayou Wings</h3>
+              <p class="menu-item-desc">Crispy wings tossed in your choice of sauce: Cajun dry rub, honey sriracha, or classic buffalo. Served with housemade ranch.</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Loaded Fries</h3>
+              <p class="menu-item-desc">Thick-cut fries, smoked brisket, queso, pickled jalapeños, sour cream</p>
+            </div>
+            <span class="menu-item-price">$13</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Shrimp Basket</h3>
+              <p class="menu-item-desc">Gulf shrimp, beer-battered and fried golden. Cocktail sauce, lemon, remoulade on the side.</p>
+            </div>
+            <span class="menu-item-price">$15</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Nachos de la Casa</h3>
+              <p class="menu-item-desc">Tortilla chips, queso, black beans, pico, jalapeños, sour cream. Add chicken +$3, brisket +$5.</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Mains</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Voodoo Burger</h3>
+              <p class="menu-item-desc">Half-pound smash burger, pepper jack, caramelized onions, bacon jam, dill pickles, Voodoo sauce on a brioche bun. Served with fries.</p>
+            </div>
+            <span class="menu-item-price">$16</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Smoked Brisket Plate</h3>
+              <p class="menu-item-desc">½ lb sliced beef brisket, smoked low and slow. Two sides, house-made pickles, white bread.</p>
+            </div>
+            <span class="menu-item-price">$22</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Gulf Tacos (3)</h3>
+              <p class="menu-item-desc">Grilled or fried fish, cabbage slaw, avocado crema, pico, lime. Choice of flour or corn.</p>
+            </div>
+            <span class="menu-item-price">$17</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Chicken Sandwich</h3>
+              <p class="menu-item-desc">Crispy buttermilk chicken, dill pickles, spicy comeback sauce, shredded lettuce, toasted brioche. Served with fries.</p>
+            </div>
+            <span class="menu-item-price">$15</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Crawfish Étouffée</h3>
+              <p class="menu-item-desc">Louisiana-style crawfish étouffée over white rice, finished with green onion and a roux that takes all day.</p>
+            </div>
+            <span class="menu-item-price">$19</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">BBQ Chicken Quesadilla</h3>
+              <p class="menu-item-desc">Smoked chicken, BBQ sauce, pepper jack, caramelized onions, served with salsa, sour cream</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Sides</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">House Fries</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Sweet Potato Fries</h3></div>
+            <span class="menu-item-price">$6</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Coleslaw</h3></div>
+            <span class="menu-item-price">$4</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Jalapeño Cornbread</h3></div>
+            <span class="menu-item-price">$4</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Side Salad</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+        </div>
+
+        <p class="menu-notice fade-in">Menu items and prices subject to change. Please inform your server of any allergies. Consuming raw or undercooked foods may increase risk of foodborne illness.</p>
+      </div>
+
+      <!-- ===================== COCKTAILS ===================== -->
+      <div id="cocktails" class="menu-panel" role="tabpanel" aria-label="Cocktail menu" aria-hidden="true">
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Signature Cocktails</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">The Voodoo Doll</h3>
+              <p class="menu-item-desc">Dark rum, blood orange, activated charcoal lemonade, prickly pear. As dark as it sounds.</p>
+            </div>
+            <span class="menu-item-price">$13</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Swamp Witch</h3>
+              <p class="menu-item-desc">Green Chartreuse, cucumber, jalapeño, lime, agave. Refreshing and dangerous.</p>
+            </div>
+            <span class="menu-item-price">$13</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Bourbon Séance</h3>
+              <p class="menu-item-desc">Bulleit bourbon, black cherry, smoked rosemary syrup, bitters, splash of stout</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Gulf Coast Mule</h3>
+              <p class="menu-item-desc">Tito's vodka, ginger beer, fresh lime, a float of Aperol, served in a copper mug</p>
+            </div>
+            <span class="menu-item-price">$12</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Kemah Margarita</h3>
+              <p class="menu-item-desc">Espolón tequila, house-made sour, agave, fresh lime, tajín rim</p>
+            </div>
+            <span class="menu-item-price">$11</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Night Ritual</h3>
+              <p class="menu-item-desc">Mezcal, blackberry, activated charcoal, honey, smoked salt rim</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Electric Elixir</h3>
+              <p class="menu-item-desc">Butterfly pea gin, St-Germain, lemon, prosecco — color-changing on pour</p>
+            </div>
+            <span class="menu-item-price">$14</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Classics</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Old Fashioned</h3></div>
+            <span class="menu-item-price">$12</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Manhattan</h3></div>
+            <span class="menu-item-price">$12</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Negroni</h3></div>
+            <span class="menu-item-price">$12</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Whiskey Sour</h3></div>
+            <span class="menu-item-price">$11</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Aperol Spritz</h3></div>
+            <span class="menu-item-price">$11</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Shots &amp; Shots</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Voodoo Shot</h3>
+              <p class="menu-item-desc">House secret. Just take it.</p>
+            </div>
+            <span class="menu-item-price">$7</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Patron Silver</h3></div>
+            <span class="menu-item-price">$8</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Fireball</h3></div>
+            <span class="menu-item-price">$6</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Jameson</h3></div>
+            <span class="menu-item-price">$7</span>
+          </div>
+        </div>
+
+        <p class="menu-notice fade-in">Drink responsibly. Must be 21+ to purchase alcohol. We reserve the right to refuse service.</p>
+      </div>
+
+      <!-- ===================== BEER & WINE ===================== -->
+      <div id="beer-wine" class="menu-panel" role="tabpanel" aria-label="Beer and wine menu" aria-hidden="true">
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Draft Beer</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Saint Arnold Amber</h3>
+              <p class="menu-item-desc">Houston's oldest craft brewery · Houston, TX</p>
+            </div>
+            <span class="menu-item-price">$7</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Karbach Hopadillo IPA</h3>
+              <p class="menu-item-desc">West Coast IPA · Houston, TX</p>
+            </div>
+            <span class="menu-item-price">$7</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Lone Star Lager</h3>
+              <p class="menu-item-desc">The National Beer of Texas</p>
+            </div>
+            <span class="menu-item-price">$5</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Shiner Bock</h3>
+              <p class="menu-item-desc">Dark lager · Shiner, TX</p>
+            </div>
+            <span class="menu-item-price">$6</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Seasonal Rotating Tap</h3>
+              <p class="menu-item-desc">Ask your server what's on today</p>
+            </div>
+            <span class="menu-item-price">$7</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Bottles &amp; Cans</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Modelo Especial</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Dos Equis Lager</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">White Claw (Variety)</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Coors Light</h3></div>
+            <span class="menu-item-price">$4</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">NA Beer (Athletic Brewing)</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Wine</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">House Red</h3>
+              <p class="menu-item-desc">Malbec — glass or bottle</p>
+            </div>
+            <span class="menu-item-price">$10 / $36</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">House White</h3>
+              <p class="menu-item-desc">Pinot Grigio — glass or bottle</p>
+            </div>
+            <span class="menu-item-price">$10 / $36</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Prosecco</h3>
+              <p class="menu-item-desc">Glass</p>
+            </div>
+            <span class="menu-item-price">$10</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Rosé</h3>
+              <p class="menu-item-desc">Glass or bottle</p>
+            </div>
+            <span class="menu-item-price">$11 / $40</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Non-Alcoholic</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Coke, Diet Coke, Sprite</h3></div>
+            <span class="menu-item-price">$3</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Sparkling Water</h3></div>
+            <span class="menu-item-price">$3</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">House-Made Lemonade</h3>
+              <p class="menu-item-desc">Classic or strawberry</p>
+            </div>
+            <span class="menu-item-price">$4</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info"><h3 class="menu-item-name">Red Bull</h3></div>
+            <span class="menu-item-price">$5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== LATE NIGHT ===================== -->
+      <div id="late-night" class="menu-panel" role="tabpanel" aria-label="Late night menu" aria-hidden="true">
+        <div class="menu-category fade-in">
+          <p class="menu-notice" style="margin-bottom:2rem;"><strong>Available 10 PM – close, Friday &amp; Saturday</strong></p>
+          <h2 class="menu-category-title">Late Night Bites</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Dirty Dog</h3>
+              <p class="menu-item-desc">All-beef hot dog, bacon wrap, queso drizzle, jalapeños, Voodoo relish</p>
+            </div>
+            <span class="menu-item-price">$8</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Slam Sliders (3)</h3>
+              <p class="menu-item-desc">Smash patty, American cheese, pickles, onion, yellow mustard</p>
+            </div>
+            <span class="menu-item-price">$10</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Late Night Fries</h3>
+              <p class="menu-item-desc">Extra crispy, seasoned salt, cheese sauce, bacon bits</p>
+            </div>
+            <span class="menu-item-price">$7</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Grilled Cheese</h3>
+              <p class="menu-item-desc">Three-cheese blend, grilled sourdough. Tomato soup dip +$2.</p>
+            </div>
+            <span class="menu-item-price">$8</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Wing Bucket (10)</h3>
+              <p class="menu-item-desc">Choice of sauce. Ranch or blue cheese.</p>
+            </div>
+            <span class="menu-item-price">$16</span>
+          </div>
+        </div>
+
+        <div class="menu-category fade-in">
+          <h2 class="menu-category-title">Late Night Drinks</h2>
+
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Bucket of Beers (5)</h3>
+              <p class="menu-item-desc">Lone Star, Modelo, or Coors Light</p>
+            </div>
+            <span class="menu-item-price">$20</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Party Pitcher (32oz)</h3>
+              <p class="menu-item-desc">Margarita, mule, or house punch</p>
+            </div>
+            <span class="menu-item-price">$28</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-info">
+              <h3 class="menu-item-name">Tequila Flight (4 shots)</h3>
+              <p class="menu-item-desc">Patron Silver, Espolón Reposado, Casamigos Blanco, 1800 Coconut</p>
+            </div>
+            <span class="menu-item-price">$28</span>
+          </div>
+        </div>
+
+        <p class="menu-notice fade-in">Late night menu available Fri–Sat 10 PM until kitchen closes. Last call is 30 minutes before closing.</p>
+        <!-- scavenger clue -->
+        <p id="menu-secret-clue" class="secret-clue" style="display:none;">✦ the night owls know the story ✦</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">THE <span>VOODOO</span> HUT</div>
+          <p class="footer-tagline">Live music. Craft cocktails.<br>Streaming worldwide.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook">FB</a>
+            <a href="#" class="social-link" aria-label="Instagram">IG</a>
+            <a href="#" class="social-link" aria-label="YouTube">YT</a>
+            <a href="#" class="social-link" aria-label="Twitch">TW</a>
+          </div>
+          <p class="footer-credit">AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a></p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="events.html">Events &amp; Shows</a></li>
+            <li><a href="menu.html">Food &amp; Drinks</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="merch.html">Merch</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Broadcast</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="live.html">Live Streams</a></li>
+            <li><a href="radio.html">Radio Station</a></li>
+            <li><a href="contact.html?topic=advertising">Advertise on Radio</a></li>
+            <li><a href="contact.html?topic=sponsorship">Sponsorships</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Visit Us</h4>
+          <address class="footer-address">
+            <p>1234 Kemah Waterfront Dr<br>Kemah, TX 77565</p>
+          </address>
+          <div class="footer-hours">
+            <p><strong>Mon–Thu</strong> 11AM – 12AM</p>
+            <p><strong>Fri–Sat</strong> 11AM – 2AM</p>
+            <p><strong>Sunday</strong> 11AM – 10PM</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 The Voodoo Hut. All rights reserved.</p>
+        <p>Kemah, TX · <a href="mailto:info@voodoohut.com">info@voodoohut.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <a href="radio.html" class="radio-player-link" aria-label="Radio station page">&#9654;&#9654;</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/easter-eggs.js"></script>
+</body>
+</html>
