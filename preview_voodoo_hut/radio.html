@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voodoo Hut Radio — 24/7 Internet Radio | Kemah, TX</title>
+  <meta name="description" content="Voodoo Hut Radio streams 24/7 worldwide. Live sets, curated music, original programming, podcasts, sports recaps, and artist interviews — all from Kemah, TX." />
+  <meta property="og:title" content="Voodoo Hut Radio — 24/7 Internet Radio" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+<div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">&#9888; Development Preview &mdash; <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a> &nbsp;&middot;&nbsp; <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a></div>
+
+<nav id="main-nav" class="main-nav" aria-label="Main navigation">
+  <div class="nav-inner container">
+    <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home"><img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" /></a>
+    <ul class="nav-links" role="list">
+      <li><a href="home.html" class="nav-link">Home</a></li>
+      <li><a href="events.html" class="nav-link">Events</a></li>
+      <li><a href="menu.html" class="nav-link">Menu</a></li>
+      <li><a href="live.html" class="nav-link">Live Streams</a></li>
+      <li><a href="radio.html" class="nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+  </div>
+</nav>
+<div id="mobile-menu" class="mobile-menu">
+  <ul role="list">
+    <li><a href="home.html" class="mobile-nav-link">Home</a></li>
+    <li><a href="events.html" class="mobile-nav-link">Events</a></li>
+    <li><a href="menu.html" class="mobile-nav-link">Menu</a></li>
+    <li><a href="live.html" class="mobile-nav-link">Live Streams</a></li>
+    <li><a href="radio.html" class="mobile-nav-link">Radio</a></li>
+    <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+    <li><a href="about.html" class="mobile-nav-link">About</a></li>
+    <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+  </ul>
+</div>
+
+<!-- PLACEHOLDER NOTICE — remove once AzuraCast is live -->
+<div class="placeholder-notice" role="status" aria-live="polite">
+  <span class="placeholder-dot" aria-hidden="true"></span>
+  <span><strong>Preview Mode</strong> — streaming local placeholder tracks. Full AzuraCast station coming soon.</span>
+</div>
+
+<!-- RADIO HERO -->
+<section class="radio-hero" aria-label="Voodoo Hut Radio">
+  <div class="container">
+    <div class="radio-hero-layout">
+
+      <div class="radio-hero-text">
+        <p class="section-eyebrow"><span class="live-dot"></span> On the Air · 24/7</p>
+        <h1 class="radio-hero-title">Voodoo Hut<br><span>Radio</span></h1>
+        <p class="radio-hero-sub">Streaming worldwide from Kemah, TX. Curated music, live sets, original programming — and eventually: podcasts, artist interviews, post-game recaps, and a whole lot more. This station is alive.</p>
+        <div class="radio-hero-ctas">
+          <button id="radio-play" class="btn btn-primary btn-lg" aria-label="Play radio">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="flex-shrink:0"><polygon points="5,3 19,12 5,21"/></svg>
+            Tune In
+          </button>
+          <a href="#advertise" class="btn btn-outline btn-lg">Advertise Here</a>
+        </div>
+      </div>
+
+      <!-- LARGE PLAYER CARD -->
+      <div class="radio-player-large fade-in" aria-label="Station player">
+        <div class="radio-station-name">VOODOO HUT RADIO</div>
+        <p class="radio-mono-text" style="font-size:11px;letter-spacing:.2em;color:var(--muted);margin-bottom:1rem;">KEMAH, TX · 24/7</p>
+
+        <!-- EQ Visualiser (animated when playing) -->
+        <div class="eq-visualiser" aria-hidden="true">
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+          <span class="eq-bar"></span>
+        </div>
+
+        <div class="radio-now-playing-info" id="radio-now-playing-large">Tap play to tune in</div>
+
+        <div class="radio-progress-bar" role="progressbar" aria-label="Track progress">
+          <div class="radio-progress-fill"></div>
+        </div>
+
+        <div class="radio-listeners" id="radio-listeners">— listeners worldwide</div>
+
+        <div style="display:flex;gap:.75rem;justify-content:center;align-items:center;margin-top:1.5rem;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--muted)" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          <input id="radio-volume" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" style="width:120px;" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LISTEN ON -->
+<section class="section-sm" style="background:var(--dark);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="listen-on-bar">
+      <span class="listen-on-label">Also available on:</span>
+      <div class="listen-on-links">
+        <a href="#" class="listen-on-btn" aria-label="Listen on TuneIn">TuneIn</a>
+        <a href="#" class="listen-on-btn" aria-label="Listen on iHeart">iHeart Radio</a>
+        <a href="#" class="listen-on-btn" aria-label="Listen on Radio.net">Radio.net</a>
+        <a href="https://radio.voodoo-hut.com:8000/stream" class="listen-on-btn" aria-label="Direct Icecast stream">Direct Stream</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMMING -->
+<section class="section" aria-labelledby="programming-heading">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">What's On</p>
+      <h2 class="section-title" id="programming-heading">Original Programming</h2>
+      <p style="color:var(--muted);max-width:600px;margin:0 auto;">We don't just play music. Voodoo Hut Radio is building a full original broadcasting network — from the stage to your ears, anywhere in the world.</p>
+    </div>
+    <div class="programming-grid fade-in">
+      <div class="program-card card card-red">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">🎸</div>
+          <h3 class="program-name">Live Sets</h3>
+          <p class="program-desc">When a band or DJ is on stage, the live feed goes straight to the station. Everything you'd hear at the bar — broadcast clean, recorded, archived.</p>
+          <span class="program-schedule">Live on show nights</span>
+        </div>
+      </div>
+      <div class="program-card card card-cyan">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">🎙️</div>
+          <h3 class="program-name">Voodoo Sessions</h3>
+          <p class="program-desc">Artist interviews and acoustic sessions recorded in the venue. Deep conversations about music, craft, and the road. Coming soon.</p>
+          <span class="program-schedule">Coming soon</span>
+        </div>
+      </div>
+      <div class="program-card card card-gold">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">🎧</div>
+          <h3 class="program-name">AutoDJ</h3>
+          <p class="program-desc">Between live sets, our curated AutoDJ runs 24/7. Deep cuts, hand-picked for the Voodoo vibe. Pre-licensed, fully compliant.</p>
+          <span class="program-schedule">24/7 between shows</span>
+        </div>
+      </div>
+      <div class="program-card card">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">🥊</div>
+          <h3 class="program-name">Post-Game Recap</h3>
+          <p class="program-desc">After UFC, NFL, boxing, and MLB events, we go live with a post-game recap show. Reactions, analysis, and bar conversation — broadcast to the world.</p>
+          <span class="program-schedule">Following major sports events</span>
+        </div>
+      </div>
+      <div class="program-card card">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">📻</div>
+          <h3 class="program-name">The Voodoo Podcast</h3>
+          <p class="program-desc">A weekly show about the intersection of music, culture, and Kemah. Guests, stories, and the kind of conversation you overhear at the bar. Coming soon.</p>
+          <span class="program-schedule">Coming soon — weekly</span>
+        </div>
+      </div>
+      <div class="program-card card">
+        <div class="card-body">
+          <div class="program-icon" aria-hidden="true">🌐</div>
+          <h3 class="program-name">What's Possible</h3>
+          <p class="program-desc">We're building a network. Branded segments, sponsor spots, specialty shows, curated genre blocks. The infrastructure is live. The content is only limited by imagination.</p>
+          <span class="program-schedule">Your idea here →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVERTISE -->
+<section class="section section-dark" id="advertise" aria-labelledby="advertise-heading">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">Revenue</p>
+      <h2 class="section-title" id="advertise-heading">Advertise on Voodoo Hut Radio</h2>
+      <p style="color:var(--muted);max-width:600px;margin:0 auto;">Reach a global audience of live music fans, local regulars, and Kemah visitors. Radio advertising spots are available in 15, 30, and 60-second formats.</p>
+    </div>
+    <div class="ad-tiers-grid fade-in">
+      <div class="sponsor-tier">
+        <div class="tier-name">Spot Package</div>
+        <div class="tier-price">From $99<span style="font-size:14px;color:var(--muted)">/month</span></div>
+        <ul>
+          <li>4 × 30-second spots per day</li>
+          <li>30-day run</li>
+          <li>Custom ad script available</li>
+          <li>Audience metrics report</li>
+        </ul>
+        <a href="contact.html?topic=advertising" class="btn btn-outline">Get Started</a>
+      </div>
+      <div class="sponsor-tier featured">
+        <div class="tier-badge">Most Popular</div>
+        <div class="tier-name">Show Sponsor</div>
+        <div class="tier-price">From $299<span style="font-size:14px;color:var(--muted)">/month</span></div>
+        <ul>
+          <li>Branded live show segment</li>
+          <li>Pre-roll and mid-roll spots</li>
+          <li>Mentioned in show intro</li>
+          <li>Social media mention</li>
+          <li>Priority placement</li>
+          <li>Monthly listener report</li>
+        </ul>
+        <a href="contact.html?topic=advertising" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="sponsor-tier">
+        <div class="tier-name">Stream Sponsor</div>
+        <div class="tier-price">Custom</div>
+        <ul>
+          <li>Logo bug on all live streams</li>
+          <li>Pre-show and post-show spots</li>
+          <li>On-screen lower third</li>
+          <li>Website logo placement</li>
+          <li>Cross-promotion package</li>
+          <li>Quarterly analytics</li>
+        </ul>
+        <a href="contact.html?topic=sponsorship" class="btn btn-outline">Contact Us</a>
+      </div>
+    </div>
+    <div class="ad-contact-note fade-in">
+      <p>Not sure which package fits? <a href="contact.html?topic=advertising">Reach out</a> and we'll build something custom around your audience and budget.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section" aria-label="Station stats">
+  <div class="container">
+    <div class="stats-row fade-in">
+      <div class="stat-block">
+        <span class="stat-big">24/7</span>
+        <span class="stat-desc">Continuous broadcast</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-big">3</span>
+        <span class="stat-desc">Live stage feeds</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-big">Global</span>
+        <span class="stat-desc">Worldwide streaming</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-big">–16 LUFS</span>
+        <span class="stat-desc">Broadcast-grade audio</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">THE <span>VOODOO</span> HUT</div>
+        <p class="footer-tagline">Live music. Craft cocktails.<br>Streaming worldwide.</p>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Facebook">FB</a>
+          <a href="#" class="social-link" aria-label="Instagram">IG</a>
+          <a href="#" class="social-link" aria-label="YouTube">YT</a>
+          <a href="#" class="social-link" aria-label="Twitch">TW</a>
+        </div>
+        <p class="footer-credit">AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a></p>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-heading">Explore</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="events.html">Events &amp; Shows</a></li>
+          <li><a href="menu.html">Food &amp; Drinks</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="merch.html">Merch</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-heading">Broadcast</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="live.html">Live Streams</a></li>
+          <li><a href="radio.html">Radio Station</a></li>
+          <li><a href="contact.html?topic=advertising">Advertise on Radio</a></li>
+          <li><a href="contact.html?topic=sponsorship">Sponsorships</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-heading">Visit Us</h4>
+        <address class="footer-address">
+          <p>1234 Kemah Waterfront Dr<br>Kemah, TX 77565</p>
+        </address>
+        <div class="footer-hours">
+          <p><strong>Mon–Thu</strong> 11AM – 12AM</p>
+          <p><strong>Fri–Sat</strong> 11AM – 2AM</p>
+          <p><strong>Sunday</strong> 11AM – 10PM</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 The Voodoo Hut. All rights reserved.</p>
+      <p>Kemah, TX · <a href="mailto:info@voodoohut.com">info@voodoohut.com</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- PERSISTENT BOTTOM PLAYER BAR -->
+<div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+  <div class="radio-player-inner">
+    <div class="radio-player-brand">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="radio-player-name">Voodoo Hut Radio</span>
+    </div>
+    <!-- EQ bars in the bar (hidden until playing) -->
+    <div class="eq-visualiser eq-visualiser-sm" aria-hidden="true">
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+    </div>
+    <div class="radio-player-track">
+      <span id="now-playing">Tap play to tune in</span>
+    </div>
+    <div class="radio-player-controls">
+      <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+      <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <a href="radio.html" class="radio-player-link" aria-label="Go to radio page">&#9654;&#9654;</a>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/easter-eggs.js"></script>
+</body>
+</html>
