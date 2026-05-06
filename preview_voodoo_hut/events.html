@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events &amp; Shows — The Voodoo Hut | Kemah, TX</title>
+  <meta name="description" content="Upcoming live music, DJs, and events at The Voodoo Hut in Kemah, TX. Three stages every weekend. Get tickets, view the full calendar, and book your table." />
+  <meta property="og:title" content="Events — The Voodoo Hut" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+<div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">&#9888; Development Preview &mdash; <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a> &nbsp;&middot;&nbsp; <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a></div>
+
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner container">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home"><img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" /></a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"   class="nav-link">Home</a></li>
+        <li><a href="events.html"  class="nav-link">Events</a></li>
+        <li><a href="menu.html"    class="nav-link">Menu</a></li>
+        <li><a href="live.html"    class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"   class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html"   class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu">
+    <ul role="list">
+      <li><a href="home.html"   class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <header class="page-header">
+    <div class="container">
+      <p class="section-eyebrow">Live Music · DJs · Special Events</p>
+      <h1 class="page-header-title">Events &amp; Shows</h1>
+      <p class="page-header-sub">Three stages. Every weekend. Check the calendar and grab your spot.</p>
+    </div>
+  </header>
+
+  <!-- FILTER BAR -->
+  <section class="section-sm" style="background:var(--dark);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Filter by Stage:</span>
+          <div class="filter-pills">
+            <button class="filter-pill active" data-filter="all">All Stages</button>
+            <button class="filter-pill" data-filter="main">Main Stage</button>
+            <button class="filter-pill" data-filter="corner">Corner Stage</button>
+            <button class="filter-pill" data-filter="patio">Patio Stage</button>
+          </div>
+        </div>
+        <a href="#booking-form" class="btn btn-outline btn-sm">Book an Act &darr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS LIST -->
+  <section class="section" aria-label="Upcoming events">
+    <div class="container">
+
+      <!-- Month header -->
+      <div class="month-header fade-in">
+        <h2 class="month-title">May 2026</h2>
+        <div class="divider" style="margin:12px 0 32px;"></div>
+      </div>
+
+      <div class="events-grid">
+
+        <article class="event-card fade-in" data-stage="main">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🎸</div>
+            <span class="badge badge-red" style="position:absolute;top:12px;left:12px;">This Saturday</span>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Sat, May 9 · Doors 8 PM · Show 9 PM</span>
+              <span class="event-stage">Main Stage</span>
+            </div>
+            <h3 class="event-title">The Bayou Breakers</h3>
+            <p class="event-genre">Southern Rock · Blues · Swamp Funk</p>
+            <p class="event-desc">Houston's hardest-working blues-rock band brings three hours of deep grooves, slide guitar, and call-and-response chaos. This one sells out.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+              <a href="live.html#main-stage" class="btn btn-outline btn-sm">Watch Live</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card fade-in" data-stage="patio">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🌿</div>
+            <span class="badge badge-gold" style="position:absolute;top:12px;left:12px;">Acoustic Night</span>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Sat, May 9 · 7 PM</span>
+              <span class="event-stage">Patio Stage</span>
+            </div>
+            <h3 class="event-title">Clara Jane</h3>
+            <p class="event-genre">Folk · Singer-Songwriter</p>
+            <p class="event-desc">Patio night storytelling from one of the Gulf Coast's most compelling voices. Free with venue entry.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+              <a href="live.html#patio-stage" class="btn btn-outline btn-sm">Watch Live</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card fade-in" data-stage="corner">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🎛️</div>
+            <span class="badge badge-cyan" style="position:absolute;top:12px;left:12px;">Next Weekend</span>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Fri, May 15 · 10 PM – 2 AM</span>
+              <span class="event-stage">Corner Stage</span>
+            </div>
+            <h3 class="event-title">DJ Phantom</h3>
+            <p class="event-genre">Electronic · Deep House · Techno</p>
+            <p class="event-desc">Houston underground legend. Four hours of relentless forward motion. The late-night set that makes Saturday mornings worthwhile.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+              <a href="live.html#corner-stage" class="btn btn-outline btn-sm">Watch Live</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card fade-in" data-stage="main">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🎤</div>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Sat, May 16 · 9 PM</span>
+              <span class="event-stage">Main Stage</span>
+            </div>
+            <h3 class="event-title">Wren &amp; the Tide</h3>
+            <p class="event-genre">Americana · Folk Rock</p>
+            <p class="event-desc">East Texas five-piece. Haunting harmonies, lap steel, and songs that cut deep. This is why we built the Patio Stage.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+              <a href="live.html#main-stage" class="btn btn-outline btn-sm">Watch Live</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card fade-in" data-stage="main">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🥊</div>
+            <span class="badge badge-red" style="position:absolute;top:12px;left:12px;">Fight Night</span>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Sat, May 23 · 7 PM</span>
+              <span class="event-stage">All 37 Screens</span>
+            </div>
+            <h3 class="event-title">UFC 315 Watch Party</h3>
+            <p class="event-genre">Combat Sports · Watch Party</p>
+            <p class="event-desc">Every screen. Every fight. Post-fight recap stream live on Voodoo Hut Radio. DJ set after the main event.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card fade-in" data-stage="corner">
+          <div class="event-img-wrap">
+            <div class="event-img-placeholder">🎧</div>
+          </div>
+          <div class="event-info">
+            <div class="event-meta">
+              <span class="event-date">Fri, May 29 · 10 PM</span>
+              <span class="event-stage">Corner Stage</span>
+            </div>
+            <h3 class="event-title">Memorial Weekend: DJ Scarlet</h3>
+            <p class="event-genre">Hip-Hop · R&amp;B · Club</p>
+            <p class="event-desc">Holiday weekend kickoff. DJ Scarlet takes you through every era. Memorial Day weekend starts here.</p>
+            <div class="event-actions">
+              <a href="contact.html?topic=reservation" class="btn btn-primary btn-sm">Reserve a Table</a>
+              <a href="live.html#corner-stage" class="btn btn-outline btn-sm">Watch Live</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <div style="text-align:center;margin-top:2.5rem;">
+        <button id="load-more-events" class="btn btn-outline">Load More Events</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BOOKING FORM -->
+  <section class="section section-dark" id="booking-form" aria-labelledby="booking-heading">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Entertainers</p>
+        <h2 class="section-title" id="booking-heading">Book Your Act</h2>
+        <p style="color:var(--muted);max-width:560px;margin:0 auto;">We're always looking for the next great act. Tell us about yourself and we'll be in touch.</p>
+      </div>
+
+      <div class="form-card fade-in">
+        <form id="booking-inquiry-form" novalidate>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="act-name">Act / Artist Name *</label>
+              <input class="form-control" type="text" id="act-name" name="act_name" placeholder="Stage name or band name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Your Name *</label>
+              <input class="form-control" type="text" id="contact-name" name="contact_name" placeholder="Booking contact" required />
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="booking-email">Email *</label>
+              <input class="form-control" type="email" id="booking-email" name="email" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="booking-phone">Phone</label>
+              <input class="form-control" type="tel" id="booking-phone" name="phone" placeholder="(xxx) xxx-xxxx" />
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="act-genre">Genre / Style *</label>
+              <input class="form-control" type="text" id="act-genre" name="genre" placeholder="e.g. Blues Rock, DJ/Electronic" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="preferred-stage">Preferred Stage</label>
+              <select class="form-control" id="preferred-stage" name="stage">
+                <option value="">No preference</option>
+                <option value="main">Main Stage</option>
+                <option value="corner">Corner Stage</option>
+                <option value="patio">Patio Stage</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="social-links">Social Media / EPK / Music Links *</label>
+            <input class="form-control" type="text" id="social-links" name="social" placeholder="Instagram, Spotify, SoundCloud, website..." required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="availability">Availability / Preferred Dates</label>
+            <input class="form-control" type="text" id="availability" name="availability" placeholder="e.g. Fridays/Saturdays, June or later..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-notes">Additional Notes</label>
+            <textarea class="form-control" id="booking-notes" name="notes" placeholder="Set length, equipment needs, past experience, anything else we should know..."></textarea>
+          </div>
+          <div style="text-align:center;margin-top:2rem;">
+            <button type="submit" class="btn btn-primary btn-lg">Submit Booking Inquiry</button>
+          </div>
+        </form>
+        <p style="text-align:center;margin-top:1rem;font-size:13px;color:var(--muted);">We review every submission. Expect a response within 3–5 business days.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECORDING PURCHASE -->
+  <section class="section" aria-labelledby="recordings-heading">
+    <div class="container container-narrow">
+      <div class="info-callout fade-in">
+        <div class="callout-icon" aria-hidden="true">🎙️</div>
+        <div class="callout-body">
+          <h3 id="recordings-heading" class="callout-title">Performed Here Recently?</h3>
+          <p class="callout-text">Every show on the Main Stage and Corner Stage is recorded in broadcast quality. If you performed at The Voodoo Hut, you can purchase a high-quality audio or video recording of your set.</p>
+          <a href="contact.html?topic=recording" class="btn btn-cyan btn-sm">Inquire About Your Recording</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">THE <span>VOODOO</span> HUT</div>
+          <p class="footer-tagline">Live music. Craft cocktails.<br>Streaming worldwide.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook">FB</a>
+            <a href="#" class="social-link" aria-label="Instagram">IG</a>
+            <a href="#" class="social-link" aria-label="YouTube">YT</a>
+            <a href="#" class="social-link" aria-label="Twitch">TW</a>
+          </div>
+          <p class="footer-credit">AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a></p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="events.html">Events &amp; Shows</a></li>
+            <li><a href="menu.html">Food &amp; Drinks</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="merch.html">Merch</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Broadcast</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="live.html">Live Streams</a></li>
+            <li><a href="radio.html">Radio Station</a></li>
+            <li><a href="contact.html?topic=advertising">Advertise on Radio</a></li>
+            <li><a href="contact.html?topic=sponsorship">Sponsorships</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Visit Us</h4>
+          <address class="footer-address">
+            <p>1234 Kemah Waterfront Dr<br>Kemah, TX 77565</p>
+          </address>
+          <div class="footer-hours">
+            <p><strong>Mon–Thu</strong> 11AM – 12AM</p>
+            <p><strong>Fri–Sat</strong> 11AM – 2AM</p>
+            <p><strong>Sunday</strong> 11AM – 10PM</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 The Voodoo Hut. All rights reserved.</p>
+        <p>Kemah, TX · <a href="mailto:info@voodoohut.com">info@voodoohut.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>events.html
+        <a href="radio.html" class="radio-player-link" aria-label="Go to radio page">&#9654;&#9654;</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Event filter pills
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const eventCards  = document.querySelectorAll('.event-card[data-stage]');
+
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        filterPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const f = pill.dataset.filter;
+        eventCards.forEach(card => {
+          card.style.display = (f === 'all' || card.dataset.stage === f) ? '' : 'none';
+        });
+      });
+    });
+
+    // Booking form submit
+    document.getElementById('booking-inquiry-form')?.addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Thank you! Your booking inquiry has been submitted. We\'ll be in touch within 3–5 business days.');
+      e.target.reset();
+    });
+  </script>
+  <script src="assets/js/easter-eggs.js"></script>
+</body>
+</html>
