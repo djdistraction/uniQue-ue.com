@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — The Voodoo Hut | Photos &amp; Videos | Kemah, TX</title>
+  <meta name="description" content="Photos and videos from The Voodoo Hut — live performances, the venue, the crowd, and the moments that make this place what it is." />
+  <meta property="og:title" content="Gallery — The Voodoo Hut" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+<div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">&#9888; Development Preview &mdash; <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a> &nbsp;&middot;&nbsp; <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a></div>
+
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner container">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home"><img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" /></a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"   class="nav-link">Home</a></li>
+        <li><a href="events.html"  class="nav-link">Events</a></li>
+        <li><a href="menu.html"    class="nav-link">Menu</a></li>
+        <li><a href="live.html"    class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"   class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html"   class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu">
+    <ul role="list">
+      <li><a href="home.html"   class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <header class="page-header">
+    <div class="container">
+      <p class="section-eyebrow">Photos · Videos · Moments</p>
+      <h1 class="page-header-title">Gallery</h1>
+      <p class="page-header-sub">Real moments from the Hut. No filters needed.</p>
+    </div>
+  </header>
+
+  <!-- CONTENT STRATEGY BANNER -->
+  <section class="section-sm" style="background:var(--dark);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="gallery-share-bar">
+        <p class="share-bar-text">See something you love? Share it — straight from here to wherever you want it.</p>
+        <div class="share-buttons">
+          <button class="share-btn" onclick="shareGallery('facebook')">Share on Facebook</button>
+          <button class="share-btn" onclick="shareGallery('instagram')">Share to Instagram</button>
+          <button class="share-btn" onclick="shareGallery('twitter')">Share on X</button>
+          <button class="share-btn" onclick="shareGallery('copy')">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTER -->
+  <section class="section-sm" aria-label="Gallery filter">
+    <div class="container">
+      <div class="filter-bar">
+        <div class="filter-pills">
+          <button class="filter-pill active" data-gallery-filter="all">All</button>
+          <button class="filter-pill" data-gallery-filter="live">Live Performances</button>
+          <button class="filter-pill" data-gallery-filter="venue">The Venue</button>
+          <button class="filter-pill" data-gallery-filter="crowd">The Crowd</button>
+          <button class="filter-pill" data-gallery-filter="video">Videos</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTO GRID -->
+  <section class="section-sm" aria-label="Photo gallery">
+    <div class="container">
+
+      <!-- Featured post (content-first approach) -->
+      <div class="gallery-featured fade-in" data-gallery-cat="live">
+        <div class="gallery-featured-img" aria-label="The Bayou Breakers Main Stage performance">
+          <span class="gallery-placeholder-icon" aria-hidden="true">🎸</span>
+        </div>
+        <div class="gallery-featured-info">
+          <p class="gallery-item-date">May 3, 2026</p>
+          <h3 class="gallery-item-title">The Bayou Breakers — Main Stage</h3>
+          <p class="gallery-item-desc">Three hours. Standing room only. Slide guitar that rattled the walls. This is why we built the Main Stage.</p>
+          <div class="gallery-item-actions">
+            <button class="share-btn-inline" onclick="shareItem('https://htxpunk.com/voodoohut/gallery.html','The Bayou Breakers at The Voodoo Hut','facebook')">Share</button>
+            <button class="share-btn-inline" onclick="shareItem('https://htxpunk.com/voodoohut/gallery.html','The Bayou Breakers at The Voodoo Hut','twitter')">Tweet</button>
+            <button class="share-btn-inline" onclick="shareItem('https://htxpunk.com/voodoohut/gallery.html','','copy')">Copy Link</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery masonry grid -->
+      <div class="gallery-grid" id="gallery-grid">
+
+        <div class="gallery-item fade-in" data-gallery-cat="venue">
+          <div class="gallery-thumb" aria-label="Main bar area">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🍹</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">The Main Bar</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'The Voodoo Hut Main Bar','facebook')">Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item fade-in" data-gallery-cat="live">
+          <div class="gallery-thumb" aria-label="DJ Phantom at the Corner Stage">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🎛️</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">DJ Phantom — Corner Stage</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'DJ Phantom at The Voodoo Hut','twitter')">Tweet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item fade-in" data-gallery-cat="crowd">
+          <div class="gallery-thumb" aria-label="Friday night crowd">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🙌</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">Friday Night Energy</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'Friday night at The Voodoo Hut','facebook')">Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item gallery-item-tall fade-in" data-gallery-cat="live">
+          <div class="gallery-thumb gallery-thumb-tall" aria-label="Clara Jane on the patio stage">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🌿</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">Clara Jane — Patio Stage</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'Clara Jane at The Voodoo Hut Patio Stage','twitter')">Tweet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item fade-in" data-gallery-cat="venue">
+          <div class="gallery-thumb" aria-label="The Voodoo Hut patio at night">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🌙</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">Patio at Night</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'The Voodoo Hut Patio','facebook')">Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item fade-in" data-gallery-cat="crowd">
+          <div class="gallery-thumb" aria-label="UFC watch party crowd">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🥊</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">UFC Watch Party</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'UFC Watch Party at The Voodoo Hut','twitter')">Tweet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item gallery-item-wide fade-in" data-gallery-cat="venue">
+          <div class="gallery-thumb" aria-label="Full venue panorama">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🏠</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">14,000 Sq Ft — The Full House</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'The Voodoo Hut — Kemah TX','facebook')">Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item fade-in" data-gallery-cat="live">
+          <div class="gallery-thumb" aria-label="Band performing">
+            <span class="gallery-placeholder-icon" aria-hidden="true">🎤</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">Wren &amp; the Tide</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'Wren and the Tide at The Voodoo Hut','twitter')">Tweet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item gallery-item-video fade-in" data-gallery-cat="video">
+          <div class="gallery-thumb gallery-thumb-video" aria-label="Video highlight reel">
+            <span class="gallery-placeholder-icon" aria-hidden="true">▶</span>
+            <span class="gallery-video-badge">VIDEO</span>
+          </div>
+          <div class="gallery-item-overlay">
+            <p class="gallery-overlay-title">Best of May 2026</p>
+            <div class="gallery-overlay-actions">
+              <button onclick="shareItem(window.location.href,'Best of May 2026 at The Voodoo Hut','facebook')">Share</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;margin-top:3rem;">
+        <button class="btn btn-outline" id="load-more-gallery">Load More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOUR PHOTOS -->
+  <section class="section section-dark" aria-labelledby="community-heading">
+    <div class="container container-narrow">
+      <div class="section-header">
+        <h2 class="section-title" id="community-heading">Been Here Recently?</h2>
+        <p style="color:var(--muted);max-width:520px;margin:0 auto;">Tag us in your photos and videos — the best ones get featured right here on the website. Your content, your moment, amplified by the Voodoo Hut platform.</p>
+      </div>
+      <div style="text-align:center;margin-top:2rem;">
+        <div class="tag-us-block fade-in">
+          <div class="tag-platform">
+            <span class="tag-platform-icon" aria-hidden="true">📸</span>
+            <span class="tag-platform-name">Instagram</span>
+            <span class="tag-platform-handle">@TheVoodooHut</span>
+          </div>
+          <div class="tag-platform">
+            <span class="tag-platform-icon" aria-hidden="true">📘</span>
+            <span class="tag-platform-name">Facebook</span>
+            <span class="tag-platform-handle">@TheVoodooHutKemah</span>
+          </div>
+          <div class="tag-platform">
+            <span class="tag-platform-icon" aria-hidden="true">🐦</span>
+            <span class="tag-platform-name">X / Twitter</span>
+            <span class="tag-platform-handle">@VoodooHutKemah</span>
+          </div>
+        </div>
+        <p style="color:var(--muted);font-size:13px;margin-top:1.5rem;">We share your content here first — then we push it to social. That's how we do it.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">THE <span>VOODOO</span> HUT</div>
+          <p class="footer-tagline">Live music. Craft cocktails.<br>Streaming worldwide.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook">FB</a>
+            <a href="#" class="social-link" aria-label="Instagram">IG</a>
+            <a href="#" class="social-link" aria-label="YouTube">YT</a>
+            <a href="#" class="social-link" aria-label="Twitch">TW</a>
+          </div>
+          <p class="footer-credit">AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a></p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="events.html">Events &amp; Shows</a></li>
+            <li><a href="menu.html">Food &amp; Drinks</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="merch.html">Merch</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Broadcast</h4>
+          <ul class="footer-links" role="list">
+            <li><a href="live.html">Live Streams</a></li>
+            <li><a href="radio.html">Radio Station</a></li>
+            <li><a href="contact.html?topic=advertising">Advertise on Radio</a></li>
+            <li><a href="contact.html?topic=sponsorship">Sponsorships</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Visit Us</h4>
+          <address class="footer-address">
+            <p>1234 Kemah Waterfront Dr<br>Kemah, TX 77565</p>
+          </address>
+          <div class="footer-hours">
+            <p><strong>Mon–Thu</strong> 11AM – 12AM</p>
+            <p><strong>Fri–Sat</strong> 11AM – 2AM</p>
+            <p><strong>Sunday</strong> 11AM – 10PM</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 The Voodoo Hut. All rights reserved.</p>
+        <p>Kemah, TX · <a href="mailto:info@voodoohut.com">info@voodoohut.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <a href="radio.html" class="radio-player-link" aria-label="Go to radio page">&#9654;&#9654;</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Gallery filter
+    const galleryPills = document.querySelectorAll('[data-gallery-filter]');
+    const galleryItems = document.querySelectorAll('[data-gallery-cat]');
+
+    galleryPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        galleryPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const f = pill.dataset.galleryFilter;
+        galleryItems.forEach(item => {
+          item.style.display = (f === 'all' || item.dataset.gallerycat === f || item.dataset.galleryCat === f) ? '' : 'none';
+        });
+      });
+    });
+
+    function shareGallery(platform) {
+      shareItem(window.location.href, 'Gallery — The Voodoo Hut, Kemah TX', platform);
+    }
+
+    function shareItem(url, text, platform) {
+      const eu = encodeURIComponent(url);
+      const et = encodeURIComponent(text + ' ' + url);
+      if (platform === 'facebook') {
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + eu, '_blank', 'width=600,height=400');
+      } else if (platform === 'twitter') {
+        window.open('https://twitter.com/intent/tweet?text=' + et, '_blank', 'width=600,height=400');
+      } else if (platform === 'instagram') {
+        alert('For Instagram: save this image/link and share from the Instagram app. Tag @TheVoodooHut!');
+      } else if (platform === 'copy') {
+        navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => prompt('Copy:', url));
+      }
+    }
+  </script>
+  <script src="assets/js/easter-eggs.js"></script>
+</body>
+</html>
