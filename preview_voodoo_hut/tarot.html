@@ -3,104 +3,216 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Spirits Speak &#x1F56F;&#xFE0F; | The Voodoo Hut</title>
-  <meta name="description" content="You found the hidden page. The spirits have a message for you." />
+  <title>The Voodoo Oracle 🕯 | The Voodoo Hut</title>
+  <meta name="description" content="You found the hidden oracle. Ask your question. Draw a card. Let the spirits speak." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
-    body {
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+    /* ── Page shell ── */
+    body { background:#000; display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
+
+    /* ── Scanlines ── */
+    .t-scanline {
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:repeating-linear-gradient(to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,200,200,.012) 3px, rgba(0,200,200,.012) 4px);
     }
-    .tarot-page {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 4rem 2rem;
-      text-align: center;
+
+    /* ── Particle canvas behind everything ── */
+    #t-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+    /* ── Main layout ── */
+    .t-page {
+      flex:1; position:relative; z-index:1;
+      display:flex; flex-direction:column; align-items:center;
+      padding:3rem 1.5rem 6rem; max-width:720px; margin:0 auto; width:100%;
     }
-    .tarot-glow {
-      font-size: clamp(4rem, 10vw, 7rem);
-      animation: tarot-pulse 2.5s ease-in-out infinite;
-      display: block;
-      margin-bottom: 1.5rem;
+
+    /* ── Entrance header ── */
+    .t-candle { font-size:clamp(3rem,8vw,5.5rem); display:block; margin-bottom:1rem;
+      animation:candle-flicker 3s ease-in-out infinite; }
+    @keyframes candle-flicker {
+      0%,100%{ filter:drop-shadow(0 0 10px rgba(0,200,200,.7)); transform:scale(1) rotate(-.5deg); }
+      30%    { filter:drop-shadow(0 0 28px rgba(0,200,200,1));  transform:scale(1.04) rotate(.3deg); }
+      60%    { filter:drop-shadow(0 0 8px  rgba(0,200,200,.5)); transform:scale(.98) rotate(-.2deg); }
     }
-    @keyframes tarot-pulse {
-      0%, 100% { filter: drop-shadow(0 0 12px rgba(0,200,200,0.6)); transform: scale(1); }
-      50%       { filter: drop-shadow(0 0 32px rgba(0,200,200,1));   transform: scale(1.06); }
+    .t-eyebrow { font-family:var(--font-mono); font-size:.7rem; letter-spacing:.3em;
+      text-transform:uppercase; color:var(--cyan); margin-bottom:.5rem; }
+    .t-title { font-family:var(--font-display); font-size:clamp(2rem,7vw,3.8rem);
+      font-weight:700; text-transform:uppercase; letter-spacing:.06em; line-height:1.05;
+      color:var(--white); margin-bottom:.5rem; text-align:center; }
+    .t-title span { color:var(--cyan); }
+    .t-subtitle { font-family:var(--font-mono); font-size:.75rem; color:var(--muted);
+      letter-spacing:.15em; text-transform:uppercase; margin-bottom:2.5rem; }
+
+    /* ── Divider ── */
+    .t-rule { width:80px; height:1px; background:linear-gradient(to right,transparent,var(--cyan),transparent);
+      margin:0 auto 2.5rem; }
+
+    /* ── Question box ── */
+    .t-ask-wrap { width:100%; margin-bottom:2rem; }
+    .t-ask-label { font-family:var(--font-mono); font-size:.65rem; letter-spacing:.25em;
+      text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.6rem; }
+    .t-ask-input {
+      width:100%; background:rgba(0,200,200,.04); border:1px solid rgba(0,200,200,.2);
+      border-radius:8px; padding:1rem 1.25rem; font-family:Georgia,serif; font-size:1rem;
+      color:var(--white); outline:none; resize:none; min-height:80px; line-height:1.6;
+      transition:border-color .25s, box-shadow .25s;
     }
-    .tarot-eyebrow {
-      font-family: var(--font-mono);
-      font-size: .75rem;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-      color: var(--cyan);
-      margin-bottom: .75rem;
+    .t-ask-input::placeholder { color:rgba(255,255,255,.25); font-style:italic; }
+    .t-ask-input:focus { border-color:rgba(0,200,200,.6); box-shadow:0 0 20px rgba(0,200,200,.12); }
+
+    /* ── Draw button ── */
+    .t-draw-btn {
+      display:inline-flex; align-items:center; gap:.75rem;
+      background:transparent; border:1px solid rgba(0,200,200,.4); border-radius:8px;
+      padding:1rem 2.5rem; font-family:var(--font-display); font-size:1rem;
+      font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan);
+      cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
+      margin-bottom:3rem;
     }
-    .tarot-title {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 6vw, 4rem);
-      font-weight: 700;
-      color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      margin-bottom: 1.5rem;
-      line-height: 1.1;
+    .t-draw-btn:hover { background:rgba(0,200,200,.08); border-color:var(--cyan);
+      box-shadow:0 0 28px rgba(0,200,200,.18); transform:translateY(-1px); }
+    .t-draw-btn:active { transform:translateY(0); }
+    .t-draw-btn .btn-candle { font-size:1.1rem; }
+
+    /* ── Card stage ── */
+    .t-card-stage {
+      width:100%; perspective:1200px; margin-bottom:2.5rem;
+      min-height:0; transition:min-height .4s ease;
     }
-    .tarot-title span { color: var(--cyan); }
-    .tarot-card {
-      background: rgba(0,200,200,0.05);
-      border: 1px solid rgba(0,200,200,0.25);
-      border-radius: 12px;
-      padding: 2rem 2.5rem;
-      max-width: 540px;
-      margin: 0 auto 2.5rem;
+    .t-card-stage.has-card { min-height:340px; }
+
+    .t-card-flipper {
+      width:200px; height:340px; margin:0 auto;
+      transform-style:preserve-3d; transition:transform 1s cubic-bezier(.4,0,.2,1);
+      position:relative;
     }
-    .tarot-card-label {
-      font-family: var(--font-mono);
-      font-size: .65rem;
-      letter-spacing: .25em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: .75rem;
+    .t-card-flipper.flipped { transform:rotateY(180deg); }
+
+    .t-card-face, .t-card-back {
+      position:absolute; inset:0; border-radius:12px;
+      backface-visibility:hidden; -webkit-backface-visibility:hidden;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
     }
-    .tarot-card-message {
-      font-family: Georgia, serif;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: var(--white);
-      font-style: italic;
+    .t-card-back {
+      background:linear-gradient(135deg,#0a0a14,#0d1a1a);
+      border:2px solid rgba(0,200,200,.35);
+      box-shadow:0 0 30px rgba(0,200,200,.15), inset 0 0 60px rgba(0,200,200,.04);
     }
-    .tarot-sub {
-      color: var(--muted);
-      font-size: .9rem;
-      margin-bottom: 2rem;
-      max-width: 440px;
+    .t-card-back-pattern {
+      font-size:4rem; opacity:.18; user-select:none;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+      padding:1rem;
     }
-    .tarot-scanline {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 3px,
-        rgba(0,200,200,0.015) 3px,
-        rgba(0,200,200,0.015) 4px
-      );
-      z-index: 0;
+    .t-card-back-label {
+      position:absolute; bottom:1rem;
+      font-family:var(--font-mono); font-size:.55rem; letter-spacing:.25em;
+      text-transform:uppercase; color:rgba(0,200,200,.4);
     }
-    .tarot-page > * { position: relative; z-index: 1; }
+    .t-card-face {
+      transform:rotateY(180deg);
+      background:linear-gradient(160deg,#080810,#0a1a14 60%,#080810);
+      border:2px solid rgba(0,200,200,.5);
+      box-shadow:0 0 40px rgba(0,200,200,.2), inset 0 0 80px rgba(0,200,200,.06);
+      padding:1.25rem 1rem;
+      gap:.6rem;
+    }
+    .t-card-face.reversed {
+      border-color:rgba(224,16,32,.5);
+      box-shadow:0 0 40px rgba(224,16,32,.2), inset 0 0 80px rgba(224,16,32,.06);
+    }
+    .t-card-arcana { font-family:var(--font-mono); font-size:.5rem; letter-spacing:.2em;
+      text-transform:uppercase; color:var(--muted); }
+    .t-card-symbol { font-size:2.8rem; line-height:1; margin:.25rem 0; }
+    .t-card-name { font-family:var(--font-display); font-size:.85rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:.1em; color:var(--white); text-align:center;
+      line-height:1.2; }
+    .t-card-reversed-tag { font-family:var(--font-mono); font-size:.5rem; letter-spacing:.18em;
+      text-transform:uppercase; color:var(--red); margin-top:.1rem; }
+    .t-card-number { font-family:var(--font-mono); font-size:.6rem; color:rgba(0,200,200,.5);
+      letter-spacing:.15em; margin-top:.25rem; }
+
+    /* ── Reading panel ── */
+    .t-reading {
+      width:100%; opacity:0; transform:translateY(20px);
+      transition:opacity .6s ease .2s, transform .6s ease .2s;
+      pointer-events:none;
+    }
+    .t-reading.visible { opacity:1; transform:translateY(0); pointer-events:auto; }
+    .t-reading-card-name {
+      font-family:var(--font-display); font-size:1.4rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--cyan);
+      margin-bottom:.25rem; text-align:center;
+    }
+    .t-reading-card-name.reversed-name { color:var(--red); }
+    .t-reading-card-subtitle {
+      font-family:var(--font-mono); font-size:.65rem; letter-spacing:.2em;
+      text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:1.5rem;
+    }
+    .t-reading-box {
+      background:rgba(0,200,200,.04); border:1px solid rgba(0,200,200,.15);
+      border-left:3px solid var(--cyan); border-radius:0 8px 8px 0;
+      padding:1.5rem 1.75rem; margin-bottom:1.5rem;
+    }
+    .t-reading-box.reversed-box { border-left-color:var(--red); }
+    .t-reading-section-label {
+      font-family:var(--font-mono); font-size:.6rem; letter-spacing:.25em;
+      text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.5rem;
+    }
+    .t-reading-text {
+      font-family:Georgia,serif; font-size:1rem; line-height:1.75;
+      color:rgba(240,238,236,.9); font-style:italic;
+    }
+    .t-reading-voodoo {
+      background:rgba(224,16,32,.04); border:1px solid rgba(224,16,32,.15);
+      border-left:3px solid var(--red); border-radius:0 8px 8px 0;
+      padding:1.25rem 1.75rem; margin-bottom:2rem;
+    }
+    .t-reading-voodoo-label {
+      font-family:var(--font-mono); font-size:.6rem; letter-spacing:.25em;
+      text-transform:uppercase; color:var(--red); display:block; margin-bottom:.5rem;
+    }
+    .t-reading-voodoo-text {
+      font-size:.9rem; line-height:1.65; color:rgba(240,238,236,.8);
+    }
+
+    /* ── Again button ── */
+    .t-again-btn {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:transparent; border:1px solid rgba(255,255,255,.15); border-radius:8px;
+      padding:.75rem 2rem; font-family:var(--font-mono); font-size:.75rem;
+      letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+      cursor:pointer; transition:all .25s; margin-bottom:3rem;
+    }
+    .t-again-btn:hover { border-color:rgba(0,200,200,.4); color:var(--cyan); }
+
+    /* ── Footer links ── */
+    .t-footer-links { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+      margin-top:1rem; }
+
+    /* ── Shake animation for wrong state ── */
+    @keyframes t-shake {
+      0%,100%{ transform:translateX(0); }
+      20%{ transform:translateX(-8px); }
+      40%{ transform:translateX(8px); }
+      60%{ transform:translateX(-5px); }
+      80%{ transform:translateX(5px); }
+    }
+    .t-shake { animation:t-shake .45s ease; }
+
+    @media(max-width:480px){
+      .t-card-flipper{ width:170px; height:290px; }
+      .t-card-stage.has-card{ min-height:290px; }
+    }
   </style>
 </head>
 <body>
-  <div class="tarot-scanline" aria-hidden="true"></div>
+  <div class="t-scanline" aria-hidden="true"></div>
+  <canvas id="t-canvas" aria-hidden="true"></canvas>
 
   <nav id="main-nav" class="main-nav" aria-label="Main navigation">
     <div class="nav-inner container">
@@ -120,7 +232,6 @@
       <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
     </div>
   </nav>
-
   <div id="mobile-menu" class="mobile-menu">
     <ul role="list">
       <li><a href="home.html" class="mobile-nav-link">Home</a></li>
@@ -134,30 +245,76 @@
     </ul>
   </div>
 
-  <main class="tarot-page">
-    <span class="tarot-glow" aria-hidden="true">&#x1F56F;&#xFE0F;</span>
-    <p class="tarot-eyebrow">&#9670; Hidden Page Found &#9670;</p>
-    <h1 class="tarot-title">The Spirits<br><span>Speak</span></h1>
+  <!-- ══════════════════ ORACLE UI ══════════════════ -->
+  <main class="t-page" id="oracle-main">
 
-    <div class="tarot-card" id="tarot-reading">
-      <p class="tarot-card-label">Your Reading</p>
-      <p class="tarot-card-message" id="tarot-text">
-        "You are exactly where you are supposed to be. The spirits of this place have watched many pass through — but few look close enough to find what is hidden. You did."
-      </p>
+    <span class="t-candle" aria-hidden="true">🕯️</span>
+    <p class="t-eyebrow">◆ You Found It ◆</p>
+    <h1 class="t-title">The Voodoo<br><span>Oracle</span></h1>
+    <p class="t-subtitle">Ask. Draw. Listen.</p>
+    <div class="t-rule"></div>
+
+    <!-- Question input -->
+    <div class="t-ask-wrap">
+      <label class="t-ask-label" for="t-question">Speak your question to the spirits</label>
+      <textarea
+        id="t-question"
+        class="t-ask-input"
+        placeholder="What do the spirits need to know…"
+        rows="3"
+        maxlength="280"
+        aria-label="Your question"
+      ></textarea>
     </div>
 
-    <p class="tarot-sub">
-      Click the skull five times. Type the ancient code. Drag the dial to the top.<br>
-      There are more secrets in these walls than you know.
-    </p>
+    <!-- Draw button -->
+    <button class="t-draw-btn" id="t-draw" aria-label="Draw a tarot card">
+      <span class="btn-candle" aria-hidden="true">🃏</span>
+      Draw a Card
+    </button>
 
-    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
-      <a href="home.html" class="btn btn-outline">Return to the Hut</a>
-      <a href="radio.html" class="btn btn-primary">Tune In</a>
+    <!-- Card flip stage -->
+    <div class="t-card-stage" id="t-stage" aria-live="polite" aria-label="Tarot card">
+      <div class="t-card-flipper" id="t-flipper">
+        <!-- Back face (shown first) -->
+        <div class="t-card-back" aria-hidden="true">
+          <div class="t-card-back-pattern">🕯️✴️🕯️✴️💫✴️🕯️✴️🕯️</div>
+          <span class="t-card-back-label">Voodoo Oracle</span>
+        </div>
+        <!-- Front face (revealed on flip) -->
+        <div class="t-card-face" id="t-card-face" aria-hidden="true">
+          <span class="t-card-arcana" id="t-arcana"></span>
+          <span class="t-card-symbol" id="t-symbol" aria-hidden="true"></span>
+          <span class="t-card-name" id="t-name"></span>
+          <span class="t-card-reversed-tag" id="t-rev-tag"></span>
+          <span class="t-card-number" id="t-number"></span>
+        </div>
+      </div>
     </div>
 
-    <p style="margin-top:3rem;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,0.15);text-transform:uppercase;">
-      No Hurries &nbsp;&middot;&nbsp; No Worries &nbsp;&middot;&nbsp; Kemah, TX
+    <!-- Reading panel (hidden until draw) -->
+    <div class="t-reading" id="t-reading" aria-live="polite">
+      <div class="t-reading-card-name" id="t-reading-name"></div>
+      <div class="t-reading-card-subtitle" id="t-reading-sub"></div>
+      <div class="t-reading-box" id="t-reading-box">
+        <span class="t-reading-section-label" id="t-reading-section-lbl">The Spirits Say</span>
+        <p class="t-reading-text" id="t-reading-text"></p>
+      </div>
+      <div class="t-reading-voodoo" id="t-voodoo-box">
+        <span class="t-reading-voodoo-label">💀 The Voodoo Hut Speaks</span>
+        <p class="t-reading-voodoo-text" id="t-voodoo-text"></p>
+      </div>
+      <div style="text-align:center;">
+        <button class="t-again-btn" id="t-again">↺ Draw Another Card</button>
+      </div>
+    </div>
+
+    <div class="t-footer-links">
+      <a href="home.html" class="btn btn-outline btn-sm">Return to the Hut</a>
+      <a href="radio.html" class="btn btn-primary btn-sm">Tune In</a>
+    </div>
+    <p style="margin-top:2rem;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.2em;color:rgba(255,255,255,.1);text-transform:uppercase;text-align:center;">
+      No Hurries &nbsp;·&nbsp; No Worries &nbsp;·&nbsp; Kemah, TX
     </p>
   </main>
 
@@ -168,9 +325,7 @@
         <span class="live-dot" aria-hidden="true"></span>
         <span class="radio-player-name">Voodoo Hut Radio</span>
       </div>
-      <div class="radio-player-track">
-        <span id="now-playing">Tap play to tune in</span>
-      </div>
+      <div class="radio-player-track"><span id="now-playing">Tap play to tune in</span></div>
       <div class="radio-player-controls">
         <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
         <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
@@ -184,18 +339,437 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/js/easter-eggs.js"></script>
   <script>
-    // Randomize tarot reading on each visit
-    const readings = [
-      "You are exactly where you are supposed to be. The spirits of this place have watched many pass through \u2014 but few look close enough to find what is hidden. You did.",
-      "Nine years of music, laughter, and secrets soaked into these walls. You\'ve found a crack in the veil. What you do with that knowledge is up to you.",
-      "The voodoo doesn\'t need belief to work. It only needs attention. You paid attention. The hut rewards those who do.",
-      "This place has seen things. The spirits remember every face at the bar, every song that shook the walls, every secret told over a cold drink. They\'re glad you\'re here.",
-      "Not everyone finds this page. In fact, most people spend years at the Hut and never look this closely. The spirits consider you a regular now."
+  (function () {
+    'use strict';
+
+    /* ══════════════════════════════════════════════════════
+       TAROT DECK — 22 Major Arcana + selected Minor Arcana
+       Each card has: name, arcana, symbol, number/suit label,
+       upright reading (general + voodoo-flavored),
+       reversed reading (general + voodoo-flavored)
+    ══════════════════════════════════════════════════════ */
+    const DECK = [
+      // ── MAJOR ARCANA ──
+      { name:'The Fool',        arcana:'Major Arcana', sym:'🃏', num:'0',
+        u:{ g:'A new chapter is beginning. You stand at the edge of something unknown with nothing but instinct and nerve. That\'s enough. The spirits favor those who leap.',
+            v:'This is Kemah energy — salt air, open water, no itinerary. The Hut was built by people who said yes before they knew what they were saying yes to. Be the Fool tonight.' },
+        r:{ g:'You\'re hesitating when you should be moving. The fear of looking stupid is louder than it deserves to be. The unknown isn\'t dangerous — your hesitation is.',
+            v:'Even the Hut had nights where nobody came. They opened anyway. Ask yourself what you\'re waiting for.' } },
+
+      { name:'The Magician',    arcana:'Major Arcana', sym:'✨', num:'I',
+        u:{ g:'Everything you need is already in your hands. You have the tools, the talent, and the timing. The only variable is whether you\'re willing to use them.',
+            v:'The Magician runs a three-stage venue with a world-class sound system and an internet radio station. Don\'t underestimate what\'s possible when someone actually knows what they\'re doing.' },
+        r:{ g:'Something\'s off in how you\'re applying your gifts — overconfidence, or energy scattered in too many directions at once. Pick a lane.',
+            v:'Even the best DJ bombs a set when they\'re not focused. Get present.' } },
+
+      { name:'The High Priestess', arcana:'Major Arcana', sym:'🌙', num:'II',
+        u:{ g:'The answer you\'re looking for is already inside you — you just haven\'t been quiet enough to hear it. Trust what you feel before you trust what you think.',
+            v:'The Hut has secrets in these walls. Some things don\'t get announced — they get found by the people paying attention. You\'re one of those people.' },
+        r:{ g:'You\'re ignoring your gut and paying the price. Something in your instincts has been sounding an alarm you\'ve been choosing not to hear.',
+            v:'The best regulars at any bar know when something\'s off before anyone says a word. Trust that instinct.' } },
+
+      { name:'The Empress',     arcana:'Major Arcana', sym:'🌿', num:'III',
+        u:{ g:'Growth is happening whether you\'re watching it or not. This is a season of abundance, creativity, and things coming into full bloom. Let it.',
+            v:'Nine years on the waterfront. The Hut grew from a bus to a broadcast station. That\'s the Empress energy — patient, inevitable, alive.' },
+        r:{ g:'You\'re blocking your own growth — through overthinking, self-doubt, or refusing to receive what\'s being offered. Ease up.',
+            v:'Nobody gets a packed house by worrying about it. Open the doors.' } },
+
+      { name:'The Emperor',     arcana:'Major Arcana', sym:'👑', num:'IV',
+        u:{ g:'It\'s time to lead, not follow. Build the structure that lets other things grow. Authority isn\'t arrogance — it\'s knowing what you stand for and holding that line.',
+            v:'Someone has to be the one who sets up the PA at 4pm, runs sound check, and keeps the whole thing moving. That person is the Emperor of the night. Be that person.' },
+        r:{ g:'You\'re either being too rigid, or you\'ve handed your power to someone who doesn\'t deserve it. Reclaim the throne.',
+            v:'Bad nights at the Hut usually have one thing in common: nobody was in charge.' } },
+
+      { name:'The Hierophant',  arcana:'Major Arcana', sym:'📜', num:'V',
+        u:{ g:'Honor what was built before you. Tradition isn\'t always a constraint — sometimes it\'s the foundation. There\'s wisdom in how things have always been done here.',
+            v:'Nine years of doing it right. The Hut didn\'t last this long by cutting corners. Some things are done a certain way for a reason.' },
+        r:{ g:'Convention is strangling something that wants to break free. The rules that were handed to you don\'t have to be the rules you live by.',
+            v:'Every great night at the Hut was the result of someone ignoring what was supposed to happen and doing what the moment called for.' } },
+
+      { name:'The Lovers',      arcana:'Major Arcana', sym:'♥️', num:'VI',
+        u:{ g:'A meaningful connection is either forming or deepening. This isn\'t just romance — it\'s alignment. When two things belong together, you feel it before you can explain it.',
+            v:'Every great night at a bar is a love story — between the music and the room, between the band and the crowd, between two people who almost didn\'t show up.' },
+        r:{ g:'Something is out of alignment — a relationship, a decision, a version of yourself you\'re still pretending to be. The dissonance is getting louder.',
+            v:'Even the best set dies if the room isn\'t feeling it. Something\'s off. Find it.' } },
+
+      { name:'The Chariot',     arcana:'Major Arcana', sym:'🏎️', num:'VII',
+        u:{ g:'You\'re moving. The question isn\'t whether you\'ll get there — it\'s whether you can hold together the competing forces pulling you in different directions while you do.',
+            v:'Live music, internet radio, live streams, a full kitchen, three stages — all running at once. That\'s the Chariot. Controlled chaos, moving forward.' },
+        r:{ g:'You\'re running full speed in the wrong direction, or you\'ve lost control of something that was almost yours. Stop before you go further off course.',
+            v:'A bad sound check that gets ignored becomes a ruined show. Stop and fix it now.' } },
+
+      { name:'Strength',        arcana:'Major Arcana', sym:'🦁', num:'VIII',
+        u:{ g:'Real strength isn\'t force — it\'s composure under pressure. You have more in you than you\'re showing, and the quiet confidence to wield it without needing to prove anything.',
+            v:'The Kemah waterfront doesn\'t reward the loudest. It rewards the ones who stay. Nine years. Still standing.' },
+        r:{ g:'Self-doubt is eating at something that should be solid. Either you\'re doubting yourself unfairly, or you\'re trying to project strength you don\'t actually have yet.',
+            v:'You can feel when a performer is shaky up there. So can the crowd. Get right with yourself before you walk out.' } },
+
+      { name:'The Hermit',      arcana:'Major Arcana', sym:'🔦', num:'IX',
+        u:{ g:'Step back. The answer you need requires solitude and reflection, not more input. You already have the light — you just need to stop running from your own company long enough to use it.',
+            v:'This page is hidden for a reason. Not everyone gets here. The ones who do are the ones who slow down and look.' },
+        r:{ g:'You\'ve been isolating when connection is what would actually help. The introspection has been useful but it\'s time to come back out.',
+            v:'The Hut is the opposite of the Hermit. Come back to the bar.' } },
+
+      { name:'Wheel of Fortune', arcana:'Major Arcana', sym:'🎰', num:'X',
+        u:{ g:'The wheel is turning in your favor. This is a lucky draw in every sense — momentum is on your side, cycles are completing, and fortune favors you right now.',
+            v:'Tonight\'s a good night to be at the Hut. Sometimes that\'s all you need to know.' },
+        r:{ g:'You\'re fighting a cycle instead of letting it complete. What feels like bad luck may be the necessary low point before things turn.',
+            v:'Every slow Tuesday eventually becomes a packed Saturday. Ride it out.' } },
+
+      { name:'Justice',         arcana:'Major Arcana', sym:'⚖️', num:'XI',
+        u:{ g:'What you\'ve put in is about to be returned to you. Fairness is being restored, accountability is coming, and clarity is cutting through the noise.',
+            v:'Every drink tab, every band payment, every promise made at this bar — the Hut believes in paying what\'s owed. Do the same.' },
+        r:{ g:'Something is unfair and it\'s been allowed to go on too long. Either an injustice is being done to you, or you\'re the one avoiding accountability.',
+            v:'Close your tab. Tip your bartender. Be honest about what\'s owed.' } },
+
+      { name:'The Hanged Man',  arcana:'Major Arcana', sym:'🙃', num:'XII',
+        u:{ g:'Pause. The progress you want requires a perspective you don\'t have yet. Surrender is not defeat — it\'s the specific act of seeing things upside down until they make sense.',
+            v:'Some of the best nights at the Hut started when someone stopped trying to make it happen and just let it happen. Stop pushing. See what arrives.' },
+        r:{ g:'You\'ve been hanging long enough. The lesson has been learned or it isn\'t coming. It\'s time to cut yourself down and move.',
+            v:'Enough waiting. Order something. Talk to someone. The night\'s not going to come to you.' } },
+
+      { name:'Death',           arcana:'Major Arcana', sym:'💀', num:'XIII',
+        u:{ g:'Something is ending, and that\'s not a bad thing. Death in the tarot is transformation — the closing of one chapter so the next one has room to begin. Let it go.',
+            v:'The Hut used to be a bus. Nothing stays what it started as. That\'s the whole story.' },
+        r:{ g:'You\'re refusing to let something die that has already ended. The resistance is costing you the new thing that\'s trying to arrive.',
+            v:'They stopped playing the old set list. That\'s not failure. That\'s growth.' } },
+
+      { name:'Temperance',      arcana:'Major Arcana', sym:'⚗️', num:'XIV',
+        u:{ g:'The magic is in the balance. You\'re being asked to blend, to moderate, to find the precise mixture of things that makes everything work together. Patience is the secret ingredient.',
+            v:'Craft cocktails are literally this card. The right amount of everything. Not too much of any one thing.' },
+        r:{ g:'Something is out of proportion and it\'s throwing everything else off. Excess in one area is starving something else.',
+            v:'Nobody\'s saying slow down. But maybe know your limit.' } },
+
+      { name:'The Devil',       arcana:'Major Arcana', sym:'😈', num:'XV',
+        u:{ g:'Something has a hold on you that you\'ve decided to let keep holding you. The chains are loose — you\'re not trapped, you\'re choosing. That makes all the difference.',
+            v:'The Hut has seen people who couldn\'t leave. Sometimes that\'s a good thing. Sometimes it\'s a sign you need to look at what you\'re really staying for.' },
+        r:{ g:'You\'re breaking free of something that had too much power over you. This is the moment the chains actually fall — don\'t pick them back up.',
+            v:'Walking out into the Kemah night air after too many hours at the bar. That\'s this card. Sometimes you need to go.' } },
+
+      { name:'The Tower',       arcana:'Major Arcana', sym:'⚡', num:'XVI',
+        u:{ g:'Something is being torn down that needed to be torn down. The collapse is real and it\'s violent, but what\'s being destroyed was built on a lie. Stand in the rubble. What\'s left is true.',
+            v:'Every renovation the Hut ever went through looked like destruction first. Every one of them led to something better.' },
+        r:{ g:'The lightning bolt is coming whether you\'re ready or not. You\'ve been warned. The only question left is whether you take cover or step into it.',
+            v:'Some things only change when they have to. The Hut has been through storms. It\'s still here.' } },
+
+      { name:'The Star',        arcana:'Major Arcana', sym:'⭐', num:'XVII',
+        u:{ g:'After the storm, this. Hope isn\'t naive — it\'s what keeps you pointing in the right direction. Something is being repaired, restored, and renewed. Trust the light you see ahead.',
+            v:'The waterfront on a clear night with music coming through the open doors. That\'s The Star. Some things are just beautiful.' },
+        r:{ g:'You\'ve lost sight of what you\'re hoping for, or you\'ve let disappointment convince you hope itself was foolish. It wasn\'t.',
+            v:'The next good night is coming. It always does.' } },
+
+      { name:'The Moon',        arcana:'Major Arcana', sym:'🌙', num:'XVIII',
+        u:{ g:'Things are not what they appear. Intuition over logic right now — your rational mind is the least reliable tool in this particular dark. Feel your way forward.',
+            v:'The Kemah waterfront at 2am has its own logic. Trust it.' },
+        r:{ g:'The fog is clearing. Illusions are dissolving and you\'re finally seeing something — or someone — as they actually are.',
+            v:'Last call tends to be clarifying.' } },
+
+      { name:'The Sun',         arcana:'Major Arcana', sym:'☀️', num:'XIX',
+        u:{ g:'This is the best card in the deck. Joy, clarity, success, vitality — not in a complicated way. In a flat-out good way. Enjoy this.',
+            v:'The Hut on a perfect summer Saturday with the patio packed and a band that\'s really cooking. That\'s The Sun. Go find that tonight.' },
+        r:{ g:'The joy is real but something is keeping it at arm\'s length — ego, overthinking, or refusing to admit things are actually good.',
+            v:'Stop qualifying the good time you\'re already having.' } },
+
+      { name:'Judgement',       arcana:'Major Arcana', sym:'🕪️', num:'XX',
+        u:{ g:'A reckoning. Not punishment — an honest accounting. You\'re being called to rise into who you\'re supposed to be. The question is whether you\'ll answer.',
+            v:'Nine years of building something real. Every choice, every late night, every show that went wrong and right — it\'s been adding up to this.' },
+        r:{ g:'You\'re judging yourself too harshly, or you\'re avoiding the judgment that would actually set you free. One of those is your situation.',
+            v:'Whatever happened, it happened. What you do next is the part that matters.' } },
+
+      { name:'The World',       arcana:'Major Arcana', sym:'🌍', num:'XXI',
+        u:{ g:'Completion. You\'ve done it. A cycle is fully realized, a chapter is whole, and you get to stand in the center of what you built and know that it\'s finished and it\'s good.',
+            v:'From a bus on the waterfront to three stages streaming worldwide. The World card. The whole point.' },
+        r:{ g:'You\'re almost there and stopping short. The finish line is visible and something in you is stalling. Close it out.',
+            v:'The last song of the night always gets the biggest applause. Don\'t walk off stage early.' } },
+
+      // ── MINOR ARCANA (selected) ──
+      { name:'Ace of Cups',     arcana:'Cups', sym:'🏺', num:'Ace · Water',
+        u:{ g:'Something new is opening in your emotional life — love, intuition, creativity, connection. This is the beginning of something that matters. Let it in.',
+            v:'That first drink at the Hut. That first song. That first conversation with someone you didn\'t expect to meet. The Ace of Cups is why people come back.' },
+        r:{ g:'You\'re blocking what wants to flow into your life. Emotional walls that made sense once are now just walls.',
+            v:'Nobody has fun at a bar with their arms crossed. Open up a little.' } },
+
+      { name:'Two of Cups',     arcana:'Cups', sym:'♥️', num:'2 · Water',
+        u:{ g:'A genuine connection — not performance, not obligation. Two people actually seeing each other. This is one of the best cards you can draw for a relationship question.',
+            v:'The Hut has witnessed ten thousand versions of this card. Two people, two drinks, music doing the rest.' },
+        r:{ g:'A connection is strained or imbalanced. What was mutual is starting to feel one-sided.',
+            v:'Some conversations need fresh air, not another round.' } },
+
+      { name:'Three of Cups',   arcana:'Cups', sym:'🍻', num:'3 · Water',
+        u:{ g:'Celebration, community, joy shared between people who genuinely like each other. This is a card of friendship and chosen family.',
+            v:'A full house on a Friday night with everyone singing along. This is it. This is the whole thing.' },
+        r:{ g:'The party energy is there but something feels hollow — like you\'re celebrating for show rather than from joy.',
+            v:'You don\'t need a packed room to have a good time. But it helps.' } },
+
+      { name:'Five of Cups',    arcana:'Cups', sym:'😔', num:'5 · Water',
+        u:{ g:'You\'re focused on what was spilled instead of what\'s still in the cup. The loss is real, but so is what remains. Turn around.',
+            v:'Every band has a bad show. The ones that last don\'t stop talking about it — they play the next one.' },
+        r:{ g:'You\'re finally releasing a grief you\'ve been carrying too long. It\'s okay to let this one go.',
+            v:'The Hut survived things. It\'s still here. So are you.' } },
+
+      { name:'Seven of Cups',   arcana:'Cups', sym:'💭', num:'7 · Water',
+        u:{ g:'Too many options, and not all of them are real. Some of what you\'re choosing between is fantasy. Get clear on what\'s actually on the table.',
+            v:'The cocktail menu is long for a reason. Pick something and commit.' },
+        r:{ g:'Clarity is arriving after a period of confusion. You can finally see which option is real.',
+            v:'The fog is lifting. Trust what you see now.' } },
+
+      { name:'Ace of Wands',    arcana:'Wands', sym:'🔥', num:'Ace · Fire',
+        u:{ g:'A burst of creative energy, a new idea, a spark that wants to become something. Act on this before the momentum fades.',
+            v:'Every band that ever played the Hut started with an Ace of Wands moment. Someone said: let\'s do this.' },
+        r:{ g:'The energy is there but the direction isn\'t. You\'re fired up with nowhere to aim it.',
+            v:'All that energy needs a stage. Find the stage.' } },
+
+      { name:'Three of Wands',  arcana:'Wands', sym:'🌊', num:'3 · Fire',
+        u:{ g:'You planted seeds and they\'ve taken root. Look at the horizon — what\'s coming is bigger than where you\'ve been.',
+            v:'The radio station goes live. The live stream goes out into the world. That\'s the Three of Wands — local becoming global.' },
+        r:{ g:'Plans are stalling in the execution phase. The vision is solid but something in the follow-through is broken.',
+            v:'Great ideas that don\'t launch don\'t count.' } },
+
+      { name:'Five of Wands',   arcana:'Wands', sym:'⚔️', num:'5 · Fire',
+        u:{ g:'Conflict and competition are heating up. This isn\'t necessarily destructive — sometimes friction makes things better. Stay in it without losing yourself.',
+            v:'When three bands all want the same Saturday slot, someone has to manage it. The chaos is part of the energy.' },
+        r:{ g:'The conflict is winding down, but unresolved tension lingers. Clear the air properly before it rots.',
+            v:'Last call arguments never end well for anyone. Settle it.' } },
+
+      { name:'Eight of Wands',  arcana:'Wands', sym:'🪃', num:'8 · Fire',
+        u:{ g:'Things are moving fast now. Communication is flowing, travel is in the cards, and the pace of events is accelerating. Keep up.',
+            v:'The signal goes out. The broadcast reaches someone three thousand miles away. That\'s this card.' },
+        r:{ g:'Things that should be moving aren\'t. Messages going unanswered. Momentum stalled.',
+            v:'Check your email. Send the follow-up. The delay is on your end.' } },
+
+      { name:'Ace of Swords',   arcana:'Swords', sym:'⚔️', num:'Ace · Air',
+        u:{ g:'Truth, clarity, a blade cutting through everything that was obscuring the real situation. The Ace of Swords is uncomfortable but it\'s clean.',
+            v:'Sometimes what a night at the Hut cuts through is exactly what needed cutting.' },
+        r:{ g:'You have the truth but you\'re struggling to speak it, or someone is using clarity as a weapon rather than a tool.',
+            v:'Be honest. The bar has heard worse.' } },
+
+      { name:'Three of Swords', arcana:'Swords', sym:'💔', num:'3 · Air',
+        u:{ g:'Heartbreak. There\'s no gentle version of this card. Something hurt you and it deserves to be acknowledged. Feel it. Then let it pass.',
+            v:'The Hut has been the backdrop for breakups, losses, and grief. The music plays anyway. It\'s okay to not be okay in here.' },
+        r:{ g:'You\'re holding on to a hurt that has done what it came to do. The wound is ready to close if you let it.',
+            v:'At some point, the sad song ends and a different one starts.' } },
+
+      { name:'Eight of Swords', arcana:'Swords', sym:'🦢', num:'8 · Air',
+        u:{ g:'You feel trapped, but the trap is largely constructed by your own mind. The blindfold is yours. Most of the constraints you believe in are not as solid as they feel.',
+            v:'The door out of any bad situation is usually unlocked. You just have to decide to try it.' },
+        r:{ g:'The blindfold is coming off. You\'re seeing a way out of something that had you convinced there was none.',
+            v:'Fresh air. Step outside. It\'s still the Kemah waterfront out there.' } },
+
+      { name:'Ace of Pentacles', arcana:'Pentacles', sym:'🪙', num:'Ace · Earth',
+        u:{ g:'A real, material opportunity. Money, a new job, a home, something tangible taking root. This isn\'t abstract — it\'s showing up in the physical world.',
+            v:'Someone\'s about to make a smart investment. Could be in a meal, a show, a sponsor spot, or something bigger. The seed is good.' },
+        r:{ g:'An opportunity is being missed or mishandled. The material offer is there but something about the approach is off.',
+            v:'Money left on the table because the ask was never made.' } },
+
+      { name:'Five of Pentacles', arcana:'Pentacles', sym:'💸', num:'5 · Earth',
+        u:{ g:'Hard times. Financial strain, feeling left out in the cold. The card also shows the church window above the figures — help is available, but you have to look up to see it.',
+            v:'Slow nights happen. The Hut has had them. The answer is always the same: open anyway.' },
+        r:{ g:'The hardship is easing. Something is stabilizing after a rough stretch. Let the relief in without waiting for it to get taken away.',
+            v:'The tide turns. It always does on this waterfront.' } },
+
+      { name:'Ten of Pentacles', arcana:'Pentacles', sym:'🏠', num:'10 · Earth',
+        u:{ g:'Lasting abundance, legacy, the fullness of what\'s been built over time. This is generational energy — something that outlasts any one moment.',
+            v:'Nine years. Still on the waterfront. Still playing music every week. Still streaming worldwide. This card.' },
+        r:{ g:'Something that should be stable isn\'t. A foundation has cracks that have been ignored.',
+            v:'Don\'t take the good thing for granted.' } }
     ];
-    const el = document.getElementById('tarot-text');
-    if (el) {
-      el.textContent = '\u201c' + readings[Math.floor(Math.random() * readings.length)] + '\u201d';
+
+    /* ══════════════════ State ══════════════════ */
+    let isAnimating = false;
+    let currentCard = null;
+    let currentReversed = false;
+
+    /* ══════════════════ DOM refs ══════════════════ */
+    const drawBtn    = document.getElementById('t-draw');
+    const againBtn   = document.getElementById('t-again');
+    const flipper    = document.getElementById('t-flipper');
+    const stage      = document.getElementById('t-stage');
+    const cardFace   = document.getElementById('t-card-face');
+    const arcanaEl   = document.getElementById('t-arcana');
+    const symbolEl   = document.getElementById('t-symbol');
+    const nameEl     = document.getElementById('t-name');
+    const revTagEl   = document.getElementById('t-rev-tag');
+    const numberEl   = document.getElementById('t-number');
+    const readingEl  = document.getElementById('t-reading');
+    const readNameEl = document.getElementById('t-reading-name');
+    const readSubEl  = document.getElementById('t-reading-card-subtitle');
+    const readBoxEl  = document.getElementById('t-reading-box');
+    const readLblEl  = document.getElementById('t-reading-section-lbl');
+    const readTextEl = document.getElementById('t-reading-text');
+    const voodooBoxEl= document.getElementById('t-voodoo-box');
+    const voodooTxtEl= document.getElementById('t-voodoo-text');
+    const questionEl = document.getElementById('t-question');
+
+    /* ══════════════════ Helpers ══════════════════ */
+    function randomCard() {
+      const card = DECK[Math.floor(Math.random() * DECK.length)];
+      const reversed = Math.random() < 0.35; // 35% chance reversed
+      return { card, reversed };
     }
+
+    function shake(el) {
+      el.classList.remove('t-shake');
+      void el.offsetWidth; // reflow
+      el.classList.add('t-shake');
+      el.addEventListener('animationend', () => el.classList.remove('t-shake'), { once: true });
+    }
+
+    /* ══════════════════ Reset to un-drawn state ══════════════════ */
+    function resetDraw() {
+      flipper.classList.remove('flipped');
+      stage.classList.remove('has-card');
+      readingEl.classList.remove('visible');
+      cardFace.classList.remove('reversed');
+      readNameEl.classList.remove('reversed-name');
+      readBoxEl.classList.remove('reversed-box');
+      revTagEl.textContent = '';
+      arcanaEl.textContent = '';
+      symbolEl.textContent = '';
+      nameEl.textContent = '';
+      numberEl.textContent = '';
+      readNameEl.textContent = '';
+      readSubEl.textContent = '';
+      readTextEl.textContent = '';
+      voodooTxtEl.textContent = '';
+      currentCard = null;
+    }
+
+    /* ══════════════════ Do the draw ══════════════════ */
+    function doDraw() {
+      if (isAnimating) return;
+
+      const q = questionEl.value.trim();
+      if (!q) {
+        shake(questionEl);
+        questionEl.focus();
+        questionEl.placeholder = 'The spirits need your question first…';
+        return;
+      }
+
+      isAnimating = true;
+      drawBtn.disabled = true;
+
+      // Pick card
+      const { card, reversed } = randomCard();
+      currentCard = card;
+      currentReversed = reversed;
+      const reading = reversed ? card.r : card.u;
+
+      // Populate card face (hidden until flip)
+      arcanaEl.textContent = card.arcana;
+      symbolEl.textContent = card.sym;
+      nameEl.textContent = card.name;
+      numberEl.textContent = card.num;
+      revTagEl.textContent = reversed ? '▼ Reversed' : '';
+      if (reversed) {
+        cardFace.classList.add('reversed');
+      } else {
+        cardFace.classList.remove('reversed');
+      }
+
+      // Expand stage
+      stage.classList.add('has-card');
+
+      // Brief pause then flip
+      setTimeout(() => {
+        flipper.classList.add('flipped');
+      }, 200);
+
+      // After card flip finishes, show reading
+      setTimeout(() => {
+        // Reading name + subtitle
+        const label = reversed ? card.name + ' — Reversed' : card.name;
+        readNameEl.textContent = label;
+        readSubEl.textContent = card.arcana + (reversed ? ' · Reversed Energy' : ' · Upright');
+        if (reversed) {
+          readNameEl.classList.add('reversed-name');
+          readBoxEl.classList.add('reversed-box');
+        } else {
+          readNameEl.classList.remove('reversed-name');
+          readBoxEl.classList.remove('reversed-box');
+        }
+
+        // Weave the question into the reading
+        const qSnippet = q.length > 60 ? q.substring(0, 57) + '…' : q;
+        readLblEl.textContent = '“' + qSnippet + '”';
+        readTextEl.textContent = reading.g;
+        voodooTxtEl.textContent = reading.v;
+
+        readingEl.classList.add('visible');
+
+        isAnimating = false;
+        drawBtn.disabled = false;
+
+        // Scroll reading into view on mobile
+        setTimeout(() => {
+          readingEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }, 1400);
+    }
+
+    /* ══════════════════ Again ══════════════════ */
+    function doAgain() {
+      // Flip card back
+      flipper.classList.remove('flipped');
+      readingEl.classList.remove('visible');
+
+      setTimeout(() => {
+        stage.classList.remove('has-card');
+        drawBtn.disabled = false;
+
+        // Scroll back up to question
+        questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        questionEl.focus();
+        questionEl.select();
+      }, 600);
+    }
+
+    drawBtn.addEventListener('click', doDraw);
+    againBtn.addEventListener('click', doAgain);
+
+    // Also allow Enter in textarea to trigger draw (Shift+Enter for newline)
+    questionEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        doDraw();
+      }
+    });
+
+    /* ══════════════════ Particle canvas ══════════════════ */
+    (function () {
+      var c = document.getElementById('t-canvas');
+      if (!c) return;
+      var x = c.getContext('2d'), W, H, P = [];
+      function sz() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+      function rp(randomY) {
+        var col = Math.random() > 0.55 ? 'rgba(0,200,200,' : Math.random() > 0.5 ? 'rgba(200,160,32,' : 'rgba(224,16,32,';
+        var p = { x:Math.random()*W, y:randomY?Math.random()*H:H+10,
+          r:0.5+Math.random()*1.8, s:0.2+Math.random()*0.5,
+          d:(Math.random()-.5)*0.4, a:0.3+Math.random()*0.4,
+          col:col, l:0, m:180+Math.random()*260 };
+        if (randomY) p.l = Math.random()*p.m*0.5;
+        return p;
+      }
+      function init() { sz(); P=[]; for(var i=0;i<60;i++) P.push(rp(true)); }
+      function tick() {
+        x.clearRect(0,0,W,H);
+        while(P.length<80) P.push(rp(false));
+        P.forEach(function(p){
+          p.y-=p.s; p.x+=p.d; p.l++;
+          var f=1-p.l/p.m; if(f<=0) return;
+          x.beginPath(); x.arc(p.x,p.y,p.r,0,Math.PI*2);
+          x.fillStyle=p.col+(p.a*f)+')'; x.fill();
+        });
+        P=P.filter(function(p){return p.l<p.m;});
+        requestAnimationFrame(tick);
+      }
+      window.addEventListener('resize',function(){sz();while(P.length<80)P.push(rp(true));});
+      if(document.readyState==='complete'){init();tick();}
+      else window.addEventListener('load',function(){init();tick();});
+    })();
+
+  })();
   </script>
+
 </body>
 </html>
