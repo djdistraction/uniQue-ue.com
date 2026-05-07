@@ -28,7 +28,11 @@
   let skullTimer  = null;
 
   function initSkullClick() {
-    document.querySelectorAll('.nav-logo-wrap, .hero-logo-wrap').forEach(el => {
+    // Use a Set to avoid double-firing when an element has both classes
+  const seen = new Set();
+  document.querySelectorAll('.nav-logo-wrap, .hero-logo-wrap').forEach(el => {
+    if (seen.has(el)) return;
+    seen.add(el);
       el.addEventListener('click', e => {
         e.preventDefault();
         skullClicks++;
@@ -63,8 +67,10 @@
     document.body.appendChild(veil);
     requestAnimationFrame(() => { veil.style.opacity = '1'; });
     setTimeout(() => {
-      const base = window.location.pathname.includes('/secret/') ? '' : 'secret/';
-      window.location.href = base + 'tarot.html';
+      // Navigate relative to wherever we are — tarot.html sits alongside all other pages
+      const parts = window.location.pathname.split('/');
+      parts[parts.length - 1] = 'tarot.html';
+      window.location.href = parts.join('/');
     }, 1200);
   }
 
