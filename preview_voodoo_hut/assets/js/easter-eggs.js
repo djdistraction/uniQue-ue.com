@@ -134,21 +134,28 @@
      Drag volume to exactly max → secret broadcast activates.
      ============================================================ */
   function initRadioFrequency() {
-    const vol = document.getElementById('radio-volume');
-    if (!vol) return;
+  const volumes = [
+    document.getElementById('radio-volume'),
+    document.getElementById('radio-volume-bar')
+  ].filter(Boolean);
 
-    let triggered = false;
+  if (!volumes.length) return;
+
+  let triggered = false;
+
+  volumes.forEach(vol => {
     vol.addEventListener('input', () => {
       const v = parseFloat(vol.value);
       if (v >= 1.0 && !triggered) {
         triggered = true;
         setTimeout(activateSecretBroadcast, 900);
       }
-      if (v < 0.98) { triggered = false; }
+      if (v < 0.98) triggered = false;
     });
-  }
+  });
+}
 
-  function activateSecretBroadcast() {
+function activateSecretBroadcast() {
     addClue('radio');
 
     if ('speechSynthesis' in window) {
