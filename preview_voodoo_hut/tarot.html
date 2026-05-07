@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Spirits Speak &#x1F56F;&#xFE0F; | The Voodoo Hut</title>
+  <meta name="description" content="You found the hidden page. The spirits have a message for you." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    body {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .tarot-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .tarot-glow {
+      font-size: clamp(4rem, 10vw, 7rem);
+      animation: tarot-pulse 2.5s ease-in-out infinite;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    @keyframes tarot-pulse {
+      0%, 100% { filter: drop-shadow(0 0 12px rgba(0,200,200,0.6)); transform: scale(1); }
+      50%       { filter: drop-shadow(0 0 32px rgba(0,200,200,1));   transform: scale(1.06); }
+    }
+    .tarot-eyebrow {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: .75rem;
+    }
+    .tarot-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 700;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+    .tarot-title span { color: var(--cyan); }
+    .tarot-card {
+      background: rgba(0,200,200,0.05);
+      border: 1px solid rgba(0,200,200,0.25);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+    }
+    .tarot-card-label {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      letter-spacing: .25em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    .tarot-card-message {
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--white);
+      font-style: italic;
+    }
+    .tarot-sub {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 2rem;
+      max-width: 440px;
+    }
+    .tarot-scanline {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,200,200,0.015) 3px,
+        rgba(0,200,200,0.015) 4px
+      );
+      z-index: 0;
+    }
+    .tarot-page > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div class="tarot-scanline" aria-hidden="true"></div>
+
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner container">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home">
+        <img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" />
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html" class="nav-link">Home</a></li>
+        <li><a href="events.html" class="nav-link">Events</a></li>
+        <li><a href="menu.html" class="nav-link">Menu</a></li>
+        <li><a href="live.html" class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html" class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu">
+    <ul role="list">
+      <li><a href="home.html" class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html" class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html" class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html" class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html" class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html" class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <main class="tarot-page">
+    <span class="tarot-glow" aria-hidden="true">&#x1F56F;&#xFE0F;</span>
+    <p class="tarot-eyebrow">&#9670; Hidden Page Found &#9670;</p>
+    <h1 class="tarot-title">The Spirits<br><span>Speak</span></h1>
+
+    <div class="tarot-card" id="tarot-reading">
+      <p class="tarot-card-label">Your Reading</p>
+      <p class="tarot-card-message" id="tarot-text">
+        "You are exactly where you are supposed to be. The spirits of this place have watched many pass through — but few look close enough to find what is hidden. You did."
+      </p>
+    </div>
+
+    <p class="tarot-sub">
+      Click the skull five times. Type the ancient code. Drag the dial to the top.<br>
+      There are more secrets in these walls than you know.
+    </p>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <a href="home.html" class="btn btn-outline">Return to the Hut</a>
+      <a href="radio.html" class="btn btn-primary">Tune In</a>
+    </div>
+
+    <p style="margin-top:3rem;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,0.15);text-transform:uppercase;">
+      No Hurries &nbsp;&middot;&nbsp; No Worries &nbsp;&middot;&nbsp; Kemah, TX
+    </p>
+  </main>
+
+  <!-- PERSISTENT BOTTOM PLAYER BAR -->
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <a href="radio.html" class="radio-player-link" aria-label="Radio station page">&#9654;&#9654;</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/easter-eggs.js"></script>
+  <script>
+    // Randomize tarot reading on each visit
+    const readings = [
+      "You are exactly where you are supposed to be. The spirits of this place have watched many pass through \u2014 but few look close enough to find what is hidden. You did.",
+      "Nine years of music, laughter, and secrets soaked into these walls. You\'ve found a crack in the veil. What you do with that knowledge is up to you.",
+      "The voodoo doesn\'t need belief to work. It only needs attention. You paid attention. The hut rewards those who do.",
+      "This place has seen things. The spirits remember every face at the bar, every song that shook the walls, every secret told over a cold drink. They\'re glad you\'re here.",
+      "Not everyone finds this page. In fact, most people spend years at the Hut and never look this closely. The spirits consider you a regular now."
+    ];
+    const el = document.getElementById('tarot-text');
+    if (el) {
+      el.textContent = '\u201c' + readings[Math.floor(Math.random() * readings.length)] + '\u201d';
+    }
+  </script>
+</body>
+</html>
