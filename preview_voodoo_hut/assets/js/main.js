@@ -361,3 +361,61 @@
   });
 
 })();
+
+
+// ── LOGO PARALLAX TILT ──
+// Makes the nav logo subtly tilt and shift toward the mouse cursor
+(function initLogoTilt() {
+  const logo = document.querySelector('.nav-logo-wrap');
+  if (!logo) return;
+
+  // Prep the logo element for 3D transforms
+  logo.style.transformStyle = 'preserve-3d';
+  logo.style.transition = 'transform 0.15s ease-out';
+  logo.style.willChange = 'transform';
+  logo.style.display = 'inline-block';
+
+  const MAX_TILT = 12;   // max degrees of tilt
+  const MAX_SHIFT = 5;   // max px of translation
+  const MAX_DIST = 600;  // distance (px) at which effect reaches maximum
+  let animId = null;
+  let targetTx = 0, targetTy = 0, targetRx = 0, targetRy = 0;
+  let currentTx = 0, currentTy = 0, currentRx = 0, currentRy = 0;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function animate() {
+    const EASE = 0.10;
+    currentTx = lerp(currentTx, targetTx, EASE);
+    currentTy = lerp(currentTy, targetTy, EASE);
+    currentRx = lerp(currentRx, targetRx, EASE);
+    currentRy = lerp(currentRy, targetRy, EASE);
+
+    logo.style.transform =
+      `perspective(400px) rotateX(${currentRx}deg) rotateY(${currentRy}deg) translate(${currentTx}px, ${currentTy}px)`;
+
+    animId = requestAnimationFrame(animate);
+  }
+  animId = requestAnimationFrame(animate);
+
+  document.addEventListener('mousemove', function(e) {
+    const rect = logo.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const strength = Math.min(dist / MAX_DIST, 1);
+
+    targetRy = (dx / Math.max(dist, 1)) * MAX_TILT * strength;
+    targetRx = -(dy / Math.max(dist, 1)) * MAX_TILT * strength;
+    targetTx = (dx / Math.max(dist, 1)) * MAX_SHIFT * strength;
+    targetTy = (dy / Math.max(dist, 1)) * MAX_SHIFT * strength;
+  });
+
+  // Reset smoothly when mouse leaves the window
+  document.addEventListener('mouseleave', function() {
+    targetTx = 0; targetTy = 0; targetRx = 0; targetRy = 0;
+  });
+})();
