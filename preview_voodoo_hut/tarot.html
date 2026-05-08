@@ -448,7 +448,7 @@ document.getElementById('card-modal').addEventListener('click', function(e) {
 
 // ── CLOUDFLARE WORKER PROXY CALL ──
 async function callGemini(prompt) {
-  const workerUrl = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/';
+  const workerUrl = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/tarot';
   const res = await fetch(workerUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
