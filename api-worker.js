@@ -773,27 +773,39 @@ async function handleOuija(request, env, corsHeaders) {
   if (!question) {
     return new Response(JSON.stringify({ error: 'question is required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
-  const prompt = `You are the Voodoo Spirit Board at The Voodoo Hut, a legendary live music venue on the Kemah, Texas waterfront. Ancient bayou spirits speak through you.
+  const prompt = `You are the ancient Voodoo Spirit Board at The Voodoo Hut on the Kemah, Texas waterfront. Bayou spirits guide your planchette and speak in cryptic riddles.
 
-Answer with 1 to 5 words ONLY. ALL CAPITAL LETTERS. Letters and spaces only — no punctuation, no numbers. Be cryptic, mystical, and atmospheric. Draw from voodoo, Gulf Coast, and bayou mysticism.
+Reply with a short mystical phrase of 2 to 5 words. Use ALL CAPITAL LETTERS. Letters and spaces ONLY — no punctuation, no numbers, no asterisks.
+
+Good examples of the style expected:
+THE WATER KNOWS
+SEEK THE BAYOU
+BEWARE THE TIDE
+IN THREE MOONS
+LOOK TO THE GULF
+THE ANCESTORS WATCH
+TRUST YOUR SPIRIT
+NOT YET SEEKER
+YES THE PATH OPENS
+THE HUT REMEMBERS
 
 The seeker asks: "${question.slice(0, 200)}"
 
-Your answer (1-5 words, ALL CAPS, letters and spaces only):`;
+Your answer (2-5 words, ALL CAPS, letters and spaces only):`;
 
   const geminiResponse = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.95, maxOutputTokens: 25 } })
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 1.0, maxOutputTokens: 50 } })
     }
   );
   const data = await geminiResponse.json();
   if (data.error) throw new Error(`Gemini error: ${data.error.message}`);
-  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'SILENCE';
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'THE SPIRITS SPEAK';
   text = text.toUpperCase().replace(/[^A-Z ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
-  if (!text) text = 'SILENCE';
+  if (!text) text = 'THE SPIRITS SPEAK';
   return new Response(JSON.stringify({ text }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 }
 

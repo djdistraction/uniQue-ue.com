@@ -134,16 +134,17 @@
       text-shadow: 0 0 14px rgba(255,255,255,0.95), 0 0 30px rgba(201,162,39,0.9);
     }
 
-    /* ── GOODBYE ── */
-    .board-goodbye-row { display: flex; justify-content: center; padding: 5px 0 2px; position: relative; z-index: 2; }
-    #key-GOODBYE {
+    /* ── HELLO / GOODBYE row ── */
+    .board-greet-row { display: flex; justify-content: center; align-items: center; gap: clamp(12px, 4vw, 36px); padding: 5px 0 2px; position: relative; z-index: 2; }
+    .board-greet-sep { color: rgba(201,162,39,0.35); font-size: 0.65rem; }
+    #key-HELLO, #key-GOODBYE {
       font-family: 'Cinzel Decorative', serif;
       font-size: clamp(0.75rem, 1.8vw, 1.1rem);
       color: #c9a227;
       letter-spacing: 5px;
       width: auto;
     }
-    #key-GOODBYE.lit {
+    #key-HELLO.lit, #key-GOODBYE.lit {
       color: #fff8e0;
       text-shadow: 0 0 14px rgba(255,240,180,0.95), 0 0 28px rgba(201,162,39,0.85);
     }
@@ -166,8 +167,8 @@
       pointer-events: none;
       z-index: 20;
       transition:
-        left 0.52s cubic-bezier(0.45, 0.05, 0.55, 0.95),
-        top  0.52s cubic-bezier(0.45, 0.05, 0.55, 0.95),
+        left 0.9s ease,
+        top  0.9s ease,
         opacity 0.4s;
     }
     .planchette-ring {
@@ -262,8 +263,10 @@
 
       <div class="board-divider"></div>
 
-      <!-- GOODBYE -->
-      <div class="board-goodbye-row">
+      <!-- HELLO / GOODBYE -->
+      <div class="board-greet-row">
+        <span id="key-HELLO" class="board-key">HELLO</span>
+        <span class="board-greet-sep">✦</span>
         <span id="key-GOODBYE" class="board-key">GOODBYE</span>
       </div>
 
@@ -365,7 +368,10 @@ let litKey = null;
 let seekInterval = null;
 let busy = false;
 
-const SEEK_CIRCUIT = ['YES', 'A', 'M', 'GOODBYE', 'Z', 'N', 'NO', 'G'];
+// Interior letters used during the seeking animation — never YES/NO
+const SEEK_CIRCUIT = ['G', 'M', 'T', 'S', 'H', 'P', 'N', 'F', 'R', 'L', 'D', 'W'];
+// All letters available for organic wandering between target letters
+const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 let seekIdx = 0;
 
 function keyCenter(id) {
@@ -392,24 +398,29 @@ function placePlanchette(id) {
 function showPlanchette() {
   const p = document.getElementById('planchette');
   const board = document.getElementById('spirit-board');
-  p.style.transition = 'opacity 0.4s';
+  // Fade in at centre with no movement transition
+  p.style.transition = 'opacity 0.5s';
   p.style.left = (board.offsetWidth  / 2 - p.offsetWidth  / 2) + 'px';
   p.style.top  = (board.offsetHeight / 2 - p.offsetHeight / 2) + 'px';
   p.style.opacity = '1';
-  setTimeout(() => {
-    p.style.transition = 'left 0.52s cubic-bezier(0.45,0.05,0.55,0.95), top 0.52s cubic-bezier(0.45,0.05,0.55,0.95), opacity 0.4s';
-  }, 420);
+  // Restore movement transition after fade completes
+  setTimeout(() => { p.style.transition = 'left 0.9s ease, top 0.9s ease, opacity 0.4s'; }, 520);
 }
 
 function startSeeking() {
   showPlanchette();
-  const p = document.getElementById('planchette');
-  p.classList.add('seeking');
-  seekIdx = 0;
-  seekInterval = setInterval(() => {
-    placePlanchette(SEEK_CIRCUIT[seekIdx % SEEK_CIRCUIT.length]);
-    seekIdx++;
-  }, 620);
+  document.getElementById('planchette').classList.add('seeking');
+  // Always greet with HELLO first, then wander
+  setTimeout(() => {
+    placePlanchette('HELLO');
+    setTimeout(() => {
+      seekIdx = Math.floor(Math.random() * SEEK_CIRCUIT.length);
+      seekInterval = setInterval(() => {
+        placePlanchette(SEEK_CIRCUIT[seekIdx % SEEK_CIRCUIT.length]);
+        seekIdx++;
+      }, 950);
+    }, 1000);
+  }, 560);
 }
 
 function stopSeeking() {
@@ -420,16 +431,29 @@ function stopSeeking() {
 
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+function randLetter(exclude) {
+  const pool = ALL_LETTERS.filter(l => l !== exclude);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 async function spellOut(text) {
-  const chars = text.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().split('');
+  const chars = text.replace(/[^A-Z ]/g, '').split('');
   for (const ch of chars) {
-    if (ch === ' ') { await wait(320); continue; }
+    if (ch === ' ') {
+      await wait(500 + Math.random() * 300);
+      continue;
+    }
+    // ~30% chance the planchette wanders to a wrong letter before finding the right one
+    if (Math.random() < 0.3) {
+      placePlanchette(randLetter(ch));
+      await wait(700 + Math.random() * 400);
+    }
     placePlanchette(ch);
-    await wait(560);
+    await wait(950 + Math.random() * 400);
   }
-  await wait(200);
+  await wait(400);
   placePlanchette('GOODBYE');
-  await wait(700);
+  await wait(1200);
 }
 
 // ── API ──
