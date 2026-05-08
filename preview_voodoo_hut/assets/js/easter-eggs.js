@@ -21,38 +21,47 @@
   function resetClues() { localStorage.removeItem(CLUE_KEY); }
 
   /* ============================================================
-     EASTER EGG 1 — SKULL CLICK × 5 → Tarot Reading
-     Click the logo 5 times within 4 seconds.
+     EASTER EGG 1 — SKULL CLICK × 5
+     Hero logo (large) → Tarot Reading
+     Nav logo (small, non-hero) → Ouija Board
+     Click either 5 times within 4 seconds.
      ============================================================ */
-  let skullClicks = 0;
-  let skullTimer  = null;
+  let heroClicks = 0, heroTimer = null;
+  let navClicks  = 0, navTimer  = null;
 
   function initSkullClick() {
-    // Use a Set to avoid double-firing when an element has both classes
-  const seen = new Set();
-  document.querySelectorAll('.nav-logo-wrap, .hero-logo-wrap').forEach(el => {
-    if (seen.has(el)) return;
-    seen.add(el);
+    const seen = new Set();
+    document.querySelectorAll('.nav-logo-wrap, .hero-logo-wrap').forEach(el => {
+      if (seen.has(el)) return;
+      seen.add(el);
+      const isHero = el.classList.contains('hero-logo-wrap');
+
       el.addEventListener('click', e => {
         e.preventDefault();
-        skullClicks++;
-        clearTimeout(skullTimer);
 
-        // Pulse the logo cyan on each click
-        const img = el.querySelector('img');
-        if (img) {
-          img.style.filter = 'hue-rotate(' + (skullClicks * 72) + 'deg) brightness(1.5)';
-          setTimeout(() => { img.style.filter = ''; }, 350);
-        }
-
-        if (skullClicks >= 5) {
-          skullClicks = 0;
-          flyToTarot();
+        if (isHero) {
+          heroClicks++;
+          clearTimeout(heroTimer);
+          flashLogo(el, heroClicks);
+          if (heroClicks >= 5) { heroClicks = 0; flyToTarot(); }
+          else { heroTimer = setTimeout(() => { heroClicks = 0; }, 4000); }
         } else {
-          skullTimer = setTimeout(() => { skullClicks = 0; }, 4000);
+          navClicks++;
+          clearTimeout(navTimer);
+          flashLogo(el, navClicks);
+          if (navClicks >= 5) { navClicks = 0; flyToOuija(); }
+          else { navTimer = setTimeout(() => { navClicks = 0; }, 4000); }
         }
       });
     });
+  }
+
+  function flashLogo(el, count) {
+    const img = el.querySelector('img');
+    if (img) {
+      img.style.filter = 'hue-rotate(' + (count * 72) + 'deg) brightness(1.5)';
+      setTimeout(() => { img.style.filter = ''; }, 350);
+    }
   }
 
   function flyToTarot() {
@@ -70,6 +79,24 @@
       // Navigate relative to wherever we are — tarot.html sits alongside all other pages
       const parts = window.location.pathname.split('/');
       parts[parts.length - 1] = 'tarot.html';
+      window.location.href = parts.join('/');
+    }, 1200);
+  }
+
+  function flyToOuija() {
+    const veil = document.createElement('div');
+    veil.style.cssText = [
+      'position:fixed;inset:0;z-index:99999;background:#000',
+      'display:flex;align-items:center;justify-content:center',
+      'opacity:0;transition:opacity .5s ease;font-family:Georgia,serif',
+      'font-size:clamp(20px,4vw,52px);color:#c9a227;letter-spacing:.2em;text-align:center'
+    ].join(';');
+    veil.textContent = '✦ THE SPIRITS AWAIT ✦';
+    document.body.appendChild(veil);
+    requestAnimationFrame(() => { veil.style.opacity = '1'; });
+    setTimeout(() => {
+      const parts = window.location.pathname.split('/');
+      parts[parts.length - 1] = 'ouija.html';
       window.location.href = parts.join('/');
     }, 1200);
   }

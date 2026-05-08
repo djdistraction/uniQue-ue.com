@@ -580,6 +580,11 @@ export default {
         return handleTarot(request, env, corsHeaders);
       }
 
+      // --- ROUTE: /ouija (sync Gemini call for spirit board) ---
+      if (path === '/ouija' && request.method === 'POST') {
+        return handleOuija(request, env, corsHeaders);
+      }
+
       return new Response('Not Found', { status: 404, headers: corsHeaders });
 
     } catch (err) {
@@ -761,6 +766,35 @@ async function saveCorporateMemory(env, userId, memoryUpdate) {
     links: JSON.stringify(memoryUpdate.links),
     created_at: new Date().toISOString()
   });
+}
+
+async function handleOuija(request, env, corsHeaders) {
+  const { question } = await request.json();
+  if (!question) {
+    return new Response(JSON.stringify({ error: 'question is required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  }
+  const prompt = `You are the Voodoo Spirit Board at The Voodoo Hut, a legendary live music venue on the Kemah, Texas waterfront. Ancient bayou spirits speak through you.
+
+Answer with 1 to 5 words ONLY. ALL CAPITAL LETTERS. Letters and spaces only — no punctuation, no numbers. Be cryptic, mystical, and atmospheric. Draw from voodoo, Gulf Coast, and bayou mysticism.
+
+The seeker asks: "${question.slice(0, 200)}"
+
+Your answer (1-5 words, ALL CAPS, letters and spaces only):`;
+
+  const geminiResponse = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.95, maxOutputTokens: 25 } })
+    }
+  );
+  const data = await geminiResponse.json();
+  if (data.error) throw new Error(`Gemini error: ${data.error.message}`);
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'SILENCE';
+  text = text.toUpperCase().replace(/[^A-Z ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+  if (!text) text = 'SILENCE';
+  return new Response(JSON.stringify({ text }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 }
 
 async function handleTarot(request, env, corsHeaders) {
