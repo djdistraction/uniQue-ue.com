@@ -575,6 +575,11 @@ export default {
         return handleAdminUsers(request, env, corsHeaders);
       }
 
+      // --- ROUTE: /tarot (sync Gemini call for tarot readings) ---
+      if (path === '/tarot' && request.method === 'POST') {
+        return handleTarot(request, env, corsHeaders);
+      }
+
       return new Response('Not Found', { status: 404, headers: corsHeaders });
 
     } catch (err) {
@@ -756,6 +761,25 @@ async function saveCorporateMemory(env, userId, memoryUpdate) {
     links: JSON.stringify(memoryUpdate.links),
     created_at: new Date().toISOString()
   });
+}
+
+async function handleTarot(request, env, corsHeaders) {
+  const { prompt } = await request.json();
+  if (!prompt) {
+    return new Response(JSON.stringify({ error: 'prompt is required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  }
+  const geminiResponse = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.9 } })
+    }
+  );
+  const data = await geminiResponse.json();
+  if (data.error) throw new Error(`Gemini error: ${data.error.message}`);
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'The spirits are silent...';
+  return new Response(JSON.stringify({ text }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 }
 
 async function handleChatFallback(payload, env, corsHeaders) {

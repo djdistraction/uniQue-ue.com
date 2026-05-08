@@ -448,7 +448,7 @@ document.getElementById('card-modal').addEventListener('click', function(e) {
 
 // ── CLOUDFLARE WORKER PROXY CALL ──
 async function callGemini(prompt) {
-  const workerUrl = 'https://unique-ue-ai-proxy.unique-ue-ai-proxy.workers.dev/';
+  const workerUrl = 'https://unique-ue-api.unique-ue-ai-proxy.workers.dev/tarot';
   const res = await fetch(workerUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -544,6 +544,8 @@ async function consultSpirits() {
       }
       typeChar();
 
+      btn.disabled = false;
+
       // Scroll to cards
       document.getElementById('cards-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 1600);
@@ -576,8 +578,6 @@ function shareReading() {
   } else {
     navigator.clipboard?.writeText(text).then(() => alert('Reading copied to clipboard!')).catch(() => alert('Share: ' + text));
   }
-}
-
 }
 
 </script>
