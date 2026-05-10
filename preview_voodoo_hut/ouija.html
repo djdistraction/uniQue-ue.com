@@ -3,495 +3,592 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Spirit Board | The Voodoo Hut</title>
+  <title>Spirit Board — The Voodoo Hut | Kemah, TX</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
   <style>
-    body { background: #0a0005; color: #e8dcc8; font-family: 'Open Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
-    .ouija-page { min-height: 100vh; padding-bottom: 80px; position: relative; }
-
-    #ouija-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-
-    /* ── HEADER ── */
-    .ouija-header { text-align: center; padding: 60px 20px 20px; position: relative; z-index: 10; }
-    .ouija-header .site-logo { font-family: 'Cinzel Decorative', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: #8b0000; text-shadow: 0 0 30px rgba(139,0,0,0.8), 0 0 60px rgba(139,0,0,0.4); letter-spacing: 4px; display: block; text-decoration: none; margin-bottom: 8px; }
-    .ouija-header .site-logo:hover { color: #cc0000; }
-    .ouija-header .oracle-subtitle { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.2rem); color: #8b6914; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 6px; }
-    .ouija-header .oracle-whisper { font-family: 'Cinzel', serif; font-style: italic; font-size: 0.85rem; color: #6b5a8a; letter-spacing: 2px; }
+    /* ── PARTICLE CANVAS ── */
+    #ouija-particles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
 
     /* ── BOARD WRAP ── */
-    .board-wrap { max-width: 820px; margin: 24px auto 0; padding: 0 16px; position: relative; z-index: 10; }
+    .board-section { position: relative; z-index: 1; padding: 20px 0 0; }
+    .board-container { max-width: 820px; margin: 0 auto; padding: 0 16px; }
 
     /* ── SPIRIT BOARD ── */
     .spirit-board {
       position: relative;
-      width: 100%;
       background:
-        radial-gradient(ellipse at 15% 25%, rgba(90,35,0,0.5) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 75%, rgba(70,25,0,0.5) 0%, transparent 55%),
-        linear-gradient(155deg, #3e1800 0%, #220e00 35%, #311500 65%, #1c0900 100%);
-      border-radius: 18px;
-      border: 3px solid #c9a227;
+        radial-gradient(ellipse at 15% 20%, rgba(80,10,10,0.4) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 80%, rgba(60,8,8,0.4) 0%, transparent 55%),
+        linear-gradient(160deg, #1a0505 0%, #0d0202 40%, #150404 70%, #080101 100%);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
       box-shadow:
-        0 0 0 6px rgba(10,0,5,0.9),
-        0 0 0 8px rgba(201,162,39,0.15),
-        0 0 60px rgba(139,0,0,0.25),
-        0 0 120px rgba(139,0,0,0.1);
-      padding: 18px 12px 20px;
+        0 0 0 1px rgba(200,160,32,0.12),
+        0 0 40px rgba(224,16,32,0.12),
+        0 0 80px rgba(224,16,32,0.06);
+      padding: 16px 12px 20px;
+      overflow: visible;
     }
     .spirit-board::before {
       content: '';
       position: absolute;
-      inset: 10px;
-      border: 1px solid rgba(201,162,39,0.22);
-      border-radius: 12px;
+      inset: 8px;
+      border: 1px solid rgba(200,160,32,0.15);
+      border-radius: 8px;
       pointer-events: none;
-      z-index: 1;
+      z-index: 0;
     }
 
-    /* ── BOARD TOP ── */
+    /* ── BOARD TOP (YES / TITLE / NO) ── */
     .board-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 4px 8px 6px;
-      position: relative;
-      z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 8px 6px; position: relative; z-index: 2;
     }
-    .board-corner { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 52px; }
-    .board-corner-symbol { font-size: clamp(1.2rem, 3vw, 1.8rem); opacity: 0.75; line-height: 1; }
+    .board-corner { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 48px; }
+    .board-corner-symbol { font-size: clamp(1.1rem, 2.5vw, 1.6rem); opacity: 0.6; line-height: 1; }
     .board-yes-no {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1rem, 3.2vw, 1.9rem);
-      color: #e8dcc8;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(232,220,200,0.3);
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 3vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-transform: uppercase;
       line-height: 1;
     }
     .board-title-area { text-align: center; flex: 1; padding: 0 8px; }
     .board-title-main {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.7rem, 2.2vw, 1.25rem);
-      color: #c9a227;
-      letter-spacing: 3px;
-      text-shadow: 0 0 14px rgba(201,162,39,0.5);
+      font-family: var(--font-display);
+      font-size: clamp(0.75rem, 2vw, 1.2rem);
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
       display: block;
       line-height: 1.3;
     }
     .board-title-sub {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.5rem, 1vw, 0.65rem);
-      color: rgba(201,162,39,0.55);
-      letter-spacing: 2px;
+      font-family: var(--font-mono);
+      font-size: clamp(0.5rem, 1vw, 0.62rem);
+      color: rgba(200,160,32,0.45);
+      letter-spacing: 0.15em;
       display: block;
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
-    /* ── DIVIDER ── */
-    .board-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(201,162,39,0.35), transparent); margin: 4px 10px; position: relative; z-index: 2; }
+    /* ── DIVIDERS ── */
+    .board-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,160,32,0.3), transparent);
+      margin: 4px 10px;
+      position: relative; z-index: 2;
+    }
 
-    /* ── LETTER / NUMBER ROWS ── */
+    /* ── LETTER & NUMBER ROWS ── */
     .letters-row, .numbers-row {
-      display: flex;
-      justify-content: center;
-      padding: 3px 4px;
-      position: relative;
-      z-index: 2;
+      display: flex; justify-content: center;
+      padding: 3px 4px; position: relative; z-index: 2;
     }
 
-    /* ── BOARD KEY ── */
+    /* ── BOARD KEYS ── */
     .board-key {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.7rem, 1.5vw, 1.05rem);
-      color: #c9a227;
+      font-family: var(--font-display);
+      font-size: clamp(0.72rem, 1.5vw, 1.05rem);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--gold);
       width: clamp(20px, 3.6vw, 40px);
       text-align: center;
       padding: 5px 0;
       line-height: 1;
       transition: color 0.15s, text-shadow 0.15s;
       user-select: none;
+      text-transform: uppercase;
     }
     .board-key.lit {
-      color: #fff8e0;
-      text-shadow: 0 0 10px rgba(255,240,180,0.95), 0 0 22px rgba(201,162,39,0.85);
+      color: #fff;
+      text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 18px rgba(200,160,32,0.8);
     }
 
-    /* ── YES / NO special styling ── */
+    /* YES / NO overrides */
     #key-YES, #key-NO {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1rem, 3.2vw, 1.9rem);
-      color: #e8dcc8;
-      width: auto;
-      padding: 0;
-      letter-spacing: 1px;
-      line-height: 1;
+      font-size: clamp(1.1rem, 3vw, 1.8rem);
+      font-weight: 700;
+      color: var(--white);
+      width: auto; padding: 0;
     }
     #key-YES.lit, #key-NO.lit {
       color: #fff;
-      text-shadow: 0 0 14px rgba(255,255,255,0.95), 0 0 30px rgba(201,162,39,0.9);
+      text-shadow: 0 0 10px rgba(255,255,255,0.95), 0 0 24px rgba(200,160,32,0.9);
     }
 
-    /* ── GOODBYE ── */
-    .board-goodbye-row { display: flex; justify-content: center; padding: 5px 0 2px; position: relative; z-index: 2; }
+    /* GOODBYE */
+    .board-goodbye-row {
+      display: flex; justify-content: center;
+      padding: 5px 0 2px; position: relative; z-index: 2;
+    }
     #key-GOODBYE {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.75rem, 1.8vw, 1.1rem);
-      color: #c9a227;
-      letter-spacing: 5px;
+      font-family: var(--font-display);
+      font-size: clamp(0.8rem, 1.8vw, 1.1rem);
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      color: var(--gold);
       width: auto;
     }
     #key-GOODBYE.lit {
-      color: #fff8e0;
-      text-shadow: 0 0 14px rgba(255,240,180,0.95), 0 0 28px rgba(201,162,39,0.85);
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.95), 0 0 22px rgba(200,160,32,0.85);
     }
 
     /* ── PLANCHETTE ── */
     .planchette {
       position: absolute;
-      width: 62px;
-      height: 62px;
+      width: 62px; height: 62px;
       border-radius: 50%;
-      background: radial-gradient(circle at 38% 32%, rgba(80,0,30,0.65) 0%, rgba(8,0,4,0.93) 68%);
-      border: 2px solid rgba(201,162,39,0.72);
+      background: radial-gradient(circle at 38% 32%, rgba(60,0,10,0.7) 0%, rgba(6,0,2,0.94) 68%);
+      border: 2px solid rgba(200,160,32,0.65);
       box-shadow:
-        0 0 14px rgba(139,0,0,0.75),
-        0 0 28px rgba(139,0,0,0.38),
-        inset 0 0 10px rgba(139,0,0,0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        0 0 14px rgba(224,16,32,0.7),
+        0 0 28px rgba(224,16,32,0.35),
+        inset 0 0 10px rgba(224,16,32,0.2);
+      display: flex; align-items: center; justify-content: center;
       pointer-events: none;
       z-index: 20;
-      transition:
-        left 0.52s cubic-bezier(0.45, 0.05, 0.55, 0.95),
-        top  0.52s cubic-bezier(0.45, 0.05, 0.55, 0.95),
-        opacity 0.4s;
+      transition: left 0.9s ease, top 0.9s ease, opacity 0.4s;
     }
     .planchette-ring {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 1px solid rgba(201,162,39,0.38);
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(200,160,32,0.3);
       display: flex; align-items: center; justify-content: center;
     }
     .planchette-eye {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(180,0,40,0.55) 0%, transparent 80%);
-      border: 1px solid rgba(201,162,39,0.48);
+      width: 18px; height: 18px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(224,16,32,0.55) 0%, transparent 80%);
+      border: 1px solid rgba(200,160,32,0.4);
     }
     @keyframes planchette-breathe {
-      0%, 100% { box-shadow: 0 0 14px rgba(139,0,0,0.75), 0 0 28px rgba(139,0,0,0.38), inset 0 0 10px rgba(139,0,0,0.22); }
-      50% { box-shadow: 0 0 22px rgba(200,0,0,0.9), 0 0 46px rgba(200,0,0,0.5), inset 0 0 16px rgba(200,0,0,0.4); }
+      0%,100% { box-shadow: 0 0 14px rgba(224,16,32,0.7), 0 0 28px rgba(224,16,32,0.35), inset 0 0 10px rgba(224,16,32,0.2); }
+      50%      { box-shadow: 0 0 22px rgba(224,16,32,0.95), 0 0 46px rgba(224,16,32,0.55), inset 0 0 16px rgba(224,16,32,0.4); }
     }
     .planchette.seeking { animation: planchette-breathe 1.1s ease-in-out infinite; }
 
     /* ── QUESTION FORM ── */
-    .question-wrap { max-width: 600px; margin: 22px auto 0; padding: 0 20px; position: relative; z-index: 10; }
-    .question-card { background: rgba(10,0,5,0.85); border: 1px solid rgba(139,0,0,0.4); border-radius: 12px; padding: 24px 28px; box-shadow: 0 0 30px rgba(139,0,0,0.12); }
-    .question-label { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: #8b6914; display: block; margin-bottom: 8px; }
-    .question-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(139,0,0,0.35); border-radius: 6px; padding: 12px 14px; color: #e8dcc8; font-family: 'Open Sans', sans-serif; font-size: 0.9rem; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
-    .question-input:focus { outline: none; border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); }
-    .question-input::placeholder { color: rgba(232,220,200,0.3); }
-    .ask-btn { width: 100%; padding: 15px; background: #8b0000; color: #f5e6c8; font-family: 'Cinzel', serif; font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
-    .ask-btn:hover { background: #aa0000; box-shadow: 0 0 20px rgba(139,0,0,0.5); }
-    .ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .ask-btn.shake { animation: shake 0.4s ease; }
-    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-    .error-msg { color: #cc4444; font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 1px; margin-top: 10px; text-align: center; display: none; }
-    .error-msg.visible { display: block; }
+    .ouija-form-section { position: relative; z-index: 1; padding: 24px 0 0; }
+    .ouija-form-wrap { max-width: 600px; margin: 0 auto; padding: 0 16px; }
+    .ouija-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+    }
+    .ouija-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .ouija-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      box-sizing: border-box;
+    }
+    .ouija-input:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 0 2px var(--red-glow);
+    }
+    .ouija-input::placeholder { color: rgba(240,238,236,0.25); }
+    .ouija-submit {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    .ouija-submit:hover { background: #c00d1c; box-shadow: 0 0 20px var(--red-glow); }
+    .ouija-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .ouija-submit.shake { animation: sh 0.4s ease; }
+    @keyframes sh { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+    .ouija-error {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--red);
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+    .ouija-error.visible { display: block; }
 
     /* ── RESPONSE ── */
-    .response-wrap { max-width: 600px; margin: 20px auto 0; padding: 0 20px; text-align: center; position: relative; z-index: 10; min-height: 60px; }
-    .response-eyebrow { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 5px; color: #6b5a8a; text-transform: uppercase; margin: 0 0 8px; opacity: 0; transition: opacity 0.5s; }
-    .response-answer { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.3rem, 4vw, 2rem); color: #c9a227; letter-spacing: 6px; text-shadow: 0 0 20px rgba(201,162,39,0.5); margin: 0; opacity: 0; transition: opacity 0.5s; }
-    .response-eyebrow.visible, .response-answer.visible { opacity: 1; }
-
-    /* ── RADIO BAR ── */
-    .radio-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,0,5,0.95); border-top: 1px solid rgba(139,0,0,0.3); display: flex; align-items: center; gap: 12px; padding: 8px 16px; }
-    .radio-bar-btn { background: none; border: 1px solid #8b0000; color: #e8dcc8; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; flex-shrink: 0; }
-    .radio-bar-info { flex: 1; min-width: 0; }
-    .radio-bar-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 2px; color: #8b6914; display: block; }
-    .radio-bar-track { font-size: 0.75rem; color: #e8dcc8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-    .radio-bar-volume { width: 70px; flex-shrink: 0; }
-    .radio-bar-link { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 2px; color: #8b6914; text-decoration: none; flex-shrink: 0; }
-    .radio-bar-link:hover { color: #c9a227; }
+    .ouija-response { max-width: 600px; margin: 20px auto 0; padding: 0 16px 40px; text-align: center; position: relative; z-index: 1; }
+    .ouija-response-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0 0 10px;
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .ouija-response-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(200,160,32,0.45);
+      margin: 0;
+      text-transform: uppercase;
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .ouija-response-eyebrow.visible,
+    .ouija-response-text.visible { opacity: 1; }
   </style>
 </head>
 <body>
-<div class="ouija-page">
+
+  <!-- PREVIEW BANNER -->
+  <div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">
+    &#9888; Development Preview &mdash;
+    <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a>
+    &nbsp;&middot;&nbsp;
+    <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a>
+  </div>
+
+  <!-- NAV -->
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home">
+        <img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" />
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"   class="nav-link">Home</a></li>
+        <li><a href="events.html"  class="nav-link">Events</a></li>
+        <li><a href="menu.html"    class="nav-link">Menu</a></li>
+        <li><a href="live.html"    class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"   class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html"   class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Mobile navigation">
+    <ul role="list">
+      <li><a href="home.html"   class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
   <canvas id="ouija-particles"></canvas>
 
-  <header class="ouija-header">
-    <a href="home.html" class="site-logo">THE VOODOO HUT</a>
-    <p class="oracle-subtitle">Spirit Board</p>
-    <p class="oracle-whisper">Place your hands upon the planchette and ask</p>
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="container">
+      <p class="section-eyebrow">Secret Feature</p>
+      <h1 class="page-header-title">Spirit Board</h1>
+      <p class="page-header-sub">Ask and the spirits shall answer</p>
+    </div>
   </header>
 
-  <div class="board-wrap">
-    <div class="spirit-board" id="spirit-board">
+  <!-- BOARD -->
+  <div class="board-section">
+    <div class="board-container">
+      <div class="spirit-board" id="spirit-board">
 
-      <!-- TOP: YES / TITLE / NO -->
-      <div class="board-top">
-        <div class="board-corner">
-          <span class="board-corner-symbol">☀</span>
-          <span id="key-YES" class="board-key board-yes-no">YES</span>
+        <!-- TOP: YES / TITLE / NO -->
+        <div class="board-top">
+          <div class="board-corner">
+            <span class="board-corner-symbol">☀</span>
+            <span id="key-YES" class="board-key board-yes-no">YES</span>
+          </div>
+          <div class="board-title-area">
+            <span class="board-title-main">Voodoo Spirit Board</span>
+            <span class="board-title-sub">The Voodoo Hut · Kemah, Texas</span>
+          </div>
+          <div class="board-corner">
+            <span class="board-corner-symbol">☾</span>
+            <span id="key-NO" class="board-key board-yes-no">NO</span>
+          </div>
         </div>
-        <div class="board-title-area">
-          <span class="board-title-main">VOODOO SPIRIT BOARD</span>
-          <span class="board-title-sub">The Voodoo Hut · Kemah, Texas</span>
+
+        <div class="board-divider"></div>
+
+        <!-- ALPHABET (built by JS) -->
+        <div class="letters-row" id="letters-row-1"></div>
+        <div class="letters-row" id="letters-row-2"></div>
+
+        <div class="board-divider"></div>
+
+        <!-- NUMBERS (built by JS) -->
+        <div class="numbers-row" id="numbers-row"></div>
+
+        <div class="board-divider"></div>
+
+        <!-- GOODBYE -->
+        <div class="board-goodbye-row">
+          <span id="key-GOODBYE" class="board-key">GOODBYE</span>
         </div>
-        <div class="board-corner">
-          <span class="board-corner-symbol">☾</span>
-          <span id="key-NO" class="board-key board-yes-no">NO</span>
+
+        <!-- PLANCHETTE -->
+        <div class="planchette" id="planchette" style="opacity:0;left:0;top:0;">
+          <div class="planchette-ring"><div class="planchette-eye"></div></div>
         </div>
+
       </div>
-
-      <div class="board-divider"></div>
-
-      <!-- ALPHABET ROWS (built by JS) -->
-      <div class="letters-row" id="letters-row-1"></div>
-      <div class="letters-row" id="letters-row-2"></div>
-
-      <div class="board-divider"></div>
-
-      <!-- NUMBERS ROW (built by JS) -->
-      <div class="numbers-row" id="numbers-row"></div>
-
-      <div class="board-divider"></div>
-
-      <!-- GOODBYE -->
-      <div class="board-goodbye-row">
-        <span id="key-GOODBYE" class="board-key">GOODBYE</span>
-      </div>
-
-      <!-- PLANCHETTE -->
-      <div class="planchette" id="planchette" style="opacity:0;left:0;top:0;">
-        <div class="planchette-ring"><div class="planchette-eye"></div></div>
-      </div>
-
     </div>
   </div>
 
   <!-- QUESTION FORM -->
-  <div class="question-wrap">
-    <div class="question-card">
-      <label class="question-label" for="spirit-question">Ask the spirits</label>
-      <input type="text" id="spirit-question" class="question-input" placeholder="What do you wish to know?" maxlength="120" />
-      <button class="ask-btn" id="ask-btn" onclick="askSpirits()">Summon the Answer</button>
-      <div class="error-msg" id="error-msg"></div>
+  <div class="ouija-form-section">
+    <div class="ouija-form-wrap">
+      <div class="ouija-card">
+        <label class="ouija-label" for="spirit-question">Ask the spirits</label>
+        <input type="text" id="spirit-question" class="ouija-input" placeholder="What do you wish to know?" maxlength="120" />
+        <button class="ouija-submit" id="ask-btn" onclick="askSpirits()">Summon the Answer</button>
+        <div class="ouija-error" id="error-msg"></div>
+      </div>
     </div>
   </div>
 
   <!-- RESPONSE -->
-  <div class="response-wrap">
-    <p class="response-eyebrow" id="response-eyebrow">The spirits say</p>
-    <p class="response-answer" id="response-answer"></p>
+  <div class="ouija-response">
+    <p class="ouija-response-eyebrow" id="response-eyebrow">The spirits say</p>
+    <p class="ouija-response-text"    id="response-answer"></p>
   </div>
 
-  <!-- RADIO BAR -->
-  <div class="radio-bar" id="radio-bar">
-    <button class="radio-bar-btn" id="radio-play-bar" aria-label="Play/Pause Radio">&#9654;</button>
-    <div class="radio-bar-info">
-      <span class="radio-bar-label">Voodoo Hut Radio</span>
-      <span class="radio-bar-track" id="radio-bar-track">Loading...</span>
+  <!-- RADIO PLAYER -->
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <a href="radio.html" class="radio-player-link" aria-label="Radio station page">&#9654;&#9654;</a>
+      </div>
     </div>
-    <input type="range" id="radio-volume-bar" min="0" max="1" step="0.01" value="0.7" class="radio-bar-volume" aria-label="Volume" />
-    <a href="radio.html" class="radio-bar-link">Full Player</a>
   </div>
-</div>
 
-<script src="assets/js/main.js"></script>
-<script src="assets/js/easter-eggs.js"></script>
-<script>
-// ── BUILD BOARD ──
-const ROW1 = 'ABCDEFGHIJKLM'.split('');
-const ROW2 = 'NOPQRSTUVWXYZ'.split('');
-const NUMS = '1234567890'.split('');
-
-function buildBoard() {
-  buildRow(ROW1, 'letters-row-1');
-  buildRow(ROW2, 'letters-row-2');
-  buildRow(NUMS, 'numbers-row');
-}
-
-function buildRow(chars, containerId) {
-  const el = document.getElementById(containerId);
-  chars.forEach(ch => {
-    const span = document.createElement('span');
-    span.className = 'board-key';
-    span.id = 'key-' + ch;
-    span.textContent = ch;
-    el.appendChild(span);
-  });
-}
-
-// ── PARTICLES ──
-(function() {
-  const canvas = document.getElementById('ouija-particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const COLORS = ['rgba(139,0,0,', 'rgba(100,0,100,', 'rgba(139,105,20,', 'rgba(60,0,60,'];
-  let pts = [];
-
-  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  for (let i = 0; i < 50; i++) pts.push(mkPt());
-  function mkPt() {
-    return { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.3, vy: -(Math.random() * 0.5 + 0.1),
-      size: Math.random() * 2 + 0.5, alpha: Math.random() * 0.4 + 0.1,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)] };
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/easter-eggs.js"></script>
+  <script>
+  // ── BUILD BOARD ──
+  function buildBoard() {
+    buildRow('ABCDEFGHIJKLM'.split(''), 'letters-row-1');
+    buildRow('NOPQRSTUVWXYZ'.split(''), 'letters-row-2');
+    buildRow('1234567890'.split(''),    'numbers-row');
   }
-
-  (function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    pts.forEach((p, i) => {
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = p.color + p.alpha + ')'; ctx.fill();
-      p.x += p.vx; p.y += p.vy; p.alpha -= 0.0006;
-      if (p.y < -10 || p.alpha <= 0) pts[i] = { ...mkPt(), y: canvas.height + 5 };
+  function buildRow(chars, id) {
+    const el = document.getElementById(id);
+    chars.forEach(ch => {
+      const s = document.createElement('span');
+      s.className = 'board-key'; s.id = 'key-' + ch; s.textContent = ch;
+      el.appendChild(s);
     });
-    requestAnimationFrame(animate);
+  }
+
+  // ── PARTICLES ──
+  (function() {
+    const canvas = document.getElementById('ouija-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const COLORS = ['rgba(224,16,32,', 'rgba(139,0,0,', 'rgba(200,160,32,', 'rgba(80,0,0,'];
+    let pts = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    function mkPt() {
+      return { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+        vx: (Math.random()-0.5)*0.3, vy: -(Math.random()*0.5+0.1),
+        size: Math.random()*1.8+0.4, alpha: Math.random()*0.3+0.05,
+        color: COLORS[Math.floor(Math.random()*COLORS.length)] };
+    }
+    for (let i=0;i<45;i++) pts.push(mkPt());
+    (function animate() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pts.forEach((p,i) => {
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fillStyle = p.color+p.alpha+')'; ctx.fill();
+        p.x+=p.vx; p.y+=p.vy; p.alpha-=0.0005;
+        if (p.y<-10||p.alpha<=0) pts[i]={...mkPt(),y:canvas.height+5};
+      });
+      requestAnimationFrame(animate);
+    })();
   })();
-})();
 
-// ── PLANCHETTE ──
-let litKey = null;
-let seekInterval = null;
-let busy = false;
+  // ── PLANCHETTE ──
+  let litKey = null, seekInterval = null, busy = false;
 
-const SEEK_CIRCUIT = ['YES', 'A', 'M', 'GOODBYE', 'Z', 'N', 'NO', 'G'];
-let seekIdx = 0;
+  const SEEK_CIRCUIT = ['G','M','T','S','H','P','N','F','R','L','D','W'];
+  const ALL_LETTERS  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  let seekIdx = 0;
 
-function keyCenter(id) {
-  const key   = document.getElementById('key-' + id);
-  const board = document.getElementById('spirit-board');
-  if (!key || !board) return null;
-  const kr = key.getBoundingClientRect();
-  const br = board.getBoundingClientRect();
-  return { x: kr.left - br.left + kr.width / 2, y: kr.top - br.top + kr.height / 2 };
-}
-
-function placePlanchette(id) {
-  const pos = keyCenter(id);
-  if (!pos) return;
-  const p = document.getElementById('planchette');
-  p.style.left = (pos.x - p.offsetWidth  / 2) + 'px';
-  p.style.top  = (pos.y - p.offsetHeight / 2) + 'px';
-
-  if (litKey) document.getElementById('key-' + litKey)?.classList.remove('lit');
-  document.getElementById('key-' + id)?.classList.add('lit');
-  litKey = id;
-}
-
-function showPlanchette() {
-  const p = document.getElementById('planchette');
-  const board = document.getElementById('spirit-board');
-  p.style.transition = 'opacity 0.4s';
-  p.style.left = (board.offsetWidth  / 2 - p.offsetWidth  / 2) + 'px';
-  p.style.top  = (board.offsetHeight / 2 - p.offsetHeight / 2) + 'px';
-  p.style.opacity = '1';
-  setTimeout(() => {
-    p.style.transition = 'left 0.52s cubic-bezier(0.45,0.05,0.55,0.95), top 0.52s cubic-bezier(0.45,0.05,0.55,0.95), opacity 0.4s';
-  }, 420);
-}
-
-function startSeeking() {
-  showPlanchette();
-  const p = document.getElementById('planchette');
-  p.classList.add('seeking');
-  seekIdx = 0;
-  seekInterval = setInterval(() => {
-    placePlanchette(SEEK_CIRCUIT[seekIdx % SEEK_CIRCUIT.length]);
-    seekIdx++;
-  }, 620);
-}
-
-function stopSeeking() {
-  clearInterval(seekInterval);
-  seekInterval = null;
-  document.getElementById('planchette').classList.remove('seeking');
-}
-
-function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function spellOut(text) {
-  const chars = text.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().split('');
-  for (const ch of chars) {
-    if (ch === ' ') { await wait(320); continue; }
-    placePlanchette(ch);
-    await wait(560);
+  function keyCenter(id) {
+    const key = document.getElementById('key-'+id);
+    const board = document.getElementById('spirit-board');
+    if (!key||!board) return null;
+    const kr=key.getBoundingClientRect(), br=board.getBoundingClientRect();
+    return { x: kr.left-br.left+kr.width/2, y: kr.top-br.top+kr.height/2 };
   }
-  await wait(200);
-  placePlanchette('GOODBYE');
-  await wait(700);
-}
 
-// ── API ──
-async function callOuija(question) {
-  const res = await fetch('https://unique-ue-api.unique-ue-ai-proxy.workers.dev/ouija', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Worker error ' + res.status);
-  return data.text || 'SILENCE';
-}
+  function placePlanchette(id) {
+    const pos = keyCenter(id);
+    if (!pos) return;
+    const p = document.getElementById('planchette');
+    p.style.left = (pos.x - p.offsetWidth/2)  + 'px';
+    p.style.top  = (pos.y - p.offsetHeight/2) + 'px';
+    if (litKey) document.getElementById('key-'+litKey)?.classList.remove('lit');
+    document.getElementById('key-'+id)?.classList.add('lit');
+    litKey = id;
+  }
 
-// ── MAIN ──
-async function askSpirits() {
-  if (busy) return;
-  const question = document.getElementById('spirit-question').value.trim();
-  const errorEl  = document.getElementById('error-msg');
-  errorEl.classList.remove('visible');
+  function showPlanchette() {
+    const p = document.getElementById('planchette');
+    const b = document.getElementById('spirit-board');
+    p.style.transition = 'opacity 0.5s';
+    p.style.left = (b.offsetWidth/2  - p.offsetWidth/2)  + 'px';
+    p.style.top  = (b.offsetHeight/2 - p.offsetHeight/2) + 'px';
+    p.style.opacity = '1';
+    setTimeout(() => { p.style.transition = 'left 0.9s ease, top 0.9s ease, opacity 0.4s'; }, 520);
+  }
 
-  if (!question) {
-    errorEl.textContent = 'You must ask the spirits a question.';
-    errorEl.classList.add('visible');
+  function startSeeking() {
+    showPlanchette();
+    document.getElementById('planchette').classList.add('seeking');
+    setTimeout(() => {
+      seekIdx = Math.floor(Math.random() * SEEK_CIRCUIT.length);
+      seekInterval = setInterval(() => {
+        placePlanchette(SEEK_CIRCUIT[seekIdx++ % SEEK_CIRCUIT.length]);
+      }, 950);
+    }, 560);
+  }
+
+  function stopSeeking() {
+    clearInterval(seekInterval); seekInterval = null;
+    document.getElementById('planchette').classList.remove('seeking');
+  }
+
+  function wait(ms) { return new Promise(r => setTimeout(r,ms)); }
+
+  function randLetter(exclude) {
+    const pool = ALL_LETTERS.filter(l => l !== exclude);
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+
+  async function spellOut(text) {
+    const chars = text.replace(/[^A-Z ]/g,'').split('');
+    for (const ch of chars) {
+      if (ch===' ') { await wait(500+Math.random()*300); continue; }
+      if (Math.random()<0.3) {
+        placePlanchette(randLetter(ch));
+        await wait(700+Math.random()*400);
+      }
+      placePlanchette(ch);
+      await wait(950+Math.random()*400);
+    }
+    await wait(400);
+    placePlanchette('GOODBYE');
+    await wait(1200);
+  }
+
+  // ── API ──
+  async function callOuija(question) {
+    const res = await fetch('https://unique-ue-api.unique-ue-ai-proxy.workers.dev/ouija', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Worker error '+res.status);
+    return data.text || 'THE SPIRITS SPEAK';
+  }
+
+  // ── MAIN ──
+  async function askSpirits() {
+    if (busy) return;
+    const question = document.getElementById('spirit-question').value.trim();
+    const errorEl  = document.getElementById('error-msg');
+    errorEl.classList.remove('visible');
+
+    if (!question) {
+      errorEl.textContent = 'You must ask the spirits a question.';
+      errorEl.classList.add('visible');
+      const btn = document.getElementById('ask-btn');
+      btn.classList.add('shake');
+      setTimeout(() => btn.classList.remove('shake'), 400);
+      return;
+    }
+
+    busy = true;
     const btn = document.getElementById('ask-btn');
-    btn.classList.add('shake');
-    setTimeout(() => btn.classList.remove('shake'), 400);
-    return;
+    btn.disabled = true;
+
+    document.getElementById('response-eyebrow').classList.remove('visible');
+    document.getElementById('response-answer').classList.remove('visible');
+    document.getElementById('response-answer').textContent = '';
+    if (litKey) { document.getElementById('key-'+litKey)?.classList.remove('lit'); litKey=null; }
+
+    startSeeking();
+    try {
+      const answer = await callOuija(question);
+      stopSeeking();
+      await wait(300);
+      await spellOut(answer);
+      document.getElementById('response-answer').textContent = answer;
+      document.getElementById('response-eyebrow').classList.add('visible');
+      document.getElementById('response-answer').classList.add('visible');
+    } catch(err) {
+      stopSeeking();
+      errorEl.textContent = 'The spirits cannot be reached: '+err.message;
+      errorEl.classList.add('visible');
+    } finally {
+      btn.disabled = false;
+      busy = false;
+    }
   }
 
-  busy = true;
-  const btn = document.getElementById('ask-btn');
-  btn.disabled = true;
-
-  // Clear previous response
-  document.getElementById('response-eyebrow').classList.remove('visible');
-  document.getElementById('response-answer').classList.remove('visible');
-  document.getElementById('response-answer').textContent = '';
-  if (litKey) { document.getElementById('key-' + litKey)?.classList.remove('lit'); litKey = null; }
-
-  startSeeking();
-
-  try {
-    const answer = await callOuija(question);
-    stopSeeking();
-    await wait(300);
-    await spellOut(answer);
-
-    document.getElementById('response-answer').textContent = answer;
-    document.getElementById('response-eyebrow').classList.add('visible');
-    document.getElementById('response-answer').classList.add('visible');
-  } catch (err) {
-    stopSeeking();
-    errorEl.textContent = 'The spirits cannot be reached: ' + err.message;
-    errorEl.classList.add('visible');
-  } finally {
-    btn.disabled = false;
-    busy = false;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', buildBoard);
-</script>
+  document.addEventListener('DOMContentLoaded', buildBoard);
+  </script>
 </body>
 </html>
