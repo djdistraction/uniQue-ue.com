@@ -268,6 +268,16 @@
     }
     .ouija-response-eyebrow.visible,
     .ouija-response-text.visible { opacity: 1; }
+    .ouija-spirit-name {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin: 10px 0 0;
+      opacity: 0; transition: opacity 0.5s 0.3s;
+    }
+    .ouija-spirit-name.visible { opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -389,6 +399,7 @@
   <div class="ouija-response">
     <p class="ouija-response-eyebrow" id="response-eyebrow">The spirits say</p>
     <p class="ouija-response-text"    id="response-answer"></p>
+    <p class="ouija-spirit-name"      id="spirit-byline"></p>
   </div>
 
   <!-- RADIO PLAYER -->
@@ -547,7 +558,7 @@
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Worker error '+res.status);
-    return data.text || 'THE SPIRITS SPEAK';
+    return { text: data.text || 'THE SPIRITS SPEAK', spirit: data.spirit || '' };
   }
 
   // ── MAIN ──
@@ -573,17 +584,23 @@
     document.getElementById('response-eyebrow').classList.remove('visible');
     document.getElementById('response-answer').classList.remove('visible');
     document.getElementById('response-answer').textContent = '';
+    document.getElementById('spirit-byline').classList.remove('visible');
+    document.getElementById('spirit-byline').textContent = '';
     if (litKey) { document.getElementById('key-'+litKey)?.classList.remove('lit'); litKey=null; }
 
     startSeeking();
     try {
-      const answer = await callOuija(question);
+      const { text: answer, spirit } = await callOuija(question);
       stopSeeking();
       await wait(300);
       await spellOut(answer);
       document.getElementById('response-answer').textContent = answer;
       document.getElementById('response-eyebrow').classList.add('visible');
       document.getElementById('response-answer').classList.add('visible');
+      if (spirit) {
+        document.getElementById('spirit-byline').textContent = '— ' + spirit;
+        document.getElementById('spirit-byline').classList.add('visible');
+      }
     } catch(err) {
       stopSeeking();
       errorEl.textContent = 'The spirits cannot be reached: '+err.message;
