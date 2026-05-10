@@ -160,7 +160,7 @@
       display: flex; align-items: center; justify-content: center;
       pointer-events: none;
       z-index: 20;
-      transition: left 0.9s ease, top 0.9s ease, opacity 0.4s;
+      transition: left 1.6s ease, top 1.6s ease, opacity 0.4s;
     }
     .planchette-ring {
       width: 40px; height: 40px; border-radius: 50%;
@@ -490,7 +490,7 @@
     p.style.left = (b.offsetWidth/2  - p.offsetWidth/2)  + 'px';
     p.style.top  = (b.offsetHeight/2 - p.offsetHeight/2) + 'px';
     p.style.opacity = '1';
-    setTimeout(() => { p.style.transition = 'left 0.9s ease, top 0.9s ease, opacity 0.4s'; }, 520);
+    setTimeout(() => { p.style.transition = 'left 1.6s ease, top 1.6s ease, opacity 0.4s'; }, 520);
   }
 
   function startSeeking() {
@@ -500,7 +500,7 @@
       seekIdx = Math.floor(Math.random() * SEEK_CIRCUIT.length);
       seekInterval = setInterval(() => {
         placePlanchette(SEEK_CIRCUIT[seekIdx++ % SEEK_CIRCUIT.length]);
-      }, 950);
+      }, 1800);
     }, 560);
   }
 
@@ -519,17 +519,28 @@
   async function spellOut(text) {
     const chars = text.replace(/[^A-Z ]/g,'').split('');
     for (const ch of chars) {
-      if (ch===' ') { await wait(500+Math.random()*300); continue; }
-      if (Math.random()<0.3) {
-        placePlanchette(randLetter(ch));
-        await wait(700+Math.random()*400);
+      if (ch===' ') {
+        // Long pause between words — like it lost the thread
+        await wait(1400 + Math.random() * 1000);
+        continue;
       }
+      // The planchette drifts to wrong letters most of the time before finding the right one
+      const wanders = Math.random() < 0.65
+        ? Math.floor(Math.random() * 3) + 1   // 65% chance: 1-3 wrong stops
+        : 0;
+      for (let i = 0; i < wanders; i++) {
+        placePlanchette(randLetter(ch));
+        // Lingers at the wrong letter — uncertain, searching
+        await wait(1700 + Math.random() * 1300);
+      }
+      // Settles on the right letter — stays a long time
       placePlanchette(ch);
-      await wait(950+Math.random()*400);
+      await wait(2200 + Math.random() * 1200);
     }
-    await wait(400);
+    // Drifts to GOODBYE slowly
+    await wait(900);
     placePlanchette('GOODBYE');
-    await wait(1200);
+    await wait(2000);
   }
 
   // ── API ──
