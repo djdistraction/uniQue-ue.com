@@ -520,24 +520,19 @@
     const chars = text.replace(/[^A-Z ]/g,'').split('');
     for (const ch of chars) {
       if (ch===' ') {
-        // Long pause between words — like it lost the thread
         await wait(1400 + Math.random() * 1000);
         continue;
       }
-      // The planchette drifts to wrong letters most of the time before finding the right one
       const wanders = Math.random() < 0.65
-        ? Math.floor(Math.random() * 3) + 1   // 65% chance: 1-3 wrong stops
+        ? Math.floor(Math.random() * 3) + 1
         : 0;
       for (let i = 0; i < wanders; i++) {
         placePlanchette(randLetter(ch));
-        // Lingers at the wrong letter — uncertain, searching
         await wait(1700 + Math.random() * 1300);
       }
-      // Settles on the right letter — stays a long time
       placePlanchette(ch);
       await wait(2200 + Math.random() * 1200);
     }
-    // Drifts to GOODBYE slowly
     await wait(900);
     placePlanchette('GOODBYE');
     await wait(2000);
