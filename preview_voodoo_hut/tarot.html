@@ -19,8 +19,8 @@
 
     /* ── HEADER ── */
     .tarot-header { text-align: center; padding: 60px 20px 20px; position: relative; z-index: 10; }
-    .tarot-header .site-logo { font-family: 'Cinzel Decorative', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: #8b0000; text-shadow: 0 0 30px rgba(139,0,0,0.8), 0 0 60px rgba(139,0,0,0.4); letter-spacing: 4px; display: block; text-decoration: none; margin-bottom: 8px; }
-    .tarot-header .site-logo:hover { color: #cc0000; }
+    .tarot-header .site-logo { display: block; margin: 0 auto 16px; width: clamp(220px, 40vw, 360px); filter: drop-shadow(0 0 24px rgba(139,0,0,0.6)); transition: filter 0.3s; }
+    .tarot-header .site-logo:hover { filter: drop-shadow(0 0 36px rgba(200,0,0,0.85)); }
     .tarot-header .oracle-subtitle { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.2rem); color: #8b6914; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 6px; }
     .tarot-header .oracle-whisper { font-family: 'Cinzel', serif; font-style: italic; font-size: 0.85rem; color: #6b5a8a; letter-spacing: 2px; }
 
@@ -156,7 +156,7 @@
 <div class="tarot-page">
   <!-- HEADER -->
   <header class="tarot-header">
-    <a href="home.html" class="site-logo">The Voodoo Hut</a>
+    <a href="home.html"><img src="assets/images/tarot_logo.PNG" alt="The Voodoo Hut" class="site-logo" /></a>
     <div class="oracle-subtitle">The Voodoo Oracle</div>
     <div class="oracle-whisper">Whispers of the Ancestors &bull; Kemah, Texas</div>
   </header>
