@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* ── PARTICLE CANVAS ── */
@@ -24,23 +24,26 @@
     .spirit-board {
       position: relative;
       background:
-        radial-gradient(ellipse at 15% 20%, rgba(80,10,10,0.4) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 80%, rgba(60,8,8,0.4) 0%, transparent 55%),
-        linear-gradient(160deg, #1a0505 0%, #0d0202 40%, #150404 70%, #080101 100%);
-      border: 2px solid var(--gold);
+        repeating-linear-gradient(94deg, transparent, transparent 3px, rgba(255,200,80,0.018) 3px, rgba(255,200,80,0.018) 4px),
+        repeating-linear-gradient(182deg, transparent, transparent 14px, rgba(0,0,0,0.045) 14px, rgba(0,0,0,0.045) 15px),
+        radial-gradient(ellipse at 30% 20%, rgba(60,25,5,0.55) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(50,20,4,0.45) 0%, transparent 50%),
+        linear-gradient(168deg, #2d1a08 0%, #1e0e04 20%, #281605 38%, #1c0c03 55%, #2b1708 72%, #1f1005 100%);
+      border: 3px solid #6b4a1a;
       border-radius: 12px;
       box-shadow:
-        0 0 0 1px rgba(200,160,32,0.12),
-        0 0 40px rgba(224,16,32,0.12),
-        0 0 80px rgba(224,16,32,0.06);
+        0 0 0 1px rgba(200,160,60,0.18),
+        inset 0 0 40px rgba(0,0,0,0.45),
+        0 8px 40px rgba(0,0,0,0.55),
+        0 0 60px rgba(100,50,10,0.2);
       padding: 16px 12px 20px;
       overflow: visible;
     }
     .spirit-board::before {
       content: '';
       position: absolute;
-      inset: 8px;
-      border: 1px solid rgba(200,160,32,0.15);
+      inset: 7px;
+      border: 1px solid rgba(200,160,60,0.22);
       border-radius: 8px;
       pointer-events: none;
       z-index: 0;
@@ -49,35 +52,39 @@
     /* ── BOARD TOP (YES / TITLE / NO) ── */
     .board-top {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 4px 8px 6px; position: relative; z-index: 2;
+      padding: 6px 10px 8px; position: relative; z-index: 2;
     }
-    .board-corner { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 48px; }
-    .board-corner-symbol { font-size: clamp(1.1rem, 2.5vw, 1.6rem); opacity: 0.6; line-height: 1; }
+    .board-corner { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; }
+    .board-corner-symbol { font-size: clamp(0.9rem, 2vw, 1.2rem); opacity: 0.5; line-height: 1; color: #c8a040; }
     .board-yes-no {
-      font-family: var(--font-display);
-      font-size: clamp(1.1rem, 3vw, 1.8rem);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-style: italic;
       font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--white);
+      letter-spacing: 0.05em;
+      color: #f0e4c4;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6), 0 0 8px rgba(200,160,60,0.15);
       text-transform: uppercase;
       line-height: 1;
     }
     .board-title-area { text-align: center; flex: 1; padding: 0 8px; }
     .board-title-main {
-      font-family: var(--font-display);
-      font-size: clamp(0.75rem, 2vw, 1.2rem);
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      color: var(--gold);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.65rem, 1.6vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #d4a840;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
       text-transform: uppercase;
       display: block;
       line-height: 1.3;
     }
     .board-title-sub {
-      font-family: var(--font-mono);
-      font-size: clamp(0.5rem, 1vw, 0.62rem);
-      color: rgba(200,160,32,0.45);
-      letter-spacing: 0.15em;
+      font-family: 'Cinzel', serif;
+      font-style: italic;
+      font-size: clamp(0.45rem, 0.9vw, 0.58rem);
+      color: rgba(200,160,60,0.5);
+      letter-spacing: 0.1em;
       display: block;
       margin-top: 4px;
     }
@@ -85,24 +92,24 @@
     /* ── DIVIDERS ── */
     .board-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200,160,32,0.3), transparent);
-      margin: 4px 10px;
+      background: linear-gradient(90deg, transparent, rgba(180,130,40,0.35), rgba(200,160,60,0.5), rgba(180,130,40,0.35), transparent);
+      margin: 6px 10px;
       position: relative; z-index: 2;
     }
 
     /* ── LETTER & NUMBER ROWS ── */
     .letters-row, .numbers-row {
       display: flex; justify-content: center;
-      padding: 3px 4px; position: relative; z-index: 2;
+      padding: 4px 4px; position: relative; z-index: 2;
     }
 
     /* ── BOARD KEYS ── */
     .board-key {
-      font-family: var(--font-display);
-      font-size: clamp(0.72rem, 1.5vw, 1.05rem);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.78rem, 1.6vw, 1.15rem);
       font-weight: 400;
-      letter-spacing: 0.05em;
-      color: var(--gold);
+      letter-spacing: 0.04em;
+      color: #e2cfa0;
       width: clamp(20px, 3.6vw, 40px);
       text-align: center;
       padding: 5px 0;
@@ -110,40 +117,46 @@
       transition: color 0.15s, text-shadow 0.15s;
       user-select: none;
       text-transform: uppercase;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(200,160,60,0.1);
     }
     .board-key.lit {
-      color: #fff;
-      text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 18px rgba(200,160,32,0.8);
+      color: #fff8e0;
+      text-shadow: 0 0 8px rgba(255,240,180,0.95), 0 0 20px rgba(255,200,60,0.7), 0 0 40px rgba(255,160,30,0.4);
     }
 
     /* YES / NO overrides */
     #key-YES, #key-NO {
-      font-size: clamp(1.1rem, 3vw, 1.8rem);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-style: italic;
       font-weight: 700;
-      color: var(--white);
+      color: #f0e4c4;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6), 0 0 8px rgba(200,160,60,0.15);
       width: auto; padding: 0;
     }
     #key-YES.lit, #key-NO.lit {
-      color: #fff;
-      text-shadow: 0 0 10px rgba(255,255,255,0.95), 0 0 24px rgba(200,160,32,0.9);
+      color: #fff8e0;
+      text-shadow: 0 0 12px rgba(255,240,180,0.95), 0 0 28px rgba(255,200,60,0.75), 0 0 50px rgba(255,160,30,0.5);
     }
 
     /* GOODBYE */
     .board-goodbye-row {
       display: flex; justify-content: center;
-      padding: 5px 0 2px; position: relative; z-index: 2;
+      padding: 6px 0 4px; position: relative; z-index: 2;
     }
     #key-GOODBYE {
-      font-family: var(--font-display);
-      font-size: clamp(0.8rem, 1.8vw, 1.1rem);
-      font-weight: 600;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-style: italic;
+      font-weight: 700;
       letter-spacing: 0.35em;
-      color: var(--gold);
+      color: #c8a040;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
       width: auto;
     }
     #key-GOODBYE.lit {
-      color: #fff;
-      text-shadow: 0 0 10px rgba(255,255,255,0.95), 0 0 22px rgba(200,160,32,0.85);
+      color: #fff8e0;
+      text-shadow: 0 0 12px rgba(255,240,180,0.95), 0 0 28px rgba(255,200,60,0.75);
     }
 
     /* ── PLANCHETTE ── */
@@ -429,7 +442,9 @@
   function buildBoard() {
     buildRow('ABCDEFGHIJKLM'.split(''), 'letters-row-1');
     buildRow('NOPQRSTUVWXYZ'.split(''), 'letters-row-2');
-    buildRow('1234567890'.split(''),    'numbers-row');
+    buildRow('0123456789'.split(''),    'numbers-row');
+    applyArch('letters-row-1', 9);
+    applyArch('letters-row-2', 9);
   }
   function buildRow(chars, id) {
     const el = document.getElementById(id);
@@ -437,6 +452,17 @@
       const s = document.createElement('span');
       s.className = 'board-key'; s.id = 'key-' + ch; s.textContent = ch;
       el.appendChild(s);
+    });
+  }
+  function applyArch(rowId, depth) {
+    const row = document.getElementById(rowId);
+    const keys = [...row.querySelectorAll('.board-key')];
+    const n = keys.length;
+    if (n < 2) return;
+    const center = (n - 1) / 2;
+    keys.forEach((key, i) => {
+      const t = (i - center) / center;
+      key.style.transform = `translateY(${depth * (t * t - 1)}px)`;
     });
   }
 
@@ -528,6 +554,14 @@
   }
 
   async function spellOut(text) {
+    if (text === 'YES' || text === 'NO') {
+      await wait(700);
+      placePlanchette(text);
+      await wait(3500);
+      placePlanchette('GOODBYE');
+      await wait(2000);
+      return;
+    }
     const chars = text.replace(/[^A-Z ]/g,'').split('');
     for (const ch of chars) {
       if (ch===' ') {
