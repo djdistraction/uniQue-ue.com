@@ -1001,6 +1001,15 @@ p:last-child { margin-bottom: 0; }
   margin: 0 auto;
 }
 
+.radio-dj-logo {
+  margin: 0 auto 16px;
+  width: clamp(160px, 50%, 220px);
+  filter: drop-shadow(0 0 18px rgba(224,16,32,0.45));
+  transition: filter 0.3s;
+}
+.radio-dj-logo:hover { filter: drop-shadow(0 0 28px rgba(224,16,32,0.7)); }
+.radio-dj-logo img { width: 100%; height: auto; display: block; }
+
 .radio-station-name {
   font-family: var(--font-display);
   font-size: 32px;
