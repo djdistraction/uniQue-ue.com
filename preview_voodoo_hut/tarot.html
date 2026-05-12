@@ -8,10 +8,19 @@
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     /* ── TAROT PAGE BASE ── */
-    body { background: #0a0005; color: #e8dcc8; font-family: 'Open Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    body {
+      background:
+        repeating-linear-gradient(94deg, transparent, transparent 3px, rgba(255,200,80,0.012) 3px, rgba(255,200,80,0.012) 4px),
+        repeating-linear-gradient(182deg, transparent, transparent 16px, rgba(0,0,0,0.04) 16px, rgba(0,0,0,0.04) 17px),
+        linear-gradient(168deg, #200e04 0%, #150805 30%, #1c0b03 60%, #120604 100%);
+      color: #e2cfa0;
+      font-family: 'Open Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
     .tarot-page { min-height: 100vh; padding-bottom: 80px; position: relative; }
 
     /* ── PARTICLE CANVAS ── */
@@ -21,20 +30,27 @@
     .tarot-header { text-align: center; padding: 60px 20px 20px; position: relative; z-index: 10; }
     .tarot-header .site-logo { display: block; margin: 0 auto 16px; width: clamp(220px, 40vw, 360px); filter: drop-shadow(0 0 24px rgba(139,0,0,0.6)); transition: filter 0.3s; }
     .tarot-header .site-logo:hover { filter: drop-shadow(0 0 36px rgba(200,0,0,0.85)); }
-    .tarot-header .oracle-subtitle { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.2rem); color: #8b6914; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 6px; }
-    .tarot-header .oracle-whisper { font-family: 'Cinzel', serif; font-style: italic; font-size: 0.85rem; color: #6b5a8a; letter-spacing: 2px; }
+    .tarot-header .oracle-subtitle { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.2rem); color: #c8a040; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 6px; }
+    .tarot-header .oracle-whisper { font-family: 'Cinzel', serif; font-style: italic; font-size: 0.85rem; color: #a07840; letter-spacing: 2px; }
 
     /* ── INPUT FORM ── */
     .tarot-form-wrap { max-width: 600px; margin: 30px auto; padding: 0 20px; position: relative; z-index: 10; }
-    .tarot-card-form { background: rgba(10, 0, 5, 0.85); border: 1px solid rgba(139, 0, 0, 0.4); border-radius: 12px; padding: 32px; box-shadow: 0 0 40px rgba(139, 0, 0, 0.15); }
+    .tarot-card-form {
+      background:
+        repeating-linear-gradient(94deg, transparent, transparent 3px, rgba(255,200,80,0.015) 3px, rgba(255,200,80,0.015) 4px),
+        linear-gradient(168deg, #2d1a08 0%, #1e0e04 50%, #281605 100%);
+      border: 2px solid #6b4a1a;
+      border-radius: 12px; padding: 32px;
+      box-shadow: 0 0 0 1px rgba(200,160,60,0.12), inset 0 0 30px rgba(0,0,0,0.3), 0 8px 30px rgba(0,0,0,0.4);
+    }
     .form-row { display: flex; gap: 12px; margin-bottom: 16px; }
     .form-row .form-group { flex: 1; }
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: #8b6914; margin-bottom: 6px; }
-    .form-group input, .form-group textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(139, 0, 0, 0.35); border-radius: 6px; padding: 12px 14px; color: #e8dcc8; font-family: 'Open Sans', sans-serif; font-size: 0.9rem; transition: border-color 0.3s, box-shadow 0.3s; box-sizing: border-box; }
+    .form-group label { display: block; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: #c8a040; margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; background: rgba(0,0,0,0.35); border: 1px solid rgba(180,130,40,0.3); border-radius: 6px; padding: 12px 14px; color: #e2cfa0; font-family: 'Open Sans', sans-serif; font-size: 0.9rem; transition: border-color 0.3s, box-shadow 0.3s; box-sizing: border-box; }
     .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #8b0000; box-shadow: 0 0 12px rgba(139, 0, 0, 0.3); }
     .form-group textarea { resize: vertical; min-height: 80px; }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(232, 220, 200, 0.3); }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(226,207,160,0.25); }
 
     .consult-btn { width: 100%; padding: 16px; background: #8b0000; color: #f5e6c8; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; margin-top: 8px; }
     .consult-btn:hover { background: #aa0000; box-shadow: 0 0 20px rgba(139, 0, 0, 0.5); }
@@ -55,8 +71,8 @@
     .cards-section { max-width: 900px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10; display: none; }
     .cards-section.visible { display: block; }
     .cards-header { text-align: center; margin-bottom: 30px; }
-    .cards-header h2 { font-family: 'Cinzel', serif; font-size: clamp(1rem, 2.5vw, 1.4rem); color: #8b6914; letter-spacing: 4px; text-transform: uppercase; }
-    .drawn-question { font-family: 'Cinzel', serif; font-style: italic; color: rgba(232,220,200,0.5); font-size: 0.8rem; margin-top: 6px; }
+    .cards-header h2 { font-family: 'Cinzel', serif; font-size: clamp(1rem, 2.5vw, 1.4rem); color: #c8a040; letter-spacing: 4px; text-transform: uppercase; }
+    .drawn-question { font-family: 'Cinzel', serif; font-style: italic; color: rgba(226,207,160,0.5); font-size: 0.8rem; margin-top: 6px; }
 
     .cards-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
     .tarot-card-wrap { width: 160px; cursor: pointer; }
@@ -64,43 +80,55 @@
     .tarot-card-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.7s ease; }
     .tarot-card-3d.flipped { transform: rotateY(180deg); }
     .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; border: 1px solid rgba(139,0,0,0.4); overflow: hidden; }
-    .card-back { background: radial-gradient(ellipse at center, #1a0010 0%, #0a0005 70%); display: flex; align-items: center; justify-content: center; }
-    .card-back-symbol { font-size: 3rem; opacity: 0.4; }
-    .card-front { transform: rotateY(180deg); background: linear-gradient(160deg, #150010 0%, #0d0008 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; text-align: center; }
+    .card-back { background: radial-gradient(ellipse at center, #2d1a08 0%, #150805 70%); display: flex; align-items: center; justify-content: center; border-color: rgba(180,130,40,0.3); }
+    .card-back-symbol { font-size: 3rem; opacity: 0.35; }
+    .card-front { transform: rotateY(180deg); background: linear-gradient(160deg, #281408 0%, #1c0c04 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; text-align: center; border-color: rgba(180,130,40,0.3); }
     .card-front.reversed { border-color: rgba(180, 0, 60, 0.7); box-shadow: 0 0 15px rgba(180, 0, 60, 0.3); }
-    .card-front.upright { border-color: rgba(0, 180, 200, 0.5); box-shadow: 0 0 15px rgba(0, 180, 200, 0.2); }
-    .card-position-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 3px; text-transform: uppercase; color: #8b6914; margin-bottom: 8px; }
-    .card-name { font-family: 'Cinzel', serif; font-size: 0.7rem; color: #e8dcc8; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+    .card-front.upright { border-color: rgba(200,160,60,0.7); box-shadow: 0 0 15px rgba(200,160,60,0.25); }
+    .card-position-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 3px; text-transform: uppercase; color: #c8a040; margin-bottom: 8px; }
+    .card-name { font-family: 'Cinzel', serif; font-size: 0.7rem; color: #e2cfa0; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
     .card-orientation { font-size: 0.55rem; letter-spacing: 2px; font-family: 'Cinzel', serif; }
     .card-front.reversed .card-orientation { color: #cc0040; }
-    .card-front.upright .card-orientation { color: #00b4c8; }
+    .card-front.upright .card-orientation { color: #c8a040; }
     .card-symbol { font-size: 2.5rem; margin: 6px 0; opacity: 0.7; }
-    .card-mini-meaning { font-size: 0.58rem; color: rgba(232,220,200,0.5); font-style: italic; line-height: 1.4; margin-top: 4px; }
-    .card-label { text-align: center; font-family: 'Cinzel', serif; font-size: 0.65rem; color: #8b6914; letter-spacing: 2px; margin-top: 8px; text-transform: uppercase; }
+    .card-mini-meaning { font-size: 0.58rem; color: rgba(226,207,160,0.5); font-style: italic; line-height: 1.4; margin-top: 4px; }
+    .card-label { text-align: center; font-family: 'Cinzel', serif; font-size: 0.65rem; color: #c8a040; letter-spacing: 2px; margin-top: 8px; text-transform: uppercase; }
 
     /* ── READING SECTION ── */
     .reading-section { max-width: 700px; margin: 0 auto 40px; padding: 0 20px; position: relative; z-index: 10; display: none; }
     .reading-section.visible { display: block; }
-    .reading-panel { background: rgba(10, 0, 5, 0.9); border: 1px solid rgba(139, 0, 0, 0.4); border-radius: 12px; padding: 28px; box-shadow: 0 0 50px rgba(139, 0, 0, 0.15); }
-    .reading-panel h3 { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: #8b6914; margin-bottom: 16px; border-bottom: 1px solid rgba(139,0,0,0.2); padding-bottom: 10px; }
-    .reading-text { font-size: 0.9rem; line-height: 1.8; color: rgba(232, 220, 200, 0.85); white-space: pre-wrap; }
+    .reading-panel {
+      background:
+        repeating-linear-gradient(94deg, transparent, transparent 3px, rgba(255,200,80,0.015) 3px, rgba(255,200,80,0.015) 4px),
+        linear-gradient(168deg, #2d1a08 0%, #1e0e04 50%, #281605 100%);
+      border: 2px solid #6b4a1a; border-radius: 12px; padding: 28px;
+      box-shadow: 0 0 0 1px rgba(200,160,60,0.12), 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .reading-panel h3 { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: #c8a040; margin-bottom: 16px; border-bottom: 1px solid rgba(180,130,40,0.25); padding-bottom: 10px; }
+    .reading-text { font-size: 0.9rem; line-height: 1.8; color: rgba(226,207,160,0.85); white-space: pre-wrap; }
     .reading-text.streaming::after { content: '▊'; animation: blink 0.8s step-end infinite; color: #8b0000; }
     @keyframes blink { 50%{opacity:0} }
 
     .reading-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
     .reading-btn { flex: 1; min-width: 120px; padding: 12px 16px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; border-radius: 6px; cursor: pointer; transition: all 0.3s; border: 1px solid; }
-    .btn-new-reading { background: transparent; border-color: rgba(139, 0, 0, 0.5); color: #8b6914; }
-    .btn-new-reading:hover { background: rgba(139, 0, 0, 0.2); border-color: #8b0000; color: #e8dcc8; }
+    .btn-new-reading { background: transparent; border-color: rgba(180,130,40,0.4); color: #c8a040; }
+    .btn-new-reading:hover { background: rgba(139, 0, 0, 0.2); border-color: #8b0000; color: #e2cfa0; }
     .btn-share { background: rgba(139, 0, 0, 0.2); border-color: rgba(139, 0, 0, 0.4); color: #e8dcc8; }
     .btn-share:hover { background: rgba(139, 0, 0, 0.4); }
 
     /* ── CARD DETAIL MODAL ── */
     .card-detail-modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); padding: 20px; }
     .card-detail-modal.active { display: flex; }
-    .card-detail-inner { background: #0f0008; border: 1px solid rgba(139,0,0,0.5); border-radius: 12px; max-width: 460px; width: 100%; padding: 28px; box-shadow: 0 0 60px rgba(139,0,0,0.3); }
+    .card-detail-inner {
+      background:
+        repeating-linear-gradient(94deg, transparent, transparent 3px, rgba(255,200,80,0.015) 3px, rgba(255,200,80,0.015) 4px),
+        linear-gradient(168deg, #2d1a08 0%, #1e0e04 50%, #281605 100%);
+      border: 2px solid #6b4a1a; border-radius: 12px; max-width: 460px; width: 100%; padding: 28px;
+      box-shadow: 0 0 0 1px rgba(200,160,60,0.12), 0 0 60px rgba(0,0,0,0.6);
+    }
     .card-detail-inner h2 { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; color: #cc0000; text-transform: uppercase; margin-bottom: 4px; }
-    .card-detail-position { font-family: 'Cinzel', serif; font-size: 0.65rem; color: #8b6914; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
-    .card-detail-meaning { font-size: 0.88rem; line-height: 1.7; color: rgba(232,220,200,0.8); margin-bottom: 16px; }
+    .card-detail-position { font-family: 'Cinzel', serif; font-size: 0.65rem; color: #c8a040; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+    .card-detail-meaning { font-size: 0.88rem; line-height: 1.7; color: rgba(226,207,160,0.8); margin-bottom: 16px; }
     .card-detail-close { width: 100%; padding: 12px; background: rgba(139,0,0,0.3); border: 1px solid rgba(139,0,0,0.5); color: #e8dcc8; font-family: 'Cinzel', serif; letter-spacing: 3px; text-transform: uppercase; font-size: 0.7rem; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
     .card-detail-close:hover { background: rgba(139,0,0,0.6); }
 
@@ -108,8 +136,10 @@
     .scanlines { position: fixed; inset: 0; pointer-events: none; z-index: 1; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px); }
 
     /* ── ERROR ── */
-    .error-msg { background: rgba(139,0,0,0.15); border: 1px solid rgba(139,0,0,0.4); color: #ff6666; font-size: 0.82rem; padding: 12px 16px; border-radius: 6px; margin-top: 12px; display: none; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    .error-msg { background: rgba(139,0,0,0.15); border: 1px solid rgba(139,0,0,0.4); color: #ff7070; font-size: 0.82rem; padding: 12px 16px; border-radius: 6px; margin-top: 12px; display: none; font-family: 'Cinzel', serif; letter-spacing: 1px; }
     .error-msg.visible { display: block; }
+    /* ── PARTICLE COLOUR OVERRIDE for tarot ── */
+    :root { --tarot-particle-warm: 1; }
   </style>
 </head>
 <body>
@@ -135,23 +165,47 @@
   </div>
 </div>
 
-<!-- NAV -->
-<nav class="main-nav">
-  <div class="nav-container">
-    <a href="home.html" class="nav-logo-wrap">
-      <img src="assets/images/voodoo-hut-logo.png" alt="The Voodoo Hut" class="nav-logo" onerror="this.style.display='none'" />
-      <span class="nav-logo-text" style="font-family:'Cinzel Decorative',serif; color:#8b0000;">THE VOODOO HUT</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="home.html">Home</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="radio.html">Radio</a></li>
-      <li><a href="live.html">Live</a></li>
-      <li><a href="menu.html">Menu</a></li>
-      <li><a href="about.html">About</a></li>
+  <!-- PREVIEW BANNER -->
+  <div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">
+    &#9888; Development Preview &mdash;
+    <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a>
+    &nbsp;&middot;&nbsp;
+    <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a>
+  </div>
+
+  <!-- NAV -->
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home">
+        <img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" />
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"    class="nav-link">Home</a></li>
+        <li><a href="events.html"  class="nav-link">Events</a></li>
+        <li><a href="menu.html"    class="nav-link">Menu</a></li>
+        <li><a href="live.html"    class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"   class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html"   class="nav-link">About</a></li>
+        <li><a href="contact.html" class="btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Mobile navigation">
+    <ul role="list">
+      <li><a href="home.html"    class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
     </ul>
   </div>
-</nav>
 
 <div class="tarot-page">
   <!-- HEADER -->
@@ -210,15 +264,24 @@
   </div>
 </div>
 
-<!-- BOTTOM RADIO BAR -->
-<div class="radio-bar" id="radio-bar">
-  <button class="radio-bar-btn" id="radio-play-bar" aria-label="Play/Pause Radio">&#9654;</button>
-  <div class="radio-bar-info">
-    <span class="radio-bar-label">Voodoo Hut Radio</span>
-    <span class="radio-bar-track" id="radio-bar-track">Loading...</span>
+<!-- RADIO PLAYER -->
+<div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+  <div class="radio-player-inner">
+    <div class="radio-player-brand">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="radio-player-name">Voodoo Hut Radio</span>
+    </div>
+    <div class="radio-player-track">
+      <span id="now-playing">Tap play to tune in</span>
+    </div>
+    <div class="radio-player-controls">
+      <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+      <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <a href="radio.html" class="radio-player-link" aria-label="Radio station page">&#9654;&#9654;</a>
+    </div>
   </div>
-  <input type="range" id="radio-volume-bar" min="0" max="1" step="0.01" value="0.7" class="radio-bar-volume" aria-label="Volume" />
-  <a href="radio.html" class="radio-bar-link">Full Player</a>
 </div>
 
 <script src="assets/js/main.js"></script>
