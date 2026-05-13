@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pool Room | The Voodoo Hut</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(0,40,0,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(60,0,0,0.3) 0%, transparent 50%),
+        linear-gradient(160deg, #030a02 0%, #060604 50%, #060205 100%);
+      color: #e0d4b0;
+      font-family: 'Open Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .pool-page { padding-bottom: 80px; }
+
+    .pool-header { text-align: center; padding: 50px 20px 16px; }
+    .pool-header h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      color: #cc3300;
+      text-shadow: 0 0 30px rgba(200,50,0,0.6), 0 0 60px rgba(200,0,0,0.2);
+      letter-spacing: 4px; margin-bottom: 6px;
+    }
+    .pool-header p {
+      font-family: 'Cinzel', serif; font-size: 0.82rem;
+      color: rgba(200,160,80,0.55); letter-spacing: 4px; text-transform: uppercase;
+    }
+
+    .pool-arena { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+    /* ── CHARACTER PANEL ── */
+    .character-panel {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(180,100,30,0.18);
+      border-radius: 14px; padding: 14px 18px; margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+    }
+    .char-portrait {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2e0a00 0%, #080004 100%);
+      border: 2px solid rgba(200,60,0,0.45);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem; flex-shrink: 0;
+      box-shadow: 0 0 18px rgba(180,40,0,0.25), inset 0 0 12px rgba(0,0,0,0.5);
+    }
+    .char-info { flex: 1; min-width: 0; }
+    .char-name {
+      font-family: 'Cinzel', serif; font-size: 0.82rem;
+      letter-spacing: 3px; text-transform: uppercase; color: #c85000; margin-bottom: 3px;
+    }
+    .char-talk {
+      font-style: italic; font-size: 0.82rem;
+      color: rgba(220,195,145,0.7); min-height: 20px;
+      transition: opacity 0.3s; line-height: 1.4;
+    }
+    .char-talk.fade { opacity: 0; }
+
+    /* ── STATUS BAR ── */
+    .status-panel {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(180,130,40,0.1);
+      border-radius: 10px; padding: 9px 16px; margin-bottom: 10px;
+      font-family: 'Cinzel', serif; font-size: 0.68rem;
+      letter-spacing: 2px; text-transform: uppercase; flex-wrap: wrap; gap: 6px;
+    }
+    .status-turn { color: #c8a040; }
+    .status-groups { display: flex; gap: 10px; align-items: center; }
+    .group-label { color: rgba(200,175,130,0.55); font-size: 0.62rem; }
+    .ball-pips { display: flex; gap: 3px; flex-wrap: wrap; }
+    .ball-pip {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* ── CANVAS ── */
+    .canvas-wrap {
+      position: relative; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 0 0 5px #3a1e00, 0 0 0 9px #1c0900, 0 0 50px rgba(0,0,0,0.9);
+    }
+    #pool-canvas { display: block; width: 100%; cursor: crosshair; touch-action: none; }
+
+    .controls-hint {
+      text-align: center; font-family: 'Cinzel', serif; font-size: 0.62rem;
+      letter-spacing: 2px; color: rgba(200,160,80,0.35); margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    /* ── MAGIC 8 BALL WIN MODAL ── */
+    .magic-modal {
+      position: fixed; inset: 0; z-index: 300; display: none;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); padding: 20px;
+    }
+    .magic-modal.active { display: flex; }
+    .magic-inner { text-align: center; max-width: 420px; width: 100%; }
+    .magic-win-text {
+      font-family: 'Cinzel Decorative', serif; font-size: clamp(1.1rem, 4vw, 1.9rem);
+      color: #dd2200; text-shadow: 0 0 30px rgba(220,40,0,0.7); margin-bottom: 6px;
+    }
+    .magic-win-sub {
+      font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 4px;
+      color: rgba(200,160,80,0.55); margin-bottom: 28px; text-transform: uppercase;
+    }
+    .eight-ball {
+      width: 156px; height: 156px; border-radius: 50%;
+      background: radial-gradient(circle at 33% 28%, #444 0%, #111 45%, #000 100%);
+      margin: 0 auto 20px; position: relative; cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.06), 0 8px 40px rgba(0,0,0,0.9),
+        inset 0 -6px 14px rgba(255,255,255,0.08);
+      transition: transform 0.18s, box-shadow 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .eight-ball:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.1), 0 8px 60px rgba(0,0,0,0.9),
+        0 0 60px rgba(80,0,180,0.4), inset 0 -6px 14px rgba(255,255,255,0.08);
+    }
+    .eight-ball:active { transform: scale(0.96); }
+    .eight-ball-circle {
+      width: 66px; height: 66px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 38%, #fff 0%, #eee 40%, #ccc 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    .eight-ball-number { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; color: #111; }
+    .eight-ball-answer {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, rgba(0,0,70,0.97) 0%, rgba(0,0,20,0.99) 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px; opacity: 0; transition: opacity 0.6s;
+    }
+    .eight-ball-answer.revealed { opacity: 1; }
+    .eight-ball-answer-text {
+      font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px;
+      color: #90b8ff; text-align: center; text-shadow: 0 0 12px rgba(100,150,255,0.8);
+      line-height: 1.5;
+    }
+    .magic-prompt {
+      font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 3px;
+      color: rgba(180,140,245,0.55); margin-bottom: 20px; text-transform: uppercase;
+    }
+    .magic-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .magic-btn {
+      padding: 12px 22px; font-family: 'Cinzel', serif; font-size: 0.68rem;
+      letter-spacing: 3px; text-transform: uppercase; border-radius: 9px;
+      cursor: pointer; border: 1px solid; transition: all 0.3s;
+    }
+    .btn-rematch { background: rgba(139,0,0,0.25); border-color: rgba(200,0,40,0.35); color: #e0cfc0; }
+    .btn-rematch:hover { background: rgba(180,0,40,0.4); }
+    .btn-leave { background: transparent; border-color: rgba(200,160,80,0.2); color: rgba(200,160,80,0.55); }
+    .btn-leave:hover { background: rgba(200,160,80,0.08); color: #c8a040; }
+
+    /* ── LOSE MODAL ── */
+    .lose-modal {
+      position: fixed; inset: 0; z-index: 300; display: none;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); padding: 20px;
+    }
+    .lose-modal.active { display: flex; }
+    .lose-inner { text-align: center; max-width: 380px; }
+    .lose-skull { font-size: 3.5rem; margin-bottom: 14px; }
+    .lose-title {
+      font-family: 'Cinzel Decorative', serif; font-size: clamp(1rem, 3vw, 1.5rem);
+      color: #8b0000; margin-bottom: 8px; text-shadow: 0 0 20px rgba(139,0,0,0.5);
+    }
+    .lose-sub {
+      font-family: 'Cinzel', serif; font-style: italic;
+      color: rgba(200,160,80,0.55); font-size: 0.83rem;
+      margin-bottom: 24px; letter-spacing: 1px;
+    }
+
+    @keyframes eightBallIn {
+      0%   { transform: scale(0) rotate(-540deg); opacity: 0; }
+      65%  { transform: scale(1.12) rotate(15deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .eight-ball.animate-in { animation: eightBallIn 1.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+    @media (max-width: 500px) {
+      .status-panel { font-size: 0.6rem; }
+      .character-panel { padding: 10px 12px; gap: 10px; }
+      .char-portrait { width: 48px; height: 48px; font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PREVIEW BANNER -->
+  <div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">
+    &#9888; Development Preview &mdash;
+    <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a>
+    &nbsp;&middot;&nbsp;
+    <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a>
+  </div>
+
+  <!-- NAV -->
+  <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home">
+        <img src="assets/images/logo.png" alt="VooDoo Hut" class="logo-img" />
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="home.html"    class="nav-link">Home</a></li>
+        <li><a href="events.html"  class="nav-link">Events</a></li>
+        <li><a href="menu.html"    class="nav-link">Menu</a></li>
+        <li><a href="live.html"    class="nav-link">Live Streams</a></li>
+        <li><a href="radio.html"   class="nav-link">Radio</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="about.html"   class="nav-link">About</a></li>
+        <li><a href="pool.html"    class="nav-link">Pool Room</a></li>
+        <li><a href="contact.html" class="btn btn-primary btn-sm">Reserve a Table</a></li>
+      </ul>
+      <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Mobile navigation">
+    <ul role="list">
+      <li><a href="home.html"    class="mobile-nav-link">Home</a></li>
+      <li><a href="events.html"  class="mobile-nav-link">Events</a></li>
+      <li><a href="menu.html"    class="mobile-nav-link">Menu</a></li>
+      <li><a href="live.html"    class="mobile-nav-link">Live Streams</a></li>
+      <li><a href="radio.html"   class="mobile-nav-link">Radio</a></li>
+      <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+      <li><a href="about.html"   class="mobile-nav-link">About</a></li>
+      <li><a href="pool.html"    class="mobile-nav-link">Pool Room</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <div class="pool-page">
+    <header class="pool-header">
+      <h1>The Pool Room</h1>
+      <p>Beat Baptiste &mdash; If You Dare</p>
+    </header>
+
+    <div class="pool-arena">
+      <!-- CHARACTER -->
+      <div class="character-panel">
+        <div class="char-portrait">💀</div>
+        <div class="char-info">
+          <div class="char-name">Baptiste Fontenot &mdash; 1962</div>
+          <div class="char-talk" id="char-talk">"You found my table, cher. Let's see what you got."</div>
+        </div>
+      </div>
+
+      <!-- STATUS -->
+      <div class="status-panel">
+        <div class="status-turn" id="status-turn">YOUR TURN — BREAK</div>
+        <div class="status-groups">
+          <span class="group-label">YOU:</span>
+          <div class="ball-pips" id="player-pips"></div>
+          <span class="group-label" style="margin-left:8px">BAPTISTE:</span>
+          <div class="ball-pips" id="ai-pips"></div>
+        </div>
+      </div>
+
+      <!-- CANVAS -->
+      <div class="canvas-wrap">
+        <canvas id="pool-canvas" width="860" height="460"></canvas>
+      </div>
+
+      <div class="controls-hint" id="controls-hint">
+        Drag from cue ball to aim &mdash; release to shoot
+      </div>
+    </div>
+  </div>
+
+  <!-- WIN / 8 BALL MODAL -->
+  <div class="magic-modal" id="magic-modal">
+    <div class="magic-inner">
+      <div class="magic-win-text">You Ran The Table</div>
+      <div class="magic-win-sub">The eight ball speaks to the worthy</div>
+      <div class="eight-ball animate-in" id="eight-ball" onclick="shake8Ball()">
+        <div class="eight-ball-circle">
+          <span class="eight-ball-number">8</span>
+        </div>
+        <div class="eight-ball-answer" id="eight-answer">
+          <div class="eight-ball-answer-text" id="eight-answer-text"></div>
+        </div>
+      </div>
+      <div class="magic-prompt" id="magic-prompt">Tap the eight ball to reveal your fate</div>
+      <div class="magic-actions">
+        <button class="magic-btn btn-rematch" onclick="startGame()">Rack &lsquo;Em Again</button>
+        <button class="magic-btn btn-leave" onclick="document.getElementById('magic-modal').classList.remove('active')">Leave the Table</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOSE MODAL -->
+  <div class="lose-modal" id="lose-modal">
+    <div class="lose-inner">
+      <div class="lose-skull">💀</div>
+      <div class="lose-title">Baptiste Wins Again</div>
+      <div class="lose-sub" id="lose-quote">"Told you, cher. Fifty years at this table."</div>
+      <div class="magic-actions">
+        <button class="magic-btn btn-rematch" onclick="startGame()">Try Again</button>
+        <button class="magic-btn btn-leave" onclick="document.getElementById('lose-modal').classList.remove('active')">Walk Away</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADIO PLAYER -->
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+    <div class="radio-player-inner">
+      <div class="radio-player-brand">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="radio-player-name">Voodoo Hut Radio</span>
+      </div>
+      <div class="radio-player-track">
+        <span id="now-playing">Tap play to tune in</span>
+      </div>
+      <div class="radio-player-controls">
+        <input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+        <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <a href="radio.html" class="radio-player-link" aria-label="Radio station page">&#9654;&#9654;</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/easter-eggs.js"></script>
+  <script>
+  // ═══════════════════════════════════════════
+  //  VOODOO HUT — POOL GAME
+  //  Baptiste Fontenot vs. The Living
+  // ═══════════════════════════════════════════
+
+  const canvas = document.getElementById('pool-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;   // 860
+  const H = canvas.height;  // 460
+
+  // Table playfield bounds
+  const T = { x1: 50, y1: 50, x2: 810, y2: 410 };
+  const FELT_W = T.x2 - T.x1;  // 760
+  const FELT_H = T.y2 - T.y1;  // 360
+
+  const BALL_R = 13;
+  const BALL_D = BALL_R * 2;
+  const FRICTION = 0.985;
+  const CUSHION_LOSS = 0.78;
+  const STOP_V = 0.07;
+  const POCKET_R = 20;
+
+  const HEAD_SPOT_X = T.x1 + FELT_W * 0.25;  // ~240 — where cue ball starts
+  const FOOT_SPOT_X = T.x1 + FELT_W * 0.75;  // ~620 — rack apex
+  const CENTER_Y = T.y1 + FELT_H / 2;         // 230
+
+  const POCKETS = [
+    { x: 50,  y: 50  },   // TL
+    { x: 430, y: 33  },   // TC
+    { x: 810, y: 50  },   // TR
+    { x: 50,  y: 410 },   // BL
+    { x: 430, y: 427 },   // BC
+    { x: 810, y: 410 },   // BR
+  ];
+
+  // Ball colours (1-15 + 0 = cue)
+  const BALL_COLOR = {
+    0:  '#f0f0e8',  // cue
+    1:  '#e8c200',  2:  '#1a3aad',  3:  '#cc1100',
+    4:  '#6a0dad',  5:  '#e86000',  6:  '#0a7a0a',
+    7:  '#8b1500',  8:  '#111111',
+    9:  '#e8c200',  10: '#1a3aad',  11: '#cc1100',
+    12: '#6a0dad',  13: '#e86000',  14: '#0a7a0a',
+    15: '#8b1500',
+  };
+  const STRIPE_NUMBERS = new Set([9,10,11,12,13,14,15]);
+  const SOLID_NUMBERS  = new Set([1,2,3,4,5,6,7]);
+
+  // Magic 8 Ball answers
+  const EIGHT_ANSWERS = [
+    'It Is Certain','It Is Decidedly So','Without A Doubt',
+    'Yes Definitely','You May Rely On It','As I See It Yes',
+    'Most Likely','Outlook Good','Yes','Signs Point To Yes',
+    'Reply Hazy Try Again','Ask Again Later','Better Not Tell Now',
+    'Cannot Predict Now','Concentrate And Ask Again',
+    "Don't Count On It",'My Reply Is No','My Sources Say No',
+    'Outlook Not So Good','Very Doubtful',
+  ];
+
+  // Baptiste trash talk lines
+  const TALK_BREAK     = [
+    '"You break like you never held a stick, cher."',
+    '"Not bad. For a living person."',
+    '"Oh, we got a shooter here. Maybe."',
+    '"Mmmph. Break like that, this gonna be quick."',
+  ];
+  const TALK_AI_MISS   = [
+    '"Table rattled on me. Happens."',
+    '"I let you have that one, sha."',
+    '"The spirits distracted me. Won\'t happen twice."',
+    '"Hmm. Even ghosts have off nights."',
+  ];
+  const TALK_AI_POCKET = [
+    '"That\'s how you do it, cher."',
+    '"One down. Tick tock."',
+    '"See that? Fifty years of practice."',
+    '"Don\'t blink, you gonna miss it."',
+  ];
+  const TALK_PLAYER_MISS = [
+    '"Almost. Almost don\'t count in pool, sha."',
+    '"You call dat a shot? Mon Dieu."',
+    '"The table don\'t lie, bébé."',
+    '"Maybe try checkers, yeah?"',
+    '"Mmm. My turn now."',
+  ];
+  const TALK_PLAYER_POCKET = [
+    '"Lucky. Real lucky."',
+    '"Beginner\'s luck runs out, cher."',
+    '"Aight, you got some game. Some."',
+    '"Don\'t get comfortable."',
+  ];
+  const TALK_PLAYER_WIN = [
+    '"You beat a ghost. Go on, tell your friends."',
+    '"Enjoy it, cher. Tomorrow night, I\'m back at this table."',
+    '"The eight ball chose you tonight. Respect."',
+  ];
+  const TALK_AI_WIN = [
+    '"Fifty years, cher. Fifty years."',
+    '"Come back when you practiced a decade or two."',
+    '"Baptiste never loses on his own table, sha."',
+  ];
+
+  // ── GAME STATE ──
+  let balls = [];
+  let gamePhase = 'idle'; // idle | aiming | moving | ai_thinking | over
+  let playerGroup = null;  // 'solid' | 'stripe' | null
+  let aiGroup     = null;
+  let playerTurnFlag = true;
+  let breakShot = true;
+  let aimStart = null;    // { x, y } mouse down position
+  let aimCurrent = null;
+  let isDragging = false;
+  let aiTimer = null;
+
+  function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  // ── INIT ──
+  function startGame() {
+    document.getElementById('magic-modal').classList.remove('active');
+    document.getElementById('lose-modal').classList.remove('active');
+    document.getElementById('eight-answer').classList.remove('revealed');
+    document.getElementById('eight-answer-text').textContent = '';
+    document.getElementById('magic-prompt').textContent = 'Tap the eight ball to reveal your fate';
+    document.getElementById('eight-ball').classList.remove('animate-in');
+    void document.getElementById('eight-ball').offsetWidth; // reflow
+    document.getElementById('eight-ball').classList.add('animate-in');
+
+    playerGroup = null;
+    aiGroup = null;
+    playerTurnFlag = true;
+    breakShot = true;
+    gamePhase = 'aiming';
+    balls = [];
+    if (aiTimer) clearTimeout(aiTimer);
+
+    // Cue ball
+    balls.push({ n: 0, x: HEAD_SPOT_X, y: CENTER_Y, vx: 0, vy: 0, pocketed: false, group: 'cue' });
+
+    // Rack (standard 8-ball triangle, foot spot = apex)
+    const rackOrder = [1, 9,2, 10,8,3, 4,14,11,7, 12,6,13,5,15];
+    const rows = [[0],[1,2],[3,4,5],[6,7,8,9],[10,11,12,13,14]];
+    const rowDX = BALL_D * Math.cos(Math.PI/6); // horizontal spacing between rows
+    const colDY = BALL_D;                        // vertical spacing within row
+
+    rows.forEach((cols, r) => {
+      cols.forEach((idx, c) => {
+        const n = rackOrder[idx];
+        const rx = FOOT_SPOT_X + r * rowDX;
+        const ry = CENTER_Y - (cols.length - 1) * BALL_R + c * colDY;
+        balls.push({
+          n, x: rx, y: ry, vx: 0, vy: 0, pocketed: false,
+          group: SOLID_NUMBERS.has(n) ? 'solid' : STRIPE_NUMBERS.has(n) ? 'stripe' : 'eight',
+        });
+      });
+    });
+
+    updateStatus();
+    setBaptisteTalk('"You found my table, cher. Let\'s see what you got."');
+  }
+
+  // ── PHYSICS ──
+  function applyFriction(b) {
+    b.vx *= FRICTION;
+    b.vy *= FRICTION;
+    const spd = Math.hypot(b.vx, b.vy);
+    if (spd < STOP_V) { b.vx = 0; b.vy = 0; }
+  }
+
+  function bounceWalls(b) {
+    if (b.x - BALL_R < T.x1) { b.x = T.x1 + BALL_R; b.vx =  Math.abs(b.vx) * CUSHION_LOSS; }
+    if (b.x + BALL_R > T.x2) { b.x = T.x2 - BALL_R; b.vx = -Math.abs(b.vx) * CUSHION_LOSS; }
+    if (b.y - BALL_R < T.y1) { b.y = T.y1 + BALL_R; b.vy =  Math.abs(b.vy) * CUSHION_LOSS; }
+    if (b.y + BALL_R > T.y2) { b.y = T.y2 - BALL_R; b.vy = -Math.abs(b.vy) * CUSHION_LOSS; }
+  }
+
+  function collideBalls(a, b) {
+    if (a.pocketed || b.pocketed) return;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const distSq = dx*dx + dy*dy;
+    if (distSq >= BALL_D*BALL_D || distSq === 0) return;
+
+    const dist = Math.sqrt(distSq);
+    const nx = dx/dist, ny = dy/dist;
+    const overlap = BALL_D - dist;
+    a.x -= nx * overlap * 0.5;
+    a.y -= ny * overlap * 0.5;
+    b.x += nx * overlap * 0.5;
+    b.y += ny * overlap * 0.5;
+
+    const dvn = (a.vx - b.vx)*nx + (a.vy - b.vy)*ny;
+    if (dvn <= 0) return;
+    a.vx -= dvn*nx; a.vy -= dvn*ny;
+    b.vx += dvn*nx; b.vy += dvn*ny;
+  }
+
+  function checkPockets() {
+    const newlyPocketed = [];
+    for (const b of balls) {
+      if (b.pocketed) continue;
+      for (const p of POCKETS) {
+        if (Math.hypot(b.x - p.x, b.y - p.y) < POCKET_R + BALL_R * 0.3) {
+          b.pocketed = true;
+          b.vx = 0; b.vy = 0;
+          newlyPocketed.push(b);
+          break;
+        }
+      }
+    }
+    return newlyPocketed;
+  }
+
+  function allStopped() {
+    return balls.every(b => b.pocketed || (Math.abs(b.vx) < STOP_V && Math.abs(b.vy) < STOP_V));
+  }
+
+  // ── TURN RESOLUTION ──
+  let pendingPocketed = [];
+
+  function onBallsStopped() {
+    const pocketed = pendingPocketed.splice(0);
+    const cue = balls[0];
+
+    // Cue scratch
+    const cueScratch = cue.pocketed;
+    if (cueScratch) {
+      cue.pocketed = false;
+      cue.x = HEAD_SPOT_X;
+      cue.y = CENTER_Y;
+      cue.vx = 0; cue.vy = 0;
+    }
+
+    const eight = balls.find(b => b.n === 8);
+    const eightPocketed = pocketed.includes(eight);
+
+    if (playerTurnFlag) {
+      // Player's turn results
+      if (eightPocketed) {
+        // Check if player has legally pocketed 8 (all their balls cleared)
+        const playerBalls = balls.filter(b => !b.pocketed && playerGroup && b.group === playerGroup);
+        if (!cueScratch && playerGroup && playerBalls.length === 0) {
+          triggerWin();
+        } else {
+          triggerLose('8 ball early');
+        }
+        return;
+      }
+
+      const playerPocketed = pocketed.filter(b => b.n !== 8 && b.n !== 0);
+      let validPockets = [];
+
+      if (!playerGroup && !aiGroup) {
+        // First pocket of the game
+        if (playerPocketed.length > 0) {
+          const firstBall = playerPocketed[0];
+          playerGroup = firstBall.group;
+          aiGroup = playerGroup === 'solid' ? 'stripe' : 'solid';
+          validPockets = playerPocketed;
+        }
+      } else {
+        validPockets = playerPocketed.filter(b => b.group === playerGroup);
+      }
+
+      if (validPockets.length > 0 && !cueScratch) {
+        setBaptisteTalk(rnd(TALK_PLAYER_POCKET));
+        gamePhase = 'aiming';
+        updateStatus();
+      } else {
+        if (playerPocketed.length === 0) setBaptisteTalk(rnd(TALK_PLAYER_MISS));
+        playerTurnFlag = false;
+        updateStatus();
+        startAiTurn();
+        return;
+      }
+    } else {
+      // AI's turn results
+      if (eightPocketed) {
+        const aiBallsLeft = balls.filter(b => !b.pocketed && aiGroup && b.group === aiGroup);
+        if (!cueScratch && aiGroup && aiBallsLeft.length === 0) {
+          triggerLose('baptiste wins');
+        } else {
+          // AI fouled
+          playerTurnFlag = true;
+          gamePhase = 'aiming';
+          updateStatus();
+        }
+        return;
+      }
+
+      const aiPocketed = pocketed.filter(b => b.n !== 8 && b.n !== 0);
+      let aiValid = [];
+
+      if (!playerGroup && !aiGroup) {
+        if (aiPocketed.length > 0) {
+          aiGroup = aiPocketed[0].group;
+          playerGroup = aiGroup === 'solid' ? 'stripe' : 'solid';
+          aiValid = aiPocketed;
+        }
+      } else {
+        aiValid = aiPocketed.filter(b => b.group === aiGroup);
+      }
+
+      if (aiValid.length > 0 && !cueScratch) {
+        setBaptisteTalk(rnd(TALK_AI_POCKET));
+        startAiTurn();
+        return;
+      } else {
+        setBaptisteTalk(rnd(TALK_AI_MISS));
+        playerTurnFlag = true;
+        gamePhase = 'aiming';
+        updateStatus();
+      }
+    }
+
+    updateStatus();
+  }
+
+  function startAiTurn() {
+    gamePhase = 'ai_thinking';
+    updateStatus();
+    setBaptisteTalk('"Mmm... let me think, sha."');
+    aiTimer = setTimeout(() => {
+      doAiShot();
+    }, 1200);
+  }
+
+  function doAiShot() {
+    const cue = balls[0];
+    if (cue.pocketed) {
+      cue.pocketed = false;
+      cue.x = HEAD_SPOT_X;
+      cue.y = CENTER_Y;
+    }
+
+    const aiBallsLeft = balls.filter(b => !b.pocketed && aiGroup && b.group === aiGroup);
+    const targets = aiBallsLeft.length > 0
+      ? aiBallsLeft
+      : [balls.find(b => !b.pocketed && b.n === 8)].filter(Boolean);
+
+    let bestAx = null, bestAy = null, bestScore = -Infinity;
+
+    for (const target of targets) {
+      for (const pocket of POCKETS) {
+        // Ghost ball method
+        const toPocket = Math.hypot(pocket.x - target.x, pocket.y - target.y);
+        if (toPocket < 1) continue;
+        const dx = (target.x - pocket.x) / toPocket;
+        const dy = (target.y - pocket.y) / toPocket;
+        const ghostX = target.x + dx * BALL_D;
+        const ghostY = target.y + dy * BALL_D;
+
+        // Ghost must be on table
+        if (ghostX < T.x1+BALL_R || ghostX > T.x2-BALL_R) continue;
+        if (ghostY < T.y1+BALL_R || ghostY > T.y2-BALL_R) continue;
+
+        const cueDist = Math.hypot(ghostX - cue.x, ghostY - cue.y);
+        const score = 1 / (cueDist * 0.001 + 1) + Math.random() * 0.15;
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestAx = ghostX;
+          bestAy = ghostY;
+        }
+      }
+    }
+
+    if (bestAx === null) {
+      // Fallback: just hit the nearest ball
+      let nearest = null, nearDist = Infinity;
+      for (const b of balls) {
+        if (b.pocketed || b.n === 0) continue;
+        const d = Math.hypot(b.x - cue.x, b.y - cue.y);
+        if (d < nearDist) { nearDist = d; nearest = b; }
+      }
+      if (nearest) {
+        bestAx = nearest.x; bestAy = nearest.y;
+      } else {
+        bestAx = T.x1 + FELT_W/2;
+        bestAy = T.y1 + FELT_H/2;
+      }
+    }
+
+    const angle = Math.atan2(bestAy - cue.y, bestAx - cue.x)
+      + (Math.random() - 0.5) * 0.22; // ±6.3° error
+    const power = 7 + Math.random() * 7; // 7–14
+
+    cue.vx = Math.cos(angle) * power;
+    cue.vy = Math.sin(angle) * power;
+    gamePhase = 'moving';
+    updateStatus();
+  }
+
+  // ── WIN / LOSE ──
+  function triggerWin() {
+    gamePhase = 'over';
+    setBaptisteTalk(rnd(TALK_PLAYER_WIN));
+    setTimeout(() => {
+      document.getElementById('magic-modal').classList.add('active');
+    }, 800);
+  }
+
+  function triggerLose(reason) {
+    gamePhase = 'over';
+    setBaptisteTalk(rnd(TALK_AI_WIN));
+    document.getElementById('lose-quote').textContent = rnd(TALK_AI_WIN);
+    setTimeout(() => {
+      document.getElementById('lose-modal').classList.add('active');
+    }, 800);
+  }
+
+  // ── MAGIC 8 BALL ──
+  let lastEightAnswer = null;
+  function shake8Ball() {
+    const answerEl = document.getElementById('eight-answer');
+    if (answerEl.classList.contains('revealed')) {
+      // Shake for new answer
+      answerEl.classList.remove('revealed');
+      setTimeout(() => {
+        const ans = rnd(EIGHT_ANSWERS.filter(a => a !== lastEightAnswer));
+        lastEightAnswer = ans;
+        document.getElementById('eight-answer-text').textContent = ans.toUpperCase();
+        document.getElementById('magic-prompt').textContent = 'Tap again to ask again';
+        answerEl.classList.add('revealed');
+      }, 400);
+    } else {
+      const ans = rnd(EIGHT_ANSWERS);
+      lastEightAnswer = ans;
+      document.getElementById('eight-answer-text').textContent = ans.toUpperCase();
+      document.getElementById('magic-prompt').textContent = 'Tap again to ask again';
+      answerEl.classList.add('revealed');
+    }
+  }
+
+  // ── UI ──
+  function setBaptisteTalk(text) {
+    const el = document.getElementById('char-talk');
+    el.classList.add('fade');
+    setTimeout(() => {
+      el.textContent = text;
+      el.classList.remove('fade');
+    }, 300);
+  }
+
+  function updateStatus() {
+    const turnEl = document.getElementById('status-turn');
+    if (gamePhase === 'aiming' && playerTurnFlag) {
+      turnEl.textContent = breakShot ? 'YOUR TURN — BREAK' : 'YOUR TURN';
+      turnEl.style.color = '#c8a040';
+    } else if (gamePhase === 'ai_thinking' || (!playerTurnFlag && gamePhase === 'moving')) {
+      turnEl.textContent = 'BAPTISTE THINKING…';
+      turnEl.style.color = '#cc4400';
+    } else if (gamePhase === 'moving' && playerTurnFlag) {
+      turnEl.textContent = 'BALLS ROLLING…';
+      turnEl.style.color = '#aaa';
+    } else if (gamePhase === 'over') {
+      turnEl.textContent = '';
+    }
+
+    // Ball pip indicators
+    renderPips('player-pips', playerGroup, true);
+    renderPips('ai-pips', aiGroup, false);
+  }
+
+  function renderPips(elId, group, isPlayer) {
+    const el = document.getElementById(elId);
+    if (!group) { el.innerHTML = '<span style="color:rgba(200,175,130,0.3);font-size:0.6rem">—</span>'; return; }
+    const myBalls = balls.filter(b => b.group === group);
+    const remaining = myBalls.filter(b => !b.pocketed);
+    el.innerHTML = myBalls.map(b =>
+      `<div class="ball-pip" style="background:${BALL_COLOR[b.n]};${b.pocketed ? 'opacity:0.2;' : ''}${group==='stripe'?'border-color:'+BALL_COLOR[b.n]+';background:rgba(240,240,230,0.9);outline:2px solid '+BALL_COLOR[b.n]+';outline-offset:-3px;':''}" title="Ball ${b.n}"></div>`
+    ).join('');
+  }
+
+  // ── DRAWING ──
+  function drawTable() {
+    // Outer wood rail
+    ctx.fillStyle = '#2a1200';
+    ctx.fillRect(0, 0, W, H);
+
+    // Wood grain detail
+    for (let i = 0; i < 12; i++) {
+      ctx.strokeStyle = `rgba(255,200,100,${0.015 + i*0.005})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, i * (H/12));
+      ctx.lineTo(W, i * (H/12) + 8);
+      ctx.stroke();
+    }
+
+    // Rail highlights
+    ctx.fillStyle = 'rgba(255,160,60,0.07)';
+    ctx.fillRect(0, 0, W, 46);
+    ctx.fillRect(0, H-46, W, 46);
+    ctx.fillRect(0, 0, 46, H);
+    ctx.fillRect(W-46, 0, 46, H);
+
+    // Felt
+    const feltGrad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 400);
+    feltGrad.addColorStop(0, '#1e5c22');
+    feltGrad.addColorStop(1, '#12380e');
+    ctx.fillStyle = feltGrad;
+    ctx.fillRect(T.x1, T.y1, FELT_W, FELT_H);
+
+    // Felt lines (diamonds)
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 0.5;
+    // Head string
+    ctx.beginPath();
+    ctx.moveTo(HEAD_SPOT_X, T.y1);
+    ctx.lineTo(HEAD_SPOT_X, T.y2);
+    ctx.stroke();
+
+    // Center spots
+    [[HEAD_SPOT_X, CENTER_Y], [FOOT_SPOT_X, CENTER_Y], [W/2, CENTER_Y]].forEach(([sx, sy]) => {
+      ctx.beginPath();
+      ctx.arc(sx, sy, 3, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fill();
+    });
+
+    // Pockets (dark holes)
+    for (const p of POCKETS) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, POCKET_R + 3, 0, Math.PI*2);
+      ctx.fillStyle = '#080400';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, POCKET_R, 0, Math.PI*2);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      // Pocket rim
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, POCKET_R + 3, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(180,120,30,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Rail cushion inner edge
+    ctx.strokeStyle = 'rgba(80,200,80,0.2)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(T.x1, T.y1, FELT_W, FELT_H);
+  }
+
+  function drawBall(b) {
+    if (b.pocketed) return;
+    const { x, y, n } = b;
+    const isStripe = STRIPE_NUMBERS.has(n);
+    const isCue = n === 0;
+    const isEight = n === 8;
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Shadow
+    ctx.beginPath();
+    ctx.arc(2, 3, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fill();
+
+    // Main ball
+    if (isCue) {
+      const g = ctx.createRadialGradient(-3, -4, 1, 0, 0, BALL_R);
+      g.addColorStop(0, '#ffffff');
+      g.addColorStop(0.6, '#e8e8e0');
+      g.addColorStop(1, '#c0c0b8');
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+    } else if (isEight) {
+      const g = ctx.createRadialGradient(-3, -4, 1, 0, 0, BALL_R);
+      g.addColorStop(0, '#333');
+      g.addColorStop(0.7, '#111');
+      g.addColorStop(1, '#000');
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      // White circle with 8
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R * 0.45, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.font = `bold ${BALL_R * 0.6}px Oswald, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#111';
+      ctx.fillText('8', 0, 0.5);
+    } else if (isStripe) {
+      // White base
+      const g = ctx.createRadialGradient(-3, -4, 1, 0, 0, BALL_R);
+      g.addColorStop(0, '#ffffff');
+      g.addColorStop(1, '#d0d0c8');
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      // Color stripe band
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R, 0, Math.PI*2);
+      ctx.clip();
+      ctx.fillStyle = BALL_COLOR[n];
+      ctx.fillRect(-BALL_R, -BALL_R * 0.55, BALL_D, BALL_R * 1.1);
+      ctx.restore();
+      // Number
+      ctx.font = `bold ${BALL_R * 0.58}px Oswald, sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeText(n, 0, 0);
+      ctx.fillText(n, 0, 0);
+    } else {
+      // Solid
+      const baseColor = BALL_COLOR[n];
+      const g = ctx.createRadialGradient(-3, -4, 1, 0, 0, BALL_R);
+      g.addColorStop(0, lighten(baseColor, 50));
+      g.addColorStop(0.7, baseColor);
+      g.addColorStop(1, darken(baseColor, 40));
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      // Number circle
+      ctx.beginPath();
+      ctx.arc(0, 0, BALL_R * 0.45, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      ctx.fill();
+      ctx.font = `bold ${BALL_R * 0.58}px Oswald, sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#111';
+      ctx.fillText(n, 0, 0.5);
+    }
+
+    // Glare
+    ctx.beginPath();
+    ctx.arc(-BALL_R*0.3, -BALL_R*0.3, BALL_R*0.28, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawAimLine() {
+    if (gamePhase !== 'aiming' || !playerTurnFlag || !isDragging || !aimStart || !aimCurrent) return;
+    const cue = balls[0];
+    if (cue.pocketed) return;
+
+    const dx = aimStart.x - aimCurrent.x;
+    const dy = aimStart.y - aimCurrent.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 5) return;
+
+    const nx = dx/dist, ny = dy/dist;
+    const power = Math.min(dist / 4, 20);
+
+    // Power bar segment colors along line
+    const lineLen = Math.min(dist * 2.5, 260);
+
+    ctx.save();
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = `rgba(255,240,180,${0.2 + power/30})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cue.x, cue.y);
+    ctx.lineTo(cue.x + nx * lineLen, cue.y + ny * lineLen);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arrow head
+    const ax = cue.x + nx * Math.min(lineLen, 80);
+    const ay = cue.y + ny * Math.min(lineLen, 80);
+    ctx.fillStyle = `rgba(255,240,180,${0.4 + power/25})`;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - nx*10 - ny*5, ay - ny*10 + nx*5);
+    ctx.lineTo(ax - nx*10 + ny*5, ay - ny*10 - nx*5);
+    ctx.closePath();
+    ctx.fill();
+
+    // Power indicator at cue ball
+    ctx.beginPath();
+    ctx.arc(cue.x, cue.y, BALL_R + 3 + power*0.3, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(255,100,0,${power/25})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawTable();
+    drawAimLine();
+    for (const b of balls) drawBall(b);
+  }
+
+  // Color helpers
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+  function lighten(hex, amt) {
+    const [r,g,b] = hexToRgb(hex);
+    return `rgb(${Math.min(255,r+amt)},${Math.min(255,g+amt)},${Math.min(255,b+amt)})`;
+  }
+  function darken(hex, amt) {
+    const [r,g,b] = hexToRgb(hex);
+    return `rgb(${Math.max(0,r-amt)},${Math.max(0,g-amt)},${Math.max(0,b-amt)})`;
+  }
+
+  // ── GAME LOOP ──
+  function update() {
+    if (gamePhase !== 'moving') return;
+
+    const active = balls.filter(b => !b.pocketed);
+
+    // Move
+    for (const b of active) {
+      b.x += b.vx;
+      b.y += b.vy;
+      applyFriction(b);
+      bounceWalls(b);
+    }
+
+    // Collisions (multiple passes for stability)
+    for (let pass = 0; pass < 3; pass++) {
+      for (let i = 0; i < active.length; i++) {
+        for (let j = i+1; j < active.length; j++) {
+          collideBalls(active[i], active[j]);
+        }
+      }
+    }
+
+    // Pockets
+    const newPocketed = checkPockets();
+    pendingPocketed.push(...newPocketed);
+
+    // Check all stopped
+    if (allStopped()) {
+      gamePhase = 'resolving';
+      setTimeout(onBallsStopped, 200);
+    }
+  }
+
+  let lastFrame = 0;
+  function loop(ts) {
+    // Fixed-step at ~60fps
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // ── MOUSE / TOUCH CONTROLS ──
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top)  * scaleY,
+    };
+  }
+
+  function onDown(e) {
+    if (gamePhase !== 'aiming' || !playerTurnFlag) return;
+    const cue = balls[0];
+    if (cue.pocketed) return;
+    const pos = getPos(e);
+    const dist = Math.hypot(pos.x - cue.x, pos.y - cue.y);
+    if (dist < BALL_R * 3.5) {
+      isDragging = true;
+      aimStart = pos;
+      aimCurrent = pos;
+    }
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    aimCurrent = getPos(e);
+  }
+
+  function onUp(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    if (gamePhase !== 'aiming' || !playerTurnFlag) return;
+
+    const cue = balls[0];
+    const dx = aimStart.x - aimCurrent.x;
+    const dy = aimStart.y - aimCurrent.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 8) { aimStart = null; aimCurrent = null; return; }
+
+    const power = Math.min(dist / 4, 20);
+    const nx = dx/dist, ny = dy/dist;
+    cue.vx = nx * power;
+    cue.vy = ny * power;
+
+    aimStart = null; aimCurrent = null;
+    gamePhase = 'moving';
+    breakShot = false;
+    pendingPocketed = [];
+    updateStatus();
+    if (e.target === document) setBaptisteTalk('"Let\'s see where that goes, sha."');
+  }
+
+  canvas.addEventListener('mousedown',  onDown);
+  canvas.addEventListener('mousemove',  onMove);
+  canvas.addEventListener('mouseup',    onUp);
+  canvas.addEventListener('touchstart', onDown, { passive: false });
+  canvas.addEventListener('touchmove',  onMove, { passive: false });
+  canvas.addEventListener('touchend',   onUp,   { passive: false });
+
+  // ── KICK OFF ──
+  startGame();
+  </script>
+</body>
+</html>
