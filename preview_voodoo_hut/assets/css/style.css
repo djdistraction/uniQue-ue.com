@@ -4,7 +4,7 @@
    ============================================================ */
 
 /* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Share+Tech+Mono&display=swap');
 
 /* --- Design Tokens --- */
 :root {
@@ -29,6 +29,14 @@
   --radius:     8px;
   --max-w:      1200px;
   --transition: 0.25s ease;
+  --space:        #010408;
+  --glass:        rgba(2, 6, 18, 0.72);
+  --glass-border: rgba(80, 120, 255, 0.12);
+  --nebula:       rgba(50, 0, 100, 0.18);
+  --purple:       #7b00cc;
+  --purple-glow:  rgba(120, 0, 200, 0.3);
+  --font-cinzel:  'Cinzel', serif;
+  --font-cinzel-dec: 'Cinzel Decorative', serif;
 }
 
 /* --- Reset & Base --- */
@@ -40,13 +48,13 @@ html {
 }
 
 body {
-  background: var(--black);
+  background: var(--space);
   color: var(--white);
   font-family: var(--font-body);
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
-  padding-top: var(--nav-h);
+  padding-top: 90px;
   padding-bottom: var(--player-h);
 }
 
@@ -223,17 +231,19 @@ p:last-child { margin-bottom: 0; }
 
 /* Cards */
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: rgba(4, 8, 22, 0.65);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
   overflow: hidden;
   transition: all var(--transition);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .card:hover {
-  border-color: rgba(255,255,255,0.12);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  border-color: rgba(80,130,255,0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(120,0,200,0.08);
 }
 
 .card-body { padding: 24px; }
@@ -441,12 +451,16 @@ p:last-child { margin-bottom: 0; }
 #mobile-menu {
   display: none;
   position: fixed;
-  top: var(--nav-h);
-  left: 0; right: 0;
-  background: rgba(6,6,8,0.98);
-  border-bottom: 1px solid var(--border);
+  top: 80px;
+  left: 24px; right: 24px;
+  background: rgba(1, 4, 14, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(80, 130, 255, 0.15);
+  border-radius: 20px;
   z-index: 999;
-  padding: 24px;
+  padding: 20px 24px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.8);
 }
 
 #mobile-menu.open { display: block; }
@@ -473,8 +487,10 @@ p:last-child { margin-bottom: 0; }
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: var(--player-h);
-  background: rgba(15,15,18,0.98);
-  border-top: 1px solid rgba(224,16,32,0.3);
+  background: rgba(1, 3, 10, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(80, 130, 255, 0.12);
   z-index: 900;
   display: flex;
   align-items: center;
@@ -1464,26 +1480,36 @@ footer {
 /* --- Nav (ID alias) --- */
 .main-nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--nav-h);
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 1180px;
+  height: 60px;
   z-index: 1000;
-  background: rgba(6,6,8,0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  transition: background var(--transition);
+  background: rgba(2, 6, 18, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(80, 130, 255, 0.15);
+  border-radius: 40px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
+              0 4px 24px rgba(0,0,0,0.6),
+              inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: background var(--transition), box-shadow var(--transition);
 }
-.main-nav.scrolled { background: rgba(6,6,8,0.98); }
-
+.main-nav.scrolled {
+  background: rgba(1, 4, 14, 0.92);
+  box-shadow: 0 0 0 1px rgba(80,130,255,0.12),
+              0 4px 32px rgba(0,0,0,0.8),
+              0 0 40px rgba(120,0,200,0.08),
+              inset 0 1px 0 rgba(255,255,255,0.04);
+}
 .main-nav .nav-inner {
-  height: var(--nav-h);
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 0 24px;
+  gap: 16px;
+  padding: 0 20px;
 }
 
 /* Nav logo as wordmark */
@@ -1511,7 +1537,8 @@ footer {
   transition: color var(--transition);
   white-space: nowrap;
 }
-.nav-link:hover, .nav-link.active { color: var(--white); }
+.nav-link:hover { color: var(--cyan); }
+.nav-link.active { color: var(--red); text-shadow: 0 0 12px var(--red-glow); }
 
 /* Mobile nav link */
 .mobile-nav-link {
@@ -1555,7 +1582,10 @@ footer {
 }
 
 /* --- Section utilities --- */
-.section-dark { background: var(--dark); }
+.section-dark {
+  background: rgba(2, 4, 14, 0.85);
+  backdrop-filter: blur(8px);
+}
 .section-eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -2028,8 +2058,10 @@ footer {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: var(--player-h);
-  background: rgba(15,15,18,0.98);
-  border-top: 1px solid rgba(224,16,32,0.3);
+  background: rgba(1, 3, 10, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(80, 130, 255, 0.12);
   z-index: 900;
   display: flex;
   align-items: center;
@@ -3379,4 +3411,36 @@ footer {
   background: var(--gold);
   flex-shrink: 0;
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── COSMIC UTILITIES ── */
+.glass-panel {
+  background: rgba(4, 8, 22, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(80, 130, 255, 0.1);
+  border-radius: 16px;
+}
+.glass-panel-dark {
+  background: rgba(2, 4, 12, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(80, 130, 255, 0.08);
+  border-radius: 20px;
+}
+.cosmic-glow-red    { text-shadow: 0 0 20px var(--red-glow), 0 0 60px rgba(200,0,30,0.15); }
+.cosmic-glow-cyan   { text-shadow: 0 0 20px var(--cyan-glow); }
+.cosmic-glow-purple { text-shadow: 0 0 20px var(--purple-glow); }
+.voodoo-border {
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+.voodoo-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(180,0,40,0.4), rgba(80,0,160,0.4), rgba(0,180,200,0.3));
+  z-index: -1;
 }
