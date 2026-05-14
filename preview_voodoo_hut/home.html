@@ -60,7 +60,6 @@
 
   <!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
   <section class="hero" aria-label="Hero" id="hero-section">
-    <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="hero-content">
       <div class="hero-logo-wrap">
         <a href="home.html" class="nav-logo-wrap hero-logo-wrap" aria-label="The VooDoo Hut">
@@ -303,81 +302,6 @@
 
   <script src="assets/js/main.js"></script>
   <script src="assets/js/easter-eggs.js"></script>
-
-  <!-- HERO PARTICLE CANVAS -->
-  <script>
-  (function () {
-    var canvas = document.getElementById('hero-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W = 0, H = 0, particles = [];
-
-    function resize() {
-      // Use the section's actual dimensions so the canvas fills it correctly
-      var hero = canvas.parentElement;
-      W = canvas.width  = hero ? hero.offsetWidth  : window.innerWidth;
-      H = canvas.height = hero ? hero.offsetHeight : window.innerHeight;
-    }
-
-    function makeParticle(randomY) {
-      var isRed = Math.random() > 0.4;
-      var p = {
-        x: Math.random() * W,
-        y: randomY ? Math.random() * H : H + Math.random() * 20,
-        r: 0.8 + Math.random() * 2.5,
-        speed: 0.35 + Math.random() * 0.75,
-        drift: (Math.random() - 0.5) * 0.55,
-        alpha: 0.55 + Math.random() * 0.4,
-        color: isRed ? 'rgba(224,16,32,' : 'rgba(0,200,200,',
-        life: 0,
-        maxLife: 140 + Math.random() * 200
-      };
-      if (randomY) p.life = Math.random() * p.maxLife * 0.6;
-      return p;
-    }
-
-    function init() {
-      resize();
-      particles = [];
-      // Pre-seed the field at random heights so it looks alive on first frame
-      for (var i = 0; i < 75; i++) particles.push(makeParticle(true));
-    }
-
-    function tick() {
-      ctx.clearRect(0, 0, W, H);
-
-      // Replenish — add up to 3 per frame so the field recovers quickly after resize
-      while (particles.length < 90) particles.push(makeParticle(false));
-
-      particles = particles.filter(function (p) { return p.life < p.maxLife; });
-
-      particles.forEach(function (p) {
-        p.y    -= p.speed;
-        p.x    += p.drift;
-        p.life++;
-        var fade = 1 - p.life / p.maxLife;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + (p.alpha * fade) + ')';
-        ctx.fill();
-      });
-
-      requestAnimationFrame(tick);
-    }
-
-    // Wait for layout, then init
-    if (document.readyState === 'complete') {
-      init(); tick();
-    } else {
-      window.addEventListener('load', function () { init(); tick(); });
-    }
-    window.addEventListener('resize', function () {
-      resize();
-      // Re-seed so the resized canvas fills immediately
-      while (particles.length < 90) particles.push(makeParticle(true));
-    });
-  })();
-  </script>
 
   <!-- RADIO TEASER TRACK SYNC -->
   <script>
