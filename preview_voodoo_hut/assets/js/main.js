@@ -364,23 +364,8 @@
 
 
 // ── SKULL CURSOR TILT ──
-// Injects the SVG filter that strips the skull's white background,
-// then makes the skull layer tilt toward the mouse cursor.
+// Makes the skull overlay in the hero logo tilt toward the mouse cursor.
 (function initSkullTilt() {
-
-  // Inject SVG filter for white-background removal on the skull image.
-  // feColorMatrix alpha row:  A_out = -R -G -B + alpha_in + 2
-  // White (1,1,1) → 0 (transparent).  Coloured / dark pixels → opaque.
-  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('width', '0');
-  svg.setAttribute('height', '0');
-  svg.style.cssText = 'position:absolute;overflow:hidden;pointer-events:none';
-  svg.innerHTML =
-    '<defs><filter id="voodoo-remove-white" color-interpolation-filters="sRGB">' +
-    '<feColorMatrix type="matrix" ' +
-    'values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 1 2"/>' +
-    '</filter></defs>';
-  document.body.insertBefore(svg, document.body.firstChild);
 
   const skull = document.querySelector('.logo-skull');
   if (!skull) return;

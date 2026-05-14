@@ -2631,27 +2631,14 @@ footer {
   display: inline-block;
   line-height: 0;
 }
-.logo-base {
-  display: block;
-}
-/* Skull layer — centered over the blank logo, white bg removed via SVG filter */
-.logo-skull-positioner {
+/* Skull sits on top of the blank logo — both images are the same size so no scaling needed */
+.logo-skull {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  overflow: visible;
-}
-.logo-skull {
-  /* Scale up so the skull character (which sits inside large white padding)
-     fills the oval center at the correct visual size */
-  width: 155%;
-  height: auto;
-  max-width: none;
+  width: 100%;
+  height: 100%;
   display: block;
-  filter: url(#voodoo-remove-white);
+  pointer-events: none;
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -2677,10 +2664,6 @@ footer {
   height: auto;
   filter: drop-shadow(0 0 40px rgba(224,16,32,0.55)) drop-shadow(0 0 80px rgba(0,200,200,0.2));
   animation: hero-logo-pulse 4s ease-in-out infinite;
-}
-/* Hero composite: skull scales bigger since the hero logo is much larger */
-.hero-logo-wrap .logo-skull {
-  width: 165%;
 }
 @keyframes hero-logo-pulse {
   0%, 100% { filter: drop-shadow(0 0 30px rgba(224,16,32,0.45)) drop-shadow(0 0 60px rgba(0,0,0,0.5)); }
