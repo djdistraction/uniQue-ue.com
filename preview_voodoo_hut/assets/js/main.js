@@ -363,59 +363,70 @@
 })();
 
 
-// ── LOGO PARALLAX TILT ──
-// Makes the nav logo subtly tilt and shift toward the mouse cursor
-(function initLogoTilt() {
-  const logo = document.querySelector('.nav-logo-wrap');
-  if (!logo) return;
+// ── SKULL CURSOR TILT ──
+// Injects the SVG filter that strips the skull's white background,
+// then makes the skull layer tilt toward the mouse cursor.
+(function initSkullTilt() {
 
-  // Prep the logo element for 3D transforms
-  logo.style.transformStyle = 'preserve-3d';
-  logo.style.transition = 'transform 0.15s ease-out';
-  logo.style.willChange = 'transform';
-  logo.style.display = 'inline-block';
+  // Inject SVG filter for white-background removal on the skull image.
+  // feColorMatrix alpha row:  A_out = -R -G -B + alpha_in + 2
+  // White (1,1,1) → 0 (transparent).  Coloured / dark pixels → opaque.
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '0');
+  svg.setAttribute('height', '0');
+  svg.style.cssText = 'position:absolute;overflow:hidden;pointer-events:none';
+  svg.innerHTML =
+    '<defs><filter id="voodoo-remove-white" color-interpolation-filters="sRGB">' +
+    '<feColorMatrix type="matrix" ' +
+    'values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 1 2"/>' +
+    '</filter></defs>';
+  document.body.insertBefore(svg, document.body.firstChild);
 
-  const MAX_TILT = 12;   // max degrees of tilt
-  const MAX_SHIFT = 5;   // max px of translation
-  const MAX_DIST = 600;  // distance (px) at which effect reaches maximum
-  let animId = null;
+  const skull = document.querySelector('.logo-skull');
+  if (!skull) return;
+
+  skull.style.transformStyle = 'preserve-3d';
+  skull.style.transition     = 'transform 0.18s ease-out';
+  skull.style.willChange     = 'transform';
+
+  const MAX_TILT = 20;   // degrees
+  const MAX_SHIFT = 4;   // px — subtle parallax float
+  const MAX_DIST  = 550; // distance at which effect is maxed
   let targetTx = 0, targetTy = 0, targetRx = 0, targetRy = 0;
   let currentTx = 0, currentTy = 0, currentRx = 0, currentRy = 0;
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function animate() {
-    const EASE = 0.10;
-    currentTx = lerp(currentTx, targetTx, EASE);
-    currentTy = lerp(currentTy, targetTy, EASE);
-    currentRx = lerp(currentRx, targetRx, EASE);
-    currentRy = lerp(currentRy, targetRy, EASE);
-
-    logo.style.transform =
-      `perspective(400px) rotateX(${currentRx}deg) rotateY(${currentRy}deg) translate(${currentTx}px, ${currentTy}px)`;
-
-    animId = requestAnimationFrame(animate);
+    const E = 0.09;
+    currentTx = lerp(currentTx, targetTx, E);
+    currentTy = lerp(currentTy, targetTy, E);
+    currentRx = lerp(currentRx, targetRx, E);
+    currentRy = lerp(currentRy, targetRy, E);
+    skull.style.transform =
+      `perspective(350px) rotateX(${currentRx}deg) rotateY(${currentRy}deg)` +
+      ` translate(${currentTx}px, ${currentTy}px)`;
+    requestAnimationFrame(animate);
   }
-  animId = requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 
-  document.addEventListener('mousemove', function(e) {
-    const rect = logo.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-
+  document.addEventListener('mousemove', function (e) {
+    const rect = skull.getBoundingClientRect();
+    const cx = rect.left + rect.width  / 2;
+    const cy = rect.top  + rect.height / 2;
     const dx = e.clientX - cx;
     const dy = e.clientY - cy;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dist     = Math.sqrt(dx * dx + dy * dy);
     const strength = Math.min(dist / MAX_DIST, 1);
-
-    targetRy = (dx / Math.max(dist, 1)) * MAX_TILT * strength;
-    targetRx = -(dy / Math.max(dist, 1)) * MAX_TILT * strength;
-    targetTx = (dx / Math.max(dist, 1)) * MAX_SHIFT * strength;
-    targetTy = (dy / Math.max(dist, 1)) * MAX_SHIFT * strength;
+    const nx = dx / Math.max(dist, 1);
+    const ny = dy / Math.max(dist, 1);
+    targetRy = nx *  MAX_TILT  * strength;
+    targetRx = ny * -MAX_TILT  * strength;
+    targetTx = nx *  MAX_SHIFT * strength;
+    targetTy = ny *  MAX_SHIFT * strength;
   });
 
-  // Reset smoothly when mouse leaves the window
-  document.addEventListener('mouseleave', function() {
+  document.addEventListener('mouseleave', function () {
     targetTx = 0; targetTy = 0; targetRx = 0; targetRy = 0;
   });
 })();

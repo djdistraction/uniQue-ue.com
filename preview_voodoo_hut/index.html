@@ -21,7 +21,6 @@
       align-items: center; justify-content: center;
       padding: 60px 24px 40px; position: relative; overflow-x: hidden;
     }
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .dev-tape {
       position: fixed; top: 0; left: 0; right: 0;
       background: repeating-linear-gradient(-55deg,rgba(200,160,32,0.18) 0,rgba(200,160,32,0.18) 20px,rgba(200,160,32,0.06) 20px,rgba(200,160,32,0.06) 40px);
@@ -93,7 +92,6 @@
   </style>
 </head>
 <body>
-<canvas id="bg-canvas" aria-hidden="true"></canvas>
 <div class="dev-tape">&#9888; Development Preview &#8212; Not the official Voodoo Hut website &#9888;</div>
 <div class="card">
   <span class="skull">&#128128;</span>
@@ -116,73 +114,6 @@
   &#183; AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a>
   &#183; Not affiliated with The Voodoo Hut
 </p>
-<script>
-  (function () {
-    var c = document.getElementById('bg-canvas');
-    if (!c) return;
-    var x = c.getContext('2d'), W, H, P = [];
-
-    function sz() {
-      W = c.width  = window.innerWidth;
-      H = c.height = window.innerHeight;
-    }
-
-    function rp(randomY) {
-      var red = Math.random() > 0.42;
-      var p = {
-        x: Math.random() * W,
-        y: randomY ? Math.random() * H : H + Math.random() * 15,
-        r: 0.8 + Math.random() * 2.2,
-        s: 0.28 + Math.random() * 0.65,
-        d: (Math.random() - 0.5) * 0.5,
-        a: 0.5 + Math.random() * 0.45,
-        col: red ? 'rgba(224,16,32,' : 'rgba(0,200,200,',
-        l: 0,
-        m: 150 + Math.random() * 220
-      };
-      if (randomY) p.l = Math.random() * p.m * 0.5;
-      return p;
-    }
-
-    function init() {
-      sz();
-      P = [];
-      for (var i = 0; i < 80; i++) P.push(rp(true));
-    }
-
-    function tick() {
-      x.clearRect(0, 0, W, H);
-
-      // Replenish up to 3 per frame for a lush, consistent field
-      var needed = 100 - P.length;
-      for (var n = 0; n < Math.min(needed, 3); n++) P.push(rp(false));
-
-      // Draw first, then cull — avoids 1-frame flicker on removal
-      P.forEach(function (p) {
-        p.y -= p.s;
-        p.x += p.d;
-        p.l++;
-        var fade = 1 - p.l / p.m;
-        if (fade <= 0) return;
-        x.beginPath();
-        x.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        x.fillStyle = p.col + (p.a * fade) + ')';
-        x.fill();
-      });
-
-      P = P.filter(function (p) { return p.l < p.m; });
-      requestAnimationFrame(tick);
-    }
-
-    window.addEventListener('resize', function () {
-      sz();
-      while (P.length < 100) P.push(rp(true));
-    });
-
-    if (document.readyState === 'complete') { init(); tick(); }
-    else window.addEventListener('load', function () { init(); tick(); });
-  })();
-</script>
   <script src="assets/js/starfield.js" defer></script>
 </body>
 </html>
