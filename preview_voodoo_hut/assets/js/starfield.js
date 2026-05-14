@@ -63,6 +63,71 @@
 
   /* ── HERO SKY ────────────────────────────────────────────── */
   var skyC, skyX, skyW, skyH, skyStars = [], skyRot = 0, moonPh = 0;
+  var ltng = { on: false, t0: 0, bolt: [], brnch: [], nextAt: 0 };
+
+  function makeBolt(x, y0, y1, spread) {
+    var pts = [[x, y0]], cx = x, n = 10 + Math.floor(Math.random() * 8);
+    for (var i = 1; i <= n; i++) {
+      cx += (Math.random() - 0.5) * spread * (1.2 - i / n);
+      pts.push([cx, y0 + (y1 - y0) * i / n]);
+    }
+    return pts;
+  }
+
+  function drawBolt(ctx, pts, alpha) {
+    if (pts.length < 2) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#a8c8ff'; ctx.lineWidth = 5;
+    ctx.shadowBlur = 18; ctx.shadowColor = '#88aaff';
+    ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.stroke();
+    ctx.globalAlpha = alpha * 0.85;
+    ctx.strokeStyle = '#eef4ff'; ctx.lineWidth = 1.5; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var j = 1; j < pts.length; j++) ctx.lineTo(pts[j][0], pts[j][1]);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function renderLightning(ctx, W, H, ts) {
+    if (ltng.nextAt === 0) ltng.nextAt = ts + 8000 + Math.random() * 10000;
+
+    if (!ltng.on) {
+      if (ts < ltng.nextAt) return;
+      ltng.on = true; ltng.t0 = ts;
+      var sx = W * (0.18 + Math.random() * 0.64);
+      ltng.bolt  = makeBolt(sx, -4, H * (0.65 + Math.random() * 0.3), 70);
+      var bi = Math.floor(ltng.bolt.length * (0.35 + Math.random() * 0.3));
+      var bp = ltng.bolt[bi];
+      ltng.brnch = makeBolt(bp[0], bp[1], bp[1] + H * (0.15 + Math.random() * 0.15), 45);
+      return;
+    }
+
+    var el = ts - ltng.t0, TOTAL = 420;
+
+    /* Flash — instant surge then secondary flicker at 100ms */
+    var fa = 0;
+    if      (el < 30)  fa = el / 30 * 0.38;
+    else if (el < 55)  fa = 0.38 * (1 - (el - 30) / 25);
+    if (el > 100 && el < 160) fa = Math.max(fa, 0.22 * (1 - Math.abs(el - 130) / 30));
+
+    if (fa > 0.003) {
+      var fl = ctx.createRadialGradient(ltng.bolt[0][0], 0, 0, ltng.bolt[0][0], H * 0.5, W * 0.55);
+      fl.addColorStop(0, 'rgba(230,240,255,' + (fa * 0.95).toFixed(3) + ')');
+      fl.addColorStop(1, 'rgba(180,210,255,' + (fa * 0.2).toFixed(3)  + ')');
+      ctx.fillStyle = fl; ctx.fillRect(0, 0, W, H);
+    }
+
+    if (el > 28) {
+      var ba = Math.pow(Math.max(0, 1 - (el - 28) / (TOTAL - 28)), 0.6);
+      drawBolt(ctx, ltng.bolt,  ba);
+      drawBolt(ctx, ltng.brnch, ba * 0.55);
+    }
+
+    if (el >= TOTAL) { ltng.on = false; ltng.nextAt = ts + 45000 + Math.random() * 55000; }
+  }
 
   function initSky() {
     var hero = document.querySelector('.hero');
@@ -143,6 +208,7 @@
     ctx.restore();
 
     drawMoon(ctx, W, H);
+    renderLightning(ctx, W, H, ts);
     requestAnimationFrame(skyTick);
   }
 
@@ -314,6 +380,65 @@
     requestAnimationFrame(ptTick);
   }
 
+  /* ── CURSOR TRAIL ────────────────────────────────────────── */
+  var trlC, trlX, trlParts = [], trlLast = 0;
+  var TRL_COLORS = ['224,16,32', '0,200,200', '200,158,30', '148,0,210'];
+
+  function initTrail() {
+    if (window.matchMedia && window.matchMedia('(hover:none)').matches) return;
+
+    trlC = document.createElement('canvas');
+    trlC.setAttribute('aria-hidden', 'true');
+    trlC.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:12;pointer-events:none;display:block;';
+    document.body.appendChild(trlC);
+    trlX = trlC.getContext('2d');
+    trlC.width = window.innerWidth; trlC.height = window.innerHeight;
+    window.addEventListener('resize', function () {
+      trlC.width = window.innerWidth; trlC.height = window.innerHeight;
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      var now = Date.now();
+      if (now - trlLast < 22) return;
+      trlLast = now;
+      var n = 2 + Math.floor(Math.random() * 2);
+      for (var k = 0; k < n; k++) {
+        trlParts.push({
+          x:   e.clientX + (Math.random() - 0.5) * 8,
+          y:   e.clientY + (Math.random() - 0.5) * 8,
+          vx:  (Math.random() - 0.5) * 1.8,
+          vy:  -0.8 - Math.random() * 1.8,
+          r:   0.8 + Math.random() * 1.8,
+          rgb: TRL_COLORS[Math.floor(Math.random() * TRL_COLORS.length)],
+          life: 0, max: 28 + Math.floor(Math.random() * 28)
+        });
+      }
+    });
+
+    requestAnimationFrame(trailTick);
+  }
+
+  function trailTick() {
+    if (!trlX) { requestAnimationFrame(trailTick); return; }
+    trlX.clearRect(0, 0, trlC.width, trlC.height);
+
+    for (var i = trlParts.length - 1; i >= 0; i--) {
+      var p = trlParts[i];
+      p.life++; p.x += p.vx; p.y += p.vy;
+      p.vy += 0.04; p.vx *= 0.96;
+      if (p.life >= p.max) { trlParts.splice(i, 1); continue; }
+      var a  = (1 - p.life / p.max) * 0.85;
+      var gr = trlX.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.8);
+      gr.addColorStop(0,   'rgba(' + p.rgb + ',' + a.toFixed(3) + ')');
+      gr.addColorStop(0.5, 'rgba(' + p.rgb + ',' + (a * 0.35).toFixed(3) + ')');
+      gr.addColorStop(1,   'rgba(' + p.rgb + ',0)');
+      trlX.beginPath();
+      trlX.arc(p.x, p.y, p.r * 2.8, 0, Math.PI * 2);
+      trlX.fillStyle = gr; trlX.fill();
+    }
+    requestAnimationFrame(trailTick);
+  }
+
   /* ── BOOT ────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
     try {
@@ -321,6 +446,7 @@
       initSky();
       initSmoke();
       initParticles();
+      initTrail();
     } catch (e) {
       if (window.console) console.warn('[voodoo-effects]', e);
     }
