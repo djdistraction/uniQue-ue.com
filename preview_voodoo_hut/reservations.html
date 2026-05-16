@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservations — The Voodoo Hut | Book a Table | Kemah, TX</title>
+  <meta name="description" content="Reserve your table at The Voodoo Hut in Kemah, TX. Live music, craft cocktails, and Gulf Coast vibes — book online instantly via Toast." />
+  <meta property="og:title" content="Reservations — The Voodoo Hut" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+  .toast-embed-wrap {
+    position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--dark);
+  min-height: 700px;
+}
+.toast-embed-wrap iframe {
+    width: 100%;
+  min-height: 700px;
+  border: none;
+  display: block;
+}
+.toast-loading-overlay {
+    position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+  z-index: 1;
+  gap: 16px;
+  transition: opacity 0.4s ease;
+}
+.toast-loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.toast-loading-spinner {
+    width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.reservation-info-grid {
+    display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 3rem;
+  }
+.res-info-card {
+    background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.res-info-icon {
+    font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.res-info-body h4 {
+    font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0 0 4px;
+}
+.res-info-body p {
+    font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+.large-party-callout {
+    display: flex;
+  gap: 20px;
+  align-items: center;
+  background: rgba(200,32,32,0.08);
+  border: 1px solid rgba(200,32,32,0.25);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.large-party-callout .callout-icon {
+    font-size: 2rem;
+  flex-shrink: 0;
+}
+.large-party-callout .callout-body {
+      flex: 1;
+  min-width: 200px;
+    }
+.large-party-callout .callout-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+    margin: 0 0 6px;
+}
+.large-party-callout .callout-text {
+    font-size: 0.875rem;
+  color: var(--muted);
+    margin: 0 0 12px;
+}
+</style>
+</head>
+<body>
+  <div style="background:rgba(200,160,32,0.12);border-bottom:1px solid rgba(200,160,32,0.3);padding:8px 20px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a020;">&#9888; Development Preview &mdash; <a href="index.html" style="color:#00c8c8;">Return to Disclaimer</a> &nbsp;&middot;&nbsp; <a href="http://thevoodoohut.com" target="_blank" rel="noopener" style="color:#00c8c8;">Official Site &#8599;</a></div>
+
+<nav id="main-nav" class="main-nav" aria-label="Main navigation">
+  <div class="nav-inner container">
+  <a href="home.html" class="nav-logo-wrap" aria-label="The VooDoo Hut — Home"><img src="assets/images/logo.png" alt="VooDoo Hut — No Hurries, No Worries" class="logo-img" /></a>
+  <ul class="nav-links" role="list">
+<li><a href="home.html" class="nav-link">Home</a></li>
+  <li><a href="events.html" class="nav-link">Events</a></li>
+<li><a href="menu.html" class="nav-link">Menu</a></li>
+  <li><a href="live.html" class="nav-link">Live Streams</a></li>
+  <li><a href="radio.html" class="nav-link">Radio</a></li>
+  <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+  <li><a href="about.html" class="nav-link">About</a></li>
+  <li><a href="reservations.html" class="nav-link btn btn-primary btn-sm active">Reserve a Table</a></li>
+</ul>
+<button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+  </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu">
+  <ul role="list">
+  <li><a href="home.html" class="mobile-nav-link">Home</a></li>
+  <li><a href="events.html" class="mobile-nav-link">Events</a></li>
+  <li><a href="menu.html" class="mobile-nav-link">Menu</a></li>
+  <li><a href="live.html" class="mobile-nav-link">Live Streams</a></li>
+  <li><a href="radio.html" class="mobile-nav-link">Radio</a></li>
+  <li><a href="gallery.html" class="mobile-nav-link">Gallery</a></li>
+  <li><a href="about.html" class="mobile-nav-link">About</a></li>
+  <li><a href="pool.html" class="mobile-nav-link">Pool Room</a></li>
+  <li><a href="reservations.html" class="mobile-nav-link">Reservations</a></li>
+  <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+  </ul>
+  </div>
+
+  <header class="page-header">
+  <div class="container">
+  <p class="section-eyebrow">Book Your Night</p>
+<h1 class="page-header-title">Reservations</h1>
+<p class="page-header-sub">Secure your spot at Kemah's most electric bar &amp; nightclub. Real-time availability — instant confirmation.</p>
+  </div>
+  </header>
+
+  <!-- BOOKING WIDGET SECTION -->
+  <section class="section" aria-label="Table reservations">
+  <div class="container">
+
+  <div class="toast-embed-wrap" id="toast-reservation-wrap">
+  <!-- Loading overlay -->
+  <div class="toast-loading-overlay" id="toast-overlay" aria-hidden="true">
+  <div class="toast-loading-spinner"></div>
+  <p style="font-family:'Oswald',sans-serif;letter-spacing:0.1em;text-transform:uppercase;font-size:0.85rem;color:var(--muted);">Loading reservation system&hellip;</p>
+  </div>
+  <!-- Toast Tables Embed -->
+  <iframe
+  src="https://tables.toasttab.com/restaurants/5ee37fe5-bb30-43eb-8000-797348be20fa/findTime"
+  title="Book a table at VooDoo Hut — powered by Toast"
+  width="100%"
+  height="700"
+  id="toast-iframe"
+  loading="lazy"
+  allow="payment"
+  ></iframe>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="reservation-info-grid fade-in">
+  <div class="res-info-card">
+  <span class="res-info-icon">📅</span>
+  <div class="res-info-body">
+  <h4>Walk-ins Welcome</h4>
+  <p>No reservation? No problem. Walk-ins are always welcome — we'll fit you in when we can.</p>
+  </div>
+  </div>
+  <div class="res-info-card">
+  <span class="res-info-icon">🍹</span>
+  <div class="res-info-body">
+  <h4>Patio — All Ages til 9PM</h4>
+  <p>The Voodoo Garden patio is family-friendly until 9 PM. Inside is strictly 21+.</p>
+  </div>
+  </div>
+  <div class="res-info-card">
+  <span class="res-info-icon">🎸</span>
+  <div class="res-info-body">
+  <h4>Live Music Nightly</h4>
+<p>Check the <a href="events.html" style="color:var(--cyan);">Events calendar</a> before you book — great shows fill up fast.</p>
+  </div>
+  </div>
+  <div class="res-info-card">
+  <span class="res-info-icon">🕐</span>
+  <div class="res-info-body">
+  <h4>Hours</h4>
+  <p>Mon–Sun: 11AM – 2AM<br>Nightclub: Thu–Sun 9PM – 2AM</p>
+</div>
+</div>
+</div>
+
+  <!-- LARGE PARTY CALLOUT -->
+  <div class="large-party-callout fade-in" role="note">
+  <div class="callout-icon" aria-hidden="true">🥂</div>
+  <div class="callout-body">
+  <h3 class="callout-title">Large Party or Private Event?</h3>
+  <p class="callout-text">For groups of 15 or more, private venue buyouts, corporate events, or special occasions, reach out directly. We'll make it unforgettable.</p>
+  <a href="contact.html?topic=general" class="btn btn-primary btn-sm">Contact Us for Group Bookings</a>
+  </div>
+  </div>
+
+  </div>
+  </section>
+
+  <!-- ORDER ONLINE CTA -->
+  <section class="section-sm" style="background:var(--dark);border-bottom:1px solid var(--border);border-top:1px solid var(--border);">
+  <div class="container">
+  <div class="order-online-bar fade-in">
+  <div>
+  <p class="order-title">Rather Order Online?</p>
+<p class="order-sub">Skip the wait — order food &amp; drinks for pickup · Powered by Toast</p>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;">
+<a href="https://order.toasttab.com/menu-and-pay/voodoogarden/welcome" class="btn btn-outline" target="_blank" rel="noopener">View Dine-In Menu ↗</a>
+  <a href="https://order.toasttab.com/online/voodoogarden" class="btn btn-primary" target="_blank" rel="noopener">Order Pickup ↗</a>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+  <div class="container">
+  <div class="footer-grid">
+  <div class="footer-brand">
+  <div class="footer-logo">THE <span>VOODOO</span> HUT</div>
+  <p class="footer-tagline">Live music. Craft cocktails.<br>Streaming worldwide.</p>
+  <div class="footer-social">
+  <a href="https://www.facebook.com/TheVooDooHut" class="social-link" aria-label="Facebook">FB</a>
+  <a href="https://www.instagram.com/thevoodoohut/" class="social-link" aria-label="Instagram">IG</a>
+  <a href="https://www.tiktok.com/@voodoohut" class="social-link" aria-label="TikTok">TK</a>
+  <a href="https://twitter.com/thevoodoohut" class="social-link" aria-label="Twitter">TW</a>
+  </div>
+  <p class="footer-credit">AV &amp; Broadcast by <a href="https://htxpunk.com" target="_blank" rel="noopener">HTXPunk.com</a></p>
+  </div>
+  <div class="footer-col">
+  <h4 class="footer-heading">Explore</h4>
+  <ul class="footer-links" role="list">
+  <li><a href="events.html">Events &amp; Shows</a></li>
+  <li><a href="menu.html">Food &amp; Drinks</a></li>
+  <li><a href="reservations.html">Reservations</a></li>
+  <li><a href="gallery.html">Gallery</a></li>
+  <li><a href="about.html">Our Story</a></li>
+  </ul>
+  </div>
+  <div class="footer-col">
+  <h4 class="footer-heading">Broadcast</h4>
+  <ul class="footer-links" role="list">
+  <li><a href="live.html">Live Streams</a></li>
+  <li><a href="radio.html">Radio Station</a></li>
+  <li><a href="contact.html?topic=advertising">Advertise on Radio</a></li>
+<li><a href="contact.html?topic=sponsorship">Sponsorships</a></li>
+</ul>
+</div>
+  <div class="footer-col">
+<h4 class="footer-heading">Visit Us</h4>
+  <address class="footer-address">
+  <p>511 Bradford Ave<br>Kemah, TX 77565</p>
+  </address>
+  <div class="footer-hours">
+  <p><strong>Mon–Sun</strong> 11AM – 2AM</p>
+  <p><strong>Nightclub</strong> Thu–Sun 9PM – 2AM</p>
+  <p><strong>Patio</strong> All ages til 9PM</p>
+</div>
+</div>
+</div>
+  <div class="footer-bottom">
+  <p>&copy; 2026 The Voodoo Hut. All rights reserved.</p>
+<p>Kemah, TX · <a href="tel:+12815496164">(281) 549-6164</a></p>
+</div>
+</div>
+  </footer>
+
+  <div id="radio-player" class="radio-player" role="region" aria-label="Radio player">
+  <div class="radio-player-inner">
+  <div class="radio-player-brand">
+  <span class="live-dot" aria-hidden="true"></span>
+  <span class="radio-player-name">Voodoo Hut Radio</span>
+</div>
+<div class="radio-player-track">
+<span id="now-playing">Tap play to tune in</span>
+</div>
+<div class="radio-player-controls">
+<input id="radio-volume-bar" type="range" min="0" max="1" step="0.05" value="0.8" class="radio-volume" aria-label="Volume" />
+  <button id="radio-play-bar" class="radio-play-btn" aria-label="Play radio">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+  </button>
+  <a href="radio.html" class="radio-player-link" aria-label="Go to radio page">&#9654;&#9654;</a>
+  </div>
+  </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+  // Hide loading overlay once iframe loads
+  const iframe = document.getElementById('toast-iframe');
+const overlay = document.getElementById('toast-overlay');
+if (iframe && overlay) {
+iframe.addEventListener('load', () => {
+  overlay.classList.add('hidden');
+setTimeout(() => { overlay.style.display = 'none'; }, 500);
+});
+// Fallback: hide after 8s if load event doesn't fire (cross-origin)
+setTimeout(() => {
+  overlay.classList.add('hidden');
+setTimeout(() => { overlay.style.display = 'none'; }, 500);
+}, 8000);
+}
+</script>
+  <script src="assets/js/easter-eggs.js"></script>
+  <script src="assets/js/starfield.js" defer></script>
+  </body>
+  </html>
